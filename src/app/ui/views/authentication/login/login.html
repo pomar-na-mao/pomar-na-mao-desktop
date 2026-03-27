@@ -37,8 +37,8 @@
           <app-input
             id="email"
             type="email"
-            [label]="'PAGES.LOGIN.EMAIL_LABEL' | translate"
-            [placeholder]="'PAGES.LOGIN.EMAIL_PLACEHOLDER' | translate"
+            label="PAGES.LOGIN.EMAIL_LABEL"
+            placeholder="PAGES.LOGIN.EMAIL_PLACEHOLDER"
             icon="mail"
             [control]="loginForm.get('email')"
             [errorMessages]="emailErrors"
@@ -48,8 +48,8 @@
           <app-input
             id="password"
             type="password"
-            [label]="'PAGES.LOGIN.PASSWORD_LABEL' | translate"
-            [placeholder]="'PAGES.LOGIN.PASSWORD_PLACEHOLDER' | translate"
+            label="PAGES.LOGIN.PASSWORD_LABEL"
+            placeholder="PAGES.LOGIN.PASSWORD_PLACEHOLDER"
             icon="lock"
             [control]="loginForm.get('password')"
             [errorMessages]="passwordErrors"

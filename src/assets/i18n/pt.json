@@ -87,6 +87,13 @@
       "TITLE": "404 - Página Não Encontrada",
       "SUBTITLE": "A página que você procura não existe ou foi movida.",
       "GO_HOME": "Voltar ao Dashboard"
+    },
+    "MAP": {
+      "ZONE_LABEL": "Zona",
+      "ZONE_PLACEHOLDER": "Selecione uma zona",
+      "NO_ZONES": "Nenhuma zona disponível",
+      "OCCURRENCE_LABEL": "Ocorrência",
+      "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência"
     }
   },
   "LAYOUT": {
@@ -117,6 +124,28 @@
   "COMMON": {
     "OCCURRENCE": "Ocorrência",
     "OCCURRENCES": "Ocorrências",
-    "REFRESH": "Atualizar"
+    "REFRESH": "Atualizar",
+    "OCCURRENCES_LABELS": {
+      "STICK": "Galho Seco",
+      "BROKEN_BRANCH": "Galho Quebrado",
+      "VINE_GROWING": "Cipó crescendo",
+      "BURNT_BRANCH": "Queimado",
+      "STRUCK_BY_LIGHTNING": "Atingido por raio",
+      "DRILL": "Broca",
+      "ANTHILL": "Formigueiro",
+      "IN_EXPERIMENT": "Em experimento/teste",
+      "WEEDS_IN_THE_BASIN": "Mato na bacia",
+      "IS_DEAD": "Planta Morta",
+      "MITES": "Presença de ácaro",
+      "THRIPS": "Presença de tripes",
+      "EMPTY_COLLECTION_BOX_NEAR": "Caixa de colheita vazia perto",
+      "FERTILIZATION_OR_MANURING": "Parada de pulverização/adubação",
+      "IS_NEW": "Pé novo",
+      "NON_EXISTENT": "Pé Inexistente",
+      "FROST": "Atingido por Geada",
+      "FLOWERS": "Presença de Flores",
+      "BUDS": "Presença de Brotos",
+      "DEHYDRATED": "Pé Desidratado"
+    }
   }
 }

@@ -1,0 +1,29 @@
+<div>
+  @if (label) {
+    <label [for]="id" class="block text-sm font-semibold text-on-surface mb-2 px-1">
+      {{ label | translate }}
+    </label>
+  }
+
+  <div class="relative group">
+    <select
+      [id]="id"
+      [ngModel]="value"
+      (ngModelChange)="onValueChange($event)"
+      [disabled]="disabled"
+      class="block w-full pr-12 pl-4 py-3 border border-outline/20 rounded-lg focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-surface transition-all text-on-surface bg-surface-variant/10 hover:border-outline/40 disabled:text-on-surface-variant/40 disabled:cursor-not-allowed appearance-none outline-none cursor-pointer"
+    >
+      @if (placeholder) {
+        <option value="">{{ placeholder | translate }}</option>
+      }
+
+      @for (option of options; track option.value) {
+        <option [value]="option.value">{{ option.label | translate }}</option>
+      }
+    </select>
+
+    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors">
+      <span class="material-symbols-outlined text-[20px]">expand_more</span>
+    </div>
+  </div>
+</div>

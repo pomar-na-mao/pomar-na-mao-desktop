@@ -3,17 +3,30 @@
 :host {
   display: block;
   height: 320px;
-  overflow: hidden;
-  border-radius: 14px; /* Still keep the radius for the map itself to match the dashboard feel */
+}
+
+.map-card {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+
+  .controls-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: end;
+  }
 }
 
 #map {
   height: 100%;
   width: 100%;
   z-index: 1;
+  overflow: hidden;
+  border-radius: 14px;
 }
 
-/* Custom Leaflet overrides for a premium feel */
 .leaflet-container {
   font-family: inherit;
   background-color: #f8fafc;
@@ -41,7 +54,6 @@
   border-bottom-right-radius: 8px !important;
 }
 
-/* User Location Marker Styles */
 .user-location-icon-container {
   background: transparent;
   border: none;
@@ -54,7 +66,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #ef4444; /* Changed to red */
+  color: #ef4444;
 
   .material-symbols-outlined {
     font-size: 32px;
@@ -67,7 +79,7 @@
     position: absolute;
     width: 24px;
     height: 24px;
-    background: rgba(239, 68, 68, 0.4); /* Changed to red pulse */
+    background: rgba(239, 68, 68, 0.4);
     border-radius: 50%;
     animation: pulse 2s infinite;
     z-index: 1;
