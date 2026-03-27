@@ -1,0 +1,41 @@
+<div>
+  @if (label) {
+    <label [for]="id" class="block text-sm font-semibold text-on-surface mb-2 px-1">
+      {{ label }}
+    </label>
+  }
+  <div class="relative group">
+    @if (icon) {
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+        <span class="material-symbols-outlined text-[20px]">{{ icon }}</span>
+      </div>
+    }
+    <input
+      [id]="id"
+      [type]="inputType()"
+      [placeholder]="placeholder"
+      [formControl]="$any(control)"
+      [class]="icon ? 'pl-11' : 'pl-4'"
+      class="block w-full pr-4 py-3.5 border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-on-surface placeholder-on-surface-variant/50 bg-[#F3F4F6]"
+      [class.ring-2]="isInvalid"
+      [class.ring-red-500]="isInvalid"
+      [class.pr-12]="isPasswordType"
+    />
+    @if (isPasswordType) {
+      <button
+        type="button"
+        (click)="toggleVisibility()"
+        class="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-primary transition-colors"
+      >
+        <span class="material-symbols-outlined text-[20px]">
+          {{ showPassword() ? 'visibility_off' : 'visibility' }}
+        </span>
+      </button>
+    }
+  </div>
+  @if (isInvalid && currentErrorMessage) {
+    <p class="mt-2 text-xs text-red-500 font-medium px-1">
+      {{ currentErrorMessage }}
+    </p>
+  }
+</div>

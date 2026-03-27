@@ -1,0 +1,16 @@
+<div class="bg-white rounded-[14px] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] flex gap-[14px] items-start p-[16px_18px]">
+  <div class="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center shrink-0 bg-[#fff7ed]">
+    <span class="material-symbols-outlined text-[#f97316] text-[20px]!">trending_up</span>
+  </div>
+  <div class="flex-1 min-w-0">
+    <div class="text-[10px] font-semibold tracking-[0.06em] text-[#9ca3af] uppercase mb-[4px]">
+      {{ 'PAGES.HOME.DASHBOARD.PROGRESS' | translate }}
+    </div>
+    <div class="text-[24px] font-bold text-[#111827] leading-[1.2] my-[2px]">
+      {{ percent() }}%
+    </div>
+    <div class="h-[5px] bg-[#f1f3f5] rounded-full overflow-hidden my-[6px]">
+      <div class="h-full bg-[#f97316] rounded-full transition-all duration-300" [style.width.%]="percent()"></div>
+    </div>
+  </div>
+</div>

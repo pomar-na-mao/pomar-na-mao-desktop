@@ -1,0 +1,117 @@
+<div class="recent-updates-container">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <div>
+        <h2 class="text-[16px] font-bold text-slate-900 leading-tight">{{ 'PAGES.HOME.DASHBOARD.RECENT_UPDATES' |
+          translate }}</h2>
+        <p class="text-[12px] font-medium text-slate-400 mt-0.5">{{ 'PAGES.HOME.DASHBOARD.REAL_TIME_REPORTING' |
+          translate }}</p>
+      </div>
+    </div>
+    <button (click)="onRefresh()" class="refresh-button">
+      {{ 'COMMON.REFRESH' | translate }}
+    </button>
+  </div>
+
+  <!-- Table Layer -->
+  <div class="flex-1 overflow-auto">
+    <table class="w-full text-left border-separate border-spacing-0">
+      <thead>
+        <tr>
+          <th class="table-header-cell pl-0 pr-4">
+            {{ 'PAGES.HOME.DASHBOARD.TREE_ID' | translate }}
+          </th>
+          <th class="table-header-cell px-4">
+            {{ 'PAGES.HOME.DASHBOARD.VARIETY' | translate }}
+          </th>
+          <th class="table-header-cell px-4">
+            {{ 'PAGES.HOME.DASHBOARD.REGION' | translate }}
+          </th>
+          <th class="table-header-cell px-4">
+            {{ 'PAGES.HOME.DASHBOARD.OCCURRENCES' | translate }}
+          </th>
+          <th class="table-header-cell pl-4 pr-0 text-right">
+            {{ 'PAGES.HOME.DASHBOARD.TIME' | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+        @if (isLoading()) {
+        @for (i of [1,2,3,4,5]; track i) {
+        <tr class="animate-pulse">
+          <td class="py-4 pl-0 pr-4">
+            <div class="h-6 w-16 bg-slate-100 rounded-md"></div>
+          </td>
+          <td class="py-4 px-4">
+            <div class="h-4 w-24 bg-slate-100 rounded"></div>
+          </td>
+          <td class="py-4 px-4">
+            <div class="h-4 w-32 bg-slate-100 rounded"></div>
+          </td>
+          <td class="py-4 px-4">
+            <div class="h-6 w-20 bg-slate-100 rounded-full"></div>
+          </td>
+          <td class="py-4 pl-4 pr-0">
+            <div class="h-4 w-12 bg-slate-100 rounded ml-auto"></div>
+          </td>
+        </tr>
+        }
+        } @else {
+        @for (update of formattedUpdates(); track update.id) {
+        <tr class="group cursor-pointer hover:bg-slate-50/50 transition-colors">
+          <td class="py-3.5 pl-0 pr-4">
+            <span class="tree-id-badge">
+              {{ update.formattedId }}
+            </span>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="text-[13px] font-semibold text-slate-700">{{ update.variety | titlecase }}</span>
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-slate-300 text-[14px]">location_on</span>
+              <span class="text-[12px] text-slate-500">{{ update.region | titlecase }}</span>
+            </div>
+          </td>
+          <td class="py-3.5 px-4">
+            @let occurrences = (update | countOccurrences);
+            <div class="flex items-center">
+              <span class="status-badge-base" [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-100': occurrences === 0,
+                    'bg-amber-50 text-amber-700 border-amber-100': occurrences > 0 && occurrences <= 2,
+                    'bg-rose-50 text-rose-700 border-rose-100': occurrences > 2
+                  }">
+                <span class="status-dot-base" [ngClass]="{
+                      'bg-emerald-500': occurrences === 0,
+                      'bg-amber-500': occurrences > 0 && occurrences <= 2,
+                      'bg-rose-500': occurrences > 2
+                    }"></span>
+                {{ occurrences }} {{ (occurrences === 1 ? 'COMMON.OCCURRENCE' :
+                'COMMON.OCCURRENCES') | translate }}
+              </span>
+            </div>
+          </td>
+          <td class="py-3.5 pl-4 pr-0 text-right">
+            <span class="text-[12px] font-medium text-slate-400 tabular-nums">
+              {{ update.updated_at | timeAgo }}
+            </span>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="5" class="py-12">
+            <div class="flex flex-col items-center justify-center text-center opacity-40">
+              <span class="material-symbols-outlined text-[48px] mb-2 text-slate-300">history_off</span>
+              <p class="text-[13px] font-medium text-slate-400">
+                {{ 'PAGES.HOME.DASHBOARD.NO_RECENT_UPDATES' | translate }}
+              </p>
+            </div>
+          </td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

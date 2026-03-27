@@ -1,0 +1,90 @@
+@import "leaflet/dist/leaflet.css";
+
+:host {
+  display: block;
+  height: 320px;
+  overflow: hidden;
+  border-radius: 14px; /* Still keep the radius for the map itself to match the dashboard feel */
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Custom Leaflet overrides for a premium feel */
+.leaflet-container {
+  font-family: inherit;
+  background-color: #f8fafc;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: #ffffff !important;
+  color: #64748b !important;
+  border: none !important;
+}
+
+.leaflet-bar a:first-child {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+.leaflet-bar a:last-child {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+/* User Location Marker Styles */
+.user-location-icon-container {
+  background: transparent;
+  border: none;
+}
+
+.user-location-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #ef4444; /* Changed to red */
+
+  .material-symbols-outlined {
+    font-size: 32px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    z-index: 2;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: rgba(239, 68, 68, 0.4); /* Changed to red pulse */
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    z-index: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}

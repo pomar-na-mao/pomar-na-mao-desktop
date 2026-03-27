@@ -1,0 +1,122 @@
+{
+  "PAGES": {
+    "HOME": {
+      "TITLE": "Orchard in Hand",
+      "DESCRIPTION": "Manage your orchard with ease and precision. Everything you need in the palm of your hand.",
+      "GO_TO_DETAIL": "Start now",
+      "DASHBOARD": {
+        "OPTIMAL": "Optimal",
+        "MODERATE": "Moderate",
+        "CRITICAL": "Critical",
+        "TOTAL_TREES": "TOTAL TREES",
+        "UPDATED_MINS_AGO": "Updated {{ time }} ago",
+        "HEALTHY": "HEALTHY",
+        "UNHEALTHY": "UNHEALTHY",
+        "ORCHARD_VIGOR": "ORCHARD VIGOR",
+        "PROGRESS": "PROGRESS",
+        "RECENT_UPDATES": "Recent Updates",
+        "REAL_TIME_REPORTING": "Real-time field reporting",
+        "VIEW_ALL": "View All",
+        "TREE_ID": "TREE ID",
+        "SPECIES": "SPECIES",
+        "STATUS": "STATUS",
+        "ASSIGNED": "ASSIGNED",
+        "TIME": "TIME",
+        "VARIETY": "Variety",
+        "REGION": "Region",
+        "OCCURRENCES": "Occurrences",
+        "NO_RECENT_UPDATES": "No recent updates found.",
+        "MONITORING": "MONITORING",
+        "PEST_ALERT": "PEST ALERT",
+        "URGENT_HEALTH_ALERTS": "Urgent Health Alerts",
+        "APHID_INFESTATION": "Aphid Infestation",
+        "IRRIGATION_FAULT": "Irrigation Fault",
+        "SECTOR_B_ROW_12": "Zone B, Row 12. 4 trees.",
+        "SECTOR_D_ZONE_4": "Zone D, Zone 4. Pressure drop.",
+        "INSPECT": "Inspect →",
+        "GROWTH_FORECAST": "Growth Forecast",
+        "ESTIMATED_YIELD_Q3": "Estimated yield Q3.",
+        "TONS": "{{ value }} Tons",
+        "TIME_AGO": "{{ time }}h ago"
+      }
+    },
+    "DETAIL": {
+      "TITLE": "Orchard Dashboard",
+      "BACK_TO_HOME": "Back",
+      "ORCHARD_INFO": "General Information",
+      "TREE_COUNT": "Total Trees",
+      "WEATHER": "Current Weather",
+      "TASKS": "Active Tasks",
+      "HARVEST": "Next Harvest",
+      "STATUS_OK": "Everything in order"
+    },
+    "LOGIN": {
+      "TITLE": "Welcome back",
+      "SUBTITLE": "Access your account to manage your orchard.",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "your@email.com",
+      "PASSWORD_LABEL": "Password",
+      "PASSWORD_PLACEHOLDER": "••••••••",
+      "SUBMIT": "Sign In",
+      "ERROR_REQUIRED": "This field is required",
+      "ERROR_EMAIL": "Invalid email",
+      "ERROR_MINLENGTH": "Password must be at least 3 characters",
+      "INVALID_CREDENTIALS": "Invalid credentials! Please fill in email and password correctly.",
+      "FORGOT_PASSWORD": "Forgot password?",
+      "SHOW_PASSWORD": "Show password",
+      "HIDE_PASSWORD": "Hide password"
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Recover password",
+      "SUBTITLE": "Enter your email to receive instructions.",
+      "SUBMIT": "Send recovery email",
+      "BACK_TO_LOGIN": "Back to login",
+      "GO_TO_RESET": "Reset password",
+      "SUCCESS_MESSAGE": "Recovery email sent! Check your inbox to reset your password."
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "New password",
+      "SUBTITLE": "Choose a new secure password for your account.",
+      "SUBMIT": "Confirm new password",
+      "SUCCESS_MESSAGE": "Password changed successfully!",
+      "PASSWORD_LABEL": "New password",
+      "PASSWORD_PLACEHOLDER": "••••••••",
+      "BACK_TO_LOGIN": "Back to login"
+    },
+    "NOT_FOUND": {
+      "TITLE": "404 - Page Not Found",
+      "SUBTITLE": "The page you are looking for doesn't exist or has been moved.",
+      "GO_HOME": "Back to Dashboard"
+    }
+  },
+  "LAYOUT": {
+    "HEADER": {
+      "SEARCH_PLACEHOLDER": "Search trees, sectors...",
+      "SEARCH_ARIA": "Search trees and sectors",
+      "NOTIFICATIONS_ARIA": "Notifications",
+      "HELP_ARIA": "Help",
+      "PROFILE_ARIA": "User profile"
+    },
+    "LANGUAGES": {
+      "PT": "Portuguese",
+      "EN": "English"
+    },
+    "SIDEBAR": {
+      "BRAND_NAME": "Pomar na mão",
+      "TAGLINE": "Control and Traceability",
+      "MENU": {
+        "DASHBOARD": "Dashboard",
+        "MAP": "Map View",
+        "INVENTORY": "Tree Inventory",
+        "ALERTS": "Alerts",
+        "SETTINGS": "Settings"
+      },
+      "LOGOUT": "Logout"
+    }
+  },
+  "COMMON": {
+    "OCCURRENCE": "Occurrence",
+    "OCCURRENCES": "Occurrences",
+    "REFRESH": "Refresh"
+  }
+}

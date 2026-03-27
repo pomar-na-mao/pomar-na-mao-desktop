@@ -1,0 +1,36 @@
+<nav class="sidebar">
+  <!-- Brand -->
+  <div class="sidebar__brand">
+    <div class="sidebar__logo">
+      <img src="assets/images/logo.png" [alt]="'LAYOUT.SIDEBAR.BRAND_NAME' | translate" class="sidebar__logo-img">
+    </div>
+    <div class="sidebar__brand-text">
+      <span class="sidebar__brand-name">{{ 'LAYOUT.SIDEBAR.BRAND_NAME' | translate }}</span>
+      <span class="sidebar__brand-tagline">{{ 'LAYOUT.SIDEBAR.TAGLINE' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <ul class="sidebar__nav">
+    @for (item of navItems; track item.route) {
+      <li class="sidebar__nav-item">
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="sidebar__nav-link--active"
+          class="sidebar__nav-link"
+        >
+          <span class="material-symbols-outlined sidebar__nav-icon">{{ item.icon }}</span>
+          <span class="sidebar__nav-label">{{ item.label | translate }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  <!-- Logout -->
+  <div class="sidebar__footer">
+    <button class="sidebar__cta sidebar__cta--logout" (click)="logout()">
+      <span class="material-symbols-outlined">logout</span>
+      {{ 'LAYOUT.SIDEBAR.LOGOUT' | translate }}
+    </button>
+  </div>
+</nav>

@@ -1,0 +1,122 @@
+{
+  "PAGES": {
+    "HOME": {
+      "TITLE": "Pomar na Mão",
+      "DESCRIPTION": "Gerencie seu pomar com facilidade e precisão. Tudo o que você precisa na palma da sua mão.",
+      "GO_TO_DETAIL": "Começar agora",
+      "DASHBOARD": {
+        "OPTIMAL": "Otimizada",
+        "MODERATE": "Moderada",
+        "CRITICAL": "Crítica",
+        "TOTAL_TREES": "TOTAL DE ÁRVORES",
+        "UPDATED_MINS_AGO": "Atualizado há {{ time }}",
+        "HEALTHY": "SAUDÁVEL",
+        "UNHEALTHY": "NÃO SAUDÁVEL",
+        "ORCHARD_VIGOR": "VIGOR DO POMAR",
+        "PROGRESS": "PROGRESSO",
+        "RECENT_UPDATES": "Atualizações Recentes",
+        "REAL_TIME_REPORTING": "Relatórios de campo em tempo real",
+        "VIEW_ALL": "Ver Tudo",
+        "TREE_ID": "ID DA ÁRVORE",
+        "SPECIES": "ESPÉCIE",
+        "STATUS": "STATUS",
+        "ASSIGNED": "ATRIBUÍDO",
+        "TIME": "HORA",
+        "VARIETY": "VARIEDADE",
+        "REGION": "REGIÃO",
+        "OCCURRENCES": "OCORRÊNCIAS",
+        "NO_RECENT_UPDATES": "Nenhuma atualização recente encontrada.",
+        "MONITORING": "MONITORANDO",
+        "PEST_ALERT": "ALERTA DE PRAGA",
+        "URGENT_HEALTH_ALERTS": "Alertas de Saúde Urgentes",
+        "APHID_INFESTATION": "Infestação de Pulgões",
+        "IRRIGATION_FAULT": "Falha na Irrigação",
+        "SECTOR_B_ROW_12": "Zona B, Fila 12. 4 árvores.",
+        "SECTOR_D_ZONE_4": "Zona D, Zona 4. Queda de pressão.",
+        "INSPECT": "Inspecionar →",
+        "GROWTH_FORECAST": "Previsão de Crescimento",
+        "ESTIMATED_YIELD_Q3": "Estimativa de produção Q3.",
+        "TONS": "{{ value }} Toneladas",
+        "TIME_AGO": "há {{ time }}h"
+      }
+    },
+    "DETAIL": {
+      "TITLE": "Dashboard do Pomar",
+      "BACK_TO_HOME": "Voltar",
+      "ORCHARD_INFO": "Informações Gerais",
+      "TREE_COUNT": "Total de Árvores",
+      "WEATHER": "Clima Atual",
+      "TASKS": "Tarefas Ativas",
+      "HARVEST": "Próxima Colheita",
+      "STATUS_OK": "Tudo em ordem"
+    },
+    "LOGIN": {
+      "TITLE": "Bem-vindo de volta",
+      "SUBTITLE": "Acesse sua conta para gerenciar seu pomar.",
+      "EMAIL_LABEL": "E-mail",
+      "EMAIL_PLACEHOLDER": "seu@email.com",
+      "PASSWORD_LABEL": "Senha",
+      "PASSWORD_PLACEHOLDER": "••••••••",
+      "SUBMIT": "Entrar",
+      "ERROR_REQUIRED": "Este campo é obrigatório",
+      "ERROR_EMAIL": "E-mail inválido",
+      "ERROR_MINLENGTH": "A senha deve ter pelo menos 3 caracteres",
+      "INVALID_CREDENTIALS": "Dados inválidos!. Preencha email e senha corretamente!",
+      "FORGOT_PASSWORD": "Esqueceu a senha?",
+      "SHOW_PASSWORD": "Ver senha",
+      "HIDE_PASSWORD": "Ocultar senha"
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Recuperar senha",
+      "SUBTITLE": "Informe seu e-mail para receber as instruções.",
+      "SUBMIT": "Enviar e-mail de recuperação",
+      "BACK_TO_LOGIN": "Voltar para o login",
+      "GO_TO_RESET": "Redefinir senha",
+      "SUCCESS_MESSAGE": "E-mail de recuperação enviado! Verifique sua caixa de entrada para redefinir a senha."
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Nova senha",
+      "SUBTITLE": "Escolha uma nova senha segura para sua conta.",
+      "SUBMIT": "Confirmar nova senha",
+      "SUCCESS_MESSAGE": "Senha alterada com sucesso!",
+      "PASSWORD_LABEL": "Nova senha",
+      "PASSWORD_PLACEHOLDER": "••••••••",
+      "BACK_TO_LOGIN": "Voltar para o login"
+    },
+    "NOT_FOUND": {
+      "TITLE": "404 - Página Não Encontrada",
+      "SUBTITLE": "A página que você procura não existe ou foi movida.",
+      "GO_HOME": "Voltar ao Dashboard"
+    }
+  },
+  "LAYOUT": {
+    "HEADER": {
+      "SEARCH_PLACEHOLDER": "Buscar árvores, setores...",
+      "SEARCH_ARIA": "Buscar árvores e setores",
+      "NOTIFICATIONS_ARIA": "Notificações",
+      "HELP_ARIA": "Ajuda",
+      "PROFILE_ARIA": "Perfil do usuário"
+    },
+    "LANGUAGES": {
+      "PT": "Português",
+      "EN": "Inglês"
+    },
+    "SIDEBAR": {
+      "BRAND_NAME": "Pomar na mão",
+      "TAGLINE": "Controle e Rastreabilidade",
+      "MENU": {
+        "DASHBOARD": "Dashboard",
+        "MAP": "Mapa",
+        "INVENTORY": "Inventário",
+        "ALERTS": "Alertas",
+        "SETTINGS": "Configurações"
+      },
+      "LOGOUT": "Sair"
+    }
+  },
+  "COMMON": {
+    "OCCURRENCE": "Ocorrência",
+    "OCCURRENCES": "Ocorrências",
+    "REFRESH": "Atualizar"
+  }
+}

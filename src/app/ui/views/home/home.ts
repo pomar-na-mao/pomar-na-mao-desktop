@@ -1,0 +1,26 @@
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { TotalPlantsComponent } from '../../components/total-plants/total-plants';
+import { OrchardVigorComponent } from '../../components/orchard-vigor/orchard-vigor';
+import { ProgressCardComponent } from '../../components/progress-card/progress-card';
+import { MapCardComponent } from '../../components/map-card/map-card';
+import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
+import { HomeViewModel } from '../../view-models/home/home.view-model';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.html',
+  styleUrls: ['./home.scss'],
+  imports: [CommonModule, TranslateModule, TotalPlantsComponent, OrchardVigorComponent, ProgressCardComponent, MapCardComponent, RecentUpdatesTableComponent],
+  providers: [HomeViewModel]
+})
+export class Home {
+  public viewModel = inject(HomeViewModel);
+
+  public barHeights = ['30px', '50px', '40px', '65px', '55px', '75px', '60px'];
+
+  constructor() {
+    this.viewModel.initialize();
+  }
+}
