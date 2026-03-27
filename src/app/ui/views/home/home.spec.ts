@@ -8,7 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Component, input, output } from '@angular/core';
 import { MapCardComponent } from '../../components/map-card/map-card';
 import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
-import * as L from 'leaflet';
+import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model';
 
 vi.mock('leaflet', () => ({
   map: vi.fn().mockReturnValue({
@@ -43,7 +43,7 @@ vi.mock('leaflet', () => ({
   standalone: true,
   template: '<div class="mock-map"></div>'
 })
-class MockMapCardComponent {}
+class MockMapCardComponent { }
 
 @Component({
   selector: 'app-recent-updates-table',
@@ -51,7 +51,7 @@ class MockMapCardComponent {}
   template: '<div class="mock-table"></div>'
 })
 class MockRecentUpdatesTableComponent {
-  updates = input<any[]>([]);
+  updates = input<PlantRecentUpdate[]>([]);
   isLoading = input<boolean>(false);
   refresh = output<void>();
 }
@@ -82,24 +82,24 @@ describe('Home', () => {
         { provide: PlantsRepository, useValue: mockPlantsRepository }
       ]
     })
-    .overrideComponent(Home, {
-      remove: { imports: [MapCardComponent, RecentUpdatesTableComponent] },
-      add: { imports: [MockMapCardComponent, MockRecentUpdatesTableComponent] }
-    })
-    .compileComponents();
+      .overrideComponent(Home, {
+        remove: { imports: [MapCardComponent, RecentUpdatesTableComponent] },
+        add: { imports: [MockMapCardComponent, MockRecentUpdatesTableComponent] }
+      })
+      .compileComponents();
   });
 
   beforeEach(async () => {
     fixture = TestBed.createComponent(Home);
     component = fixture.componentInstance;
     fixture.detectChanges(); // Trigger initialize()
-    
+
     // Explicitly wait for the view model to finish loading
-    while(component.viewModel.isLoading()) {
+    while (component.viewModel.isLoading()) {
       await new Promise(resolve => setTimeout(resolve, 10));
       fixture.detectChanges();
     }
-    
+
     await fixture.whenStable();
     fixture.detectChanges();
   });
