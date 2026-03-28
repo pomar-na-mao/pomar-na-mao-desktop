@@ -23,14 +23,15 @@
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 20px;
+  align-items: start;
 }
 
 .dashboard__stats {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-
-  height: 320px;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 76px;
 }
 
 .dashboard__stat-card {

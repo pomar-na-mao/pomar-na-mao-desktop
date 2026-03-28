@@ -1,19 +1,14 @@
-<div class="login-container min-h-screen flex font-body text-on-surface items-center justify-center relative overflow-hidden">
+<div
+  class="login-container min-h-screen flex font-body text-on-surface items-center justify-center relative overflow-hidden">
   <div class="absolute inset-0 bg-orchard-pattern pointer-events-none opacity-30"></div>
 
   <!-- Animated Background Elements -->
   <div class="decorations-container">
     @for (leaf of leaves; track $index) {
-      <span
-        class="material-symbols-outlined leaf"
-        [style.left]="leaf.left"
-        [style.animation-delay]="leaf.animationDelay"
-        [style.animation-duration]="leaf.duration"
-        [style.font-size]="leaf.size"
-        [style.opacity]="leaf.opacity"
-      >
-        eco
-      </span>
+    <span class="material-symbols-outlined leaf" [style.left]="leaf.left" [style.animation-delay]="leaf.animationDelay"
+      [style.animation-duration]="leaf.duration" [style.font-size]="leaf.size" [style.opacity]="leaf.opacity">
+      eco
+    </span>
     }
   </div>
 
@@ -34,42 +29,25 @@
         <form [formGroup]="loginForm" (ngSubmit)="loginHandler()" class="space-y-4">
 
           <!-- Email Field -->
-          <app-input
-            id="email"
-            type="email"
-            [label]="'PAGES.LOGIN.EMAIL_LABEL' | translate"
-            [placeholder]="'PAGES.LOGIN.EMAIL_PLACEHOLDER' | translate"
-            icon="mail"
-            [control]="loginForm.get('email')"
-            [errorMessages]="emailErrors"
-          />
+          <app-input id="email" type="email" label="PAGES.LOGIN.EMAIL_LABEL" placeholder="PAGES.LOGIN.EMAIL_PLACEHOLDER"
+            icon="mail" [control]="loginForm.get('email')" [errorMessages]="emailErrors" />
 
           <!-- Password Field -->
-          <app-input
-            id="password"
-            type="password"
-            [label]="'PAGES.LOGIN.PASSWORD_LABEL' | translate"
-            [placeholder]="'PAGES.LOGIN.PASSWORD_PLACEHOLDER' | translate"
-            icon="lock"
-            [control]="loginForm.get('password')"
-            [errorMessages]="passwordErrors"
-          />
+          <app-input id="password" type="password" label="PAGES.LOGIN.PASSWORD_LABEL"
+            placeholder="PAGES.LOGIN.PASSWORD_PLACEHOLDER" icon="lock" [control]="loginForm.get('password')"
+            [errorMessages]="passwordErrors" />
 
-          
+
           <!-- Submit Button -->
-          <app-button
-           class="mt-10"
-            type="submit"
-            [label]="'PAGES.LOGIN.SUBMIT' | translate"
-            [loading]="loginViewModel.loadingService.isLoading()"
-          />
+          <app-button class="mt-10" type="submit" variant="primary" [label]="'PAGES.LOGIN.SUBMIT' | translate"
+            [loading]="loginViewModel.loadingService.isLoading()" />
 
         </form>
       </main>
 
       <!-- Footer -->
       <footer class="mt-12 text-center w-full flex justify-center">
-        <p class="text-xs text-white/60 font-medium tracking-wider uppercase">
+        <p class="text-xs text-white/60 font-medium tracking-wider">
           Pomar na mão &bull; v1.0.0 &bull; Controle e Rastreabilidade
         </p>
       </footer>

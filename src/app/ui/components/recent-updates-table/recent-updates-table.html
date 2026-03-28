@@ -19,7 +19,7 @@
     <table class="w-full text-left border-separate border-spacing-0">
       <thead>
         <tr>
-          <th class="table-header-cell pl-0 pr-4">
+          <th class="table-header-cell pl-6 pr-4">
             {{ 'PAGES.HOME.DASHBOARD.TREE_ID' | translate }}
           </th>
           <th class="table-header-cell px-4">
@@ -31,8 +31,8 @@
           <th class="table-header-cell px-4">
             {{ 'PAGES.HOME.DASHBOARD.OCCURRENCES' | translate }}
           </th>
-          <th class="table-header-cell pl-4 pr-0 text-right">
-            {{ 'PAGES.HOME.DASHBOARD.TIME' | translate }}
+          <th class="table-header-cell pl-4 pr-6 text-right">
+            {{ 'PAGES.HOME.DASHBOARD.LAST_UPDATE' | translate }}
           </th>
         </tr>
       </thead>
@@ -40,7 +40,7 @@
         @if (isLoading()) {
         @for (i of [1,2,3,4,5]; track i) {
         <tr class="animate-pulse">
-          <td class="py-4 pl-0 pr-4">
+          <td class="py-4 pl-6 pr-4">
             <div class="h-6 w-16 bg-slate-100 rounded-md"></div>
           </td>
           <td class="py-4 px-4">
@@ -52,15 +52,15 @@
           <td class="py-4 px-4">
             <div class="h-6 w-20 bg-slate-100 rounded-full"></div>
           </td>
-          <td class="py-4 pl-4 pr-0">
+          <td class="py-4 pl-4 pr-6">
             <div class="h-4 w-12 bg-slate-100 rounded ml-auto"></div>
           </td>
         </tr>
         }
         } @else {
         @for (update of formattedUpdates(); track update.id) {
-        <tr class="group cursor-pointer hover:bg-slate-50/50 transition-colors">
-          <td class="py-3.5 pl-0 pr-4">
+        <tr class="group cursor-pointer">
+          <td class="py-3.5 pl-6 pr-4">
             <span class="tree-id-badge">
               {{ update.formattedId }}
             </span>
@@ -69,10 +69,7 @@
             <span class="text-[13px] font-semibold text-slate-700">{{ update.variety | titlecase }}</span>
           </td>
           <td class="py-3.5 px-4">
-            <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-slate-300 text-[14px]">location_on</span>
-              <span class="text-[12px] text-slate-500">{{ update.region | titlecase }}</span>
-            </div>
+            <span class="text-[12px] text-slate-500">{{ update.region | titlecase }}</span>
           </td>
           <td class="py-3.5 px-4">
             @let occurrences = (update | countOccurrences);
@@ -92,7 +89,7 @@
               </span>
             </div>
           </td>
-          <td class="py-3.5 pl-4 pr-0 text-right">
+          <td class="py-3.5 pl-4 pr-6 text-right">
             <span class="text-[12px] font-medium text-slate-400 tabular-nums">
               {{ update.updated_at | timeAgo }}
             </span>

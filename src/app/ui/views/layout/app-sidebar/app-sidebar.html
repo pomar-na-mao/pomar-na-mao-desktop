@@ -13,16 +13,12 @@
   <!-- Navigation -->
   <ul class="sidebar__nav">
     @for (item of navItems; track item.route) {
-      <li class="sidebar__nav-item">
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="sidebar__nav-link--active"
-          class="sidebar__nav-link"
-        >
-          <span class="material-symbols-outlined sidebar__nav-icon">{{ item.icon }}</span>
-          <span class="sidebar__nav-label">{{ item.label | translate }}</span>
-        </a>
-      </li>
+    <li class="sidebar__nav-item">
+      <a [routerLink]="item.route" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
+        <span class="material-symbols-outlined sidebar__nav-icon">{{ item.icon }}</span>
+        <span class="sidebar__nav-label">{{ item.label | translate }}</span>
+      </a>
+    </li>
     }
   </ul>
 

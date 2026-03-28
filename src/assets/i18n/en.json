@@ -21,7 +21,7 @@
         "SPECIES": "SPECIES",
         "STATUS": "STATUS",
         "ASSIGNED": "ASSIGNED",
-        "TIME": "TIME",
+        "LAST_UPDATE": "Last update",
         "VARIETY": "Variety",
         "REGION": "Region",
         "OCCURRENCES": "Occurrences",
@@ -87,6 +87,13 @@
       "TITLE": "404 - Page Not Found",
       "SUBTITLE": "The page you are looking for doesn't exist or has been moved.",
       "GO_HOME": "Back to Dashboard"
+    },
+    "MAP": {
+      "ZONE_LABEL": "Zone",
+      "ZONE_PLACEHOLDER": "Select a zone",
+      "NO_ZONES": "No zones available",
+      "OCCURRENCE_LABEL": "Occurrence",
+      "OCCURRENCE_PLACEHOLDER": "Select an occurrence"
     }
   },
   "LAYOUT": {
@@ -117,6 +124,28 @@
   "COMMON": {
     "OCCURRENCE": "Occurrence",
     "OCCURRENCES": "Occurrences",
-    "REFRESH": "Refresh"
+    "REFRESH": "Refresh",
+    "OCCURRENCES_LABELS": {
+      "STICK": "Dry Branch",
+      "BROKEN_BRANCH": "Broken Branch",
+      "VINE_GROWING": "Vine Growing",
+      "BURNT_BRANCH": "Burnt Branch",
+      "STRUCK_BY_LIGHTNING": "Struck by Lightning",
+      "DRILL": "Drill (Pest)",
+      "ANTHILL": "Anthill",
+      "IN_EXPERIMENT": "In Experiment/Testing",
+      "WEEDS_IN_THE_BASIN": "Weeds in the Basin",
+      "IS_DEAD": "Dead Plant",
+      "MITES": "Presence of Mites",
+      "THRIPS": "Presence of Thrips",
+      "EMPTY_COLLECTION_BOX_NEAR": "Empty Collection Box Nearby",
+      "FERTILIZATION_OR_MANURING": "Spraying/Fertilizing Stop",
+      "IS_NEW": "New Plant",
+      "NON_EXISTENT": "Non-existent Plant",
+      "FROST": "Affected by Frost",
+      "FLOWERS": "Presence of Flowers",
+      "BUDS": "Presence of Buds",
+      "DEHYDRATED": "Dehydrated Plant"
+    }
   }
 }
