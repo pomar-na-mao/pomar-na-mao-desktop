@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, OnDestroy, OnInit, inject, PLATFORM_ID, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
+import type { Plant } from '../../../domain/models/plant-data.model';
 import type { Region } from '../../../domain/models/regions.model';
 import { AppSelect } from '../../../shared/components';
 import { getConvexHull } from '../../../shared/utils/geolocation-math';
@@ -17,6 +18,7 @@ import { FarmOverviewMapViewModel } from '../../view-models/map-card/map-card.vi
 export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
   private map?: L.Map;
   private regionPolygons: Map<string, L.Polygon> = new Map();
+  private plantCircles: L.Circle[] = [];
   private assignedColors: Map<string, string> = new Map();
   private platformId = inject(PLATFORM_ID);
   public farmOverviewMapViewModel = inject(FarmOverviewMapViewModel);
@@ -37,6 +39,10 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
       if (this.farmOverviewMapViewModel.regionsGroupedByName().size > 0) {
         this.renderPolygons();
       }
+    });
+
+    effect(() => {
+      this.renderPlantCircles(this.farmOverviewMapViewModel.plants());
     });
   }
 
@@ -87,6 +93,29 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
       });
 
       this.regionPolygons.set(regionName, polygon);
+    });
+  }
+
+  private renderPlantCircles(plants: Plant[]): void {
+    if (!this.map || !isPlatformBrowser(this.platformId)) return;
+
+    this.plantCircles.forEach(circle => circle.remove());
+    this.plantCircles = [];
+
+    plants.forEach((plant) => {
+      const circle = L.circle([plant.latitude, plant.longitude], {
+        radius: 4,
+        color: '#166534',
+        fillColor: '#22c55e',
+        fillOpacity: 0.9,
+        weight: 2,
+      }).addTo(this.map!);
+
+      circle.bindTooltip(plant.variety || plant.id, {
+        direction: 'top',
+      });
+
+      this.plantCircles.push(circle);
     });
   }
 
