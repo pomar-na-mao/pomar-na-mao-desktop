@@ -1,0 +1,16 @@
+<div class="map-card">
+  <div class="controls-container">
+    <app-select id="map-region-select" label="PAGES.MAP.ZONE_LABEL"
+      [placeholder]="farmOverviewMapViewModel.regionOptions().length === 0 ? 'PAGES.MAP.NO_ZONES' : 'PAGES.MAP.ZONE_PLACEHOLDER'"
+      [value]="farmOverviewMapViewModel.selectedRegionId()" [options]="farmOverviewMapViewModel.regionOptions()"
+      [disabled]="farmOverviewMapViewModel.isLoadingRegions() || farmOverviewMapViewModel.regionOptions().length === 0"
+      (valueChange)="farmOverviewMapViewModel.onRegionChange($event)" />
+
+    <app-select id="map-occurrence-select" label="PAGES.MAP.OCCURRENCE_LABEL"
+      placeholder="PAGES.MAP.OCCURRENCE_PLACEHOLDER" [value]="farmOverviewMapViewModel.selectedOccurrenceKey()"
+      [options]="farmOverviewMapViewModel.occurrenceOptions()"
+      (valueChange)="farmOverviewMapViewModel.onOccurrenceChange($event)" />
+  </div>
+
+  <div id="map"></div>
+</div>

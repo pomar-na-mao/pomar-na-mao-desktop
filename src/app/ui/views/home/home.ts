@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TotalPlantsComponent } from '../../components/total-plants/total-plants';
 import { OrchardVigorComponent } from '../../components/orchard-vigor/orchard-vigor';
 import { ProgressCardComponent } from '../../components/progress-card/progress-card';
-import { MapCardComponent } from '../../components/map-card/map-card';
+import { FarmOverviewMap } from '../../components/map-card/farm-overview-map';
 import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
 import { HomeViewModel } from '../../view-models/home/home.view-model';
 
@@ -12,7 +12,7 @@ import { HomeViewModel } from '../../view-models/home/home.view-model';
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
-  imports: [CommonModule, TranslateModule, TotalPlantsComponent, OrchardVigorComponent, ProgressCardComponent, MapCardComponent, RecentUpdatesTableComponent],
+  imports: [CommonModule, TranslateModule, TotalPlantsComponent, OrchardVigorComponent, ProgressCardComponent, FarmOverviewMap, RecentUpdatesTableComponent],
   providers: [HomeViewModel]
 })
 export class Home {

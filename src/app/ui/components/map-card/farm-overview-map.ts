@@ -4,29 +4,29 @@ import * as L from 'leaflet';
 import type { Region } from '../../../domain/models/regions.model';
 import { AppSelect } from '../../../shared/components';
 import { getConvexHull } from '../../../shared/utils/geolocation-math';
-import { regionColors, getRandomColor } from '../../../shared/utils/colors';
-import { MapCardViewModel } from '../../view-models/map-card/map-card.view-model';
+import { getRandomColor } from '../../../shared/utils/colors';
+import { FarmOverviewMapViewModel } from '../../view-models/map-card/map-card.view-model';
 
 @Component({
-  selector: 'app-map-card',
+  selector: 'app-farm-overview-map',
   imports: [CommonModule, AppSelect],
-  templateUrl: './map-card.html',
-  styleUrls: ['./map-card.scss'],
-  providers: [MapCardViewModel]
+  templateUrl: './farm-overview-map.html',
+  styleUrls: ['./farm-overview-map.scss'],
+  providers: [FarmOverviewMapViewModel]
 })
-export class MapCardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
   private map?: L.Map;
   private regionPolygons: Map<string, L.Polygon> = new Map();
   private assignedColors: Map<string, string> = new Map();
   private platformId = inject(PLATFORM_ID);
-  public vm = inject(MapCardViewModel);
+  public farmOverviewMapViewModel = inject(FarmOverviewMapViewModel);
 
   private defaultZoom = 15;
 
   constructor() {
     effect(() => {
-      const regionId = this.vm.selectedRegionId();
-      const region = this.vm.findRegionById(regionId);
+      const regionId = this.farmOverviewMapViewModel.selectedRegionId();
+      const region = this.farmOverviewMapViewModel.findRegionById(regionId);
       if (region) {
         this.focusRegion(region);
       }
@@ -34,14 +34,14 @@ export class MapCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     effect(() => {
       // Re-render polygons if regions change
-      if (this.vm.regionsGroupedByName().size > 0) {
+      if (this.farmOverviewMapViewModel.regionsGroupedByName().size > 0) {
         this.renderPolygons();
       }
     });
   }
 
   async ngOnInit() {
-    await this.vm.loadRegions();
+    await this.farmOverviewMapViewModel.loadRegions();
   }
 
   ngAfterViewInit() {
@@ -65,14 +65,14 @@ export class MapCardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.regionPolygons.forEach(polygon => polygon.remove());
     this.regionPolygons.clear();
 
-    this.vm.regionsGroupedByName().forEach((points, regionName) => {
+    this.farmOverviewMapViewModel.regionsGroupedByName().forEach((points, regionName) => {
       if (!this.assignedColors.has(regionName)) {
         this.assignedColors.set(regionName, getRandomColor());
       }
       const color = this.assignedColors.get(regionName)!;
       const rawCoords = points.map(p => [p.latitude, p.longitude] as [number, number]);
       const hullCoords = getConvexHull(rawCoords);
-      
+
       const polygon = L.polygon(hullCoords, {
         color: color,
         fillColor: color,
@@ -116,7 +116,7 @@ export class MapCardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private focusSelectedRegion(): void {
-    const selectedRegion = this.vm.findRegionById(this.vm.selectedRegionId());
+    const selectedRegion = this.farmOverviewMapViewModel.findRegionById(this.farmOverviewMapViewModel.selectedRegionId());
     if (selectedRegion) {
       this.focusRegion(selectedRegion);
     } else if (this.regionPolygons.size > 0) {

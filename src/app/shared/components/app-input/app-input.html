@@ -1,6 +1,6 @@
 <div>
   @if (label) {
-    <label [for]="id" class="block text-sm font-semibold text-on-surface mb-2 px-1">
+    <label [for]="id" class="block text-sm font-semibold text-on-surface-variant mb-1.5 px-1">
       {{ label | translate }}
     </label>
   }
@@ -15,12 +15,17 @@
       [type]="inputType()"
       [placeholder]="placeholder | translate"
       [formControl]="$any(control)"
-      [class]="icon ? 'pl-11' : 'pl-4'"
-      class="block w-full pr-4 py-3 border border-outline/20 rounded-lg focus:ring-4 focus:ring-primary/10 focus:border-primary focus:bg-surface transition-all text-on-surface placeholder-on-surface-variant/40 bg-surface-variant/10 hover:border-outline/40 outline-none"
-      [class.ring-2]="isInvalid"
-      [class.ring-error]="isInvalid"
-      [class.border-error]="isInvalid"
-      [class.pr-12]="isPasswordType"
+      class="block w-full pr-4 py-3 border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all text-on-surface placeholder-outline/50 bg-surface-container-low outline-none"
+      [class]="{
+        'bg-error-container/20!': isInvalid,
+        'border-solid!': isInvalid,
+        'border-error/30!': isInvalid,
+        'border!': isInvalid,
+        'text-error!': isInvalid,
+        'pl-11': icon,
+        'pl-4': !icon,
+        'pr-12': isPasswordType
+      }"
     />
     @if (isPasswordType) {
       <button
@@ -36,7 +41,7 @@
     }
   </div>
   @if (isInvalid && currentErrorMessage) {
-    <p class="mt-2 text-xs text-error font-medium px-1">
+    <p class="mt-1.5 text-xs text-error px-1 font-medium">
       {{ currentErrorMessage | translate }}
     </p>
   }

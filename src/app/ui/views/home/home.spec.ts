@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Component, input, output } from '@angular/core';
-import { MapCardComponent } from '../../components/map-card/map-card';
+import { FarmOverviewMap } from '../../components/map-card/farm-overview-map';
 import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
 import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model';
 
@@ -39,11 +39,11 @@ vi.mock('leaflet', () => ({
 }));
 
 @Component({
-  selector: 'app-map-card',
+  selector: 'app-farm-overview-map',
   standalone: true,
   template: '<div class="mock-map"></div>'
 })
-class MockMapCardComponent { }
+class MockFarmOverviewMap { }
 
 @Component({
   selector: 'app-recent-updates-table',
@@ -83,8 +83,8 @@ describe('Home', () => {
       ]
     })
       .overrideComponent(Home, {
-        remove: { imports: [MapCardComponent, RecentUpdatesTableComponent] },
-        add: { imports: [MockMapCardComponent, MockRecentUpdatesTableComponent] }
+        remove: { imports: [FarmOverviewMap, RecentUpdatesTableComponent] },
+        add: { imports: [MockFarmOverviewMap, MockRecentUpdatesTableComponent] }
       })
       .compileComponents();
   });
@@ -114,7 +114,7 @@ describe('Home', () => {
   });
 
   it('should display the map card', () => {
-    const mapCard = fixture.debugElement.query(By.css('app-map-card'));
+    const mapCard = fixture.debugElement.query(By.css('app-farm-overview-map'));
     expect(mapCard).toBeTruthy();
   });
 

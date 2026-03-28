@@ -5,7 +5,7 @@ import { type AppSelectOption } from "../../../shared/components";
 import { occurencesLabels } from "../../../shared/utils/occurrences";
 
 @Injectable()
-export class MapCardViewModel {
+export class FarmOverviewMapViewModel {
   private regionsRepository = inject(RegionsRepository);
 
   public selectedRegionId = signal('');

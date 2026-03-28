@@ -1,8 +1,11 @@
 .login-container {
-  background: radial-gradient(circle at center, #1e1b4b 0%, #000000 100%) !important;
+  background: radial-gradient(
+    circle at center,
+    #1e1b4b 0%,
+    #000000 100%
+  ) !important;
 }
 
-// Revert card to white glass effect as requested
 .glass-card {
   background: rgba(255, 255, 255, 0.85) !important;
   backdrop-filter: blur(16px) !important;
