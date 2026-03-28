@@ -21,7 +21,7 @@
         "SPECIES": "SPECIES",
         "STATUS": "STATUS",
         "ASSIGNED": "ASSIGNED",
-        "TIME": "TIME",
+        "LAST_UPDATE": "Last update",
         "VARIETY": "Variety",
         "REGION": "Region",
         "OCCURRENCES": "Occurrences",

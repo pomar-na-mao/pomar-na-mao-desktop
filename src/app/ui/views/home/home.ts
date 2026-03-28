@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TotalPlantsComponent } from '../../components/total-plants/total-plants';
 import { OrchardVigorComponent } from '../../components/orchard-vigor/orchard-vigor';
 import { ProgressCardComponent } from '../../components/progress-card/progress-card';
-import { FarmOverviewMap } from '../../components/map-card/farm-overview-map';
+import { FarmOverviewMap } from '../../components/farm-overview-map/farm-overview-map';
 import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
 import { HomeViewModel } from '../../view-models/home/home.view-model';
 

@@ -6,7 +6,7 @@ import type { Region } from '../../../domain/models/regions.model';
 import { AppSelect } from '../../../shared/components';
 import { getConvexHull } from '../../../shared/utils/geolocation-math';
 import { getRandomColor } from '../../../shared/utils/colors';
-import { FarmOverviewMapViewModel } from '../../view-models/map-card/map-card.view-model';
+import { FarmOverviewMapViewModel } from '../../view-models/farm-overview-map/farm-overview-map.view-model';
 
 @Component({
   selector: 'app-farm-overview-map',
@@ -110,10 +110,6 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
         fillOpacity: 0.9,
         weight: 2,
       }).addTo(this.map!);
-
-      circle.bindTooltip(plant.variety || plant.id, {
-        direction: 'top',
-      });
 
       this.plantCircles.push(circle);
     });
