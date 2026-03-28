@@ -100,3 +100,18 @@
     opacity: 0;
   }
 }
+
+.region-tooltip {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #4ADE80;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 600;
+  color: #166534;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  
+  &::before {
+    display: none;
+  }
+}
