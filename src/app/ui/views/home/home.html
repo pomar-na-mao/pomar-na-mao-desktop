@@ -34,9 +34,11 @@
       </div>
       } @else {
       <!-- Success State -->
-      <app-total-plants [total]="viewModel.totalPlants()" [latestUpdatedAt]="viewModel.latestUpdatedAt()" />
-      <app-orchard-vigor [percent]="viewModel.vigorPercent()" />
-      <app-progress-card [percent]="viewModel.progressPercent()" />
+      <div class="gap-10 flex flex-col justify-between">
+        <app-total-plants [total]="viewModel.totalPlants()" [latestUpdatedAt]="viewModel.latestUpdatedAt()" />
+        <app-orchard-vigor [percent]="viewModel.vigorPercent()" />
+        <app-progress-card [percent]="viewModel.progressPercent()" />
+      </div>
       }
     </div>
   </div>
