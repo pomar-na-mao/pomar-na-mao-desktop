@@ -8,7 +8,6 @@ import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model'
 
 @Component({
   selector: 'app-recent-updates-table',
-  standalone: true,
   imports: [CommonModule, TranslateModule, TitleCasePipe, TimeAgoPipe, CountOccurrencesPipe],
   templateUrl: './recent-updates-table.html',
   styleUrl: './recent-updates-table.scss',
@@ -16,7 +15,6 @@ import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model'
 export class RecentUpdatesTableComponent {
   public updates = input<PlantRecentUpdate[]>([]);
   public isLoading = input<boolean>(false);
-  public refresh = output<void>();
 
   public formattedUpdates = computed(() => {
     return this.updates().map(plant => ({
@@ -24,8 +22,4 @@ export class RecentUpdatesTableComponent {
       formattedId: `${plant.id.toString().split("-")[0]}`
     }));
   });
-
-  public onRefresh() {
-    this.refresh.emit();
-  }
 }
