@@ -19,7 +19,7 @@
         "VIEW_ALL": "Ver Tudo",
         "TREE_ID": "ID DA ÁRVORE",
         "SPECIES": "ESPÉCIE",
-        "STATUS": "STATUS",
+        "STATUS": "Status",
         "ASSIGNED": "ATRIBUÍDO",
         "LAST_UPDATE": "Última atualização",
         "VARIETY": "VARIEDADE",
@@ -99,6 +99,12 @@
       "NO_ZONES": "Nenhuma zona disponível",
       "OCCURRENCE_LABEL": "Ocorrência",
       "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência"
+    },
+    "SYNCS": {
+      "TITLE": "Sincronizações",
+      "INSPECT_ROUTINES": "Rotinas de Inspeção",
+      "HISTORY_DESCRIPTION": "Histórico de rotinas sincronizadas com o servidor",
+      "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada."
     }
   },
   "LAYOUT": {
@@ -130,6 +136,13 @@
     "OCCURRENCE": "Ocorrência",
     "OCCURRENCES": "Ocorrências",
     "REFRESH": "Atualizar",
+    "DATE": "Data",
+    "DESCRIPTION": "Descrição",
+    "REGION": "Região",
+    "STATUS": "Status",
+    "DONE": "Concluído",
+    "PENDING": "Pendente",
+    "EDIT": "Editar",
     "OCCURRENCES_LABELS": {
       "STICK": "Galho Seco",
       "BROKEN_BRANCH": "Galho Quebrado",
@@ -154,3 +167,4 @@
     }
   }
 }
+

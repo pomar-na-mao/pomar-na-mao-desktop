@@ -22,8 +22,7 @@ export class AppSidebar {
 
   public navItems: NavItem[] = [
     { icon: 'dashboard', label: 'LAYOUT.SIDEBAR.MENU.DASHBOARD', route: '/pomar-na-mao/home' },
-    { icon: 'playlist_add_check', label: 'Rotinas', route: '/pomar-na-mao/inspect-routines' },
-    { icon: 'edit_note', label: 'Anotações', route: '/pomar-na-mao/inspect-annotations' },
+    { icon: 'sync', label: 'Sincronizações', route: '/pomar-na-mao/sincronizacoes' },
     { icon: 'settings', label: 'LAYOUT.SIDEBAR.MENU.SETTINGS', route: '/pomar-na-mao/settings' },
   ];
 

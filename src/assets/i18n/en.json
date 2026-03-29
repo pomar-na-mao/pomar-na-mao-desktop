@@ -19,7 +19,7 @@
         "VIEW_ALL": "View All",
         "TREE_ID": "TREE ID",
         "SPECIES": "SPECIES",
-        "STATUS": "STATUS",
+        "STATUS": "Status",
         "ASSIGNED": "ASSIGNED",
         "LAST_UPDATE": "Last update",
         "VARIETY": "Variety",
@@ -99,6 +99,12 @@
       "NO_ZONES": "No zones available",
       "OCCURRENCE_LABEL": "Occurrence",
       "OCCURRENCE_PLACEHOLDER": "Select an occurrence"
+    },
+    "SYNCS": {
+      "TITLE": "Syncs",
+      "INSPECT_ROUTINES": "Inspection Routines",
+      "HISTORY_DESCRIPTION": "History of routines synced with the server",
+      "NO_ROUTINES": "No inspection routines found."
     }
   },
   "LAYOUT": {
@@ -130,6 +136,13 @@
     "OCCURRENCE": "Occurrence",
     "OCCURRENCES": "Occurrences",
     "REFRESH": "Refresh",
+    "DATE": "Date",
+    "DESCRIPTION": "Description",
+    "REGION": "Region",
+    "STATUS": "Status",
+    "DONE": "Done",
+    "PENDING": "Pending",
+    "EDIT": "Edit",
     "OCCURRENCES_LABELS": {
       "STICK": "Dry Branch",
       "BROKEN_BRANCH": "Broken Branch",
@@ -154,3 +167,4 @@
     }
   }
 }
+
