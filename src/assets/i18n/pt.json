@@ -103,7 +103,7 @@
     "SYNCS": {
       "TITLE": "Sincronizações",
       "INSPECT_ROUTINES": "Rotinas de Inspeção",
-      "HISTORY_DESCRIPTION": "Histórico de rotinas sincronizadas com o servidor",
+      "HISTORY_DESCRIPTION": "Histórico de rotinas de inspeção",
       "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada."
     }
   },
@@ -167,4 +167,3 @@
     }
   }
 }
-

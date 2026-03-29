@@ -103,7 +103,7 @@
     "SYNCS": {
       "TITLE": "Syncs",
       "INSPECT_ROUTINES": "Inspection Routines",
-      "HISTORY_DESCRIPTION": "History of routines synced with the server",
+      "HISTORY_DESCRIPTION": "History of inspection routines",
       "NO_ROUTINES": "No inspection routines found."
     }
   },
@@ -167,4 +167,3 @@
     }
   }
 }
-
