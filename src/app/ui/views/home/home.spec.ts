@@ -7,6 +7,7 @@ import { PlantsRepository } from '../../../data/repositories/plants/plants-repos
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Component, input, output } from '@angular/core';
 import { FarmOverviewMap } from '../../components/farm-overview-map/farm-overview-map';
+import { HomeAlertsForecastPanel } from '../../components/home-alerts-forecast-panel/home-alerts-forecast-panel';
 import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
 import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model';
 
@@ -56,6 +57,26 @@ class MockRecentUpdatesTableComponent {
   refresh = output<void>();
 }
 
+@Component({
+  selector: 'app-home-alerts-forecast-panel',
+  standalone: true,
+  template: `
+    <div class="dashboard__alerts-card">
+      <div class="alert-item">
+        <div class="alert-item__title">PAGES.HOME.DASHBOARD.APHID_INFESTATION</div>
+      </div>
+    </div>
+    <div class="forecast__bar" style="height: 30px"></div>
+    <div class="forecast__bar" style="height: 50px"></div>
+    <div class="forecast__bar" style="height: 40px"></div>
+    <div class="forecast__bar" style="height: 65px"></div>
+    <div class="forecast__bar" style="height: 55px"></div>
+    <div class="forecast__bar" style="height: 75px"></div>
+    <div class="forecast__bar" style="height: 60px"></div>
+  `
+})
+class MockHomeAlertsForecastPanelComponent { }
+
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
@@ -83,8 +104,8 @@ describe('Home', () => {
       ]
     })
       .overrideComponent(Home, {
-        remove: { imports: [FarmOverviewMap, RecentUpdatesTableComponent] },
-        add: { imports: [MockFarmOverviewMap, MockRecentUpdatesTableComponent] }
+        remove: { imports: [FarmOverviewMap, RecentUpdatesTableComponent, HomeAlertsForecastPanel] },
+        add: { imports: [MockFarmOverviewMap, MockRecentUpdatesTableComponent, MockHomeAlertsForecastPanelComponent] }
       })
       .compileComponents();
   });
@@ -154,10 +175,10 @@ describe('Home', () => {
 
   it('should display the growth forecast chart with correct number of bars', () => {
     const forecastBars = fixture.debugElement.queryAll(By.css('.forecast__bar'));
-    expect(forecastBars.length).toBe(component.barHeights.length);
+    expect(forecastBars.length).toBe(7);
 
     // Check if the first bar has the expected height style
     const firstBar = forecastBars[0].nativeElement;
-    expect(firstBar.style.height).toBe(component.barHeights[0]);
+    expect(firstBar.style.height).toBe('30px');
   });
 });

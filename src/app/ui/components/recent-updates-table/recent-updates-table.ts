@@ -14,18 +14,18 @@ import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model'
   styleUrl: './recent-updates-table.scss',
 })
 export class RecentUpdatesTableComponent {
-  updates = input<PlantRecentUpdate[]>([]);
-  isLoading = input<boolean>(false);
-  refresh = output<void>();
+  public updates = input<PlantRecentUpdate[]>([]);
+  public isLoading = input<boolean>(false);
+  public refresh = output<void>();
 
-  formattedUpdates = computed(() => {
+  public formattedUpdates = computed(() => {
     return this.updates().map(plant => ({
       ...plant,
       formattedId: `${plant.id.toString().split("-")[0]}`
     }));
   });
 
-  onRefresh() {
+  public onRefresh() {
     this.refresh.emit();
   }
 }

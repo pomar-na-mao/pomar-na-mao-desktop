@@ -51,42 +51,6 @@
       (refresh)="viewModel.refreshRecentUpdates()" />
 
     <!-- Right: Alerts + Forecast -->
-    <div class="dashboard__side-panel">
-
-      <!-- Urgent Health Alerts -->
-      <div class="card dashboard__alerts-card">
-        <div class="alerts-card__header">
-          <span class="material-symbols-outlined alerts-card__icon">warning</span>
-          <span class="alerts-card__title">{{ 'PAGES.HOME.DASHBOARD.URGENT_HEALTH_ALERTS' | translate }}</span>
-        </div>
-        <div class="alert-item">
-          <div class="alert-item__title">{{ 'PAGES.HOME.DASHBOARD.APHID_INFESTATION' | translate }}</div>
-          <div class="alert-item__sub">{{ 'PAGES.HOME.DASHBOARD.SECTOR_B_ROW_12' | translate }}</div>
-          <a class="alert-item__link" href="#">{{ 'PAGES.HOME.DASHBOARD.INSPECT' | translate }}</a>
-        </div>
-        <div class="alert-item">
-          <div class="alert-item__title">{{ 'PAGES.HOME.DASHBOARD.IRRIGATION_FAULT' | translate }}</div>
-          <div class="alert-item__sub">{{ 'PAGES.HOME.DASHBOARD.SECTOR_D_ZONE_4' | translate }}</div>
-          <a class="alert-item__link" href="#">{{ 'PAGES.HOME.DASHBOARD.INSPECT' | translate }}</a>
-        </div>
-      </div>
-
-      <!-- Growth Forecast -->
-      <div class="card dashboard__forecast-card">
-        <div class="forecast__header">
-          <div>
-            <div class="forecast__label">{{ 'PAGES.HOME.DASHBOARD.GROWTH_FORECAST' | translate }}</div>
-            <div class="forecast__sub">{{ 'PAGES.HOME.DASHBOARD.ESTIMATED_YIELD_Q3' | translate }}</div>
-          </div>
-        </div>
-        <div class="forecast__bars">
-          @for (h of barHeights; track $index) {
-          <div class="forecast__bar" [style.height]="h"></div>
-          }
-        </div>
-        <div class="forecast__value">{{ 'PAGES.HOME.DASHBOARD.TONS' | translate: { value: '12.8' } }}</div>
-      </div>
-
-    </div>
+    <app-home-alerts-forecast-panel />
   </div>
 </div>
