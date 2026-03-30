@@ -12,9 +12,6 @@ export class InspectRoutinePlantsRepository {
   private _inspectRoutinePlants = signal<IInspectRoutinePlants[]>([]);
   public inspectRoutinePlants = this._inspectRoutinePlants.asReadonly();
 
-  private _plants = signal<PlantData[]>([]);
-  public plants = this._plants.asReadonly();
-
   private _selectedInspectRoutinePlant = signal<IInspectRoutinePlants | null>(null);
   public selectedInspectRoutinePlant = this._selectedInspectRoutinePlant.asReadonly();
 
@@ -47,22 +44,6 @@ export class InspectRoutinePlantsRepository {
 
   public setSelectedPlant(plant: IInspectRoutinePlants | null): void {
     this._selectedInspectRoutinePlant.set(plant);
-  }
-
-  public addPlant(plant: PlantData | any): void {
-    this._plants.update(plants => {
-      const index = plants.findIndex(p => p.id === plant.id);
-      if (index !== -1) {
-        const newPlants = [...plants];
-        newPlants[index] = plant as PlantData;
-        return newPlants;
-      }
-      return [...plants, plant as PlantData];
-    });
-  }
-
-  public clearPlants(): void {
-    this._plants.set([]);
   }
 
   public async updatePlantFromInspectRoutine(
