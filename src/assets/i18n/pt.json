@@ -104,7 +104,10 @@
       "TITLE": "Sincronizações",
       "INSPECT_ROUTINES": "Rotinas de Inspeção",
       "HISTORY_DESCRIPTION": "Histórico de rotinas de inspeção",
-      "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada."
+      "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada.",
+      "INSPECT_ANNOTATIONS": "Anotações de Inspeção",
+      "ANNOTATIONS_HISTORY_DESCRIPTION": "Histórico de anotações enviadas a campo",
+      "NO_ANNOTATIONS": "Nenhuma anotação encontrada."
     }
   },
   "LAYOUT": {

@@ -104,7 +104,10 @@
       "TITLE": "Syncs",
       "INSPECT_ROUTINES": "Inspection Routines",
       "HISTORY_DESCRIPTION": "History of inspection routines",
-      "NO_ROUTINES": "No inspection routines found."
+      "NO_ROUTINES": "No inspection routines found.",
+      "INSPECT_ANNOTATIONS": "Inspection Annotations",
+      "ANNOTATIONS_HISTORY_DESCRIPTION": "History of annotations sent to the field",
+      "NO_ANNOTATIONS": "No annotations found."
     }
   },
   "LAYOUT": {

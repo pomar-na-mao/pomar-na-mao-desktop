@@ -3,12 +3,14 @@ import { Routes } from '@angular/router';
 import { Home } from '../../ui/views/home/home';
 import { Syncs } from '../../ui/views/syncs/syncs';
 import { InspectRoutineDetail } from '../../ui/views/inspect-routine-detail/inspect-routine-detail';
+import { InspectAnnotationDetail } from '../../ui/views/inspect-annotation-detail/inspect-annotation-detail';
 import { PageNotFound } from '../../shared/components';
 
 export default [
   { path: 'home', component: Home },
   { path: 'sincronizacoes', component: Syncs },
   { path: 'sincronizacoes/rotinas-de-inspecao/:id', component: InspectRoutineDetail },
+  { path: 'sincronizacoes/anotacoes-de-inspecao/:id', component: InspectAnnotationDetail },
   { path: 'notfound', component: PageNotFound },
   { path: '**', redirectTo: '/notfound' },
 ] as Routes;
