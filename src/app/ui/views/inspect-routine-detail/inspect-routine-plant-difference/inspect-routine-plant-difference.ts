@@ -15,15 +15,15 @@ import { TranslateModule } from '@ngx-translate/core';
 export class InspectRoutinePlantDifference implements OnChanges, OnDestroy {
   @Input() id!: number;
 
-  public vm = inject(InspectRoutineSyncViewModel);
+  public inspectRoutineSyncViewModel = inject(InspectRoutineSyncViewModel);
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['id'] && this.id) {
-      this.vm.initialize(this.id);
+      this.inspectRoutineSyncViewModel.initialize(this.id);
     }
   }
 
   public ngOnDestroy(): void {
-    this.vm.cleanup();
+    this.inspectRoutineSyncViewModel.cleanup();
   }
 }

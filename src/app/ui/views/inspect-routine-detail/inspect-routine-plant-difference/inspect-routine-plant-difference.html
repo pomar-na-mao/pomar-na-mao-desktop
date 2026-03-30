@@ -10,11 +10,12 @@
           >
             Inspeção #{{ id }}
           </h2>
-          @if (vm.currentRoutineRegion() !== 'Desconhecida') {
+          @if (inspectRoutineSyncViewModel.currentRoutineRegion() !==
+          'Desconhecida') {
           <div
             class="px-3 py-1 bg-secondary-container/50 text-on-secondary-container text-xs font-bold rounded-full flex items-center gap-1"
           >
-            Zona {{ vm.currentRoutineRegion() }}
+            Zona {{ inspectRoutineSyncViewModel.currentRoutineRegion() }}
           </div>
           }
         </div>
@@ -25,12 +26,12 @@
       <div
         class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
       >
-        {{ vm.totalPlants() }} Pendentes
+        {{ inspectRoutineSyncViewModel.totalPlants() }} Pendentes
       </div>
     </div>
   </div>
 
-  @if (vm.totalPlants() > 0) {
+  @if (inspectRoutineSyncViewModel.totalPlants() > 0) {
   <!-- Carousel Card Container -->
   <div class="relative group">
     <div
@@ -40,39 +41,54 @@
         <div class="flex justify-between items-start">
           <div>
             <h3 class="text-2xl font-headline font-bold text-primary">
-              TRE-{{vm.currentInspectRoutinePlant()?.plant_id!.split("-")[0]}}...
+              TRE-{{inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.plant_id!.split("-")[0]}}...
             </h3>
           </div>
         </div>
         <!-- Updated Occurrence Badges List -->
         <div class="flex flex-wrap gap-2 pt-2">
-          @if (vm.isPlantLoading()) {
-            <div class="w-full bg-surface-container-high animate-pulse h-10 rounded-xl"></div>
-          } @else if (vm.occurrencesChanges().exclusions.length === 0 && vm.occurrencesChanges().inclusions.length === 0) {
-            <div class="w-full bg-secondary-container/20 text-on-surface-variant px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 border border-outline-variant/20 tracking-wide">
-              <span class="material-symbols-outlined text-lg text-secondary">info</span>
-              Nenhuma diferença enviada ou sincronização já realizada
-            </div>
+          @if (inspectRoutineSyncViewModel.isPlantLoading()) {
+          <div
+            class="w-full bg-surface-container-high animate-pulse h-10 rounded-xl"
+          ></div>
+          } @else if
+          (inspectRoutineSyncViewModel.occurrencesChanges().exclusions.length
+          === 0 &&
+          inspectRoutineSyncViewModel.occurrencesChanges().inclusions.length ===
+          0) {
+          <div
+            class="w-full bg-secondary-container/20 text-on-surface-variant px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 border border-outline-variant/20 tracking-wide"
+          >
+            <span class="material-symbols-outlined text-lg text-secondary"
+              >info</span
+            >
+            Nenhuma diferença enviada ou sincronização já realizada
+          </div>
           } @else {
-            <!-- Exclusion Style (Negative/Issues) -->
-            @for (exclusion of vm.occurrencesChanges().exclusions; track exclusion) {
-            <div
-              class="bg-error-container/40 text-on-error-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1"
-            >
-              <span class="material-symbols-outlined text-sm">remove</span>
-              {{ vm.occurrencesLabels[exclusion] | translate }}
-            </div>
-            }
-            <!-- Inclusion Style (Positive/Actions/Added) -->
-            @for (inclusion of vm.occurrencesChanges().inclusions; track inclusion) {
-            <div
-              class="bg-secondary-container/50 text-on-secondary-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1"
-            >
-              <span class="material-symbols-outlined text-sm">add</span>
-              {{ vm.occurrencesLabels[inclusion] | translate }}
-            </div>
-            }
+          <!-- Exclusion Style (Negative/Issues) -->
+          @for (exclusion of
+          inspectRoutineSyncViewModel.occurrencesChanges().exclusions; track
+          exclusion) {
+          <div
+            class="bg-error-container/40 text-on-error-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">remove</span>
+            {{ inspectRoutineSyncViewModel.occurrencesLabels[exclusion] |
+            translate }}
+          </div>
           }
+          <!-- Inclusion Style (Positive/Actions/Added) -->
+          @for (inclusion of
+          inspectRoutineSyncViewModel.occurrencesChanges().inclusions; track
+          inclusion) {
+          <div
+            class="bg-secondary-container/50 text-on-secondary-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">add</span>
+            {{ inspectRoutineSyncViewModel.occurrencesLabels[inclusion] |
+            translate }}
+          </div>
+          } }
         </div>
         <div class="pt-4 border-t border-outline-variant/10">
           <p class="text-on-surface-variant text-xs font-medium"><br /></p>
@@ -81,19 +97,20 @@
       <!-- Carousel Controls -->
       <div class="flex items-center justify-between">
         <button
-          (click)="vm.previousPlant()"
-          [disabled]="vm.currentPlantIndex() === 0"
+          (click)="inspectRoutineSyncViewModel.previousPlant()"
+          [disabled]="inspectRoutineSyncViewModel.currentPlantIndex() === 0"
           class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-bold text-sm transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span class="material-symbols-outlined">chevron_left</span>
           Anterior
         </button>
         <div class="text-xs font-bold text-on-surface-variant">
-          {{ vm.currentPlantIndex() + 1 }} / {{ vm.totalPlants() }}
+          {{ inspectRoutineSyncViewModel.currentPlantIndex() + 1 }} / {{
+          inspectRoutineSyncViewModel.totalPlants() }}
         </div>
         <button
-          (click)="vm.nextPlant()"
-          [disabled]="vm.currentPlantIndex() === vm.totalPlants() - 1"
+          (click)="inspectRoutineSyncViewModel.nextPlant()"
+          [disabled]="inspectRoutineSyncViewModel.currentPlantIndex() === inspectRoutineSyncViewModel.totalPlants() - 1"
           class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-bold text-sm transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Próximo
@@ -108,20 +125,21 @@
   </div>
 
   <button
-    [disabled]="vm.currentInspectRoutinePlant()?.is_approved || vm.isApproving()"
-    (click)="vm.onApprove()"
+    [disabled]="inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.is_approved || inspectRoutineSyncViewModel.isApproving()"
+    (click)="inspectRoutineSyncViewModel.onApprove()"
     class="flex items-center justify-center gap-2 py-4 bg-linear-to-br from-primary to-primary-container text-white rounded-2xl font-headline font-bold shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-95 disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100 disabled:cursor-not-allowed transition-all text-sm"
   >
-    @if (vm.isApproving()) {
-      <div class="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-      Aprovando...
-    } @else {
-      <span class="material-symbols-outlined"
-        >{{ vm.currentInspectRoutinePlant()?.is_approved ? 'check_circle' :
-        'check_circle_outline' }}</span
-      >
-      {{ vm.currentInspectRoutinePlant()?.is_approved ? 'Aprovado' : 'Aprovar' }}
-    }
+    @if (inspectRoutineSyncViewModel.isApproving()) {
+    <div
+      class="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+    ></div>
+    Aprovando... } @else {
+    <span class="material-symbols-outlined"
+      >{{ inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.is_approved
+      ? 'check_circle' : 'check_circle_outline' }}</span
+    >
+    {{ inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.is_approved ?
+    'Aprovado' : 'Aprovar' }} }
   </button>
   } @else {
   <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -135,7 +153,7 @@
 
   <div class="flex justify-start mt-auto pt-6">
     <button
-      (click)="vm.goBack()"
+      (click)="inspectRoutineSyncViewModel.goBack()"
       class="flex items-center gap-2 px-1 py-2 text-on-surface-variant hover:text-primary transition-all active:scale-95 text-sm font-bold group"
     >
       <span

@@ -18,7 +18,8 @@ export class InspectRoutinePlantsService implements IInspectRoutinePlantsService
     return await this.supabase
       .from('inspect_routines_plants')
       .select('*')
-      .eq('routine_id', routineId);
+      .eq('routine_id', routineId)
+      .order('id', { ascending: true });
   }
 
   public async updatePlantFromInspectRoutine(

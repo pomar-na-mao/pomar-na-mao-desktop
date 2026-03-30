@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, computed, effect } from "@angular/core";
+import { inject, Injectable, signal, computed, effect, untracked } from "@angular/core";
 import { Router } from "@angular/router";
 import { InspectRoutinePlantsRepository } from "../../../data/repositories/inspect-routine-plants/inspect-routine-plants-repository";
 import { InspectRoutineRepository } from "../../../data/repositories/inspect-routine/inspect-routine-repository";
@@ -57,11 +57,15 @@ export class InspectRoutineSyncViewModel {
     return { inclusions, exclusions };
   });
 
+  private pendingFetches = new Map<string, Promise<void>>();
+
   constructor() {
     effect(() => {
       const routinePlant = this.currentInspectRoutinePlant();
       if (routinePlant) {
-        this.fetchPlantData(routinePlant.plant_id);
+        untracked(() => {
+          this.fetchPlantData(routinePlant.plant_id);
+        });
       }
     });
   }
@@ -77,15 +81,29 @@ export class InspectRoutineSyncViewModel {
     if (!force && existingPlants.some(plant => plant.id === plantId)) {
       return;
     }
-    this.isPlantLoading.set(true);
-    try {
-      const plant = await this.plantsRepository.findById(plantId);
-      if (plant) {
-        this.plantsRepository.addInspectRoutineCurrentPlantsItem(plant as PlantData);
-      }
-    } finally {
-      this.isPlantLoading.set(false);
+
+    if (!force && this.pendingFetches.has(plantId)) {
+      return this.pendingFetches.get(plantId)!;
     }
+
+    const fetchPromise = (async () => {
+      this.isPlantLoading.set(true);
+      try {
+        const plant = await this.plantsRepository.findById(plantId);
+        if (plant) {
+          this.plantsRepository.addInspectRoutineCurrentPlantsItem(plant as PlantData);
+        }
+      } finally {
+        this.pendingFetches.delete(plantId);
+        // Only set isPlantLoading to false if there are no other pending fetches
+        if (this.pendingFetches.size === 0) {
+          this.isPlantLoading.set(false);
+        }
+      }
+    })();
+
+    this.pendingFetches.set(plantId, fetchPromise);
+    return fetchPromise;
   }
 
   public nextPlant(): void {
@@ -149,7 +167,7 @@ export class InspectRoutineSyncViewModel {
         this.messageService.show('COMMON.TOAST.SUCCESS', 'success');
 
         await this.inspectRoutinePlantsRepository.findByInspectRoutineId(routineId);
-        this.currentPlantIndex.set(0);
+        this.updateSelectedPlant();
         const refetchedPlant = this.inspectRoutinePlantsRepository.selectedInspectRoutinePlant();
         if (refetchedPlant) {
           await this.fetchPlantData(refetchedPlant.plant_id, true);
