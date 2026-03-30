@@ -81,7 +81,7 @@ export class InspectRoutineSyncViewModel {
     try {
       const plant = await this.plantsRepository.findById(plantId);
       if (plant) {
-        this.plantsRepository.addPlant(plant);
+        this.plantsRepository.addInspectRoutineCurrentPlantsItem(plant as PlantData);
       }
     } finally {
       this.isPlantLoading.set(false);
@@ -155,7 +155,7 @@ export class InspectRoutineSyncViewModel {
           await this.fetchPlantData(refetchedPlant.plant_id, true);
         }
 
-      } catch (error) {
+      } catch {
         this.messageService.show('COMMON.TOAST.ERROR', 'error');
       } finally {
         this.isApproving.set(false);

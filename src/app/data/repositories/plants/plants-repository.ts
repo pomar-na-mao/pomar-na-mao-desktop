@@ -14,12 +14,12 @@ export class PlantsRepository {
   private _inspectRoutineCurrentPlants = signal<PlantData[]>([]);
   public inspectRoutineCurrentPlants = this._inspectRoutineCurrentPlants.asReadonly();
 
-  public addPlant(plant: PlantData | any): void {
+  public addInspectRoutineCurrentPlantsItem(plant: PlantData): void {
     this._inspectRoutineCurrentPlants.update(plants => {
       const index = plants.findIndex(p => p.id === plant.id);
       if (index !== -1) {
         const newPlants = [...plants];
-        newPlants[index] = plant as PlantData;
+        newPlants[index] = plant;
         return newPlants;
       }
       return [...plants, plant as PlantData];
