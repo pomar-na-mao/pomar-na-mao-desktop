@@ -163,7 +163,11 @@
       "FROST": "Affected by Frost",
       "FLOWERS": "Presence of Flowers",
       "BUDS": "Presence of Buds",
-      "DEHYDRATED": "Dehydrated Plant"
+      "DEHYDRATED": "Dehydrated Tree"
+    },
+    "TOAST": {
+      "SUCCESS": "Action completed successfully",
+      "ERROR": "An error occurred processing the request"
     }
   }
 }

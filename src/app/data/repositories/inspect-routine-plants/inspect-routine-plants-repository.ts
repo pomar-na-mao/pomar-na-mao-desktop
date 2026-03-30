@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { InspectRoutinePlantsService } from "../../services/inspect-routine-plants/inspect-routine-plants-service";
 import type { IInspectRoutinePlants } from "../../../domain/models/inspect-routine-plants.model";
+import type { PlantData } from "../../../domain/models/plant-data.model";
 
 @Injectable({
   providedIn: 'root',
@@ -8,21 +9,78 @@ import type { IInspectRoutinePlants } from "../../../domain/models/inspect-routi
 export class InspectRoutinePlantsRepository {
   private inspectRoutinePlantsService = inject(InspectRoutinePlantsService);
 
-  public inspectRoutinePlants = signal<IInspectRoutinePlants[]>([]);
-  public isLoading = signal<boolean>(false);
-  public error = signal<string | null>(null);
+  private _inspectRoutinePlants = signal<IInspectRoutinePlants[]>([]);
+  public inspectRoutinePlants = this._inspectRoutinePlants.asReadonly();
+
+  private _plants = signal<PlantData[]>([]);
+  public plants = this._plants.asReadonly();
+
+  private _selectedInspectRoutinePlant = signal<IInspectRoutinePlants | null>(null);
+  public selectedInspectRoutinePlant = this._selectedInspectRoutinePlant.asReadonly();
+
+  private _isLoading = signal<boolean>(false);
+  public isLoading = this._isLoading.asReadonly();
+
+  private _error = signal<string | null>(null);
+  public error = this._error.asReadonly();
+
 
   public async findByInspectRoutineId(routineId: number): Promise<void> {
-    this.isLoading.set(true);
-    this.error.set(null);
+    this._isLoading.set(true);
+    this._error.set(null);
     try {
       const { data, error } = await this.inspectRoutinePlantsService.findByInspectRoutineId(routineId);
       if (error) throw error;
-      this.inspectRoutinePlants.set(data ?? []);
+      const plants = data ?? [];
+      this._inspectRoutinePlants.set(plants);
+      if (plants.length > 0) {
+        this._selectedInspectRoutinePlant.set(plants[0]);
+      } else {
+        this._selectedInspectRoutinePlant.set(null);
+      }
     } catch (error) {
-      this.error.set(`Error fetching inspect routine plants: ${JSON.stringify(error)}`);
+      this._error.set(`Error fetching inspect routine plants: ${JSON.stringify(error)}`);
     } finally {
-      this.isLoading.set(false);
+      this._isLoading.set(false);
     }
   }
+
+  public setSelectedPlant(plant: IInspectRoutinePlants | null): void {
+    this._selectedInspectRoutinePlant.set(plant);
+  }
+
+  public addPlant(plant: PlantData | any): void {
+    this._plants.update(plants => {
+      const index = plants.findIndex(p => p.id === plant.id);
+      if (index !== -1) {
+        const newPlants = [...plants];
+        newPlants[index] = plant as PlantData;
+        return newPlants;
+      }
+      return [...plants, plant as PlantData];
+    });
+  }
+
+  public clearPlants(): void {
+    this._plants.set([]);
+  }
+
+  public async updatePlantFromInspectRoutine(
+    plantId: string,
+    occurrences: {
+      [k: string]: boolean;
+    },
+    inspectRoutinePlantId: string,
+    informations: Partial<PlantData>,
+  ) {
+    const { data, error } = await this.inspectRoutinePlantsService.updatePlantFromInspectRoutine(
+      plantId,
+      occurrences,
+      inspectRoutinePlantId,
+      informations,
+    );
+
+    return { data, error };
+  }
+
 }

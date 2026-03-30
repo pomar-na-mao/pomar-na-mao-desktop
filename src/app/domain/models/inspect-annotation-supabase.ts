@@ -13,5 +13,6 @@ export interface SupabaseInspectAnnotation {
   description: string | null;
   occurrences: Partial<Record<BooleanKeys, boolean>>;
   is_approved?: boolean;
+  is_rejected?: boolean;
   created_at: string;
 }

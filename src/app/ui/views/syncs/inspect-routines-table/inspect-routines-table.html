@@ -116,9 +116,8 @@
           </td>
           <td class="py-3.5 pl-4 pr-6">
             <button
-              [disabled]="routine.is_done"
               (click)="onEditRoutine(routine); $event.stopPropagation()"
-              class="inline-flex h-8 w-8 items-center justify-center rounded-full text-primary transition-all opacity-80 hover:opacity-100 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-30 disabled:grayscale"
+              class="inline-flex h-8 w-full items-center justify-center rounded-full text-primary transition-all opacity-80 hover:opacity-100 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-30 disabled:grayscale"
             >
               <span class="material-symbols-outlined text-[20px]">edit</span>
             </button>

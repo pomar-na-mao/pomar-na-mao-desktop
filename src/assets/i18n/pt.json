@@ -164,6 +164,10 @@
       "FLOWERS": "Presença de Flores",
       "BUDS": "Presença de Brotos",
       "DEHYDRATED": "Pé Desidratado"
+    },
+    "TOAST": {
+      "SUCCESS": "Ação concluída com sucesso",
+      "ERROR": "Ocorreu um erro ao processar a solicitação"
     }
   }
 }

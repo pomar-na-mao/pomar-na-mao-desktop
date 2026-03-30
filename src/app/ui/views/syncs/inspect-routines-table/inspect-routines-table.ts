@@ -2,7 +2,7 @@ import { Component, input, computed, inject } from '@angular/core';
 import { CommonModule, TitleCasePipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import type { IInspectRoutine } from '../../../domain/models/inspect-routine.model';
+import type { IInspectRoutine } from '../../../../domain/models/inspect-routine.model';
 
 @Component({
   selector: 'app-inspect-routines-table',
