@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { InspectRoutinePlantsRepository } from "../../../data/repositories/inspect-routine-plants/inspect-routine-plants-repository";
 import { InspectRoutineRepository } from "../../../data/repositories/inspect-routine/inspect-routine-repository";
 import { PlantsRepository } from "../../../data/repositories/plants/plants-repository";
+import { InspectAnnotationRepository } from "../../../data/repositories/inspect-annotation/inspect-annotation-repository";
 import { MessageService } from "../../../data/services/message/message.service";
 import { occurenceKeys, occurencesLabels } from "../../../shared/utils/occurrences";
 import type { BooleanKeys, PlantData } from "../../../domain/models/plant-data.model";
@@ -13,12 +14,14 @@ export class InspectRoutineSyncViewModel {
     private inspectRoutinePlantsRepository = inject(InspectRoutinePlantsRepository);
     private inspectRoutineRepository = inject(InspectRoutineRepository);
     private plantsRepository = inject(PlantsRepository);
+    private inspectAnnotationRepository = inject(InspectAnnotationRepository);
     private messageService = inject(MessageService);
 
     public id = signal<number | null>(null);
     public currentPlantIndex = signal(0);
     public isPlantLoading = signal(false);
     public isApproving = signal(false);
+    public isLoading = this.inspectAnnotationRepository.isLoading;
 
     public currentInspectRoutinePlant = this.inspectRoutinePlantsRepository.selectedInspectRoutinePlant;
     public totalPlants = computed(() => this.inspectRoutinePlantsRepository.inspectRoutinePlants().length);
@@ -133,6 +136,7 @@ export class InspectRoutineSyncViewModel {
 
     public async onApproveInspectAnnotation(annotationId: string): Promise<void> {
         try {
+            this.isApproving.set(true);
             const { error } = await this.inspectRoutinePlantsRepository.approveInspectRoutinePlant(annotationId);
             if (error) throw error;
             this.messageService.show('COMMON.TOAST.SUCCESS', 'success');

@@ -17,7 +17,7 @@ export class InspectRoutineService implements IInspectRoutineService {
     return await this.supabase
       .from('inspect_routines')
       .select('*')
-      .order('date', { ascending: false });
+      .order('created_at', { ascending: false });
   }
 
 }

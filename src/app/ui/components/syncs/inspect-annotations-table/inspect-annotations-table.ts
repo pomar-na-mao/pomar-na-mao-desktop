@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import type { IInspectAnnotation } from '../../../../domain/models/inspect-annotation.model';
+import { InspectAnnotationsViewModel } from '../../../view-models/inspect-annotation/inspect-annotations.view-model';
 
 @Component({
   selector: 'app-inspect-annotations-table',
@@ -13,11 +14,10 @@ import type { IInspectAnnotation } from '../../../../domain/models/inspect-annot
 export class InspectAnnotationsTableComponent {
   private router = inject(Router);
 
-  public annotations = input<IInspectAnnotation[]>([]);
-  public isLoading = input<boolean>(false);
+  public inspectAnnotationsViewModel = inject(InspectAnnotationsViewModel);
 
   public sortedAnnotations = computed(() => {
-    return [...this.annotations()].sort((a, b) => {
+    return [...this.inspectAnnotationsViewModel.annotations()].sort((a, b) => {
       const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
       const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
       return dateB - dateA;

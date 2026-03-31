@@ -20,21 +20,19 @@ export class InspectAnnotationOccurrences implements OnChanges {
   @Input() id!: string;
 
   private router = inject(Router);
-  private repository = inject(InspectAnnotationRepository);
+  private inspectAnnotationRepository = inject(InspectAnnotationRepository);
 
   private currentId = signal<string | null>(null);
 
   public inspectRoutineSyncViewModel = inject(InspectRoutineSyncViewModel)
 
-  public isApproving = signal(false);
-  public isLoading = this.repository.isLoading;
   public occurrencesLabels = occurencesLabels;
 
   public selectedAnnotation = computed<IInspectAnnotation | null>(() => {
     const id = this.currentId();
     if (!id) return null;
 
-    return this.repository.inspectAnnotations().find(annotation => annotation.id === id) ?? null;
+    return this.inspectAnnotationRepository.inspectAnnotations().find(annotation => annotation.id === id) ?? null;
   });
 
   public occurrenceKeys = computed<string[]>(() => {
@@ -51,7 +49,7 @@ export class InspectAnnotationOccurrences implements OnChanges {
   public async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes['id'] && this.id) {
       this.currentId.set(this.id);
-      await this.repository.fetchInspectAnnotations();
+      await this.inspectAnnotationRepository.fetchInspectAnnotations();
     }
   }
 

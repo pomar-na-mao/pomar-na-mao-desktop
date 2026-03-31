@@ -3,6 +3,7 @@ import { CommonModule, TitleCasePipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import type { IInspectRoutine } from '../../../../domain/models/inspect-routine.model';
+import { InspectRoutinesViewModel } from '../../../view-models/inspect-routine/inspect-routines.view-model';
 
 @Component({
   selector: 'app-inspect-routines-table',
@@ -13,11 +14,11 @@ import type { IInspectRoutine } from '../../../../domain/models/inspect-routine.
 export class InspectRoutinesTableComponent {
   private router = inject(Router);
 
-  public routines = input<IInspectRoutine[]>([]);
-  public isLoading = input<boolean>(false);
+  public inspectRoutinesViewModel = inject(InspectRoutinesViewModel);
+
 
   public sortedRoutines = computed(() => {
-    return [...this.routines()].sort((a, b) => {
+    return [...this.inspectRoutinesViewModel.routines()].sort((a, b) => {
       const dateA = a.date ? new Date(a.date).getTime() : 0;
       const dateB = b.date ? new Date(b.date).getTime() : 0;
       return dateB - dateA;
