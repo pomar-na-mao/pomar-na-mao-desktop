@@ -137,8 +137,11 @@ export class InspectRoutineSyncViewModel {
     public async onApproveInspectAnnotation(annotationId: string): Promise<void> {
         try {
             this.isApproving.set(true);
-            const { error } = await this.inspectRoutinePlantsRepository.approveInspectRoutinePlant(annotationId);
+            const { error } = await this.inspectRoutinePlantsRepository.approveInspectAnnotation(annotationId);
             if (error) throw error;
+
+            await this.inspectAnnotationRepository.fetchInspectAnnotations();
+
             this.messageService.show('COMMON.TOAST.SUCCESS', 'success');
         } catch {
             this.messageService.show('COMMON.TOAST.ERROR', 'error');

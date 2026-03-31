@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
+import { Component, computed, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,18 +22,11 @@ export class InspectAnnotationOccurrences implements OnChanges {
   private router = inject(Router);
   private inspectAnnotationRepository = inject(InspectAnnotationRepository);
 
-  private currentId = signal<string | null>(null);
-
   public inspectRoutineSyncViewModel = inject(InspectRoutineSyncViewModel)
 
   public occurrencesLabels = occurencesLabels;
 
-  public selectedAnnotation = computed<IInspectAnnotation | null>(() => {
-    const id = this.currentId();
-    if (!id) return null;
-
-    return this.inspectAnnotationRepository.inspectAnnotations().find(annotation => annotation.id === id) ?? null;
-  });
+  public selectedAnnotation = this.inspectAnnotationRepository.selectedAnnotation;
 
   public occurrenceKeys = computed<string[]>(() => {
     const occurrences = this.selectedAnnotation()?.occurrences;
@@ -48,7 +41,7 @@ export class InspectAnnotationOccurrences implements OnChanges {
 
   public async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes['id'] && this.id) {
-      this.currentId.set(this.id);
+      this.inspectAnnotationRepository.setSelectedAnnotationId(this.id);
       await this.inspectAnnotationRepository.fetchInspectAnnotations();
     }
   }

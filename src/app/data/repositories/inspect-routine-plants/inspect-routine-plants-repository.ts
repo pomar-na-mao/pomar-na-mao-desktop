@@ -64,8 +64,8 @@ export class InspectRoutinePlantsRepository {
     return { data, error };
   }
 
-  public async approveInspectRoutinePlant(annotationId: string) {
-    const { data, error } = await this.inspectRoutinePlantsService.approveInspectRoutinePlant(annotationId);
+  public async approveInspectAnnotation(annotationId: string) {
+    const { data, error } = await this.inspectRoutinePlantsService.approveInspectAnnotation(annotationId);
     return { data, error };
   }
 

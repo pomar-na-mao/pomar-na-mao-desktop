@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import { InspectAnnotationService } from "../../services/inspect-annotation/inspect-annotation-service";
 import type { IInspectAnnotation } from "../../../domain/models/inspect-annotation.model";
 
@@ -10,6 +10,17 @@ export class InspectAnnotationRepository {
 
   private _inspectAnnotations = signal<IInspectAnnotation[]>([]);
   public inspectAnnotations = this._inspectAnnotations.asReadonly();
+
+  private _selectedAnnotationId = signal<string | null>(null);
+  public selectedAnnotation = computed(() => {
+    const id = this._selectedAnnotationId();
+    if (!id) return null;
+    return this._inspectAnnotations().find(a => a.id === id) ?? null;
+  });
+
+  public setSelectedAnnotationId(id: string | null) {
+      this._selectedAnnotationId.set(id);
+  }
 
   private _isLoading = signal<boolean>(false);
   public isLoading = this._isLoading.asReadonly();
