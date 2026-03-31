@@ -1,6 +1,5 @@
 import { Component, inject, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { TranslateModule } from '@ngx-translate/core';
 import { InspectRoutineSyncViewModel } from '../../../view-models/inspect-routine/inspect-routine-sync.view-model';
 

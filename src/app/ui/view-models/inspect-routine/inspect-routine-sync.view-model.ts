@@ -29,7 +29,7 @@ export class InspectRoutineSyncViewModel {
     public currentRoutineRegion = computed(() => {
         const routineId = this.id();
         const routines = this.inspectRoutineRepository.inspectRoutines();
-        const routine = routines.find(r => r.id === routineId);
+        const routine = routines.find(routine => routine.id === routineId);
         return routine?.region || 'COMMON.UNKNOWN';
     });
 

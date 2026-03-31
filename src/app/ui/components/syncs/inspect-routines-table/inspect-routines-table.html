@@ -70,8 +70,8 @@
             <div class="h-8 w-8 bg-slate-100 rounded-full"></div>
           </td>
         </tr>
-        } } @else { @for (routine of sortedRoutines(); track routine.id; let odd
-        = $odd) {
+        } } @else { @for (routine of inspectRoutinesViewModel.sortedRoutines();
+        track routine.id; let odd = $odd) {
         <tr
           class="group border-b border-slate-50 last:border-b-0"
           [class.bg-white]="odd"

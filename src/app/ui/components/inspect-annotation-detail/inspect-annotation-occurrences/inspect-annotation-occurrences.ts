@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { InspectAnnotationRepository } from '../../../../data/repositories/inspect-annotation/inspect-annotation-repository';
 import { occurencesLabels } from '../../../../shared/utils/occurrences';
-import type { IInspectAnnotation } from '../../../../domain/models/inspect-annotation.model';
 import { InspectRoutineSyncViewModel } from '../../../view-models/inspect-routine/inspect-routine-sync.view-model';
 
 @Component({
