@@ -5,6 +5,7 @@ import type { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 export interface IInspectAnnotationService {
   getInspectAnnotations(): Promise<PostgrestSingleResponse<IInspectAnnotation[]>>;
+  approveInspectAnnotation(id: string): Promise<PostgrestSingleResponse<string>>
 }
 
 @Injectable({
@@ -18,5 +19,11 @@ export class InspectAnnotationService implements IInspectAnnotationService {
       .from('inspect_annotations')
       .select('*')
       .order('created_at', { ascending: false });
+  }
+
+  public async approveInspectAnnotation(id: string): Promise<PostgrestSingleResponse<string>> {
+    return await this.supabase.rpc('approve_inspect_annotation', {
+      p_annotation_id: id,
+    });
   }
 }

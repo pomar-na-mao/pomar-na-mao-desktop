@@ -41,7 +41,7 @@ export class InspectRoutineCurrentPlantMap implements OnInit, AfterViewInit, OnD
         } else {
           this.plantCircle = L.circle(coords, {
             radius: 4,
-            color: '#10b981', // green-500
+            color: '#10b981',
             fillColor: '#10b981',
             fillOpacity: 0.9,
             weight: 2,

@@ -8,25 +8,24 @@
           <h2
             class="text-3xl font-headline font-extrabold text-on-surface tracking-tight"
           >
-            Inspeção #{{ id }}
+            {{ 'PAGES.SYNCS.INSPECTION_ID' | translate: { id: id } }}
           </h2>
-          @if (inspectRoutineSyncViewModel.currentRoutineRegion() !==
-          'Desconhecida') {
+          @if (inspectRoutineSyncViewModel.currentRoutineRegion()) {
           <div
             class="px-3 py-1 bg-secondary-container/50 text-on-secondary-container text-xs font-bold rounded-full flex items-center gap-1"
           >
-            Zona {{ inspectRoutineSyncViewModel.currentRoutineRegion() }}
+            {{ 'PAGES.SYNCS.ZONE_NUMBER' | translate: { number: inspectRoutineSyncViewModel.currentRoutineRegion() } }}
           </div>
           }
         </div>
         <p class="text-on-surface-variant text-sm mt-1">
-          Revise e aprove as alterações enviadas
+          {{ 'PAGES.SYNCS.SUBTITLE' | translate }}
         </p>
       </div>
       <div
         class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
       >
-        {{ inspectRoutineSyncViewModel.totalPlants() }} Pendentes
+        {{ 'COMMON.PENDING_COUNT' | translate: { count: inspectRoutineSyncViewModel.totalPlants() } }}
       </div>
     </div>
   </div>
@@ -62,7 +61,7 @@
             <span class="material-symbols-outlined text-lg text-secondary"
               >info</span
             >
-            Nenhuma diferença enviada ou sincronização já realizada
+            {{ 'PAGES.SYNCS.NO_DIFFERENCES' | translate }}
           </div>
           } @else {
           <!-- Exclusion Style (Negative/Issues) -->
@@ -102,7 +101,7 @@
           class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-bold text-sm transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span class="material-symbols-outlined">chevron_left</span>
-          Anterior
+          {{ 'COMMON.PREVIOUS' | translate }}
         </button>
         <div class="text-xs font-bold text-on-surface-variant">
           {{ inspectRoutineSyncViewModel.currentPlantIndex() + 1 }} / {{
@@ -113,7 +112,7 @@
           [disabled]="inspectRoutineSyncViewModel.currentPlantIndex() === inspectRoutineSyncViewModel.totalPlants() - 1"
           class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-bold text-sm transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Próximo
+          {{ 'COMMON.NEXT' | translate }}
           <span class="material-symbols-outlined">chevron_right</span>
         </button>
       </div>
@@ -126,20 +125,20 @@
 
   <button
     [disabled]="inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.is_approved || inspectRoutineSyncViewModel.isApproving()"
-    (click)="inspectRoutineSyncViewModel.onApprove()"
+    (click)="inspectRoutineSyncViewModel.onApproveInspectRoutine()"
     class="flex items-center justify-center gap-2 py-4 bg-linear-to-br from-primary to-primary-container text-white rounded-2xl font-headline font-bold shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-95 disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100 disabled:cursor-not-allowed transition-all text-sm"
   >
     @if (inspectRoutineSyncViewModel.isApproving()) {
     <div
       class="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
     ></div>
-    Aprovando... } @else {
+    {{ 'COMMON.APPROVING' | translate }} } @else {
     <span class="material-symbols-outlined"
       >{{ inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.is_approved
       ? 'check_circle' : 'check_circle_outline' }}</span
     >
-    {{ inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.is_approved ?
-    'Aprovado' : 'Aprovar' }} }
+    {{ (inspectRoutineSyncViewModel.currentInspectRoutinePlant()?.is_approved ?
+    'COMMON.APPROVED' : 'COMMON.APPROVE') | translate }} }
   </button>
   } @else {
   <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -147,7 +146,7 @@
       class="material-symbols-outlined text-[48px] text-on-surface-variant/50 mb-4"
       >eco</span
     >
-    <p class="text-on-surface-variant font-bold">Nenhuma planta encontrada.</p>
+    <p class="text-on-surface-variant font-bold">{{ 'PAGES.SYNCS.NO_PLANTS_FOUND' | translate }}</p>
   </div>
   }
 
@@ -160,7 +159,7 @@
         class="material-symbols-outlined text-[20px] transition-transform group-hover:-translate-x-1"
         >arrow_back</span
       >
-      Voltar
+      {{ 'COMMON.BACK' | translate }}
     </button>
   </div>
 </section>

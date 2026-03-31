@@ -12,7 +12,7 @@ export interface SupabaseInspectAnnotation {
   planting_date: string | null;
   description: string | null;
   occurrences: Partial<Record<BooleanKeys, boolean>>;
-  is_approved?: boolean;
-  is_rejected?: boolean;
+  is_approved: boolean;
   created_at: string;
+  updated_at: string;
 }

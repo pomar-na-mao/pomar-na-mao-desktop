@@ -1,7 +1,8 @@
 import { Component, inject, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InspectRoutineSyncViewModel } from '../../../../ui/view-models/inspect-routine/inspect-routine-sync.view-model';
+
 import { TranslateModule } from '@ngx-translate/core';
+import { InspectRoutineSyncViewModel } from '../../../view-models/inspect-routine/inspect-routine-sync.view-model';
 
 @Component({
   selector: 'app-inspect-routine-plant-difference',

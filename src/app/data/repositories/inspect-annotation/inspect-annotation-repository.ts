@@ -30,4 +30,12 @@ export class InspectAnnotationRepository {
       this._isLoading.set(false);
     }
   }
+
+  public async approveInspectAnnotation(id: string) {
+    const { data, error } = await this.inspectAnnotationService.approveInspectAnnotation(id);
+
+    return { data, error };
+  }
+
+
 }

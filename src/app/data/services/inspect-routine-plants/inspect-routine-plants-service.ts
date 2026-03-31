@@ -37,4 +37,12 @@ export class InspectRoutinePlantsService implements IInspectRoutinePlantsService
       informations,
     });
   }
+
+  public async approveInspectRoutinePlant(
+    annotationId: string,
+  ): Promise<PostgrestSingleResponse<null>> {
+    return await this.supabase.rpc('approve_inspect_annotation', {
+      p_annotation_id: annotationId,
+    });
+  }
 }

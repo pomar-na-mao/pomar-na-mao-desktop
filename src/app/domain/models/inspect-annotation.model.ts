@@ -11,6 +11,7 @@ export interface IInspectAnnotation {
   planting_date: string | null;
   description: string | null;
   occurrences: Record<string, unknown> | null;
-  created_at: string | null;
+  created_at: string;
   is_approved: boolean;
+  updated_at: string | null;
 }
