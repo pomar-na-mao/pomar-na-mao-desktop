@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { TimeAgoPipe } from '../../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-total-plants',

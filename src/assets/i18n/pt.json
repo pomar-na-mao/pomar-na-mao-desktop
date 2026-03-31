@@ -100,22 +100,22 @@
       "OCCURRENCE_LABEL": "Ocorrência",
       "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência"
     },
-      "SYNCS": {
-        "TITLE": "Sincronizações",
-        "INSPECT_ROUTINES": "Rotinas de Inspeção",
-        "HISTORY_DESCRIPTION": "Histórico de rotinas de inspeção",
-        "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada.",
-        "INSPECT_ANNOTATIONS": "Anotações de Inspeção",
-        "ANNOTATIONS_HISTORY_DESCRIPTION": "Histórico de anotações enviadas a campo",
-        "NO_ANNOTATIONS": "Nenhuma anotação encontrada.",
-        "INSPECTION_ID": "Inspeção {{ id }}",
-        "SUBTITLE": "Detalhamento e aprovação de ocorrências",
-        "ZONE_NUMBER": "Zona {{ number }}",
-        "APPROVED_INSPECTION": "Esta inspeção já foi aprovada e sincronizada.",
-        "NO_DIFFERENCES": "Nenhuma diferença de ocorrências encontrada para esta planta.",
-        "ANNOTATION_NOT_FOUND": "Anotação não encontrada",
-        "NO_PLANTS_FOUND": "Nenhuma planta encontrada para esta rotina."
-      }
+    "SYNCS": {
+      "TITLE": "Sincronizações",
+      "INSPECT_ROUTINES": "Rotinas de Inspeção",
+      "HISTORY_DESCRIPTION": "Histórico de rotinas de inspeção",
+      "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada.",
+      "INSPECT_ANNOTATIONS": "Anotações de Inspeção",
+      "ANNOTATIONS_HISTORY_DESCRIPTION": "Histórico de anotações de inspeção",
+      "NO_ANNOTATIONS": "Nenhuma anotação encontrada.",
+      "INSPECTION_ID": "Inspeção {{ id }}",
+      "SUBTITLE": "Detalhamento e aprovação de ocorrências",
+      "ZONE_NUMBER": "Zona {{ number }}",
+      "APPROVED_INSPECTION": "Esta inspeção já foi aprovada e sincronizada.",
+      "NO_DIFFERENCES": "Nenhuma diferença de ocorrências encontrada para esta planta.",
+      "ANNOTATION_NOT_FOUND": "Anotação não encontrada",
+      "NO_PLANTS_FOUND": "Nenhuma planta encontrada para esta rotina."
+    }
   },
   "LAYOUT": {
     "HEADER": {

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { AlertsViewModel } from '../../view-models/alerts/alerts.view-model';
+import { AlertsViewModel } from '../../../view-models/alerts/alerts.view-model';
 
 @Component({
   selector: 'app-home-alerts-forecast-panel',

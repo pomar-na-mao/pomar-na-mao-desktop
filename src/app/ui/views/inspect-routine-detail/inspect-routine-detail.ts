@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { InspectRoutinePlantDifference } from './inspect-routine-plant-difference/inspect-routine-plant-difference';
-import { InspectRoutineCurrentPlantMap } from './inspect-routine-current-plant-map/inspect-routine-current-plant-map';
+import { InspectRoutinePlantDifference } from '../../components/inspect-routine-detail/inspect-routine-plant-difference/inspect-routine-plant-difference';
+import { InspectRoutineCurrentPlantMap } from '../../components/inspect-routine-detail/inspect-routine-current-plant-map/inspect-routine-current-plant-map';
 
 @Component({
   selector: 'app-inspect-routine-detail',

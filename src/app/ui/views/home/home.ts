@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { TotalPlantsComponent } from '../../components/total-plants/total-plants';
-import { OrchardVigorComponent } from '../../components/orchard-vigor/orchard-vigor';
-import { ProgressCardComponent } from '../../components/progress-card/progress-card';
-import { FarmOverviewMap } from '../../components/farm-overview-map/farm-overview-map';
-import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
-import { HomeAlertsForecastPanel } from '../../components/home-alerts-forecast-panel/home-alerts-forecast-panel';
+import { TotalPlantsComponent } from '../../components/home/total-plants/total-plants';
+import { OrchardVigorComponent } from '../../components/home/orchard-vigor/orchard-vigor';
+import { ProgressCardComponent } from '../../components/home/progress-card/progress-card';
+import { FarmOverviewMap } from '../../components/home/farm-overview-map/farm-overview-map';
+import { RecentUpdatesTableComponent } from '../../components/home/recent-updates-table/recent-updates-table';
+import { HomeAlertsForecastPanel } from '../../components/home/home-alerts-forecast-panel/home-alerts-forecast-panel';
 import { HomeViewModel } from '../../view-models/home/home.view-model';
 
 @Component({

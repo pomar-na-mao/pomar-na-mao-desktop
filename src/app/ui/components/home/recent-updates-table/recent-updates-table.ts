@@ -2,9 +2,9 @@ import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TitleCasePipe } from '@angular/common';
-import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
-import { CountOccurrencesPipe } from '../../pipes/count-occurrences.pipe';
-import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model';
+import { TimeAgoPipe } from '../../../pipes/time-ago.pipe';
+import { CountOccurrencesPipe } from '../../../pipes/count-occurrences.pipe';
+import type { PlantRecentUpdate } from '../../../../domain/models/plant-data.model';
 
 @Component({
   selector: 'app-recent-updates-table',

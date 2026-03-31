@@ -1,12 +1,12 @@
 import { Component, AfterViewInit, OnDestroy, OnInit, inject, PLATFORM_ID, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
-import type { Plant } from '../../../domain/models/plant-data.model';
-import type { Region } from '../../../domain/models/regions.model';
-import { AppSelect } from '../../../shared/components';
-import { getConvexHull } from '../../../shared/utils/geolocation-math';
-import { getRandomColor } from '../../../shared/utils/colors';
-import { FarmOverviewMapViewModel } from '../../view-models/farm-overview-map/farm-overview-map.view-model';
+import type { Plant } from '../../../../domain/models/plant-data.model';
+import type { Region } from '../../../../domain/models/regions.model';
+import { AppSelect } from '../../../../shared/components';
+import { getConvexHull } from '../../../../shared/utils/geolocation-math';
+import { getRandomColor } from '../../../../shared/utils/colors';
+import { FarmOverviewMapViewModel } from '../../../view-models/farm-overview-map/farm-overview-map.view-model';
 
 @Component({
   selector: 'app-farm-overview-map',

@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { InspectAnnotationOccurrences } from './inspect-annotation-occurrences/inspect-annotation-occurrences';
-import { InspectAnnotationCurrentPointMap } from './inspect-annotation-current-point-map/inspect-annotation-current-point-map';
+import { InspectAnnotationOccurrences } from '../../components/inspect-annotation-detail/inspect-annotation-occurrences/inspect-annotation-occurrences';
+import { InspectAnnotationCurrentPointMap } from '../../components/inspect-annotation-detail/inspect-annotation-current-point-map/inspect-annotation-current-point-map';
 
 @Component({
   selector: 'app-inspect-annotation-detail',

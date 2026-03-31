@@ -6,9 +6,9 @@ import { By } from '@angular/platform-browser';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Component, input, output } from '@angular/core';
-import { FarmOverviewMap } from '../../components/farm-overview-map/farm-overview-map';
-import { HomeAlertsForecastPanel } from '../../components/home-alerts-forecast-panel/home-alerts-forecast-panel';
-import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
+import { FarmOverviewMap } from '../../components/home/farm-overview-map/farm-overview-map';
+import { HomeAlertsForecastPanel } from '../../components/home/home-alerts-forecast-panel/home-alerts-forecast-panel';
+import { RecentUpdatesTableComponent } from '../../components/home/recent-updates-table/recent-updates-table';
 import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model';
 
 vi.mock('leaflet', () => ({
