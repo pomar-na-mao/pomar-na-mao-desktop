@@ -1,5 +1,6 @@
 import { MapPolygonSelectorComponent, type PolygonSelection } from '../../components/mass-inclusion/map-polygon-selector';
 import { FarmOverviewMapViewModel } from '../../view-models/farm-overview-map/farm-overview-map.view-model';
+import { MassInclusionViewModel } from '../../view-models/mass-inclusion/mass-inclusion.view-model';
 import { AppSelect } from '../../../shared/components';
 import { getConvexHull } from '../../../shared/utils/geolocation-math';
 import { Component, computed, inject, OnInit } from '@angular/core';
@@ -11,10 +12,11 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [CommonModule, MapPolygonSelectorComponent, AppSelect, TranslateModule],
   templateUrl: './mass-inclusion.html',
   styleUrls: ['./mass-inclusion.scss'],
-  providers: [FarmOverviewMapViewModel]
+  providers: [FarmOverviewMapViewModel, MassInclusionViewModel]
 })
 export class MassInclusion implements OnInit {
   public farmOverviewMapViewModel = inject(FarmOverviewMapViewModel);
+  public massInclusionViewModel = inject(MassInclusionViewModel);
 
   public backgroundPolygon = computed(() => {
     const regionId = this.farmOverviewMapViewModel.selectedRegionId();
@@ -37,6 +39,10 @@ export class MassInclusion implements OnInit {
   }
 
   public onPolygonSelected(event: PolygonSelection): void {
-    console.log(event);
+    this.massInclusionViewModel.onPolygonSelected(event);
+  }
+
+  public onPolygonCleared(): void {
+    this.massInclusionViewModel.onPolygonCleared();
   }
 }
