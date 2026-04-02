@@ -120,7 +120,8 @@ describe('FarmOverviewMapViewModel', () => {
     expect(currentRegionSignal()?.id).toBe('r1');
     expect(mockPlantsRepository.findAll).toHaveBeenCalledWith({
       region: 'North',
-      occurrence: ''
+      occurrence: '',
+      variety: ''
     });
     expect(viewModel.isLoadingRegions()).toBe(false);
   });
@@ -132,7 +133,8 @@ describe('FarmOverviewMapViewModel', () => {
     expect(currentRegionSignal()?.id).toBe('r3');
     expect(mockPlantsRepository.findAll).toHaveBeenCalledWith({
       region: 'South',
-      occurrence: ''
+      occurrence: '',
+      variety: ''
     });
   });
 
@@ -151,7 +153,21 @@ describe('FarmOverviewMapViewModel', () => {
     expect(viewModel.selectedOccurrenceKey()).toBe('mites');
     expect(mockPlantsRepository.findAll).toHaveBeenCalledWith({
       region: 'North',
-      occurrence: 'mites'
+      occurrence: 'mites',
+      variety: ''
+    });
+  });
+
+  it('should apply the variety filter using the current region', async () => {
+    viewModel.selectedRegionId.set('r1');
+
+    await viewModel.onVarietyChange('Gala');
+
+    expect(viewModel.selectedVariety()).toBe('Gala');
+    expect(mockPlantsRepository.findAll).toHaveBeenCalledWith({
+      region: 'North',
+      occurrence: '',
+      variety: 'Gala'
     });
   });
 });

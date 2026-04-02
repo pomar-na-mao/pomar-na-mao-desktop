@@ -100,6 +100,30 @@
       "OCCURRENCE_LABEL": "Occurrence",
       "OCCURRENCE_PLACEHOLDER": "Select an occurrence"
     },
+    "MASS_INCLUSION": {
+      "MAP_POLYGON_SELECTOR": {
+        "TITLE": "Region Selector",
+        "STATUS_DRAWING": "Drawing... ({{ count }} pts)",
+        "STATUS_SELECTED": "Region selected",
+        "STATUS_WAITING": "Waiting",
+        "UNDO_LAST_POINT": "Undo last point",
+        "FINISH_POLYGON": "Finish polygon",
+        "FINISH": "Finish",
+        "CANCEL_DRAWING": "Cancel drawing",
+        "DRAW_POLYGON": "Draw polygon",
+        "CANCEL": "Cancel",
+        "DRAW": "Draw",
+        "CLEAR_ALL": "Clear all",
+        "DRAWING_HINT": "Click to add points · Double click or \"Finish\" to complete · Minimum 3 points",
+        "COORDINATES_COUNT": "{{ count }} coordinates",
+        "HIDE": "Hide",
+        "VIEW": "View",
+        "COORDS": "coords",
+        "COPIED": "Copied!",
+        "COPY_JSON": "Copy JSON",
+        "COPY_GEOJSON": "GeoJSON"
+      }
+    },
     "SYNCS": {
       "TITLE": "Syncs",
       "INSPECT_ROUTINES": "Inspection Routines",

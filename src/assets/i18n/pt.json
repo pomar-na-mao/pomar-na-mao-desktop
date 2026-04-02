@@ -100,6 +100,30 @@
       "OCCURRENCE_LABEL": "Ocorrência",
       "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência"
     },
+    "MASS_INCLUSION": {
+      "MAP_POLYGON_SELECTOR": {
+        "TITLE": "Seletor de Região",
+        "STATUS_DRAWING": "Desenhando... ({{ count }} pts)",
+        "STATUS_SELECTED": "Região selecionada",
+        "STATUS_WAITING": "Aguardando",
+        "UNDO_LAST_POINT": "Desfazer último ponto",
+        "FINISH_POLYGON": "Finalizar polígono",
+        "FINISH": "Finalizar",
+        "CANCEL_DRAWING": "Cancelar desenho",
+        "DRAW_POLYGON": "Desenhar polígono",
+        "CANCEL": "Cancelar",
+        "DRAW": "Desenhar",
+        "CLEAR_ALL": "Limpar tudo",
+        "DRAWING_HINT": "Clique para adicionar pontos · Duplo clique ou \"Finalizar\" para concluir · Mínimo 3 pontos",
+        "COORDINATES_COUNT": "{{ count }} coordenadas",
+        "HIDE": "Ocultar",
+        "VIEW": "Ver",
+        "COORDS": "coords",
+        "COPIED": "Copiado!",
+        "COPY_JSON": "Copiar JSON",
+        "COPY_GEOJSON": "GeoJSON"
+      }
+    },
     "SYNCS": {
       "TITLE": "Sincronizações",
       "INSPECT_ROUTINES": "Rotinas de Inspeção",

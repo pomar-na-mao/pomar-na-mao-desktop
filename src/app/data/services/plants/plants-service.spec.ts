@@ -64,6 +64,23 @@ describe('PlantsService', () => {
       expect(eq1).toHaveBeenCalledWith('region', 'North');
       expect(eq2).toHaveBeenCalledWith('flowers', true);
     });
+
+    it('should apply variety filter', async () => {
+      const mockResponse = { data: [], error: null };
+      const eq3 = vi.fn().mockResolvedValue(mockResponse);
+      const eq2 = vi.fn().mockReturnValue({ eq: eq3 });
+      const eq1 = vi.fn().mockReturnValue({ eq: eq2 });
+      const order = vi.fn().mockReturnValue({ eq: eq1 });
+      const select = vi.fn().mockReturnValue({ order });
+      mockFrom.mockReturnValue({ select });
+
+      const filters = { region: 'North', occurrence: 'flowers', variety: 'Gala' };
+      await service.findAll(filters);
+
+      expect(eq1).toHaveBeenCalledWith('region', 'North');
+      expect(eq2).toHaveBeenCalledWith('flowers', true);
+      expect(eq3).toHaveBeenCalledWith('variety', 'Gala');
+    });
   });
 
   describe('findById', () => {

@@ -23,6 +23,7 @@ export class AppSidebar {
   public navItems: NavItem[] = [
     { icon: 'dashboard', label: 'LAYOUT.SIDEBAR.MENU.DASHBOARD', route: '/pomar-na-mao/home' },
     { icon: 'sync', label: 'LAYOUT.SIDEBAR.MENU.SYNCS', route: '/pomar-na-mao/sincronizacoes' },
+    { icon: 'add_circle', label: 'LAYOUT.SIDEBAR.MENU.MASS_INCLUSION', route: '/pomar-na-mao/inclusoes-em-massa' },
   ];
 
   async logout(): Promise<void> {

@@ -6,7 +6,6 @@ import { InspectAnnotationsViewModel } from '../../view-models/inspect-annotatio
 import { InspectRoutinesTableComponent } from '../../components/syncs/inspect-routines-table/inspect-routines-table';
 import { InspectAnnotationsTableComponent } from '../../components/syncs/inspect-annotations-table/inspect-annotations-table';
 
-
 @Component({
   selector: 'app-syncs',
   imports: [CommonModule, TranslateModule, InspectRoutinesTableComponent, InspectAnnotationsTableComponent],
@@ -21,4 +20,6 @@ export class Syncs implements OnInit {
     this.inspectRoutinesViewModel.loadRoutines();
     this.inspectAnnotationsViewModel.loadAnnotations();
   }
+
+
 }

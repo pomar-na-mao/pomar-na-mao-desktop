@@ -5,6 +5,7 @@ import type { BooleanKeys } from "../../../domain/models/plant-data.model";
 import type { Region } from "../../../domain/models/regions.model";
 import { type AppSelectOption } from "../../../shared/components";
 import { occurenceKeys, occurencesLabels } from "../../../shared/utils/occurrences";
+import { varieties } from "../../../shared/utils/varieties";
 
 @Injectable()
 export class FarmOverviewMapViewModel {
@@ -13,6 +14,7 @@ export class FarmOverviewMapViewModel {
 
   public selectedRegionId = signal('');
   public selectedOccurrenceKey = signal<BooleanKeys | ''>('');
+  public selectedVariety = signal('');
   public isLoadingRegions = signal(true);
   public plants = this.plantsRepository.plants;
 
@@ -56,6 +58,13 @@ export class FarmOverviewMapViewModel {
     }))
   );
 
+  public varietyOptions = computed<AppSelectOption[]>(() =>
+    varieties.map((variety) => ({
+      value: variety,
+      label: variety,
+    }))
+  );
+
   public async loadRegions(): Promise<void> {
     this.isLoadingRegions.set(true);
     try {
@@ -90,11 +99,16 @@ export class FarmOverviewMapViewModel {
     await this.loadPlantsForCurrentFilters();
   }
 
+  public async onVarietyChange(variety: string): Promise<void> {
+    this.selectedVariety.set(variety);
+    await this.loadPlantsForCurrentFilters();
+  }
+
   public findRegionById(regionId: string): Region | undefined {
     return this.uniqueRegions().find((region) => region.id === regionId);
   }
 
-  private async loadPlants(region: string, occurrence: BooleanKeys | ''): Promise<void> {
+  private async loadPlants(region: string, occurrence: BooleanKeys | '', variety: string): Promise<void> {
     if (!region) {
       this.plants.set([]);
       return;
@@ -103,12 +117,13 @@ export class FarmOverviewMapViewModel {
     await this.plantsRepository.findAll({
       region,
       occurrence,
+      variety,
     });
   }
 
   private async loadPlantsForCurrentFilters(): Promise<void> {
     const selectedRegion = this.findRegionById(this.selectedRegionId());
-    await this.loadPlants(selectedRegion?.region ?? '', this.selectedOccurrenceKey());
+    await this.loadPlants(selectedRegion?.region ?? '', this.selectedOccurrenceKey(), this.selectedVariety());
   }
 
   private toOccurrenceKey(value: string): BooleanKeys | '' {

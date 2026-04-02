@@ -10,6 +10,11 @@
       placeholder="PAGES.MAP.OCCURRENCE_PLACEHOLDER" [value]="farmOverviewMapViewModel.selectedOccurrenceKey()"
       [options]="farmOverviewMapViewModel.occurrenceOptions()"
       (valueChange)="farmOverviewMapViewModel.onOccurrenceChange($event)" />
+
+    <app-select id="map-variety-select" label="PAGES.MAP.VARIETY_LABEL"
+      placeholder="PAGES.MAP.VARIETY_PLACEHOLDER" [value]="farmOverviewMapViewModel.selectedVariety()"
+      [options]="farmOverviewMapViewModel.varietyOptions()"
+      (valueChange)="farmOverviewMapViewModel.onVarietyChange($event)" />
   </div>
 
   <div id="map"></div>
