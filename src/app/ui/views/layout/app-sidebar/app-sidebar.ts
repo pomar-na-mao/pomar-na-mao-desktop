@@ -22,8 +22,7 @@ export class AppSidebar {
 
   public navItems: NavItem[] = [
     { icon: 'dashboard', label: 'LAYOUT.SIDEBAR.MENU.DASHBOARD', route: '/pomar-na-mao/home' },
-    { icon: 'sync', label: 'Sincronizações', route: '/pomar-na-mao/sincronizacoes' },
-    { icon: 'settings', label: 'LAYOUT.SIDEBAR.MENU.SETTINGS', route: '/pomar-na-mao/settings' },
+    { icon: 'sync', label: 'LAYOUT.SIDEBAR.MENU.SYNCS', route: '/pomar-na-mao/sincronizacoes' },
   ];
 
   async logout(): Promise<void> {

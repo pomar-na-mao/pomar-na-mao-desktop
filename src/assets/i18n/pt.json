@@ -137,6 +137,7 @@
         "MAP": "Mapa",
         "INVENTORY": "Inventário",
         "ALERTS": "Alertas",
+        "SYNCS": "Sincronizações",
         "SETTINGS": "Configurações"
       },
       "LOGOUT": "Sair"

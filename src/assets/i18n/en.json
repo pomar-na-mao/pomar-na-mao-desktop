@@ -137,6 +137,7 @@
         "MAP": "Map View",
         "INVENTORY": "Tree Inventory",
         "ALERTS": "Alerts",
+        "SYNCS": "Syncs",
         "SETTINGS": "Settings"
       },
       "LOGOUT": "Logout"

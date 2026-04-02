@@ -2,6 +2,9 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { IInspectRoutinePlants } from '../../../domain/models/inspect-routine-plants.model';
+import type { IInspectRoutine } from '../../../domain/models/inspect-routine.model';
+import type { PlantData } from '../../../domain/models/plant-data.model';
 import { InspectAnnotationRepository } from '../../../data/repositories/inspect-annotation/inspect-annotation-repository';
 import { InspectRoutinePlantsRepository } from '../../../data/repositories/inspect-routine-plants/inspect-routine-plants-repository';
 import { InspectRoutineRepository } from '../../../data/repositories/inspect-routine/inspect-routine-repository';
@@ -9,13 +12,109 @@ import { PlantsRepository } from '../../../data/repositories/plants/plants-repos
 import { MessageService } from '../../../data/services/message/message.service';
 import { InspectRoutineSyncViewModel } from './inspect-routine-sync.view-model';
 
+function createInspectRoutinePlant(overrides: Partial<IInspectRoutinePlants> = {}): IInspectRoutinePlants {
+  return {
+    id: 'inspect-routine-plant-1',
+    created_at: '2026-03-31T10:00:00Z',
+    routine_id: 7,
+    longitude: -46.6,
+    latitude: -23.5,
+    gps_timestamp: 123456,
+    mass: '10',
+    variety: 'Gala',
+    harvest: '2026',
+    description: 'Healthy plant',
+    planting_date: '2020-01-01',
+    life_of_the_tree: '5',
+    stick: false,
+    broken_branch: false,
+    vine_growing: false,
+    burnt_branch: false,
+    struck_by_lightning: false,
+    drill: false,
+    anthill: false,
+    in_experiment: false,
+    weeds_in_the_basin: false,
+    fertilization_or_manuring: false,
+    mites: false,
+    thrips: false,
+    empty_collection_box_near: false,
+    is_dead: false,
+    region: 'North',
+    updated_at: '2026-03-31T10:00:00Z',
+    plant_id: 'plant-1',
+    is_new: false,
+    non_existent: false,
+    frost: false,
+    flowers: false,
+    buds: false,
+    dehydrated: false,
+    is_approved: false,
+    ...overrides
+  };
+}
+
+function createInspectRoutine(overrides: Partial<IInspectRoutine> = {}): IInspectRoutine {
+  return {
+    id: 7,
+    date: '2026-03-31T10:00:00Z',
+    region: 'North',
+    is_done: false,
+    created_at: '2026-03-31T10:00:00Z',
+    description: 'Routine description',
+    updated_at: '2026-03-31T10:00:00Z',
+    is_review_started: false,
+    ...overrides
+  };
+}
+
+function createPlantData(overrides: Partial<PlantData> = {}): PlantData {
+  return {
+    id: 'plant-1',
+    created_at: '2026-03-31T10:00:00Z',
+    updated_at: '2026-03-31T10:00:00Z',
+    longitude: -46.6,
+    latitude: -23.5,
+    gps_timestamp: 123456,
+    photo_file: null,
+    mass: '10',
+    variety: 'Gala',
+    harvest: '2026',
+    description: 'Healthy plant',
+    planting_date: '2020-01-01',
+    life_of_the_tree: '5',
+    stick: false,
+    broken_branch: false,
+    vine_growing: false,
+    burnt_branch: false,
+    struck_by_lightning: false,
+    drill: false,
+    anthill: false,
+    in_experiment: false,
+    weeds_in_the_basin: false,
+    fertilization_or_manuring: false,
+    mites: false,
+    thrips: false,
+    region: 'North',
+    empty_collection_box_near: false,
+    is_dead: false,
+    is_new: false,
+    non_existent: false,
+    frost: false,
+    flowers: false,
+    buds: false,
+    dehydrated: false,
+    ...overrides
+  };
+}
+
 describe('InspectRoutineSyncViewModel', () => {
   let viewModel: InspectRoutineSyncViewModel;
 
-  const inspectRoutinePlantsSignal = signal<any[]>([]);
-  const selectedInspectRoutinePlantSignal = signal<any | null>(null);
-  const inspectRoutinesSignal = signal<any[]>([]);
-  const inspectRoutineCurrentPlantsSignal = signal<any[]>([]);
+  const inspectRoutinePlantsSignal = signal<IInspectRoutinePlants[]>([]);
+  const selectedInspectRoutinePlantSignal = signal<IInspectRoutinePlants | null>(null);
+  const inspectRoutinesSignal = signal<IInspectRoutine[]>([]);
+  const inspectRoutineCurrentPlantsSignal = signal<PlantData[]>([]);
   const inspectAnnotationsLoadingSignal = signal(false);
 
   const mockRouter = {
@@ -25,8 +124,8 @@ describe('InspectRoutineSyncViewModel', () => {
   const mockInspectRoutinePlantsRepository = {
     inspectRoutinePlants: inspectRoutinePlantsSignal.asReadonly(),
     selectedInspectRoutinePlant: selectedInspectRoutinePlantSignal.asReadonly(),
-    findByInspectRoutineId: vi.fn().mockImplementation(async (_routineId: number) => undefined),
-    setSelectedPlant: vi.fn().mockImplementation((plant: any) => selectedInspectRoutinePlantSignal.set(plant)),
+    findByInspectRoutineId: vi.fn().mockImplementation(async () => undefined),
+    setSelectedPlant: vi.fn().mockImplementation((plant: IInspectRoutinePlants | null) => selectedInspectRoutinePlantSignal.set(plant)),
     approveInspectAnnotation: vi.fn(),
     updatePlantFromInspectRoutine: vi.fn()
   };
@@ -38,7 +137,7 @@ describe('InspectRoutineSyncViewModel', () => {
   const mockPlantsRepository = {
     inspectRoutineCurrentPlants: inspectRoutineCurrentPlantsSignal.asReadonly(),
     findById: vi.fn(),
-    addInspectRoutineCurrentPlantsItem: vi.fn().mockImplementation((plant: any) => {
+    addInspectRoutineCurrentPlantsItem: vi.fn().mockImplementation((plant: PlantData) => {
       inspectRoutineCurrentPlantsSignal.update((plants) => [...plants, plant]);
     }),
     clearPlants: vi.fn()
@@ -90,7 +189,7 @@ describe('InspectRoutineSyncViewModel', () => {
 
   it('should compute the current routine region', () => {
     inspectRoutinesSignal.set([
-      { id: 7, region: 'North' }
+      createInspectRoutine()
     ]);
 
     viewModel.id.set(7);
@@ -99,18 +198,18 @@ describe('InspectRoutineSyncViewModel', () => {
   });
 
   it('should compute inclusions and exclusions for the selected plant', () => {
-    selectedInspectRoutinePlantSignal.set({
+    selectedInspectRoutinePlantSignal.set(createInspectRoutinePlant({
       id: 'irp-1',
       plant_id: 'plant-1',
       mites: true,
       flowers: false
-    });
+    }));
     inspectRoutineCurrentPlantsSignal.set([
-      {
+      createPlantData({
         id: 'plant-1',
         mites: false,
         flowers: true
-      }
+      })
     ]);
 
     expect(viewModel.occurrencesChanges()).toEqual({
@@ -120,7 +219,7 @@ describe('InspectRoutineSyncViewModel', () => {
   });
 
   it('should skip fetching plant data when the plant is already loaded', async () => {
-    inspectRoutineCurrentPlantsSignal.set([{ id: 'plant-1' }]);
+    inspectRoutineCurrentPlantsSignal.set([createPlantData()]);
 
     await viewModel.fetchPlantData('plant-1');
 
@@ -128,34 +227,33 @@ describe('InspectRoutineSyncViewModel', () => {
   });
 
   it('should fetch and cache plant data when needed', async () => {
-    mockPlantsRepository.findById.mockResolvedValue({ id: 'plant-2' });
+    const plant = createPlantData({ id: 'plant-2' });
+    mockPlantsRepository.findById.mockResolvedValue(plant);
 
     await viewModel.fetchPlantData('plant-2');
 
     expect(mockPlantsRepository.findById).toHaveBeenCalledWith('plant-2');
-    expect(mockPlantsRepository.addInspectRoutineCurrentPlantsItem).toHaveBeenCalledWith({ id: 'plant-2' });
+    expect(mockPlantsRepository.addInspectRoutineCurrentPlantsItem).toHaveBeenCalledWith(plant);
     expect(viewModel.isPlantLoading()).toBe(false);
   });
 
   it('should move to the next and previous plants', () => {
     inspectRoutinePlantsSignal.set([
-      { id: 'irp-1', plant_id: 'plant-1' },
-      { id: 'irp-2', plant_id: 'plant-2' }
+      createInspectRoutinePlant({ id: 'irp-1', plant_id: 'plant-1' }),
+      createInspectRoutinePlant({ id: 'irp-2', plant_id: 'plant-2' })
     ]);
 
     viewModel.nextPlant();
     expect(viewModel.currentPlantIndex()).toBe(1);
-    expect(mockInspectRoutinePlantsRepository.setSelectedPlant).toHaveBeenLastCalledWith({
-      id: 'irp-2',
-      plant_id: 'plant-2'
-    });
+    expect(mockInspectRoutinePlantsRepository.setSelectedPlant).toHaveBeenLastCalledWith(
+      createInspectRoutinePlant({ id: 'irp-2', plant_id: 'plant-2' })
+    );
 
     viewModel.previousPlant();
     expect(viewModel.currentPlantIndex()).toBe(0);
-    expect(mockInspectRoutinePlantsRepository.setSelectedPlant).toHaveBeenLastCalledWith({
-      id: 'irp-1',
-      plant_id: 'plant-1'
-    });
+    expect(mockInspectRoutinePlantsRepository.setSelectedPlant).toHaveBeenLastCalledWith(
+      createInspectRoutinePlant({ id: 'irp-1', plant_id: 'plant-1' })
+    );
   });
 
   it('should approve an inspection annotation successfully', async () => {
@@ -179,19 +277,19 @@ describe('InspectRoutineSyncViewModel', () => {
   });
 
   it('should approve a routine plant successfully', async () => {
-    const plant = {
+    const plant = createInspectRoutinePlant({
       id: 'inspect-routine-plant-1',
       plant_id: 'plant-1',
       region: 'North',
       variety: 'Gala',
-      mass: 10,
-      life_of_the_tree: 5,
+      mass: '10',
+      life_of_the_tree: '5',
       harvest: '2026',
       planting_date: '2020-01-01',
       description: 'Healthy plant',
       mites: true,
       flowers: false
-    };
+    });
 
     selectedInspectRoutinePlantSignal.set(plant);
     inspectRoutinePlantsSignal.set([plant]);
@@ -202,7 +300,7 @@ describe('InspectRoutineSyncViewModel', () => {
       inspectRoutinePlantsSignal.set([plant]);
       selectedInspectRoutinePlantSignal.set(plant);
     });
-    mockPlantsRepository.findById.mockResolvedValue({ id: 'plant-1' });
+    mockPlantsRepository.findById.mockResolvedValue(createPlantData());
 
     await viewModel.onApproveInspectRoutine();
 
@@ -216,8 +314,8 @@ describe('InspectRoutineSyncViewModel', () => {
       {
         region: 'North',
         variety: 'Gala',
-        mass: 10,
-        life_of_the_tree: 5,
+        mass: '10',
+        life_of_the_tree: '5',
         harvest: '2026',
         planting_date: '2020-01-01',
         description: 'Healthy plant'
@@ -229,11 +327,11 @@ describe('InspectRoutineSyncViewModel', () => {
   });
 
   it('should show an error when approving a routine plant fails', async () => {
-    selectedInspectRoutinePlantSignal.set({
+    selectedInspectRoutinePlantSignal.set(createInspectRoutinePlant({
       id: 'inspect-routine-plant-1',
       plant_id: 'plant-1',
       region: 'North'
-    });
+    }));
     viewModel.id.set(7);
     mockInspectRoutinePlantsRepository.updatePlantFromInspectRoutine.mockResolvedValue({ error: new Error('failed') });
 

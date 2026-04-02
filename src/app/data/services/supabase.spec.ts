@@ -5,7 +5,7 @@ import { SupabaseService, injectSupabase } from './supabase';
 describe('SupabaseService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (SupabaseService as any).instance = undefined;
+    Reflect.set(SupabaseService, 'instance', undefined);
   });
 
   it('should create a singleton instance', () => {
@@ -18,7 +18,8 @@ describe('SupabaseService', () => {
 
   it('should delegate signOut to the client auth API', async () => {
     const service = new SupabaseService();
-    const signOutSpy = vi.spyOn(service.supabase.auth, 'signOut').mockResolvedValue({ error: null } as any);
+    const signOutResponse: Awaited<ReturnType<typeof service.supabase.auth.signOut>> = { error: null };
+    const signOutSpy = vi.spyOn(service.supabase.auth, 'signOut').mockResolvedValue(signOutResponse);
 
     await service.signOut();
 
