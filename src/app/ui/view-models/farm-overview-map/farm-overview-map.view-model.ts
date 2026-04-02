@@ -81,9 +81,10 @@ export class FarmOverviewMapViewModel {
     }
   }
 
-  public async onRegionChange(regionId: string): Promise<void> {
-    this.selectedRegionId.set(regionId);
-    const selectedRegion = this.findRegionById(regionId);
+  public async onRegionChange(regionId: string | string[]): Promise<void> {
+    const normalizedRegionId = this.toSingleValue(regionId);
+    this.selectedRegionId.set(normalizedRegionId);
+    const selectedRegion = this.findRegionById(normalizedRegionId);
 
     if (selectedRegion) {
       this.regionsRepository.currentRegion.set(selectedRegion);
@@ -94,13 +95,13 @@ export class FarmOverviewMapViewModel {
     }
   }
 
-  public async onOccurrenceChange(occurrenceKey: string): Promise<void> {
-    this.selectedOccurrenceKey.set(this.toOccurrenceKey(occurrenceKey));
+  public async onOccurrenceChange(occurrenceKey: string | string[]): Promise<void> {
+    this.selectedOccurrenceKey.set(this.toOccurrenceKey(this.toSingleValue(occurrenceKey)));
     await this.loadPlantsForCurrentFilters();
   }
 
-  public async onVarietyChange(variety: string): Promise<void> {
-    this.selectedVariety.set(variety);
+  public async onVarietyChange(variety: string | string[]): Promise<void> {
+    this.selectedVariety.set(this.toSingleValue(variety));
     await this.loadPlantsForCurrentFilters();
   }
 
@@ -128,5 +129,13 @@ export class FarmOverviewMapViewModel {
 
   private toOccurrenceKey(value: string): BooleanKeys | '' {
     return occurenceKeys.includes(value as BooleanKeys) ? (value as BooleanKeys) : '';
+  }
+
+  private toSingleValue(value: string | string[]): string {
+    if (Array.isArray(value)) {
+      return value[0] ?? '';
+    }
+
+    return value;
   }
 }

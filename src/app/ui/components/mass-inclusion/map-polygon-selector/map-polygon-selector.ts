@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
-import type { Plant } from '../../../domain/models/plant-data.model';
+import type { Plant } from '../../../../domain/models/plant-data.model';
 
 export interface PolygonCoordinate {
     lat: number;

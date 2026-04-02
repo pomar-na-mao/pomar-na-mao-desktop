@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class AppInput implements OnInit {
   @Input() public id = '';
-  @Input() public type: 'text' | 'email' | 'password' = 'text';
+  @Input() public type: 'text' | 'email' | 'password' | 'date' = 'text';
   @Input() public label = '';
   @Input() public placeholder = '';
   @Input() public icon = '';
@@ -18,7 +18,8 @@ export class AppInput implements OnInit {
   @Input() public errorMessages: Record<string, string> = {};
 
   public showPassword = signal(false);
-  public inputType = signal<'text' | 'email' | 'password'>('text');
+
+  public inputType = signal<'text' | 'email' | 'password' | 'date'>('text');
 
   public ngOnInit(): void {
     this.inputType.set(this.type);

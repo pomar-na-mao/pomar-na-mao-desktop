@@ -1,0 +1,11 @@
+<div class="mb-4 flex w-full">
+  <app-select
+    id="mass-inclusion-region-select"
+    label="PAGES.MAP.ZONE_LABEL"
+    [placeholder]="farmOverviewMapViewModel.regionOptions().length === 0 ? 'PAGES.MAP.NO_ZONES' : 'PAGES.MAP.ZONE_PLACEHOLDER'"
+    [value]="farmOverviewMapViewModel.selectedRegionId()"
+    [options]="farmOverviewMapViewModel.regionOptions()"
+    [disabled]="farmOverviewMapViewModel.isLoadingRegions() || farmOverviewMapViewModel.regionOptions().length === 0"
+    (valueChange)="farmOverviewMapViewModel.onRegionChange($event)"
+  />
+</div>

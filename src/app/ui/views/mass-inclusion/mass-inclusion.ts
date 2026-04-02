@@ -1,7 +1,8 @@
-import { MapPolygonSelectorComponent, type PolygonSelection } from '../../components/mass-inclusion/map-polygon-selector';
+import { MapPolygonSelectorComponent, type PolygonSelection } from '../../components/mass-inclusion/map-polygon-selector/map-polygon-selector';
+import { MassInclusionMapFiltersComponent } from '../../components/mass-inclusion/mass-inclusion-map-filters/mass-inclusion-map-filters';
+import { MassInclusionFormComponent } from '../../components/mass-inclusion/mass-inclusion-form/mass-inclusion-form';
 import { FarmOverviewMapViewModel } from '../../view-models/farm-overview-map/farm-overview-map.view-model';
 import { MassInclusionViewModel } from '../../view-models/mass-inclusion/mass-inclusion.view-model';
-import { AppSelect } from '../../../shared/components';
 import { getConvexHull } from '../../../shared/utils/geolocation-math';
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -9,7 +10,13 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-mass-inclusion',
-  imports: [CommonModule, MapPolygonSelectorComponent, AppSelect, TranslateModule],
+  imports: [
+    CommonModule,
+    MapPolygonSelectorComponent,
+    MassInclusionMapFiltersComponent,
+    MassInclusionFormComponent,
+    TranslateModule,
+  ],
   templateUrl: './mass-inclusion.html',
   styleUrls: ['./mass-inclusion.scss'],
   providers: [FarmOverviewMapViewModel, MassInclusionViewModel]

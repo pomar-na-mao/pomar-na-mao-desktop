@@ -1,20 +1,11 @@
 <div
   class="flex h-full flex-1 flex-col overflow-y-auto md:overflow-hidden lg:flex-row"
 >
-  <div class="order-1 min-h-72 shrink-0 lg:order-2 lg:min-h-0 lg:flex-1 flex flex-col">
-    <!-- Controles do Mapa (Região) -->
-    <div class="map-controls bg-white border-b border-gray-200">
-      <app-select 
-        id="mass-inclusion-region-select" 
-        label="PAGES.MAP.ZONE_LABEL"
-        [placeholder]="farmOverviewMapViewModel.regionOptions().length === 0 ? 'PAGES.MAP.NO_ZONES' : 'PAGES.MAP.ZONE_PLACEHOLDER'"
-        [value]="farmOverviewMapViewModel.selectedRegionId()" 
-        [options]="farmOverviewMapViewModel.regionOptions()"
-        [disabled]="farmOverviewMapViewModel.isLoadingRegions() || farmOverviewMapViewModel.regionOptions().length === 0"
-        (valueChange)="farmOverviewMapViewModel.onRegionChange($event)" />
-    </div>
+  <div
+    class="order-1 min-h-72 shrink-0 lg:order-2 lg:min-h-0 lg:flex-1 flex flex-col p-4"
+  >
+    <app-mass-inclusion-map-filters />
 
-    <!-- O mapa ficará aqui -->
     <app-map-polygon-selector
       class="flex-1"
       [center]="[-23.398772, -49.148646]"
@@ -27,9 +18,8 @@
   </div>
 
   <div class="order-2 w-full lg:order-1 lg:w-[40%] lg:shrink-0">
-    <!-- O card ficará aqui -->
     <div class="h-full w-full border-r border-gray-200 bg-white p-4">
-      <h2 class="text-lg font-bold">Inclusões em Massa</h2>
+      <app-mass-inclusion-form class="block h-full"></app-mass-inclusion-form>
     </div>
   </div>
 </div>

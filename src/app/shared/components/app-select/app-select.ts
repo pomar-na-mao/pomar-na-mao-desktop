@@ -18,13 +18,14 @@ export class AppSelect {
   @Input() public id = '';
   @Input() public label = '';
   @Input() public placeholder = '';
-  @Input() public value = '';
+  @Input() public value: string | string[] = '';
   @Input() public options: AppSelectOption[] = [];
   @Input() public disabled = false;
+  @Input() public multiple = false;
 
-  @Output() public valueChange = new EventEmitter<string>();
+  @Output() public valueChange = new EventEmitter<string | string[]>();
 
-  public onValueChange(value: string): void {
+  public onValueChange(value: string | string[]): void {
     this.valueChange.emit(value);
   }
 }

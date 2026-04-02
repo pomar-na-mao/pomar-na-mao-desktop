@@ -98,7 +98,9 @@
       "ZONE_PLACEHOLDER": "Selecione uma zona",
       "NO_ZONES": "Nenhuma zona disponível",
       "OCCURRENCE_LABEL": "Ocorrência",
-      "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência"
+      "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência",
+      "VARIETY_LABEL": "Variedade",
+      "VARIETY_PLACEHOLDER": "Selecione uma variedade"
     },
     "MASS_INCLUSION": {
       "MAP_POLYGON_SELECTOR": {
@@ -122,6 +124,21 @@
         "COPIED": "Copiado!",
         "COPY_JSON": "Copiar JSON",
         "COPY_GEOJSON": "GeoJSON"
+      },
+      "FORM": {
+        "TITLE": "Inclusão em Massa",
+        "SUBTITLE": "Preencha os dados para aplicar a inclusão no polígono selecionado.",
+        "DISABLED_HINT": "Desenhe e finalize um polígono no mapa para habilitar o formulário.",
+        "OCCURRENCES": "Ocorrências",
+        "VARIETY": "Variedade",
+        "VARIETY_PLACEHOLDER": "Selecione uma variedade",
+        "LIFE_OF_TREE": "Vida da Árvore",
+        "LIFE_OF_TREE_PLACEHOLDER": "Ex.: primeira, segunda, terceira, etc...",
+        "PLANTING_DATE": "Data de Plantio",
+        "DESCRIPTION": "Descrição",
+        "DESCRIPTION_PLACEHOLDER": "Adicione uma observação para esta inclusão.",
+        "CLEAR": "Limpar",
+        "SAVE": "Salvar"
       }
     },
     "SYNCS": {
@@ -162,6 +179,7 @@
         "INVENTORY": "Inventário",
         "ALERTS": "Alertas",
         "SYNCS": "Sincronizações",
+        "MASS_INCLUSION": "Inclusões em Massa",
         "SETTINGS": "Configurações"
       },
       "LOGOUT": "Sair"
