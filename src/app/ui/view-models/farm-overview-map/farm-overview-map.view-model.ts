@@ -70,12 +70,7 @@ export class FarmOverviewMapViewModel {
     try {
       await this.regionsRepository.findAll();
 
-      const [firstRegion] = this.uniqueRegions();
-      if (firstRegion) {
-        this.selectedRegionId.set(firstRegion.id);
-        this.regionsRepository.currentRegion.set(firstRegion);
-        await this.loadPlantsForCurrentFilters();
-      }
+      // No auto-selection of the first region to keep maps clean initially
     } finally {
       this.isLoadingRegions.set(false);
     }

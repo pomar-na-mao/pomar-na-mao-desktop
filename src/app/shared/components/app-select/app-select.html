@@ -1,8 +1,11 @@
 <div>
   @if (label) {
-    <label [for]="id" class="block text-sm font-semibold text-on-surface-variant mb-1.5 px-1">
-      {{ label | translate }}
-    </label>
+  <label
+    [for]="id"
+    class="block text-sm font-semibold text-on-surface-variant mb-1.5 px-1"
+  >
+    {{ label | translate }}
+  </label>
   }
 
   <div class="relative group">
@@ -16,15 +19,16 @@
       [class.min-h-32]="multiple"
     >
       @if (placeholder && !multiple) {
-        <option value="">{{ placeholder | translate }}</option>
-      }
-
-      @for (option of options; track option.value) {
-        <option [value]="option.value">{{ option.label | translate }}</option>
+      <option value="">{{ placeholder | translate }}</option>
+      } @for (option of options; track option.value) {
+      <option [value]="option.value">{{ option.label | translate }}</option>
       }
     </select>
 
-    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors" [class.hidden]="multiple">
+    <div
+      class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors"
+      [class.hidden]="multiple"
+    >
       <span class="material-symbols-outlined text-[20px]">expand_more</span>
     </div>
   </div>

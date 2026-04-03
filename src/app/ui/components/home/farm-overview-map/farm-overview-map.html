@@ -1,20 +1,32 @@
 <div class="map-card">
   <div class="controls-container">
-    <app-select id="map-region-select" label="PAGES.MAP.ZONE_LABEL"
+    <app-select
+      id="map-region-select"
+      label="PAGES.MAP.ZONE_LABEL"
       [placeholder]="farmOverviewMapViewModel.regionOptions().length === 0 ? 'PAGES.MAP.NO_ZONES' : 'PAGES.MAP.ZONE_PLACEHOLDER'"
-      [value]="farmOverviewMapViewModel.selectedRegionId()" [options]="farmOverviewMapViewModel.regionOptions()"
+      [value]="farmOverviewMapViewModel.selectedRegionId()"
+      [options]="farmOverviewMapViewModel.regionOptions()"
       [disabled]="farmOverviewMapViewModel.isLoadingRegions() || farmOverviewMapViewModel.regionOptions().length === 0"
-      (valueChange)="farmOverviewMapViewModel.onRegionChange($event)" />
+      (valueChange)="farmOverviewMapViewModel.onRegionChange($event)"
+    />
 
-    <app-select id="map-occurrence-select" label="PAGES.MAP.OCCURRENCE_LABEL"
-      placeholder="PAGES.MAP.OCCURRENCE_PLACEHOLDER" [value]="farmOverviewMapViewModel.selectedOccurrenceKey()"
+    <app-select
+      id="map-occurrence-select"
+      label="PAGES.MAP.OCCURRENCE_LABEL"
+      placeholder="PAGES.MAP.OCCURRENCE_PLACEHOLDER"
+      [value]="farmOverviewMapViewModel.selectedOccurrenceKey()"
       [options]="farmOverviewMapViewModel.occurrenceOptions()"
-      (valueChange)="farmOverviewMapViewModel.onOccurrenceChange($event)" />
+      (valueChange)="farmOverviewMapViewModel.onOccurrenceChange($event)"
+    />
 
-    <app-select id="map-variety-select" label="PAGES.MAP.VARIETY_LABEL"
-      placeholder="PAGES.MAP.VARIETY_PLACEHOLDER" [value]="farmOverviewMapViewModel.selectedVariety()"
+    <app-select
+      id="map-variety-select"
+      label="PAGES.MAP.VARIETY_LABEL"
+      placeholder="PAGES.MAP.VARIETY_PLACEHOLDER"
+      [value]="farmOverviewMapViewModel.selectedVariety()"
       [options]="farmOverviewMapViewModel.varietyOptions()"
-      (valueChange)="farmOverviewMapViewModel.onVarietyChange($event)" />
+      (valueChange)="farmOverviewMapViewModel.onVarietyChange($event)"
+    />
   </div>
 
   <div id="map"></div>

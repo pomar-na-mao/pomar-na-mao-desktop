@@ -1,5 +1,5 @@
 <div
-  class="mass-card h-full rounded-2xl border border-outline/10 bg-surface-container-lowest p-4 shadow-sm"
+  class="mass-card lg:h-full rounded-2xl border border-outline/10 bg-surface-container-lowest p-4 shadow-sm"
 >
   <div class="mb-4 border-b border-outline/10 pb-3">
     <h2 class="text-lg font-bold text-on-surface">
@@ -13,9 +13,9 @@
   <form
     [formGroup]="massInclusionViewModel.form"
     (ngSubmit)="onSave()"
-    class="flex h-[calc(100%-5.75rem)] flex-col"
+    class="flex lg:h-[calc(100%-5.75rem)] flex-col"
   >
-    <div class="flex-1 space-y-4 overflow-y-auto px-1.5">
+    <div class="flex-1 space-y-4 lg:overflow-y-auto px-1.5">
       @if (!massInclusionViewModel.canEditForm()) {
       <div
         class="rounded-xl border border-outline/20 bg-surface-container px-3 py-2 text-sm font-medium text-on-surface-variant"
