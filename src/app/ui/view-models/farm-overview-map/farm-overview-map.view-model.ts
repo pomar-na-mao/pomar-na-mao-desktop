@@ -22,7 +22,7 @@ export class FarmOverviewMapViewModel {
     const groups = new Map<string, Region[]>();
     const regions = this.regionsRepository.regions();
     for (const region of regions) {
-      const normalizedName = region.region.trim().toLocaleLowerCase();
+      const normalizedName = (region.region ?? '').trim().toLocaleLowerCase();
       if (!groups.has(normalizedName)) {
         groups.set(normalizedName, []);
       }
@@ -35,7 +35,7 @@ export class FarmOverviewMapViewModel {
     const uniqueByName = new Map<string, Region>();
 
     for (const region of this.regionsRepository.regions()) {
-      const normalizedName = region.region.trim().toLocaleLowerCase();
+      const normalizedName = (region.region ?? '').trim().toLocaleLowerCase();
       if (!uniqueByName.has(normalizedName)) {
         uniqueByName.set(normalizedName, region);
       }

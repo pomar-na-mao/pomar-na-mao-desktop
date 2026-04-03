@@ -153,7 +153,7 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
 
 
   private focusRegion(region: Region): void {
-    const normalizedName = region.region.trim().toLocaleLowerCase();
+    const normalizedName = (region.region ?? '').trim().toLocaleLowerCase();
     const polygon = this.regionPolygons.get(normalizedName);
 
     if (polygon) {

@@ -112,17 +112,13 @@ describe('FarmOverviewMapViewModel', () => {
     ]);
   });
 
-  it('should load regions and fetch plants for the first available region', async () => {
+  it('should load regions and NOT fetch plants initially (no auto-selection)', async () => {
     await viewModel.loadRegions();
 
     expect(mockRegionsRepository.findAll).toHaveBeenCalled();
-    expect(viewModel.selectedRegionId()).toBe('r1');
-    expect(currentRegionSignal()?.id).toBe('r1');
-    expect(mockPlantsRepository.findAll).toHaveBeenCalledWith({
-      region: 'North',
-      occurrence: '',
-      variety: ''
-    });
+    expect(viewModel.selectedRegionId()).toBe('');
+    expect(currentRegionSignal()).toBeNull();
+    expect(mockPlantsRepository.findAll).not.toHaveBeenCalled();
     expect(viewModel.isLoadingRegions()).toBe(false);
   });
 
