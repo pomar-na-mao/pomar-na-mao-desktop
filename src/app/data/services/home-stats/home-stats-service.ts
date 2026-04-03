@@ -39,7 +39,7 @@ export class HomeStatsService implements IHomeStatsService {
       .select('id, variety, region, updated_at, stick, broken_branch, vine_growing, burnt_branch, struck_by_lightning, drill, anthill, in_experiment, weeds_in_the_basin, fertilization_or_manuring, mites, thrips, empty_collection_box_near, is_new, non_existent, frost, flowers, buds, dehydrated, is_dead')
       .not('updated_at', 'is', null)
       .order('updated_at', { ascending: false })
-      .limit(5);
+      .limit(10);
 
     if (error) {
       throw error;
