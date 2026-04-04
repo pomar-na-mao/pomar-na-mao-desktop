@@ -13,7 +13,6 @@ import { FarmOverviewMapViewModel } from '../../../view-models/farm-overview-map
   imports: [CommonModule, AppSelect],
   templateUrl: './farm-overview-map.html',
   styleUrls: ['./farm-overview-map.scss'],
-  providers: [FarmOverviewMapViewModel]
 })
 export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
   private map?: L.Map;
@@ -48,6 +47,7 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit() {
     await this.farmOverviewMapViewModel.loadRegions();
+    await this.farmOverviewMapViewModel.restoreMapContextAfterRegionsLoad();
   }
 
   ngAfterViewInit() {

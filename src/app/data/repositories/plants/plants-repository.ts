@@ -37,6 +37,15 @@ export class PlantsRepository {
     }
   }
 
+  /** Loads plants for the given filters without updating the shared `plants` signal. */
+  public async queryPlants(filters: InspectRoutineFilter | null): Promise<Plant[]> {
+    const { data, error } = await this.plantsService.findAll(filters);
+    if (!error && data) {
+      return data;
+    }
+    return [];
+  }
+
   public async findById(id: string): Promise<Plant | null> {
     const { data, error } = await this.plantsService.findById(id);
     return error ? null : data;

@@ -1,22 +1,30 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, PLATFORM_ID, signal, untracked } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 import { PlantsRepository } from "../../../data/repositories/plants/plants-repository";
 import { RegionsRepository } from "../../../data/repositories/regions/regions-repository";
-import type { BooleanKeys } from "../../../domain/models/plant-data.model";
+import type { BooleanKeys, Plant } from "../../../domain/models/plant-data.model";
 import type { Region } from "../../../domain/models/regions.model";
 import { type AppSelectOption } from "../../../shared/components";
 import { occurenceKeys, occurencesLabels } from "../../../shared/utils/occurrences";
 import { varieties } from "../../../shared/utils/varieties";
 
+const STORAGE_KEY_PREFIX = 'farm_overview_map_';
+const REGION_KEY = `${STORAGE_KEY_PREFIX}region_id`;
+const OCCURRENCE_KEY = `${STORAGE_KEY_PREFIX}occurrence_key`;
+const VARIETY_KEY = `${STORAGE_KEY_PREFIX}variety`;
+
 @Injectable()
 export class FarmOverviewMapViewModel {
+  private platformId = inject(PLATFORM_ID);
   private plantsRepository = inject(PlantsRepository);
   private regionsRepository = inject(RegionsRepository);
+  private initialized = false;
 
-  public selectedRegionId = signal('');
-  public selectedOccurrenceKey = signal<BooleanKeys | ''>('');
-  public selectedVariety = signal('');
+  public selectedRegionId = signal<string>(this.getFromStorage(REGION_KEY));
+  public selectedOccurrenceKey = signal<BooleanKeys | ''>(this.toOccurrenceKey(this.getFromStorage(OCCURRENCE_KEY)));
+  public selectedVariety = signal<string>(this.getFromStorage(VARIETY_KEY));
   public isLoadingRegions = signal(true);
-  public plants = this.plantsRepository.plants;
+  public plants = signal<Plant[]>([]);
 
   public regionsGroupedByName = computed(() => {
     const groups = new Map<string, Region[]>();
@@ -65,6 +73,32 @@ export class FarmOverviewMapViewModel {
     }))
   );
 
+  constructor() {
+    // Persist filter changes to localStorage and reload plants
+    effect(() => {
+      const regionId = this.selectedRegionId();
+      const occurrenceKey = this.selectedOccurrenceKey();
+      const variety = this.selectedVariety();
+
+      untracked(() => {
+        this.saveToStorage(REGION_KEY, regionId);
+        this.saveToStorage(OCCURRENCE_KEY, occurrenceKey);
+        this.saveToStorage(VARIETY_KEY, variety);
+
+        if (!this.initialized) return;
+
+        const selectedRegion = this.findRegionById(regionId);
+        if (selectedRegion) {
+          this.regionsRepository.currentRegion.set(selectedRegion);
+        } else {
+          this.regionsRepository.currentRegion.set(null);
+        }
+
+        this.loadPlantsForCurrentFilters();
+      });
+    });
+  }
+
   public async loadRegions(): Promise<void> {
     this.isLoadingRegions.set(true);
     try {
@@ -76,28 +110,22 @@ export class FarmOverviewMapViewModel {
     }
   }
 
-  public async onRegionChange(regionId: string | string[]): Promise<void> {
-    const normalizedRegionId = this.toSingleValue(regionId);
-    this.selectedRegionId.set(normalizedRegionId);
-    const selectedRegion = this.findRegionById(normalizedRegionId);
+  /** Reapplies persisted filters and plant list after regions are fetched (e.g. when returning to Home). */
+  public async restoreMapContextAfterRegionsLoad(): Promise<void> {
+    const id = this.selectedRegionId();
+    const selectedRegion = id ? this.findRegionById(id) : undefined;
 
-    if (selectedRegion) {
+    if (id && selectedRegion) {
       this.regionsRepository.currentRegion.set(selectedRegion);
       await this.loadPlantsForCurrentFilters();
     } else {
-      this.regionsRepository.currentRegion.set(null);
+      if (id && !selectedRegion) {
+        this.selectedRegionId.set('');
+      }
       this.plants.set([]);
     }
-  }
 
-  public async onOccurrenceChange(occurrenceKey: string | string[]): Promise<void> {
-    this.selectedOccurrenceKey.set(this.toOccurrenceKey(this.toSingleValue(occurrenceKey)));
-    await this.loadPlantsForCurrentFilters();
-  }
-
-  public async onVarietyChange(variety: string | string[]): Promise<void> {
-    this.selectedVariety.set(this.toSingleValue(variety));
-    await this.loadPlantsForCurrentFilters();
+    this.initialized = true;
   }
 
   public findRegionById(regionId: string): Region | undefined {
@@ -110,11 +138,12 @@ export class FarmOverviewMapViewModel {
       return;
     }
 
-    await this.plantsRepository.findAll({
+    const data = await this.plantsRepository.queryPlants({
       region,
       occurrence,
       variety,
     });
+    this.plants.set(data);
   }
 
   private async loadPlantsForCurrentFilters(): Promise<void> {
@@ -126,11 +155,21 @@ export class FarmOverviewMapViewModel {
     return occurenceKeys.includes(value as BooleanKeys) ? (value as BooleanKeys) : '';
   }
 
-  private toSingleValue(value: string | string[]): string {
-    if (Array.isArray(value)) {
-      return value[0] ?? '';
+  private getFromStorage(key: string): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(key) || '';
     }
+    return '';
+  }
 
-    return value;
+  private saveToStorage(key: string, value: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      if (value) {
+        localStorage.setItem(key, value);
+      } else {
+        localStorage.removeItem(key);
+      }
+    }
   }
 }
+

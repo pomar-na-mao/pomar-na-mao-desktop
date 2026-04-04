@@ -34,7 +34,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
     @ViewChild('mapContainer') mapContainer!: ElementRef;
 
     @Input() center: [number, number] = [-23.398772, -49.148646];
-    @Input() zoom: number = 16;
+    @Input() zoom: number = 32;
     @Input() maxPolygons: number = 1;
     @Input() set plants(plants: Plant[]) {
         this._plants = plants;
@@ -109,8 +109,8 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
 
         if (this._backgroundPolygonCoords && this._backgroundPolygonCoords.length > 0) {
             this.backgroundLayer = L.polygon(this._backgroundPolygonCoords, {
-                color: '#6b7280', // gray-500
-                fillColor: '#9ca3af', // gray-400
+                color: '#dc2626', // red-500
+                fillColor: '#dc2626', // red-400
                 fillOpacity: 0.2,
                 weight: 2,
                 dashArray: '5, 5',

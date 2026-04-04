@@ -10,8 +10,8 @@
       class="flex-1"
       [center]="[-23.398772, -49.148646]"
       [zoom]="16"
-      [backgroundPolygon]="backgroundPolygon()"
-      [plants]="farmOverviewMapViewModel.plants()"
+      [backgroundPolygon]="massInclusionViewModel.backgroundPolygon()"
+      [plants]="massInclusionViewModel.plants()"
       (polygonSelected)="onPolygonSelected($event)"
       (polygonCleared)="onPolygonCleared()"
     ></app-map-polygon-selector>

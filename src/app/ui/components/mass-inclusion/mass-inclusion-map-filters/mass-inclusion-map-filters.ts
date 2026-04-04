@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppSelect } from '../../../../shared/components';
-import { FarmOverviewMapViewModel } from '../../../view-models/farm-overview-map/farm-overview-map.view-model';
+import { MassInclusionViewModel } from '../../../view-models/mass-inclusion/mass-inclusion.view-model';
 
 @Component({
   selector: 'app-mass-inclusion-map-filters',
@@ -10,5 +10,5 @@ import { FarmOverviewMapViewModel } from '../../../view-models/farm-overview-map
   templateUrl: './mass-inclusion-map-filters.html',
 })
 export class MassInclusionMapFiltersComponent {
-  public farmOverviewMapViewModel = inject(FarmOverviewMapViewModel);
+  public massInclusionViewModel = inject(MassInclusionViewModel);
 }
