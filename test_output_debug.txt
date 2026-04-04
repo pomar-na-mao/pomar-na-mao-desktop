@@ -1,5 +1,0 @@
-
-> pomar-na-mao@1.0.0 test
-> ng test --watch=false src/app/ui/components/home/recent-updates-table/recent-updates-table.spec.ts src/app/ui/components/home/home-alerts-forecast-panel/home-alerts-forecast-panel.spec.ts
-
-[1m[31mError: Unknown arguments: watch, src/app/ui/components/home/home-alerts-forecast-panel/home-alerts-forecast-panel.spec.ts[39m[22m
