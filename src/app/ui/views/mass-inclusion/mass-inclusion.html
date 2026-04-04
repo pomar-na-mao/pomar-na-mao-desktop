@@ -1,0 +1,25 @@
+<div
+  class="flex h-full flex-1 flex-col overflow-y-auto lg:overflow-hidden lg:flex-row"
+>
+  <div
+    class="order-1 min-h-72 shrink-0 lg:order-2 lg:min-h-0 lg:flex-1 flex flex-col p-4"
+  >
+    <app-mass-inclusion-map-filters />
+
+    <app-map-polygon-selector
+      class="flex-1"
+      [center]="[-23.398772, -49.148646]"
+      [zoom]="16"
+      [backgroundPolygon]="massInclusionViewModel.backgroundPolygon()"
+      [plants]="massInclusionViewModel.plants()"
+      (polygonSelected)="onPolygonSelected($event)"
+      (polygonCleared)="onPolygonCleared()"
+    ></app-map-polygon-selector>
+  </div>
+
+  <div class="order-2 w-full lg:order-1 lg:w-[40%] lg:shrink-0">
+    <div class="lg:h-full w-full border-r border-gray-200 bg-white p-4">
+      <app-mass-inclusion-form class="block lg:h-full"></app-mass-inclusion-form>
+    </div>
+  </div>
+</div>

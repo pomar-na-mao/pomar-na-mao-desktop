@@ -1,0 +1,96 @@
+<div
+  class="mass-card lg:h-full rounded-2xl border border-outline/10 bg-surface-container-lowest p-4 shadow-sm"
+>
+  <div class="mb-4 border-b border-outline/10 pb-3">
+    <h2 class="text-lg font-bold text-on-surface">
+      {{ 'PAGES.MASS_INCLUSION.FORM.TITLE' | translate }}
+    </h2>
+    <p class="mt-1 text-sm text-on-surface-variant">
+      {{ 'PAGES.MASS_INCLUSION.FORM.SUBTITLE' | translate }}
+    </p>
+  </div>
+
+  <form
+    [formGroup]="massInclusionViewModel.form"
+    (ngSubmit)="onSave()"
+    class="flex lg:h-[calc(100%-5.75rem)] flex-col"
+  >
+    <div class="flex-1 space-y-4 lg:overflow-y-auto px-1.5">
+      @if (!massInclusionViewModel.canEditForm()) {
+      <div
+        class="rounded-xl border border-outline/20 bg-surface-container px-3 py-2 text-sm font-medium text-on-surface-variant"
+      >
+        {{ 'PAGES.MASS_INCLUSION.FORM.DISABLED_HINT' | translate }}
+      </div>
+      }
+
+      <app-select
+        id="mass-occurrences"
+        label="PAGES.MASS_INCLUSION.FORM.OCCURRENCES"
+        [value]="massInclusionViewModel.form.controls.occurrences.value"
+        [options]="massInclusionViewModel.occurrenceOptions()"
+        [multiple]="true"
+        [disabled]="!massInclusionViewModel.canEditForm()"
+        (valueChange)="massInclusionViewModel.onOccurrencesChange($event)"
+      />
+
+      <app-select
+        id="mass-variety"
+        label="PAGES.MASS_INCLUSION.FORM.VARIETY"
+        placeholder="PAGES.MASS_INCLUSION.FORM.VARIETY_PLACEHOLDER"
+        [value]="massInclusionViewModel.form.controls.variety.value"
+        [options]="massInclusionViewModel.varietyOptions()"
+        [disabled]="!massInclusionViewModel.canEditForm()"
+        (valueChange)="massInclusionViewModel.onVarietyChange($event)"
+      />
+
+      <app-input
+        id="mass-life-of-tree"
+        type="text"
+        label="PAGES.MASS_INCLUSION.FORM.LIFE_OF_TREE"
+        placeholder="PAGES.MASS_INCLUSION.FORM.LIFE_OF_TREE_PLACEHOLDER"
+        [control]="massInclusionViewModel.form.controls.lifeOfTree"
+      />
+
+      <app-input
+        id="mass-planting-date"
+        type="date"
+        label="PAGES.MASS_INCLUSION.FORM.PLANTING_DATE"
+        [control]="massInclusionViewModel.form.controls.plantingDate"
+      />
+
+      <div>
+        <label
+          for="mass-description"
+          class="mb-1.5 block px-1 text-sm font-semibold text-on-surface-variant"
+        >
+          {{ 'PAGES.MASS_INCLUSION.FORM.DESCRIPTION' | translate }}
+        </label>
+        <textarea
+          id="mass-description"
+          formControlName="description"
+          rows="4"
+          [placeholder]="'PAGES.MASS_INCLUSION.FORM.DESCRIPTION_PLACEHOLDER' | translate"
+          class="block w-full resize-y rounded-xl border-none bg-surface-container-low px-4 py-3 text-on-surface outline-none transition-all placeholder-outline/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="mt-4 grid grid-cols-2 gap-3 border-t border-outline/10 pt-4">
+      <app-button
+        type="button"
+        variant="ghost"
+        [label]="'PAGES.MASS_INCLUSION.FORM.CLEAR' | translate"
+        [disabled]="!massInclusionViewModel.canEditForm()"
+        (click)="onClear()"
+      />
+      <app-button
+        type="submit"
+        variant="primary"
+        [label]="'PAGES.MASS_INCLUSION.FORM.SAVE' | translate"
+        [loading]="massInclusionViewModel.isSaving()"
+        [disabled]="!massInclusionViewModel.canEditForm()"
+      />
+    </div>
+  </form>
+</div>

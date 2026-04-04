@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppSidebar } from './app-sidebar/app-sidebar';
 import { AppHeader } from './app-header/app-header';
+import { FarmOverviewMapViewModel } from '../../view-models/farm-overview-map/farm-overview-map.view-model';
 
 @Component({
   selector: 'app-layout',
@@ -13,6 +14,7 @@ import { AppHeader } from './app-header/app-header';
     AppSidebar,
     AppHeader,
   ],
+  providers: [FarmOverviewMapViewModel],
   template: `
     <app-sidebar />
     <div class="layout-wrapper">

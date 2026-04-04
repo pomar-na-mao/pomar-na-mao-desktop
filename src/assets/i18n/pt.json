@@ -19,7 +19,7 @@
         "VIEW_ALL": "Ver Tudo",
         "TREE_ID": "ID DA ÁRVORE",
         "SPECIES": "ESPÉCIE",
-        "STATUS": "STATUS",
+        "STATUS": "Status",
         "ASSIGNED": "ATRIBUÍDO",
         "LAST_UPDATE": "Última atualização",
         "VARIETY": "VARIEDADE",
@@ -98,7 +98,64 @@
       "ZONE_PLACEHOLDER": "Selecione uma zona",
       "NO_ZONES": "Nenhuma zona disponível",
       "OCCURRENCE_LABEL": "Ocorrência",
-      "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência"
+      "OCCURRENCE_PLACEHOLDER": "Selecione uma ocorrência",
+      "VARIETY_LABEL": "Variedade",
+      "VARIETY_PLACEHOLDER": "Selecione uma variedade"
+    },
+    "MASS_INCLUSION": {
+      "MAP_POLYGON_SELECTOR": {
+        "TITLE": "Seletor de Região",
+        "STATUS_DRAWING": "Desenhando... ({{ count }} pts)",
+        "STATUS_SELECTED": "Região selecionada",
+        "STATUS_WAITING": "Aguardando",
+        "UNDO_LAST_POINT": "Desfazer último ponto",
+        "FINISH_POLYGON": "Finalizar polígono",
+        "FINISH": "Finalizar",
+        "CANCEL_DRAWING": "Cancelar desenho",
+        "DRAW_POLYGON": "Desenhar polígono",
+        "CANCEL": "Cancelar",
+        "DRAW": "Desenhar",
+        "CLEAR_ALL": "Limpar tudo",
+        "DRAWING_HINT": "Clique para adicionar pontos · Duplo clique ou \"Finalizar\" para concluir · Mínimo 3 pontos",
+        "COORDINATES_COUNT": "{{ count }} coordenadas",
+        "HIDE": "Ocultar",
+        "VIEW": "Ver",
+        "COORDS": "coords",
+        "COPIED": "Copiado!",
+        "COPY_JSON": "Copiar JSON",
+        "COPY_GEOJSON": "GeoJSON"
+      },
+      "FORM": {
+        "TITLE": "Inclusão em Massa",
+        "SUBTITLE": "Preencha os dados para aplicar a inclusão no polígono selecionado.",
+        "DISABLED_HINT": "Desenhe e finalize um polígono no mapa para habilitar o formulário.",
+        "OCCURRENCES": "Ocorrências",
+        "VARIETY": "Variedade",
+        "VARIETY_PLACEHOLDER": "Selecione uma variedade",
+        "LIFE_OF_TREE": "Vida da Árvore",
+        "LIFE_OF_TREE_PLACEHOLDER": "Ex.: primeira, segunda, terceira, etc...",
+        "PLANTING_DATE": "Data de Plantio",
+        "DESCRIPTION": "Descrição",
+        "DESCRIPTION_PLACEHOLDER": "Adicione uma observação para esta inclusão.",
+        "CLEAR": "Limpar",
+        "SAVE": "Salvar"
+      }
+    },
+    "SYNCS": {
+      "TITLE": "Sincronizações",
+      "INSPECT_ROUTINES": "Rotinas de Inspeção",
+      "HISTORY_DESCRIPTION": "Histórico de rotinas de inspeção",
+      "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada.",
+      "INSPECT_ANNOTATIONS": "Anotações de Inspeção",
+      "ANNOTATIONS_HISTORY_DESCRIPTION": "Histórico de anotações de inspeção",
+      "NO_ANNOTATIONS": "Nenhuma anotação encontrada.",
+      "INSPECTION_ID": "Inspeção {{ id }}",
+      "SUBTITLE": "Detalhamento e aprovação de ocorrências",
+      "ZONE_NUMBER": "Zona {{ number }}",
+      "APPROVED_INSPECTION": "Esta inspeção já foi aprovada e sincronizada.",
+      "NO_DIFFERENCES": "Nenhuma diferença de ocorrências encontrada para esta planta.",
+      "ANNOTATION_NOT_FOUND": "Anotação não encontrada",
+      "NO_PLANTS_FOUND": "Nenhuma planta encontrada para esta rotina."
     }
   },
   "LAYOUT": {
@@ -121,6 +178,8 @@
         "MAP": "Mapa",
         "INVENTORY": "Inventário",
         "ALERTS": "Alertas",
+        "SYNCS": "Sincronizações",
+        "MASS_INCLUSION": "Inclusões em Massa",
         "SETTINGS": "Configurações"
       },
       "LOGOUT": "Sair"
@@ -130,6 +189,21 @@
     "OCCURRENCE": "Ocorrência",
     "OCCURRENCES": "Ocorrências",
     "REFRESH": "Atualizar",
+    "DATE": "Data",
+    "DESCRIPTION": "Descrição",
+    "REGION": "Região",
+    "STATUS": "Status",
+    "DONE": "Concluído",
+    "PENDING": "Pendente",
+    "EDIT": "Editar",
+    "PENDING_COUNT": "{{ count }} Pendentes",
+    "APPROVING": "Aprovando...",
+    "APPROVED": "Aprovado",
+    "APPROVE": "Aprovar",
+    "BACK": "Voltar",
+    "PREVIOUS": "Anterior",
+    "NEXT": "Próximo",
+    "UNKNOWN": "Desconhecido",
     "OCCURRENCES_LABELS": {
       "STICK": "Galho Seco",
       "BROKEN_BRANCH": "Galho Quebrado",
@@ -151,6 +225,10 @@
       "FLOWERS": "Presença de Flores",
       "BUDS": "Presença de Brotos",
       "DEHYDRATED": "Pé Desidratado"
+    },
+    "TOAST": {
+      "SUCCESS": "Ação concluída com sucesso",
+      "ERROR": "Ocorreu um erro ao processar a solicitação"
     }
   }
 }

@@ -1,0 +1,16 @@
+.mass-card {
+  font-family: inherit;
+
+  textarea {
+    min-height: 112px;
+  }
+
+  :where(select, textarea)::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  :where(select, textarea)::-webkit-scrollbar-thumb {
+    background: rgba(120, 128, 140, 0.45);
+    border-radius: 9999px;
+  }
+}

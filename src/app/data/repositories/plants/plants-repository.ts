@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { PlantsService, type InspectRoutineFilter } from "../../services/plants/plants-service";
 import { HomeStatsService, type HomeStats } from "../../services/home-stats/home-stats-service";
-import type { Plant, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
+import type { Plant, PlantData, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +11,39 @@ export class PlantsRepository {
   private homeStatsService = inject(HomeStatsService);
 
   public plants = signal<Plant[]>([]);
+  private _inspectRoutineCurrentPlants = signal<PlantData[]>([]);
+  public inspectRoutineCurrentPlants = this._inspectRoutineCurrentPlants.asReadonly();
+
+  public addInspectRoutineCurrentPlantsItem(plant: PlantData): void {
+    this._inspectRoutineCurrentPlants.update(plants => {
+      const index = plants.findIndex(p => p.id === plant.id);
+      if (index !== -1) {
+        const newPlants = [...plants];
+        newPlants[index] = plant;
+        return newPlants;
+      }
+      return [...plants, plant as PlantData];
+    });
+  }
+
+  public clearPlants(): void {
+    this._inspectRoutineCurrentPlants.set([]);
+  }
 
   public async findAll(filters: InspectRoutineFilter | null = null): Promise<void> {
     const { data, error } = await this.plantsService.findAll(filters);
     if (!error && data) {
       this.plants.set(data);
     }
+  }
+
+  /** Loads plants for the given filters without updating the shared `plants` signal. */
+  public async queryPlants(filters: InspectRoutineFilter | null): Promise<Plant[]> {
+    const { data, error } = await this.plantsService.findAll(filters);
+    if (!error && data) {
+      return data;
+    }
+    return [];
   }
 
   public async findById(id: string): Promise<Plant | null> {

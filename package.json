@@ -13,6 +13,7 @@
     "tauri:bundle": "tauri build",
     "test": "ng test --watch=false",
     "test:watch": "ng test",
+    "test:preview": "npx vite preview --outDir test-results/vitest",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
     "lint": "ng lint"
   },

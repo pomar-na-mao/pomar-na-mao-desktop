@@ -1,0 +1,203 @@
+﻿<div class="map-selector-wrapper">
+  <!-- Toolbar -->
+  <div class="map-toolbar">
+    <div class="toolbar-left">
+      <span class="toolbar-title">
+        {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.TITLE' | translate }}
+      </span>
+      <span
+        class="status-badge"
+        [class.drawing]="drawingMode"
+        [class.has-polygon]="hasPolygon && !drawingMode"
+      >
+        <span class="status-dot"></span>
+        {{
+          drawingMode
+            ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.STATUS_DRAWING' | translate: { count: pointsCount })
+            : hasPolygon
+              ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.STATUS_SELECTED' | translate)
+              : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.STATUS_WAITING' | translate)
+        }}
+      </span>
+    </div>
+
+    <div class="toolbar-actions">
+      <button
+        class="btn btn-undo"
+        [disabled]="!drawingMode || pointsCount === 0"
+        (click)="undoLastPoint()"
+        [attr.title]="'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.UNDO_LAST_POINT' | translate"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M3 7v6h6" />
+          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+        </svg>
+      </button>
+
+      <button
+        class="btn btn-finish"
+        [disabled]="!drawingMode || pointsCount < 3"
+        (click)="completePolygon()"
+        [attr.title]="'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.FINISH_POLYGON' | translate"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.FINISH' | translate }}
+      </button>
+
+      <button
+        class="btn"
+        [class.btn-draw-active]="drawingMode"
+        [class.btn-draw]="!drawingMode"
+        (click)="toggleDrawingMode()"
+        [attr.title]="(drawingMode
+          ? 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.CANCEL_DRAWING'
+          : 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.DRAW_POLYGON') | translate"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polygon points="3 11 22 2 13 21 11 13 3 11" />
+        </svg>
+        {{
+          drawingMode
+            ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.CANCEL' | translate)
+            : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.DRAW' | translate)
+        }}
+      </button>
+
+      <button
+        class="btn btn-clear"
+        [disabled]="!hasPolygon && !drawingMode"
+        (click)="clearAll()"
+        [attr.title]="'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.CLEAR_ALL' | translate"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14H6L5 6" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="map-container" #mapContainer></div>
+
+  <!-- Drawing hint -->
+  @if (drawingMode) {
+    <div class="drawing-hint">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.DRAWING_HINT' | translate }}
+    </div>
+  }
+
+  <!-- Coordinates Panel -->
+  @if (hasPolygon) {
+    <div class="coords-panel">
+      <div class="coords-header">
+        <span class="coords-title">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          {{
+            'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COORDINATES_COUNT'
+              | translate: { count: selectedPolygonCoords.length }
+          }}
+        </span>
+
+        <div class="coords-actions">
+          <button class="btn-copy" (click)="showCoords = !showCoords">
+            {{
+              (showCoords
+                ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.HIDE' | translate)
+                : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.VIEW' | translate)) +
+                ' ' +
+                ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COORDS' | translate)
+            }}
+          </button>
+          <button
+            class="btn-copy"
+            (click)="copyCoordinates()"
+            [class.copied]="copiedFeedback"
+          >
+            {{
+              copiedFeedback
+                ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COPIED' | translate)
+                : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COPY_JSON' | translate)
+            }}
+          </button>
+          <button class="btn-copy" (click)="copyGeoJson()">
+            {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COPY_GEOJSON' | translate }}
+          </button>
+        </div>
+      </div>
+
+      @if (showCoords) {
+        <div class="coords-list">
+          @for (coord of selectedPolygonCoords; track coord; let i = $index) {
+            <div class="coord-item">
+              <span class="coord-index">{{ i + 1 }}</span>
+              <span class="coord-value">
+                {{ coord.lat.toFixed(6) }}, {{ coord.lng.toFixed(6) }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+
+      @if (!showCoords) {
+        <div class="coords-preview">
+          <pre>{{ selectedPolygonCoords | json }}</pre>
+        </div>
+      }
+    </div>
+  }
+</div>

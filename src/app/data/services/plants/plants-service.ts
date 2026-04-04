@@ -7,6 +7,7 @@ import { injectSupabase } from "../supabase";
 export type InspectRoutineFilter = {
   region: string;
   occurrence: string;
+  variety?: string;
 }
 
 export interface IPlantsService {
@@ -31,7 +32,7 @@ export class PlantsService implements IPlantsService {
     let query = this.supabase.from('plants').select('*').order('created_at', { ascending: false });
 
     if (filters) {
-      const { region, occurrence } = filters;
+      const { region, occurrence, variety } = filters;
 
       if (region) {
         query = query.eq('region', region);
@@ -39,6 +40,10 @@ export class PlantsService implements IPlantsService {
 
       if (occurrence) {
         query = query.eq(occurrence, true);
+      }
+
+      if (variety) {
+        query = query.eq('variety', variety);
       }
     }
     return await query;

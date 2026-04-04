@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, model, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -18,13 +18,15 @@ export class AppSelect {
   @Input() public id = '';
   @Input() public label = '';
   @Input() public placeholder = '';
-  @Input() public value = '';
   @Input() public options: AppSelectOption[] = [];
   @Input() public disabled = false;
+  @Input() public multiple = false;
+  public value = model<string | string[]>('');
 
-  @Output() public valueChange = new EventEmitter<string>();
+  @Output() public valueChange = new EventEmitter<string | string[]>();
 
-  public onValueChange(value: string): void {
+  public onValueChange(value: string | string[]): void {
+    this.value.set(value);
     this.valueChange.emit(value);
   }
 }

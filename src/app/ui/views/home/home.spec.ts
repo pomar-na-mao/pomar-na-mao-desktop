@@ -1,15 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { inject } from '@angular/core';
 import { Home } from './home';
 import { TranslateModule } from '@ngx-translate/core';
 import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, input, output } from '@angular/core';
-import { FarmOverviewMap } from '../../components/farm-overview-map/farm-overview-map';
-import { HomeAlertsForecastPanel } from '../../components/home-alerts-forecast-panel/home-alerts-forecast-panel';
-import { RecentUpdatesTableComponent } from '../../components/recent-updates-table/recent-updates-table';
-import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model';
+import { Component } from '@angular/core';
+import { FarmOverviewMap } from '../../components/home/farm-overview-map/farm-overview-map';
+import { HomeAlertsForecastPanel } from '../../components/home/home-alerts-forecast-panel/home-alerts-forecast-panel';
+import { RecentUpdatesTableComponent } from '../../components/home/recent-updates-table/recent-updates-table';
+import { HomeViewModel } from '../../view-models/home/home.view-model';
 
 vi.mock('leaflet', () => ({
   map: vi.fn().mockReturnValue({
@@ -49,12 +50,10 @@ class MockFarmOverviewMap { }
 @Component({
   selector: 'app-recent-updates-table',
   standalone: true,
-  template: '<div class="mock-table"></div>'
+  template: '<div class="mock-table">@if(viewModel.recentUpdates().length > 0) { <div class="has-updates"></div> }</div>'
 })
 class MockRecentUpdatesTableComponent {
-  updates = input<PlantRecentUpdate[]>([]);
-  isLoading = input<boolean>(false);
-  refresh = output<void>();
+  public viewModel = inject(HomeViewModel);
 }
 
 @Component({
@@ -129,9 +128,9 @@ describe('Home', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the dashboard container', () => {
-    const dashboard = fixture.debugElement.query(By.css('.dashboard'));
-    expect(dashboard).toBeTruthy();
+  it('should render the grid container', () => {
+    const grid = fixture.debugElement.query(By.css('.grid'));
+    expect(grid).toBeTruthy();
   });
 
   it('should display the map card', () => {
@@ -139,14 +138,14 @@ describe('Home', () => {
     expect(mapCard).toBeTruthy();
   });
 
-  it('should display the stats cards', () => {
-    const statsContainer = fixture.debugElement.query(By.css('.dashboard__stats'));
-    expect(statsContainer).toBeTruthy();
+  it('should display the stats components', () => {
+    const statusComp = fixture.debugElement.query(By.css('app-farm-base-status'));
+    expect(statusComp).toBeTruthy();
 
-    // Check if stat components are rendered
-    const totalPlants = statsContainer.query(By.css('app-total-plants'));
-    const orchardVigor = statsContainer.query(By.css('app-orchard-vigor'));
-    const progressCard = statsContainer.query(By.css('app-progress-card'));
+    // Check if stat components are rendered inside FarmBaseStatus
+    const totalPlants = fixture.debugElement.query(By.css('app-total-plants'));
+    const orchardVigor = fixture.debugElement.query(By.css('app-orchard-vigor'));
+    const progressCard = fixture.debugElement.query(By.css('app-progress-card'));
 
     expect(totalPlants).toBeTruthy();
     expect(orchardVigor).toBeTruthy();
@@ -161,7 +160,7 @@ describe('Home', () => {
   it('should display the recent updates table component', () => {
     const tableComp = fixture.debugElement.query(By.css('app-recent-updates-table'));
     expect(tableComp).toBeTruthy();
-    expect(tableComp.componentInstance.updates().length).toBe(2);
+    expect(tableComp.query(By.css('.has-updates'))).toBeTruthy();
   });
 
   it('should display urgent health alerts', () => {

@@ -1,0 +1,116 @@
+<section
+  class="flex h-full w-full flex-col space-y-6 overflow-y-auto border-outline-variant/10 bg-surface-container-low p-4 sm:p-6 lg:border-r lg:p-12"
+>
+  <div class="flex flex-col gap-4 mb-2">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="flex items-center gap-3">
+          <h2
+            class="text-3xl font-headline font-extrabold text-on-surface tracking-tight"
+          >
+            {{ 'PAGES.SYNCS.INSPECTION_ID' | translate: { id:
+            selectedAnnotation()?.id?.slice(0, 8) ?? '-' } }}
+          </h2>
+        </div>
+        <p class="text-on-surface-variant text-sm mt-1">
+          {{ 'PAGES.SYNCS.SUBTITLE' | translate }}
+        </p>
+      </div>
+      <div
+        class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
+      >
+        {{ 'COMMON.PENDING_COUNT' | translate: { count: pendingCount() } }}
+      </div>
+    </div>
+  </div>
+
+  @if (selectedAnnotation()) {
+  <div class="relative group">
+    <div
+      class="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 p-8 border border-outline-variant/10"
+    >
+      <div class="flex flex-col gap-4 mb-8">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="text-2xl font-headline font-bold text-primary">
+              ANN-{{ selectedAnnotation()!.id.slice(0, 8) }}
+            </h3>
+          </div>
+        </div>
+
+
+        <div class="flex flex-wrap gap-2 pt-2">
+          @if (inspectRoutineSyncViewModel.isLoading()) {
+          <div
+            class="w-full bg-surface-container-high animate-pulse h-10 rounded-xl"
+          ></div>
+          } @else if (occurrenceKeys().length === 0) {
+          <div
+            class="w-full bg-secondary-container/20 text-on-surface-variant px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 border border-outline-variant/20 tracking-wide"
+          >
+            <span class="material-symbols-outlined text-lg text-secondary"
+              >info</span
+            >
+            {{ 'PAGES.SYNCS.NO_DIFFERENCES' | translate }}
+          </div>
+          } @else { @for (occurrence of occurrenceKeys(); track occurrence) {
+          <div
+            class="bg-secondary-container/50 text-on-secondary-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">add</span>
+            {{ occurrencesLabels[occurrence] | translate }}
+          </div>
+          } }
+        </div>
+        <div class="pt-4 border-t border-outline-variant/10">
+          <p class="text-on-surface-variant text-xs font-medium"><br /></p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="absolute -top-4 -right-4 w-16 h-16 bg-secondary-container/20 rounded-full blur-2xl -z-10"
+    ></div>
+  </div>
+
+  <button
+    [disabled]="selectedAnnotation()?.is_approved || inspectRoutineSyncViewModel.isApproving()"
+    (click)="inspectRoutineSyncViewModel.onApproveInspectAnnotation(selectedAnnotation()?.id!)"
+    class="flex items-center justify-center gap-2 py-4 bg-linear-to-br from-primary to-primary-container text-white rounded-2xl font-headline font-bold shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-95 disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100 disabled:cursor-not-allowed transition-all text-sm"
+  >
+    @if (inspectRoutineSyncViewModel.isApproving()) {
+    <div
+      class="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+    ></div>
+    {{ 'COMMON.APPROVING' | translate }} } @else {
+    <span class="material-symbols-outlined"
+      >{{ selectedAnnotation()?.is_approved ? 'check_circle' :
+      'check_circle_outline' }}</span
+    >
+    {{ (selectedAnnotation()?.is_approved ? 'COMMON.APPROVED' :
+    'COMMON.APPROVE') | translate }} }
+  </button>
+  } @else {
+  <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+    <span
+      class="material-symbols-outlined text-[48px] text-on-surface-variant/50 mb-4"
+      >eco</span
+    >
+    <p class="text-on-surface-variant font-bold">
+      {{ 'PAGES.SYNCS.ANNOTATION_NOT_FOUND' | translate }}
+    </p>
+  </div>
+  }
+
+  <div class="flex justify-start mt-auto pt-6">
+    <button
+      (click)="goBack()"
+      class="flex items-center gap-2 px-1 py-2 text-on-surface-variant hover:text-primary transition-all active:scale-95 text-sm font-bold group"
+    >
+      <span
+        class="material-symbols-outlined text-[20px] transition-transform group-hover:-translate-x-1"
+        >arrow_back</span
+      >
+      {{ 'COMMON.BACK' | translate }}
+    </button>
+  </div>
+</section>

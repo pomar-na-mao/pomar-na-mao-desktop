@@ -1,8 +1,11 @@
 <div>
   @if (label) {
-    <label [for]="id" class="block text-sm font-semibold text-on-surface-variant mb-1.5 px-1">
-      {{ label | translate }}
-    </label>
+  <label
+    [for]="id"
+    class="block text-sm font-semibold text-on-surface-variant mb-1.5 px-1"
+  >
+    {{ label | translate }}
+  </label>
   }
 
   <div class="relative group">
@@ -11,18 +14,21 @@
       [ngModel]="value"
       (ngModelChange)="onValueChange($event)"
       [disabled]="disabled"
+      [multiple]="multiple"
       class="block w-full pr-12 pl-4 py-3 border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all text-on-surface bg-surface-container-low disabled:text-on-surface-variant/40 disabled:cursor-not-allowed appearance-none outline-none cursor-pointer"
+      [class.min-h-32]="multiple"
     >
-      @if (placeholder) {
-        <option value="">{{ placeholder | translate }}</option>
-      }
-
-      @for (option of options; track option.value) {
-        <option [value]="option.value">{{ option.label | translate }}</option>
+      @if (placeholder && !multiple) {
+      <option value="">{{ placeholder | translate }}</option>
+      } @for (option of options; track option.value) {
+      <option [value]="option.value">{{ option.label | translate }}</option>
       }
     </select>
 
-    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors">
+    <div
+      class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors"
+      [class.hidden]="multiple"
+    >
       <span class="material-symbols-outlined text-[20px]">expand_more</span>
     </div>
   </div>

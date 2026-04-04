@@ -1,0 +1,11 @@
+<div
+  class="flex h-full flex-1 flex-col overflow-y-auto md:overflow-hidden lg:flex-row"
+>
+  <div class="order-1 min-h-72 shrink-0 lg:order-2 lg:min-h-0 lg:flex-1">
+    <app-inspect-routine-current-plant-map [id]="id!" />
+  </div>
+
+  <div class="order-2 w-full lg:order-1 lg:w-[40%] lg:shrink-0">
+    <app-inspect-routine-plant-difference [id]="id!" />
+  </div>
+</div>

@@ -19,7 +19,7 @@
         "VIEW_ALL": "View All",
         "TREE_ID": "TREE ID",
         "SPECIES": "SPECIES",
-        "STATUS": "STATUS",
+        "STATUS": "Status",
         "ASSIGNED": "ASSIGNED",
         "LAST_UPDATE": "Last update",
         "VARIETY": "Variety",
@@ -98,7 +98,64 @@
       "ZONE_PLACEHOLDER": "Select a zone",
       "NO_ZONES": "No zones available",
       "OCCURRENCE_LABEL": "Occurrence",
-      "OCCURRENCE_PLACEHOLDER": "Select an occurrence"
+      "OCCURRENCE_PLACEHOLDER": "Select an occurrence",
+      "VARIETY_LABEL": "Variety",
+      "VARIETY_PLACEHOLDER": "Select a variety"
+    },
+    "MASS_INCLUSION": {
+      "MAP_POLYGON_SELECTOR": {
+        "TITLE": "Region Selector",
+        "STATUS_DRAWING": "Drawing... ({{ count }} pts)",
+        "STATUS_SELECTED": "Region selected",
+        "STATUS_WAITING": "Waiting",
+        "UNDO_LAST_POINT": "Undo last point",
+        "FINISH_POLYGON": "Finish polygon",
+        "FINISH": "Finish",
+        "CANCEL_DRAWING": "Cancel drawing",
+        "DRAW_POLYGON": "Draw polygon",
+        "CANCEL": "Cancel",
+        "DRAW": "Draw",
+        "CLEAR_ALL": "Clear all",
+        "DRAWING_HINT": "Click to add points · Double click or \"Finish\" to complete · Minimum 3 points",
+        "COORDINATES_COUNT": "{{ count }} coordinates",
+        "HIDE": "Hide",
+        "VIEW": "View",
+        "COORDS": "coords",
+        "COPIED": "Copied!",
+        "COPY_JSON": "Copy JSON",
+        "COPY_GEOJSON": "GeoJSON"
+      },
+      "FORM": {
+        "TITLE": "Mass Inclusion",
+        "SUBTITLE": "Fill in the data to apply inclusion to the selected polygon.",
+        "DISABLED_HINT": "Draw and finish a polygon on the map to enable the form.",
+        "OCCURRENCES": "Occurrences",
+        "VARIETY": "Variety",
+        "VARIETY_PLACEHOLDER": "Select a variety",
+        "LIFE_OF_TREE": "Life of Tree",
+        "LIFE_OF_TREE_PLACEHOLDER": "Ex.: first, second, third, etc...",
+        "PLANTING_DATE": "Planting Date",
+        "DESCRIPTION": "Description",
+        "DESCRIPTION_PLACEHOLDER": "Add a note for this mass inclusion.",
+        "CLEAR": "Clear",
+        "SAVE": "Save"
+      }
+    },
+    "SYNCS": {
+      "TITLE": "Syncs",
+      "INSPECT_ROUTINES": "Inspection Routines",
+      "HISTORY_DESCRIPTION": "History of inspection routines",
+      "NO_ROUTINES": "No inspection routines found.",
+      "INSPECT_ANNOTATIONS": "Inspection Annotations",
+      "ANNOTATIONS_HISTORY_DESCRIPTION": "History of inspect annotations",
+      "NO_ANNOTATIONS": "No annotations found.",
+      "INSPECTION_ID": "Inspection {{ id }}",
+      "SUBTITLE": "Detailing and approval of occurrences",
+      "ZONE_NUMBER": "Zone {{ number }}",
+      "APPROVED_INSPECTION": "This inspection has already been approved and synchronized.",
+      "NO_DIFFERENCES": "No differences in occurrences found for this plant.",
+      "ANNOTATION_NOT_FOUND": "Annotation not found",
+      "NO_PLANTS_FOUND": "No plants found for this routine."
     }
   },
   "LAYOUT": {
@@ -121,6 +178,8 @@
         "MAP": "Map View",
         "INVENTORY": "Tree Inventory",
         "ALERTS": "Alerts",
+        "SYNCS": "Syncs",
+        "MASS_INCLUSION": "Mass Inclusion",
         "SETTINGS": "Settings"
       },
       "LOGOUT": "Logout"
@@ -130,6 +189,21 @@
     "OCCURRENCE": "Occurrence",
     "OCCURRENCES": "Occurrences",
     "REFRESH": "Refresh",
+    "DATE": "Date",
+    "DESCRIPTION": "Description",
+    "REGION": "Region",
+    "STATUS": "Status",
+    "DONE": "Done",
+    "PENDING": "Pending",
+    "EDIT": "Edit",
+    "PENDING_COUNT": "{{ count }} Pending",
+    "APPROVING": "Approving...",
+    "APPROVED": "Approved",
+    "APPROVE": "Approve",
+    "BACK": "Back",
+    "PREVIOUS": "Previous",
+    "NEXT": "Next",
+    "UNKNOWN": "Unknown",
     "OCCURRENCES_LABELS": {
       "STICK": "Dry Branch",
       "BROKEN_BRANCH": "Broken Branch",
@@ -150,7 +224,11 @@
       "FROST": "Affected by Frost",
       "FLOWERS": "Presence of Flowers",
       "BUDS": "Presence of Buds",
-      "DEHYDRATED": "Dehydrated Plant"
+      "DEHYDRATED": "Dehydrated Tree"
+    },
+    "TOAST": {
+      "SUCCESS": "Action completed successfully",
+      "ERROR": "An error occurred processing the request"
     }
   }
 }

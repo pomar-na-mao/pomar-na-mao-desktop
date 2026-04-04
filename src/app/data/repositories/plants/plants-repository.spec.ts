@@ -46,6 +46,18 @@ describe('PlantsRepository', () => {
     expect(repo.plants()).toEqual(mockPlants);
   });
 
+  it('queryPlants should return data without updating plants signal', async () => {
+    const mockPlants = [{ id: '1', variety: 'Apple' }] as Plant[];
+    mockFindAll.mockResolvedValue({ data: mockPlants, error: null });
+    repo.plants.set([]);
+
+    const result = await repo.queryPlants({ region: 'North', occurrence: '' });
+
+    expect(mockFindAll).toHaveBeenCalledWith({ region: 'North', occurrence: '' });
+    expect(result).toEqual(mockPlants);
+    expect(repo.plants()).toEqual([]);
+  });
+
   it('findById should return plant from service', async () => {
     const mockPlant = { id: '1', variety: 'Apple' } as Plant;
     mockFindById.mockResolvedValue({ data: mockPlant, error: null });

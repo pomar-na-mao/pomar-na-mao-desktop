@@ -1,0 +1,25 @@
+<div
+  class="bg-white rounded-[14px] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] flex gap-[14px] items-start p-[16px_18px]"
+>
+  <div
+    class="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center shrink-0 bg-[#ecfdf5]"
+  >
+    <span class="material-symbols-outlined text-[#22c55e] text-[20px]!"
+      >forest</span
+    >
+  </div>
+  <div class="flex-1 min-w-0 relative">
+    <div
+      class="text-[10px] font-semibold tracking-[0.06em] text-[#9ca3af] uppercase"
+    >
+      {{ 'PAGES.HOME.DASHBOARD.TOTAL_TREES' | translate }}
+    </div>
+    <div class="text-[24px] font-bold text-[#111827] leading-[1.2] my-[2px]">
+      {{ total() | number }}
+    </div>
+    <div class="text-[11px] text-[#9ca3af] mt-[2px]">
+      {{ 'PAGES.HOME.DASHBOARD.UPDATED_MINS_AGO' | translate: { time:
+      (latestUpdatedAt() | timeAgo) } }}
+    </div>
+  </div>
+</div>
