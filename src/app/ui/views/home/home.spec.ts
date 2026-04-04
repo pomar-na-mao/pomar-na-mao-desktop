@@ -6,12 +6,11 @@ import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Component, input, output } from '@angular/core';
+import { Component } from '@angular/core';
 import { FarmOverviewMap } from '../../components/home/farm-overview-map/farm-overview-map';
 import { HomeAlertsForecastPanel } from '../../components/home/home-alerts-forecast-panel/home-alerts-forecast-panel';
 import { RecentUpdatesTableComponent } from '../../components/home/recent-updates-table/recent-updates-table';
 import { HomeViewModel } from '../../view-models/home/home.view-model';
-import type { PlantRecentUpdate } from '../../../domain/models/plant-data.model';
 
 vi.mock('leaflet', () => ({
   map: vi.fn().mockReturnValue({

@@ -9,7 +9,7 @@ import { By } from '@angular/platform-browser';
 describe('FarmBaseStatus', () => {
   let component: FarmBaseStatus;
   let fixture: ComponentFixture<FarmBaseStatus>;
-  let mockHomeViewModel: any;
+  let mockHomeViewModel: Partial<HomeViewModel>;
 
   beforeEach(async () => {
     mockHomeViewModel = {
@@ -39,17 +39,17 @@ describe('FarmBaseStatus', () => {
   });
 
   it('should show loading skeletons when loading', () => {
-    mockHomeViewModel.isLoading.set(true);
+    mockHomeViewModel.isLoading!.set(true);
     fixture.detectChanges();
-
+ 
     const skeletons = fixture.debugElement.queryAll(By.css('.animate-pulse'));
     expect(skeletons.length).toBeGreaterThan(0);
   });
-
+ 
   it('should show error state when hasError is true', () => {
-    mockHomeViewModel.hasError.set(true);
+    mockHomeViewModel.hasError!.set(true);
     fixture.detectChanges();
-
+ 
     const errorContainer = fixture.debugElement.query(By.css('.bg-red-50'));
     expect(errorContainer).toBeTruthy();
   });

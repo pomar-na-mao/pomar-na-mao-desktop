@@ -5,17 +5,18 @@ import { HomeViewModel } from '../../../view-models/home/home.view-model';
 import { signal } from '@angular/core';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { By } from '@angular/platform-browser';
+import type { PlantRecentUpdate } from '../../../../domain/models/plant-data.model';
 
 describe('RecentUpdatesTableComponent', () => {
   let component: RecentUpdatesTableComponent;
   let fixture: ComponentFixture<RecentUpdatesTableComponent>;
-  let mockHomeViewModel: any;
+  let mockHomeViewModel: Partial<HomeViewModel>;
 
   beforeEach(async () => {
     mockHomeViewModel = {
       recentUpdates: signal([
-        { id: '1-uuid', variety: 'Gala', region: 'Sector A', updated_at: new Date().toISOString() },
-        { id: '2-uuid', variety: 'Fuji', region: 'Sector B', updated_at: new Date().toISOString() }
+        { id: '1-uuid', variety: 'Gala', region: 'Sector A', updated_at: new Date().toISOString() } as PlantRecentUpdate,
+        { id: '2-uuid', variety: 'Fuji', region: 'Sector B', updated_at: new Date().toISOString() } as PlantRecentUpdate
       ]),
       isLoading: signal(false)
     };
@@ -48,7 +49,7 @@ describe('RecentUpdatesTableComponent', () => {
   });
 
   it('should show empty state if no updates', () => {
-    mockHomeViewModel.recentUpdates.set([]);
+    mockHomeViewModel.recentUpdates!.set([]);
     fixture.detectChanges();
 
     const emptyMessage = fixture.debugElement.query(By.css('tbody .text-slate-400'));

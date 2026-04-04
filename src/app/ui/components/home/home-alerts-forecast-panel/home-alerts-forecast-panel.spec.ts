@@ -9,12 +9,12 @@ import { By } from '@angular/platform-browser';
 describe('HomeAlertsForecastPanel', () => {
   let component: HomeAlertsForecastPanel;
   let fixture: ComponentFixture<HomeAlertsForecastPanel>;
-  let mockAlertsViewModel: any;
+  let mockAlertsViewModel: Partial<AlertsViewModel>;
 
   beforeEach(async () => {
     mockAlertsViewModel = {
       alerts: signal([
-        { id: '1', title: 'PAGES.HOME.DASHBOARD.APHID_INFESTATION', severity: 'high', region: 'A', row: 1, number_of_tree: 1 }
+        { id: '1', title: 'PAGES.HOME.DASHBOARD.APHID_INFESTATION', region: 'A', row: 1, number_of_tree: 1, created_at: new Date().toISOString(), description: null, is_active: true }
       ]),
       isLoading: signal(false),
       hasError: signal(false),
@@ -25,14 +25,14 @@ describe('HomeAlertsForecastPanel', () => {
     await TestBed.configureTestingModule({
       imports: [HomeAlertsForecastPanel, TranslateModule.forRoot()],
     })
-    .overrideComponent(HomeAlertsForecastPanel, {
-      set: {
-        providers: [
-          { provide: AlertsViewModel, useValue: mockAlertsViewModel }
-        ]
-      }
-    })
-    .compileComponents();
+      .overrideComponent(HomeAlertsForecastPanel, {
+        set: {
+          providers: [
+            { provide: AlertsViewModel, useValue: mockAlertsViewModel }
+          ]
+        }
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(HomeAlertsForecastPanel);
     component = fixture.componentInstance;

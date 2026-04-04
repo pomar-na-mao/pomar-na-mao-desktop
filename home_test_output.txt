@@ -1,98 +1,43 @@
 
-> pomar-na-mao@1.0.0 test
-> ng test --watch=false --include=src/app/ui/views/home/home.spec.ts
-
-[33m❯[39m Building...
-[32m✔[39m Building...
-[1mInitial chunk files[22m           [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
-[32mspec-app-ui-views-home-home.js[39m[2m | [22m[2mspec-app-ui-views-home-home[22m[2m | [22m[36m210.94 kB[39m[2m | [22m
-[32mstyles.css[39m                    [2m | [22m[2mstyles[22m                     [2m | [22m [36m66.88 kB[39m[2m | [22m
-[32mchunk-RSTWSNOR.js[39m             [2m | [22m[2m-[22m                          [2m | [22m  [36m4.75 kB[39m[2m | [22m
-[32minit-testbed.js[39m               [2m | [22m[2minit-testbed[22m               [2m | [22m  [36m1.21 kB[39m[2m | [22m
-[32mvitest-mock-patch.js[39m          [2m | [22m[2mvitest-mock-patch[22m          [2m | [22m[36m704 bytes[39m[2m | [22m
-
-[1m [22m                             [2m | [22m[1mInitial total[22m              [2m | [22m[1m284.49 kB[22m
-
-Application bundle generation complete. [8.591 seconds] - 2026-04-03T10:19:26.074Z
-
-
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/lspei/Documents/Projects/fullstack/pomar-na-mao/pomar-na-mao-desktop[39m
-      [2mCoverage enabled with [22m[33mv8[39m
 
- [31m❯[39m [30m[45m pomar-na-mao (chromium) [49m[39m src/app/ui/views/home/home.spec.ts [2m([22m[2m8 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 270[2mms[22m[39m
-     [32m✓[39m should create[32m 86[2mms[22m[39m
-[31m     [31m×[31m should render the dashboard container[39m[32m 30[2mms[22m[39m
-     [32m✓[39m should display the map card[32m 23[2mms[22m[39m
-[31m     [31m×[31m should display the stats cards[39m[32m 24[2mms[22m[39m
-     [32m✓[39m should display total trees count accurately[32m 25[2mms[22m[39m
-[31m     [31m×[31m should display the recent updates table component[39m[32m 27[2mms[22m[39m
-     [32m✓[39m should display urgent health alerts[32m 26[2mms[22m[39m
-     [32m✓[39m should display the growth forecast chart with correct number of bars[32m 26[2mms[22m[39m
+ [31m❯[39m src/app/ui/views/home/home.spec.ts [2m([22m[2m8 tests[22m[2m | [22m[31m8 failed[39m[2m)[22m[32m 11[2mms[22m[39m
+[31m     [31m×[31m should create[39m[32m 6[2mms[22m[39m
+[31m     [31m×[31m should render the grid container[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should display the map card[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should display the stats components[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should display total trees count accurately[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should display the recent updates table component[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should display urgent health alerts[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should display the growth forecast chart with correct number of bars[39m[32m 0[2mms[22m[39m
 
-[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 8 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
 
-[41m[1m FAIL [22m[49m [30m[45m pomar-na-mao (chromium) [49m[39m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould render the dashboard container
-[31m[1mAssertionError[22m: expected null to be truthy[39m
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould create
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould render the grid container
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display the map card
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display the stats components
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display total trees count accurately
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display the recent updates table component
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display urgent health alerts
+[41m[1m FAIL [22m[49m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display the growth forecast chart with correct number of bars
+[31m[1mError[22m: Need to call TestBed.initTestEnvironment() first[39m
+[90m [2m❯[22m TestBedImpl.get compiler [as compiler] node_modules/@angular/core/fesm2022/testing.mjs:[2m1486:13[22m[39m
+[90m [2m❯[22m TestBedImpl.configureTestingModule node_modules/@angular/core/fesm2022/testing.mjs:[2m1402:10[22m[39m
+[90m [2m❯[22m Function.configureTestingModule node_modules/@angular/core/fesm2022/testing.mjs:[2m1273:33[22m[39m
+[36m [2m❯[22m src/app/ui/views/home/home.spec.ts:[2m98:19[22m[39m
+    [90m 96| [39m    }[33m;[39m
+    [90m 97| [39m
+    [90m 98| [39m    [35mawait[39m [33mTestBed[39m[33m.[39m[34mconfigureTestingModule[39m({
+    [90m   | [39m                  [31m^[39m
+    [90m 99| [39m      imports[33m:[39m [[33mHome[39m[33m,[39m [33mTranslateModule[39m[33m.[39m[34mforRoot[39m()][33m,[39m
+    [90m100| [39m      providers[33m:[39m [
 
-[32m- Expected:[39m 
-true
-
-[31m+ Received:[39m 
-null
-
-[36m [2m❯[22m src/app/ui/views/home/home.spec.ts:[2m134:23[22m[39m
-    [90m132| [39m  [34mit[39m([32m'should render the dashboard container'[39m[33m,[39m () [33m=>[39m {
-    [90m133| [39m    [35mconst[39m dashboard [33m=[39m fixture[33m.[39mdebugElement[33m.[39m[34mquery[39m([33mBy[39m[33m.[39m[34mcss[39m([32m'.dashboard'[39m))[33m;[39m
-    [90m134| [39m    [34mexpect[39m(dashboard)[33m.[39m[34mtoBeTruthy[39m()[33m;[39m
-    [90m   | [39m                      [31m^[39m
-    [90m135| [39m  })[33m;[39m
-    [90m136| [39m
-
-[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
-
-[41m[1m FAIL [22m[49m [30m[45m pomar-na-mao (chromium) [49m[39m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display the stats cards
-[31m[1mAssertionError[22m: expected null to be truthy[39m
-
-[32m- Expected:[39m 
-true
-
-[31m+ Received:[39m 
-null
-
-[36m [2m❯[22m src/app/ui/views/home/home.spec.ts:[2m144:28[22m[39m
-    [90m142| [39m  [34mit[39m([32m'should display the stats cards'[39m[33m,[39m () [33m=>[39m {
-    [90m143| [39m    const statsContainer = fixture.debugElement.query(By.css('.dashboa…
-    [90m144| [39m    [34mexpect[39m(statsContainer)[33m.[39m[34mtoBeTruthy[39m()[33m;[39m
-    [90m   | [39m                           [31m^[39m
-    [90m145| [39m
-    [90m146| [39m    [90m// Check if stat components are rendered[39m
-
-[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
-
-[41m[1m FAIL [22m[49m [30m[45m pomar-na-mao (chromium) [49m[39m src/app/ui/views/home/home.spec.ts[2m > [22mHome[2m > [22mshould display the recent updates table component
-[31m[1mAssertionError[22m: expected +0 to be 2 // Object.is equality[39m
-
-[32m- Expected[39m
-[31m+ Received[39m
-
-[32m- 2[39m
-[31m+ 0[39m
-
-[36m [2m❯[22m src/app/ui/views/home/home.spec.ts:[2m164:58[22m[39m
-    [90m162| [39m    const tableComp = fixture.debugElement.query(By.css('app-recent-up…
-    [90m163| [39m    [34mexpect[39m(tableComp)[33m.[39m[34mtoBeTruthy[39m()[33m;[39m
-    [90m164| [39m    [34mexpect[39m(tableComp[33m.[39mcomponentInstance[33m.[39m[34mupdates[39m()[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
-    [90m   | [39m                                                         [31m^[39m
-    [90m165| [39m  })[33m;[39m
-    [90m166| [39m
-
-[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯[22m[39m
 
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (8)[39m
-[2m   Start at [22m 07:19:26
-[2m   Duration [22m 6.50s[2m (transform 0ms, setup 903ms, import 1.35s, tests 270ms, environment 0ms)[22m
+[2m      Tests [22m [1m[31m8 failed[39m[22m[90m (8)[39m
+[2m   Start at [22m 21:41:41
+[2m   Duration [22m 1.15s[2m (transform 336ms, setup 0ms, import 952ms, tests 11ms, environment 0ms)[22m
 
-[1m[7m[35m HTML [39m[27m[22m [35mReport is generated[39m
-[2m       You can run [22m[1mnpx vite preview --outDir test-results/vitest[22m[2m to see the test results.[22m

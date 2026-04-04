@@ -1,12 +1,13 @@
-import { Component, AfterViewInit, OnDestroy, OnInit, inject, PLATFORM_ID, effect } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit, inject, PLATFORM_ID, effect, signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
-import type { Plant } from '../../../../domain/models/plant-data.model';
+import type { BooleanKeys, Plant } from '../../../../domain/models/plant-data.model';
 import type { Region } from '../../../../domain/models/regions.model';
 import { AppSelect } from '../../../../shared/components';
 import { getConvexHull } from '../../../../shared/utils/geolocation-math';
 import { getRandomColor } from '../../../../shared/utils/colors';
 import { FarmOverviewMapViewModel } from '../../../view-models/farm-overview-map/farm-overview-map.view-model';
+import { RegionsRepository } from '../../../../data/repositories/regions/regions-repository';
 
 @Component({
   selector: 'app-farm-overview-map',
@@ -21,12 +22,17 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
   private assignedColors: Map<string, string> = new Map();
   private platformId = inject(PLATFORM_ID);
   public farmOverviewMapViewModel = inject(FarmOverviewMapViewModel);
+  private regionsRepository = inject(RegionsRepository);
+
+  public selectedRegionId = signal('');
+  public selectedOccurrenceKey = signal<BooleanKeys | ''>('');
+  public selectedVariety = signal('');
 
   private defaultZoom = 15;
 
   constructor() {
     effect(() => {
-      const regionId = this.farmOverviewMapViewModel.selectedRegionId();
+      const regionId = this.selectedRegionId();
       const region = this.farmOverviewMapViewModel.findRegionById(regionId);
       if (region) {
         this.focusRegion(region);
@@ -34,9 +40,20 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
     });
 
     effect(() => {
+      const regionId = this.selectedRegionId();
+      const region = this.farmOverviewMapViewModel.findRegionById(regionId);
+      this.farmOverviewMapViewModel.loadPlants(
+        region?.region ?? '',
+        this.selectedOccurrenceKey(),
+        this.selectedVariety()
+      );
+    });
+
+    effect(() => {
       // Re-render polygons if regions change
       if (this.farmOverviewMapViewModel.regionsGroupedByName().size > 0) {
         this.renderPolygons();
+        this.fitAllRegions();
       }
     });
 
@@ -47,14 +64,13 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit() {
     await this.farmOverviewMapViewModel.loadRegions();
-    await this.farmOverviewMapViewModel.restoreMapContextAfterRegionsLoad();
   }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.initMap();
       this.renderPolygons();
-      this.focusSelectedRegion();
+      this.fitAllRegions();
     }
   }
 
@@ -62,6 +78,23 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
     if (this.map) {
       this.map.remove();
     }
+  }
+
+  public onRegionChange(regionId: string | string[]): void {
+    const id = Array.isArray(regionId) ? regionId[0] : regionId;
+    this.selectedRegionId.set(id);
+    const region = this.farmOverviewMapViewModel.findRegionById(id);
+    this.regionsRepository.currentRegion.set(region ?? null);
+  }
+
+  public onOccurrenceChange(occurrenceKey: string | string[]): void {
+    const key = Array.isArray(occurrenceKey) ? occurrenceKey[0] : occurrenceKey;
+    this.selectedOccurrenceKey.set(key as BooleanKeys | '');
+  }
+
+  public onVarietyChange(variety: string | string[]): void {
+    const value = Array.isArray(variety) ? variety[0] : variety;
+    this.selectedVariety.set(value);
   }
 
   private renderPolygons(): void {
@@ -140,17 +173,12 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
     L.Marker.prototype.options.icon = defaultIcon;
   }
 
-  private focusSelectedRegion(): void {
-    const selectedRegion = this.farmOverviewMapViewModel.findRegionById(this.farmOverviewMapViewModel.selectedRegionId());
-    if (selectedRegion) {
-      this.focusRegion(selectedRegion);
-    } else if (this.regionPolygons.size > 0) {
-      // If no region is selected but we have polygons, fit all of them
+  private fitAllRegions(): void {
+    if (this.regionPolygons.size > 0 && !this.selectedRegionId()) {
       const group = L.featureGroup(Array.from(this.regionPolygons.values()));
       this.map?.fitBounds(group.getBounds(), { padding: [40, 40] });
     }
   }
-
 
   private focusRegion(region: Region): void {
     const normalizedName = (region.region ?? '').trim().toLocaleLowerCase();
