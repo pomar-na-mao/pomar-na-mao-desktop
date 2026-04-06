@@ -4,8 +4,8 @@ import { PlantsRepository } from "../../../data/repositories/plants/plants-repos
 import { RegionsRepository } from "../../../data/repositories/regions/regions-repository";
 import {
   MassInclusionRepository,
-  type MassInclusionDraft,
 } from "../../../data/repositories/mass-inclusion/mass-inclusion.repository";
+import type { MassInclusionData } from "../../../domain/models/mass-inclusion";
 import type { BooleanKeys, Plant } from "../../../domain/models/plant-data.model";
 import type { Region } from "../../../domain/models/regions.model";
 import type { AppSelectOption } from "../../../shared/components";
@@ -13,6 +13,7 @@ import { getConvexHull } from "../../../shared/utils/geolocation-math";
 import { occurenceKeys, occurencesLabels } from "../../../shared/utils/occurrences";
 import { varieties } from "../../../shared/utils/varieties";
 import type { PolygonCoordinate, PolygonSelection } from "../../components/mass-inclusion/map-polygon-selector/map-polygon-selector";
+
 
 interface MassInclusionFormValue {
   occurrences: string[];
@@ -95,6 +96,10 @@ export class MassInclusionViewModel {
 
   public canEditForm = computed(() => this.selectedPolygonCoordinates().length >= 3);
 
+  public get currentMassInclusionData(): MassInclusionData {
+    return this.toMassInclusionData(this.form.getRawValue() as MassInclusionFormValue);
+  }
+
   public occurrenceOptions = computed<AppSelectOption[]>(() =>
     occurenceKeys.map((key) => ({
       value: key,
@@ -110,8 +115,8 @@ export class MassInclusionViewModel {
   );
 
   constructor() {
-    const draft = this.massInclusionRepository.draft();
-    this.form.patchValue(draft, { emitEvent: false });
+    const data = this.massInclusionRepository.currentMassInclusionData();
+    this.form.patchValue(data, { emitEvent: false });
 
     effect(() => {
       const isEnabled = this.canEditForm();
@@ -182,8 +187,6 @@ export class MassInclusionViewModel {
       },
       { emitEvent: false }
     );
-
-    this.massInclusionRepository.clearDraft();
   }
 
   public saveForm(): void {
@@ -192,21 +195,21 @@ export class MassInclusionViewModel {
     }
 
     this.form.markAllAsTouched();
+
     if (this.form.invalid) {
       return;
     }
 
-    this.isSaving.set(true);
-    const draft = this.toDraft(this.form.getRawValue() as MassInclusionFormValue);
+    const data = this.toMassInclusionData(this.form.getRawValue() as MassInclusionFormValue);
+
+    this.massInclusionRepository.saveMassInclusionData(data);
 
     console.log('Mass Inclusion Save:', {
       formValue: this.form.getRawValue(),
-      draft,
+      data,
       coordinates: this.selectedPolygonCoordinates(),
     });
 
-    this.massInclusionRepository.saveDraft(draft);
-    this.isSaving.set(false);
   }
 
   private isValidPolygon(coordinates: PolygonCoordinate[]): boolean {
@@ -217,7 +220,7 @@ export class MassInclusionViewModel {
     return coordinates.every((coordinate) => Number.isFinite(coordinate.lat) && Number.isFinite(coordinate.lng));
   }
 
-  private toDraft(value: MassInclusionFormValue): MassInclusionDraft {
+  private toMassInclusionData(value: MassInclusionFormValue): MassInclusionData {
     const occurrences = value.occurrences.filter((occurrence): occurrence is BooleanKeys =>
       occurenceKeys.includes(occurrence as BooleanKeys)
     );
