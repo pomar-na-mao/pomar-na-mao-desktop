@@ -1,4 +1,7 @@
 import { computed, effect, Injectable, inject, signal } from "@angular/core";
+import { LoadingService } from "../../../data/services/loading";
+import { MessageService } from "../../../data/services/message/message.service";
+import { TranslateService } from "@ngx-translate/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { PlantsRepository } from "../../../data/repositories/plants/plants-repository";
 import { RegionsRepository } from "../../../data/repositories/regions/regions-repository";
@@ -19,6 +22,9 @@ export class MassInclusionViewModel {
   private massInclusionRepository = inject(MassInclusionRepository);
   private plantsRepository = inject(PlantsRepository);
   private regionsRepository = inject(RegionsRepository);
+  public loadingService = inject(LoadingService);
+  private messageService = inject(MessageService);
+  private translate = inject(TranslateService);
 
   public selectedRegionId = signal('');
   public isLoadingRegions = signal(true);
@@ -225,7 +231,7 @@ export class MassInclusionViewModel {
     return value;
   }
 
-  public onSaveMassInclusionDataHandler(): void {
+  public async onSaveMassInclusionDataHandler(): Promise<void> {
     if (!this.canEditForm()) return;
 
     this.massInclusionDataForm.markAllAsTouched();
@@ -238,10 +244,28 @@ export class MassInclusionViewModel {
 
     const massInclusionInfo: MassInclusionInfo = {
       massInclusionData: massInclusionFormData,
-      coordinates: this.selectedPolygonCoordinates()
+      coordinates: this.selectedPolygonCoordinates(),
+    };
+
+    this.loadingService.isLoading.set(true);
+    try {
+      const { data, error } = await this.massInclusionRepository.massUpdatePlantsInPolygon({
+        coordinates: massInclusionInfo.coordinates,
+        occurrences: massInclusionInfo.massInclusionData.occurrences,
+        variety: massInclusionInfo.massInclusionData.variety || null,
+        lifeOfTree: massInclusionInfo.massInclusionData.lifeOfTree || null,
+        plantingDate: massInclusionInfo.massInclusionData.plantingDate || null,
+        description: massInclusionInfo.massInclusionData.description || null,
+      });
+
+      if (error) {
+        this.messageService.error(this.translate.instant('PAGES.MASS_INCLUSION.FORM.SAVE_ERROR'));
+        return;
+      }
+
+      this.messageService.success(this.translate.instant('PAGES.MASS_INCLUSION.FORM.SAVE_SUCCESS'));
+    } finally {
+      this.loadingService.isLoading.set(false);
     }
-
-    console.log(massInclusionInfo);
-
   }
 }

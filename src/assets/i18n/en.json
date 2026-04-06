@@ -138,7 +138,9 @@
         "DESCRIPTION": "Description",
         "DESCRIPTION_PLACEHOLDER": "Add a note for this mass inclusion.",
         "CLEAR": "Clear",
-        "SAVE": "Save"
+        "SAVE": "Save",
+        "SAVE_SUCCESS": "Plants updated successfully!",
+        "SAVE_ERROR": "Error updating plants. Please try again."
       }
     },
     "SYNCS": {

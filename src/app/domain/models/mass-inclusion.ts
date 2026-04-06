@@ -44,3 +44,18 @@ export interface MassInclusionInfo {
     massInclusionData: MassInclusionFormValue,
     coordinates: PolygonCoordinate[]
 }
+
+export interface MassUpdatePlantsParams {
+    coordinates: PolygonCoordinate[];
+    occurrences?: string[];
+    variety?: string | null;
+    lifeOfTree?: string | null;
+    plantingDate?: string | null;
+    description?: string | null;
+}
+
+export interface MassUpdatePlantsResult {
+    message: string;
+    updated: number;
+    ids: string[];
+}
