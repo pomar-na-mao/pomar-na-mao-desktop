@@ -8,6 +8,8 @@ import {
     ElementRef,
     ViewChild,
     AfterViewInit,
+    OnChanges,
+    SimpleChanges,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
@@ -21,7 +23,7 @@ import type { PolygonCoordinate } from '../../../../domain/models/mass-inclusion
     templateUrl: './map-polygon-selector.html',
     styleUrls: ['./map-polygon-selector.scss'],
 })
-export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
+export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('mapContainer') mapContainer!: ElementRef;
 
     @Input() center: [number, number] = [-23.398772, -49.148646];
@@ -34,6 +36,8 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
         this._plants = plants;
         this.renderPlantCircles();
     }
+
+    @Input() clearSignal: number = 0;
 
     @Input() set backgroundPolygon(coords: [number, number][] | null) {
         this._backgroundPolygonCoords = coords;
@@ -64,6 +68,12 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
 
     public ngAfterViewInit(): void {
         this.initMap();
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if (changes['clearSignal'] && !changes['clearSignal'].firstChange) {
+            this.clearAll();
+        }
     }
 
     public ngOnDestroy(): void {

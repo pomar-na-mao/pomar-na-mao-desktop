@@ -81,7 +81,7 @@
         type="button"
         variant="ghost"
         [label]="'PAGES.MASS_INCLUSION.FORM.CLEAR' | translate"
-        [disabled]="!massInclusionViewModel.canEditForm()"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
         (click)="onClearMassInclusionFormData()"
       />
       <app-button
@@ -89,7 +89,7 @@
         variant="primary"
         [label]="'PAGES.MASS_INCLUSION.FORM.SAVE' | translate"
         [loading]="massInclusionViewModel.isSaving()"
-        [disabled]="!massInclusionViewModel.canEditForm()"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
       />
     </div>
   </form>

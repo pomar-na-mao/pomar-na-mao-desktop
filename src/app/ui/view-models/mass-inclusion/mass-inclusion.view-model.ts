@@ -81,6 +81,7 @@ export class MassInclusionViewModel {
 
   public selectedPolygonCoordinates = this.massInclusionRepository.selectedPolygonCoordinates;
   public isSaving = signal(false);
+  public clearMapSignal = signal(0);
 
   public massInclusionDataForm = this.formBuilder.group({
     occurrences: this.formBuilder.nonNullable.control<string[]>([]),
@@ -247,7 +248,7 @@ export class MassInclusionViewModel {
       coordinates: this.selectedPolygonCoordinates(),
     };
 
-    this.loadingService.isLoading.set(true);
+    this.isSaving.set(true);
     try {
       const { data, error } = await this.massInclusionRepository.massUpdatePlantsInPolygon({
         coordinates: massInclusionInfo.coordinates,
@@ -264,8 +265,11 @@ export class MassInclusionViewModel {
       }
 
       this.messageService.success(this.translate.instant('PAGES.MASS_INCLUSION.FORM.SAVE_SUCCESS'));
+      this.onClearMassInclusionFormDataHandler();
+      this.onPolygonCleared();
+      this.clearMapSignal.update((v) => v + 1);
     } finally {
-      this.loadingService.isLoading.set(false);
+      this.isSaving.set(false);
     }
   }
 }
