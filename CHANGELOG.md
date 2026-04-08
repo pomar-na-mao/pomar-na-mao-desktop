@@ -3,6 +3,7 @@
 * feat: Add `CountOccurrencesPipe` for counting plant occurrences and introduce unit tests for the `Ho ([f1dba13](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/f1dba13))
 * feat: add RecentUpdatesTable component and integrate it into the home dashboard view ([41d0c18](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/41d0c18))
 * feat: Add shared input and select components, map card, regions data management, occurrences utility ([6a186a1](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/6a186a1))
+* feat: implement authentication login view with localized UI, styling, and Tailwind configuration ([187db08](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/187db08))
 * feat: implement core UI components and layout views with Tailwind CSS integration ([958296f](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/958296f))
 * feat: implement farm overview map and recent updates dashboard components with localization support ([9eaf6ba](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/9eaf6ba))
 * feat: implement farm overview map component and associated view model for region visualization ([809d448](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/809d448))
