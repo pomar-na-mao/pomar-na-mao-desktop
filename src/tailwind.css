@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
   --breakpoint-*: initial;
@@ -8,58 +8,58 @@
   --breakpoint-xl: 1200px;
   --breakpoint-2xl: 1920px;
 
-  /* Stitch Design System - Login (Ajuste de Contrastes) */
-  --color-primary: #3525cd;
-  --color-primary-container: #4f46e5;
+  /* Stitch Design System - Terra Precision (Pomar na Mão) */
+  --color-primary: #2b4c2c; /* Verde Floresta Principal */
+  --color-primary-container: #3d5a3e;
   --color-on-primary: #ffffff;
-  --color-on-primary-container: #dad7ff;
+  --color-on-primary-container: #d1e2d2;
 
-  --color-secondary: #006c49;
-  --color-secondary-container: #6cf8bb;
+  --color-secondary: #8b4513; /* Marrom Terroso / Bronze */
+  --color-secondary-container: #a0522d;
   --color-on-secondary: #ffffff;
-  --color-on-secondary-container: #00714d;
+  --color-on-secondary-container: #f5ebe0;
 
-  --color-tertiary: #7e3000;
-  --color-tertiary-container: #a44100;
-  --color-on-tertiary: #ffffff;
-  --color-on-tertiary-container: #ffd2be;
+  --color-tertiary: #4a5d23; /* Verde Oliva / Musgo */
+  --color-tertiary-container: #e8f0e1;
+  --color-on-tertiary: #1a2408;
+  --color-on-tertiary-container: #2b3a11;
 
-  --color-error: #ba1a1a;
-  --color-error-container: #ffdad6;
+  --color-error: #b91c1c;
+  --color-error-container: #fee2e2;
   --color-on-error: #ffffff;
-  --color-on-error-container: #93000a;
+  --color-on-error-container: #7f1d1d;
 
-  --color-success: #15803d;
+  --color-success: #166534;
   --color-success-container: #dcfce7;
   --color-on-success: #ffffff;
 
-  --color-warn: #eab308;
-  --color-warn-container: #fef9c3;
+  --color-warn: #d97706;
+  --color-warn-container: #fef3c7;
   --color-on-warn: #ffffff;
 
-  --color-info: #1d4ed8;
-  --color-info-container: #dbeafe;
+  --color-info: #0369a1;
+  --color-info-container: #e0f2fe;
   --color-on-info: #ffffff;
 
-  --color-background: #f8f9fa;
-  --color-on-background: #191c1d;
+  --color-background: #f8f9f8; /* Neutro muito claro puxado para o verde */
+  --color-on-background: #1c1d1c;
 
-  --color-surface: #f8f9fa;
-  --color-on-surface: #191c1d;
-  --color-on-surface-variant: #464555;
-  --color-surface-bright: #f8f9fa;
+  --color-surface: #f8f9f8;
+  --color-on-surface: #1c1d1c;
+  --color-on-surface-variant: #444744;
+  --color-surface-bright: #ffffff;
   --color-surface-dim: #d9dadb;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f3f4f5;
-  --color-surface-container: #edeeef;
-  --color-surface-container-high: #e7e8e9;
-  --color-surface-container-highest: #e1e3e4;
+  --color-surface-container-low: #f1f3f1;
+  --color-surface-container: #ebeeeb;
+  --color-surface-container-high: #e5e8e5;
+  --color-surface-container-highest: #dfe3df;
 
-  --color-outline: #777587;
-  --color-outline-variant: #c7c4d8;
-  --color-inverse-surface: #2e3132;
-  --color-inverse-on-surface: #f0f1f2;
-  --color-inverse-primary: #c3c0ff;
+  --color-outline: #747974;
+  --color-outline-variant: #c4c8c4;
+  --color-inverse-surface: #2e312e;
+  --color-inverse-on-surface: #f0f1f0;
+  --color-inverse-primary: #97d69b;
 
   --font-headline: "Manrope", sans-serif;
   --font-body: "Inter", sans-serif;

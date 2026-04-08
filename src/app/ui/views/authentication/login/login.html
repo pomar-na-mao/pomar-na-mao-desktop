@@ -1,55 +1,119 @@
-<div
-  class="login-container min-h-screen flex font-body text-on-surface items-center justify-center relative overflow-hidden">
-  <div class="absolute inset-0 bg-orchard-pattern pointer-events-none opacity-30"></div>
+<div class="login-wrapper">
+  <!-- LEFT PANEL: Hero / Background (60%) -->
+  <div class="hero-panel">
+    <!-- Subtle dot overlay pattern -->
+    <div class="hero-pattern"></div>
 
-  <!-- Animated Background Elements -->
-  <div class="decorations-container">
-    @for (leaf of leaves; track $index) {
-    <span class="material-symbols-outlined leaf" [style.left]="leaf.left" [style.animation-delay]="leaf.animationDelay"
-      [style.animation-duration]="leaf.duration" [style.font-size]="leaf.size" [style.opacity]="leaf.opacity">
-      eco
-    </span>
-    }
+    <!-- Animated falling leaves -->
+    <div class="decorations-container">
+      @for (leaf of leaves; track $index) {
+      <span
+        class="material-symbols-outlined leaf"
+        [style.left]="leaf.left"
+        [style.animation-delay]="leaf.animationDelay"
+        [style.animation-duration]="leaf.duration"
+        [style.font-size]="leaf.size"
+        [style.opacity]="leaf.opacity"
+      >
+        eco
+      </span>
+      }
+    </div>
+
+    <!-- Hero content -->
+    <div class="hero-content">
+      <!-- Logo + Brand -->
+      <div class="hero-brand">
+        <img
+          src="assets/images/logo.png"
+          alt="Pomar na Mão logo"
+          class="hero-logo"
+        />
+        <span class="hero-brand-name">Pomar na Mão</span>
+      </div>
+
+      <!-- Welcome headline -->
+      <div class="hero-headline">
+        <h1 class="hero-title">{{ 'PAGES.LOGIN.TITLE' | translate }}</h1>
+        <p class="hero-subtitle">{{ 'PAGES.LOGIN.SUBTITLE' | translate }}</p>
+      </div>
+
+      <!-- Feature badges -->
+      <div class="hero-badges">
+        <span class="hero-badge">
+          <span class="material-symbols-outlined">monitoring</span>
+          {{ 'PAGES.LOGIN.BADGE_MONITORING' | translate }}
+        </span>
+        <span class="hero-badge">
+          <span class="material-symbols-outlined">map</span>
+          {{ 'PAGES.LOGIN.BADGE_MAP' | translate }}
+        </span>
+        <span class="hero-badge">
+          <span class="material-symbols-outlined">sync</span>
+          {{ 'PAGES.LOGIN.BADGE_SYNC' | translate }}
+        </span>
+      </div>
+
+      <!-- Bottom tagline -->
+      <p class="hero-tagline">{{ 'PAGES.LOGIN.TAGLINE' | translate }}</p>
+    </div>
   </div>
 
-  <div class="relative z-10 flex items-center justify-center px-4 py-12 w-full">
-    <div class="max-w-md w-full flex flex-col items-center justify-center">
-      <!-- Header -->
-      <div class="flex flex-col items-center mb-8">
-        <h1 class="font-headline font-extrabold text-4xl text-white tracking-tight text-center drop-shadow-sm">
-          {{ 'PAGES.LOGIN.TITLE' | translate }}
-        </h1>
-        <p class="mt-3 text-white/80 font-medium text-center text-lg">
-          {{ 'PAGES.LOGIN.SUBTITLE' | translate }}
-        </p>
+  <!-- RIGHT PANEL: Login Form (40%) -->
+  <div class="form-panel">
+    <div class="form-inner">
+      <!-- Form header -->
+      <div class="form-header">
+        <div class="form-icon">
+          <span class="material-symbols-outlined">lock_person</span>
+        </div>
+        <h2 class="form-title">{{ 'PAGES.LOGIN.FORM_TITLE' | translate }}</h2>
+        <p class="form-subtitle">{{ 'PAGES.LOGIN.FORM_SUBTITLE' | translate }}</p>
       </div>
 
       <!-- Login Card -->
-      <main class="glass-card rounded-2xl p-8 md:p-10 shadow-2xl w-full border border-white/20">
-        <form [formGroup]="loginForm" (ngSubmit)="loginHandler()" class="space-y-4">
-
+      <main class="form-card">
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="loginHandler()"
+          class="form-fields"
+        >
           <!-- Email Field -->
-          <app-input id="email" type="email" label="PAGES.LOGIN.EMAIL_LABEL" placeholder="PAGES.LOGIN.EMAIL_PLACEHOLDER"
-            icon="mail" [control]="loginForm.get('email')" [errorMessages]="emailErrors" />
+          <app-input
+            id="email"
+            type="email"
+            label="PAGES.LOGIN.EMAIL_LABEL"
+            placeholder="PAGES.LOGIN.EMAIL_PLACEHOLDER"
+            icon="mail"
+            [control]="loginForm.get('email')"
+            [errorMessages]="emailErrors"
+          />
 
           <!-- Password Field -->
-          <app-input id="password" type="password" label="PAGES.LOGIN.PASSWORD_LABEL"
-            placeholder="PAGES.LOGIN.PASSWORD_PLACEHOLDER" icon="lock" [control]="loginForm.get('password')"
-            [errorMessages]="passwordErrors" />
-
+          <app-input
+            id="password"
+            type="password"
+            label="PAGES.LOGIN.PASSWORD_LABEL"
+            placeholder="PAGES.LOGIN.PASSWORD_PLACEHOLDER"
+            icon="lock"
+            [control]="loginForm.get('password')"
+            [errorMessages]="passwordErrors"
+          />
 
           <!-- Submit Button -->
-          <app-button class="mt-10" type="submit" variant="primary" [label]="'PAGES.LOGIN.SUBMIT' | translate"
-            [loading]="loginViewModel.loadingService.isLoading()" />
-
+          <app-button
+            class="submit-btn"
+            type="submit"
+            variant="primary"
+            [label]="'PAGES.LOGIN.SUBMIT' | translate"
+            [loading]="loginViewModel.loadingService.isLoading()"
+          />
         </form>
       </main>
 
       <!-- Footer -->
-      <footer class="mt-12 text-center w-full flex justify-center">
-        <p class="text-xs text-white/60 font-medium tracking-wider">
-          Pomar na mão &bull; v1.0.0 &bull; Controle e Rastreabilidade
-        </p>
+      <footer class="form-footer">
+        <p class="form-footer-text">{{ 'PAGES.LOGIN.FOOTER' | translate }}</p>
       </footer>
     </div>
   </div>

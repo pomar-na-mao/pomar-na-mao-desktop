@@ -69,7 +69,14 @@
       "INVALID_CREDENTIALS": "Invalid credentials! Please fill in email and password correctly.",
       "FORGOT_PASSWORD": "Forgot password?",
       "SHOW_PASSWORD": "Show password",
-      "HIDE_PASSWORD": "Hide password"
+      "HIDE_PASSWORD": "Hide password",
+      "BADGE_MONITORING": "Real-time monitoring",
+      "BADGE_MAP": "Plant-by-plant management",
+      "BADGE_SYNC": "Smart synchronization",
+      "TAGLINE": "Control and Traceability",
+      "FORM_TITLE": "Access your account",
+      "FORM_SUBTITLE": "Enter your credentials to continue",
+      "FOOTER": "Pomar na mão • v1.0.0 • Control and Traceability"
     },
     "FORGOT_PASSWORD": {
       "TITLE": "Recover password",
@@ -152,6 +159,7 @@
       "ANNOTATIONS_HISTORY_DESCRIPTION": "History of inspect annotations",
       "NO_ANNOTATIONS": "No annotations found.",
       "INSPECTION_ID": "Inspection {{ id }}",
+      "ANNOTATION_ID": "Annotation {{ id }}",
       "SUBTITLE": "Detailing and approval of occurrences",
       "ZONE_NUMBER": "Zone {{ number }}",
       "APPROVED_INSPECTION": "This inspection has already been approved and synchronized.",

@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppButton } from '../app-button/app-button';
 
 @Component({
   selector: 'app-page-not-found',
   templateUrl: './page-not-found.html',
   styleUrls: ['./page-not-found.scss'],
-  imports: [TranslateModule, AppButton],
+  imports: [TranslateModule],
 })
 export class PageNotFound {
   public leaves = new Array(12).fill(0).map(() => ({

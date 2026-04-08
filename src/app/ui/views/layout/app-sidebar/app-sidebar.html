@@ -1,31 +1,57 @@
-<nav class="sidebar">
+<nav
+  class="w-[240px] h-screen flex flex-col p-0 overflow-hidden z-100 border-r border-solid bg-linear-to-b from-primary-container to-primary border-on-primary/6"
+>
   <!-- Brand -->
-  <div class="sidebar__brand">
-    <div class="sidebar__logo">
-      <img src="assets/images/logo.png" [alt]="'LAYOUT.SIDEBAR.BRAND_NAME' | translate" class="sidebar__logo-img">
+  <div
+    class="flex items-center gap-2.5 px-5 pt-5 pb-[18px] border-b border-solid border-on-primary/8"
+  >
+    <div class="w-10 h-10 flex items-center justify-center shrink-0">
+      <img
+        src="assets/images/logo.png"
+        [alt]="'LAYOUT.SIDEBAR.BRAND_NAME' | translate"
+        class="w-full h-full object-contain"
+      />
     </div>
-    <div class="sidebar__brand-text">
-      <span class="sidebar__brand-name">{{ 'LAYOUT.SIDEBAR.BRAND_NAME' | translate }}</span>
-      <span class="sidebar__brand-tagline">{{ 'LAYOUT.SIDEBAR.TAGLINE' | translate }}</span>
+    <div class="flex flex-col leading-[1.2]">
+      <span class="text-[13px] font-bold text-on-primary tracking-tight"
+        >{{ 'LAYOUT.SIDEBAR.BRAND_NAME' | translate }}</span
+      >
+      <span
+        class="text-[10px] font-normal text-on-primary/45 tracking-wider mt-0.5"
+        >{{ 'LAYOUT.SIDEBAR.TAGLINE' | translate }}</span
+      >
     </div>
   </div>
 
   <!-- Navigation -->
-  <ul class="sidebar__nav">
+  <ul class="list-none m-0 px-2 py-3 flex-1 overflow-y-auto">
     @for (item of navItems; track item.route) {
-    <li class="sidebar__nav-item">
-      <a [routerLink]="item.route" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
-        <span class="material-symbols-outlined sidebar__nav-icon">{{ item.icon }}</span>
-        <span class="sidebar__nav-label">{{ item.label | translate }}</span>
+    <li class="mb-0.5">
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="bg-on-primary/25 text-on-primary active-link"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-[10px] text-on-primary/70 no-underline text-[13px] font-medium transition-all duration-150 cursor-pointer hover:bg-on-primary/15 hover:text-on-primary group"
+      >
+        <span
+          class="material-symbols-outlined text-xl leading-none shrink-0 transition-colors duration-150 group-[.active-link]:fill-1"
+        >
+          {{ item.icon }}
+        </span>
+        <span class="whitespace-nowrap overflow-hidden text-ellipsis"
+          >{{ item.label | translate }}</span
+        >
       </a>
     </li>
     }
   </ul>
 
   <!-- Logout -->
-  <div class="sidebar__footer">
-    <button class="sidebar__cta sidebar__cta--logout" (click)="logout()">
-      <span class="material-symbols-outlined">logout</span>
+  <div class="px-4 pt-4 pb-5 border-t border-solid border-on-primary/8">
+    <button
+      class="flex items-center justify-center gap-1.5 w-full px-4 py-2.5 bg-error text-on-error border border-solid border-error rounded-[10px] text-[13px] font-semibold font-['Poppins'] cursor-pointer opacity-90 transition-all duration-150 hover:opacity-100 hover:-translate-y-px active:translate-y-0"
+      (click)="logout()"
+    >
+      <span class="material-symbols-outlined text-[18px]">logout</span>
       {{ 'LAYOUT.SIDEBAR.LOGOUT' | translate }}
     </button>
   </div>
