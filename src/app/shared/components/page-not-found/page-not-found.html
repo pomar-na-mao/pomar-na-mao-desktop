@@ -2,16 +2,16 @@
   <!-- Animated Background Elements -->
   <div class="decorations-container">
     @for (leaf of leaves; track $index) {
-      <span
-        class="material-symbols-outlined leaf"
-        [style.left]="leaf.left"
-        [style.animation-delay]="leaf.animationDelay"
-        [style.animation-duration]="leaf.duration"
-        [style.font-size]="leaf.size"
-        [style.opacity]="leaf.opacity"
-      >
-        eco
-      </span>
+    <span
+      class="material-symbols-outlined leaf"
+      [style.left]="leaf.left"
+      [style.animation-delay]="leaf.animationDelay"
+      [style.animation-duration]="leaf.duration"
+      [style.font-size]="leaf.size"
+      [style.opacity]="leaf.opacity"
+    >
+      eco
+    </span>
     }
   </div>
 
@@ -23,22 +23,25 @@
       </div>
 
       <div class="text-content">
-        <h1 class="not-found-title">{{ 'PAGES.NOT_FOUND.TITLE' | translate }}</h1>
-        <p class="not-found-subtitle">{{ 'PAGES.NOT_FOUND.SUBTITLE' | translate }}</p>
+        <h1 class="not-found-title">
+          {{ 'PAGES.NOT_FOUND.TITLE' | translate }}
+        </h1>
+        <p class="not-found-subtitle">
+          {{ 'PAGES.NOT_FOUND.SUBTITLE' | translate }}
+        </p>
       </div>
 
       <div class="not-found-actions">
-        <app-button
-          [label]="'PAGES.NOT_FOUND.GO_HOME' | translate"
-          (click)="goToDashboard()"
-          [fullWidth]="true"
-        ></app-button>
+        <button class="back-link" (click)="goToDashboard()">
+          {{ 'PAGES.NOT_FOUND.GO_HOME' | translate }}
+        </button>
       </div>
     </div>
   </div>
 
   <div class="footer-hint">
-    <span class="material-symbols-outlined">help_center</span>
-    {{ 'PAGES.HOME.TITLE' | translate }} — {{ 'PAGES.HOME.DESCRIPTION' | translate }}
+    <span class="material-symbols-outlined">help</span>
+    {{ 'PAGES.HOME.TITLE' | translate }} — {{ 'PAGES.HOME.DESCRIPTION' |
+    translate }}
   </div>
 </div>

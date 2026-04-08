@@ -8,7 +8,7 @@
           <h2
             class="text-3xl font-headline font-extrabold text-on-surface tracking-tight"
           >
-            {{ 'PAGES.SYNCS.INSPECTION_ID' | translate: { id:
+            {{ 'PAGES.SYNCS.ANNOTATION_ID' | translate: { id:
             selectedAnnotation()?.id?.slice(0, 8) ?? '-' } }}
           </h2>
         </div>
@@ -30,15 +30,6 @@
       class="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 p-8 border border-outline-variant/10"
     >
       <div class="flex flex-col gap-4 mb-8">
-        <div class="flex justify-between items-start">
-          <div>
-            <h3 class="text-2xl font-headline font-bold text-primary">
-              ANN-{{ selectedAnnotation()!.id.slice(0, 8) }}
-            </h3>
-          </div>
-        </div>
-
-
         <div class="flex flex-wrap gap-2 pt-2">
           @if (inspectRoutineSyncViewModel.isLoading()) {
           <div

@@ -10,24 +10,21 @@
   justify-content: center;
   z-index: 9999;
   overflow: hidden;
-  background: radial-gradient(circle at center, #1e1b4b 0%, #000000 100%);
+  background: radial-gradient(circle at center, var(--color-primary-container) 0%, #0a1a0b 100%);
 
-  // Pattern overlay
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    );
     background-size: 32px 32px;
     pointer-events: none;
   }
 }
 
-// ─── DECORATIONS ─────────────────────────────────────────────────────────────
-.decorations {
-}
-
-// ─── GLASS CARD ──────────────────────────────────────────────────────────────
 .main-content {
   position: relative;
   z-index: 10;
@@ -44,7 +41,7 @@
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 
+  box-shadow:
     0 30px 60px -12px rgba(0, 0, 0, 0.6),
     inset 0 1px 1px rgba(255, 255, 255, 0.1);
   transform-style: preserve-3d;
@@ -59,10 +56,10 @@
   font-size: 110px;
   font-weight: 900;
   line-height: 1;
-  background: linear-gradient(135deg, #ffffff 30%, #4f46e5 100%);
+  background: linear-gradient(135deg, #ffffff 30%, var(--color-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 15px rgba(79, 70, 229, 0.3));
+  filter: drop-shadow(0 0 15px color-mix(in srgb, var(--color-primary), transparent 70%));
   letter-spacing: -6px;
   position: relative;
   z-index: 2;
@@ -75,7 +72,11 @@
   transform: translate(-50%, -50%);
   width: 140px;
   height: 140px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-primary), transparent 75%) 0%,
+    transparent 70%
+  );
   filter: blur(20px);
   z-index: 1;
 }
@@ -106,25 +107,24 @@
   position: relative;
 }
 
-// Pre-existing app-button overrides for this specific view
-:host ::ng-deep app-button {
-  width: 100%;
-  
-  button {
-    height: 56px;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
-    font-size: 16px !important;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    
-    &:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 12px 24px rgba(79, 70, 229, 0.45) !important;
-    }
+.back-link {
+  color: #ffffff;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: all 0.3s;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.8;
   }
 }
 
-// ─── FOOTER INFO ─────────────────────────────────────────────────────────────
 .footer-hint {
   position: absolute;
   bottom: 32px;
