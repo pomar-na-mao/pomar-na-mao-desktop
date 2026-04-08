@@ -1,10 +1,11 @@
-import { MapPolygonSelectorComponent, type PolygonSelection } from '../../components/mass-inclusion/map-polygon-selector/map-polygon-selector';
+import { MapPolygonSelectorComponent } from '../../components/mass-inclusion/map-polygon-selector/map-polygon-selector';
 import { MassInclusionMapFiltersComponent } from '../../components/mass-inclusion/mass-inclusion-map-filters/mass-inclusion-map-filters';
 import { MassInclusionFormComponent } from '../../components/mass-inclusion/mass-inclusion-form/mass-inclusion-form';
 import { MassInclusionViewModel } from '../../view-models/mass-inclusion/mass-inclusion.view-model';
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
 
 @Component({
   selector: 'app-mass-inclusion',

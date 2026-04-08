@@ -12,6 +12,7 @@
       [zoom]="16"
       [backgroundPolygon]="massInclusionViewModel.backgroundPolygon()"
       [plants]="massInclusionViewModel.plants()"
+      [clearSignal]="massInclusionViewModel.clearMapSignal()"
       (polygonSelected)="onPolygonSelected($event)"
       (polygonCleared)="onPolygonCleared()"
     ></app-map-polygon-selector>

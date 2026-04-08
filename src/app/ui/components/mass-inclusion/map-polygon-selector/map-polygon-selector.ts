@@ -8,21 +8,14 @@ import {
     ElementRef,
     ViewChild,
     AfterViewInit,
+    OnChanges,
+    SimpleChanges,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
 import type { Plant } from '../../../../domain/models/plant-data.model';
-
-export interface PolygonCoordinate {
-    lat: number;
-    lng: number;
-}
-
-export interface PolygonSelection {
-    coordinates: PolygonCoordinate[];
-    geoJson: object;
-    area?: number;
-}
+import type { PolygonSelection } from '../../../../domain/models/mass-inclusion';
+import type { PolygonCoordinate } from '../../../../domain/models/mass-inclusion';
 
 @Component({
     selector: 'app-map-polygon-selector',
@@ -30,22 +23,29 @@ export interface PolygonSelection {
     templateUrl: './map-polygon-selector.html',
     styleUrls: ['./map-polygon-selector.scss'],
 })
-export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
+export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('mapContainer') mapContainer!: ElementRef;
 
     @Input() center: [number, number] = [-23.398772, -49.148646];
+
     @Input() zoom: number = 32;
+
     @Input() maxPolygons: number = 1;
+
     @Input() set plants(plants: Plant[]) {
         this._plants = plants;
         this.renderPlantCircles();
     }
+
+    @Input() clearSignal: number = 0;
+
     @Input() set backgroundPolygon(coords: [number, number][] | null) {
         this._backgroundPolygonCoords = coords;
         this.renderBackgroundPolygon();
     }
 
     @Output() polygonSelected = new EventEmitter<PolygonSelection>();
+
     @Output() polygonCleared = new EventEmitter<void>();
 
     private map!: L.Map;
@@ -70,10 +70,14 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
         this.initMap();
     }
 
-    public ngOnDestroy(): void {
-        if (this.map) {
-            this.map.remove();
+    public ngOnChanges(changes: SimpleChanges): void {
+        if (changes['clearSignal'] && !changes['clearSignal'].firstChange) {
+            this.clearAll();
         }
+    }
+
+    public ngOnDestroy(): void {
+        if (this.map) this.map.remove();
     }
 
     private initMap(): void {
@@ -85,7 +89,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
-            maxZoom: 19,
+            maxZoom: 24,
         }).addTo(this.map);
 
         this.map.on('click', (e: L.LeafletMouseEvent) => this.onMapClick(e));
@@ -143,6 +147,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
 
     public toggleDrawingMode(): void {
         this.drawingMode = !this.drawingMode;
+        if (!this.map) return;
         this.map.getContainer().style.cursor = this.drawingMode ? 'crosshair' : '';
 
         if (!this.drawingMode) {
@@ -275,6 +280,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
 
     public clearAll(): void {
         this.cancelDrawing();
+        if (!this.map) return;
         this.drawnLayers.forEach((l) => this.map.removeLayer(l));
         this.drawnLayers = [];
         this.polygons = [];
@@ -301,6 +307,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
 
     public copyCoordinates(): void {
         const text = JSON.stringify(this.selectedPolygonCoords, null, 2);
+
         navigator.clipboard.writeText(text).then(() => {
             this.copiedFeedback = true;
             setTimeout(() => (this.copiedFeedback = false), 2000);
@@ -309,7 +316,9 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnDestroy {
 
     public copyGeoJson(): void {
         if (this.polygons.length === 0) return;
+
         const text = JSON.stringify(this.polygons[this.polygons.length - 1].geoJson, null, 2);
+
         navigator.clipboard.writeText(text).then(() => {
             this.copiedFeedback = true;
             setTimeout(() => (this.copiedFeedback = false), 2000);

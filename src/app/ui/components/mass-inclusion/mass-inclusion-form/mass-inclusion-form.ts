@@ -14,11 +14,11 @@ import { MassInclusionViewModel } from '../../../view-models/mass-inclusion/mass
 export class MassInclusionFormComponent {
   public massInclusionViewModel = inject(MassInclusionViewModel);
 
-  public onSave(): void {
-    this.massInclusionViewModel.saveForm();
+  public onSaveMassInclusionData(): void {
+    this.massInclusionViewModel.onSaveMassInclusionDataHandler();
   }
 
-  public onClear(): void {
-    this.massInclusionViewModel.clearForm();
+  public onClearMassInclusionFormData(): void {
+    this.massInclusionViewModel.onClearMassInclusionFormDataHandler();
   }
 }

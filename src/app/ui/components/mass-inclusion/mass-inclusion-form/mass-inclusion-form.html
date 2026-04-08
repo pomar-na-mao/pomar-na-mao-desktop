@@ -11,8 +11,8 @@
   </div>
 
   <form
-    [formGroup]="massInclusionViewModel.form"
-    (ngSubmit)="onSave()"
+    [formGroup]="massInclusionViewModel.massInclusionDataForm"
+    (ngSubmit)="onSaveMassInclusionData()"
     class="flex lg:h-[calc(100%-5.75rem)] flex-col"
   >
     <div class="flex-1 space-y-4 lg:overflow-y-auto px-1.5">
@@ -27,7 +27,7 @@
       <app-select
         id="mass-occurrences"
         label="PAGES.MASS_INCLUSION.FORM.OCCURRENCES"
-        [value]="massInclusionViewModel.form.controls.occurrences.value"
+        [value]="massInclusionViewModel.massInclusionDataForm.controls.occurrences.value"
         [options]="massInclusionViewModel.occurrenceOptions()"
         [multiple]="true"
         [disabled]="!massInclusionViewModel.canEditForm()"
@@ -38,7 +38,7 @@
         id="mass-variety"
         label="PAGES.MASS_INCLUSION.FORM.VARIETY"
         placeholder="PAGES.MASS_INCLUSION.FORM.VARIETY_PLACEHOLDER"
-        [value]="massInclusionViewModel.form.controls.variety.value"
+        [value]="massInclusionViewModel.massInclusionDataForm.controls.variety.value"
         [options]="massInclusionViewModel.varietyOptions()"
         [disabled]="!massInclusionViewModel.canEditForm()"
         (valueChange)="massInclusionViewModel.onVarietyChange($event)"
@@ -49,14 +49,14 @@
         type="text"
         label="PAGES.MASS_INCLUSION.FORM.LIFE_OF_TREE"
         placeholder="PAGES.MASS_INCLUSION.FORM.LIFE_OF_TREE_PLACEHOLDER"
-        [control]="massInclusionViewModel.form.controls.lifeOfTree"
+        [control]="massInclusionViewModel.massInclusionDataForm.controls.lifeOfTree"
       />
 
       <app-input
         id="mass-planting-date"
         type="date"
         label="PAGES.MASS_INCLUSION.FORM.PLANTING_DATE"
-        [control]="massInclusionViewModel.form.controls.plantingDate"
+        [control]="massInclusionViewModel.massInclusionDataForm.controls.plantingDate"
       />
 
       <div>
@@ -81,15 +81,15 @@
         type="button"
         variant="ghost"
         [label]="'PAGES.MASS_INCLUSION.FORM.CLEAR' | translate"
-        [disabled]="!massInclusionViewModel.canEditForm()"
-        (click)="onClear()"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
+        (click)="onClearMassInclusionFormData()"
       />
       <app-button
         type="submit"
         variant="primary"
         [label]="'PAGES.MASS_INCLUSION.FORM.SAVE' | translate"
         [loading]="massInclusionViewModel.isSaving()"
-        [disabled]="!massInclusionViewModel.canEditForm()"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
       />
     </div>
   </form>

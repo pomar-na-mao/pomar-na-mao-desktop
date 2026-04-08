@@ -138,7 +138,9 @@
         "DESCRIPTION": "Descrição",
         "DESCRIPTION_PLACEHOLDER": "Adicione uma observação para esta inclusão.",
         "CLEAR": "Limpar",
-        "SAVE": "Salvar"
+        "SAVE": "Salvar",
+        "SAVE_SUCCESS": "Plantas atualizadas com sucesso!",
+        "SAVE_ERROR": "Erro ao atualizar as plantas. Tente novamente."
       }
     },
     "SYNCS": {
