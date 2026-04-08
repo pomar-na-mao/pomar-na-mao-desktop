@@ -147,6 +147,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
     public toggleDrawingMode(): void {
         this.drawingMode = !this.drawingMode;
+        if (!this.map) return;
         this.map.getContainer().style.cursor = this.drawingMode ? 'crosshair' : '';
 
         if (!this.drawingMode) {
@@ -279,6 +280,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
     public clearAll(): void {
         this.cancelDrawing();
+        if (!this.map) return;
         this.drawnLayers.forEach((l) => this.map.removeLayer(l));
         this.drawnLayers = [];
         this.polygons = [];

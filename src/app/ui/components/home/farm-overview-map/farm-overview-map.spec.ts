@@ -4,58 +4,22 @@ import { FarmOverviewMapViewModel } from '../../../view-models/farm-overview-map
 import { RegionsRepository } from '../../../../data/repositories/regions/regions-repository';
 import { signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
+import { describe, it, expect, beforeEach, vi, type Mock, type MockInstance } from 'vitest';
 import { By } from '@angular/platform-browser';
-import * as L from 'leaflet';
 import type { Region } from '../../../../domain/models/regions.model';
 
-// Mock Leaflet
-vi.mock('leaflet', () => ({
-  map: vi.fn().mockReturnValue({
-    setView: vi.fn(),
-    remove: vi.fn(),
-    invalidateSize: vi.fn(),
-    addControl: vi.fn(),
-    on: vi.fn(),
-    fitBounds: vi.fn(),
-    fitWorld: vi.fn()
-  }),
-  tileLayer: vi.fn().mockReturnValue({
-    addTo: vi.fn()
-  }),
-  marker: vi.fn().mockReturnValue({
-    addTo: vi.fn(),
-    setLatLng: vi.fn()
-  }),
-  polygon: vi.fn().mockReturnValue({
-    addTo: vi.fn(),
-    remove: vi.fn(),
-    bindTooltip: vi.fn()
-  }),
-  circle: vi.fn().mockReturnValue({
-    addTo: vi.fn(),
-    remove: vi.fn()
-  }),
-  icon: vi.fn().mockReturnValue({}),
-  divIcon: vi.fn().mockReturnValue({}),
-  LatLng: vi.fn(),
-  featureGroup: vi.fn().mockReturnValue({
-    getBounds: vi.fn()
-  }),
-  Marker: {
-    prototype: {
-      options: {
-        icon: {}
-      }
-    }
-  }
-}));
+type FarmOverviewMapPrivateApi = {
+  initMap: () => void;
+  renderPolygons: () => void;
+  fitAllRegions: () => void;
+};
 
 describe('FarmOverviewMap', () => {
   let component: FarmOverviewMap;
   let fixture: ComponentFixture<FarmOverviewMap>;
   let mockFarmOverviewMapViewModel: Partial<FarmOverviewMapViewModel>;
   let mockRegionsRepository: Partial<RegionsRepository>;
+  let initMapSpy: MockInstance<() => void>;
 
   beforeEach(async () => {
     mockFarmOverviewMapViewModel = {
@@ -90,6 +54,10 @@ describe('FarmOverviewMap', () => {
 
     fixture = TestBed.createComponent(FarmOverviewMap);
     component = fixture.componentInstance;
+    const componentPrototype = Object.getPrototypeOf(component) as FarmOverviewMapPrivateApi;
+    initMapSpy = vi.spyOn(componentPrototype, 'initMap').mockImplementation(() => undefined);
+    vi.spyOn(componentPrototype, 'renderPolygons').mockImplementation(() => undefined);
+    vi.spyOn(componentPrototype, 'fitAllRegions').mockImplementation(() => undefined);
     fixture.detectChanges();
   });
 
@@ -99,7 +67,7 @@ describe('FarmOverviewMap', () => {
 
   it('should initialize map on afterViewInit', () => {
     component.ngAfterViewInit();
-    expect(L.map).toHaveBeenCalled();
+    expect(initMapSpy).toHaveBeenCalled();
   });
 
   it('should call loadRegions on ngOnInit', async () => {

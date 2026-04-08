@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { EMPTY_MASS_INCLUSION_DATA, type MassInclusionCoordinate, type MassInclusionData, type MassUpdatePlantsParams, type MassUpdatePlantsResult, type PolygonCoordinate } from "../../../domain/models/mass-inclusion";
+import { EMPTY_MASS_INCLUSION_DATA, type MassInclusionCoordinate, type MassInclusionData, type MassUpdatePlantsParams, type MassUpdatePlantsResult } from "../../../domain/models/mass-inclusion";
 import { MassInclusionService } from "../../services/mass-inclusion/mass-inclusion.service";
 
 @Injectable({

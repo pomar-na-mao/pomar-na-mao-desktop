@@ -8,7 +8,7 @@ import { RegionsRepository } from "../../../data/repositories/regions/regions-re
 import {
   MassInclusionRepository,
 } from "../../../data/repositories/mass-inclusion/mass-inclusion.repository";
-import type { MassInclusionData, MassInclusionFormValue, MassInclusionInfo, PolygonCoordinate, PolygonSelection } from "../../../domain/models/mass-inclusion";
+import type { MassInclusionData, MassInclusionFormValue, PolygonCoordinate, PolygonSelection } from "../../../domain/models/mass-inclusion";
 import type { BooleanKeys, Plant } from "../../../domain/models/plant-data.model";
 import type { Region } from "../../../domain/models/regions.model";
 import type { AppSelectOption } from "../../../shared/components";
@@ -243,20 +243,15 @@ export class MassInclusionViewModel {
 
     this.massInclusionRepository.saveMassInclusionData(massInclusionFormData);
 
-    const massInclusionInfo: MassInclusionInfo = {
-      massInclusionData: massInclusionFormData,
-      coordinates: this.selectedPolygonCoordinates(),
-    };
-
     this.isSaving.set(true);
     try {
-      const { data, error } = await this.massInclusionRepository.massUpdatePlantsInPolygon({
-        coordinates: massInclusionInfo.coordinates,
-        occurrences: massInclusionInfo.massInclusionData.occurrences,
-        variety: massInclusionInfo.massInclusionData.variety || null,
-        lifeOfTree: massInclusionInfo.massInclusionData.lifeOfTree || null,
-        plantingDate: massInclusionInfo.massInclusionData.plantingDate || null,
-        description: massInclusionInfo.massInclusionData.description || null,
+      const { error } = await this.massInclusionRepository.massUpdatePlantsInPolygon({
+        coordinates: this.selectedPolygonCoordinates(),
+        occurrences: massInclusionFormData.occurrences,
+        variety: massInclusionFormData.variety || null,
+        lifeOfTree: massInclusionFormData.lifeOfTree || null,
+        plantingDate: massInclusionFormData.plantingDate || null,
+        description: massInclusionFormData.description || null,
       });
 
       if (error) {

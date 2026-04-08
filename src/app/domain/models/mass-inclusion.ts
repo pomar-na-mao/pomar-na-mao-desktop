@@ -40,11 +40,6 @@ export const EMPTY_MASS_INCLUSION_DATA: MassInclusionData = {
     description: '',
 };
 
-export interface MassInclusionInfo {
-    massInclusionData: MassInclusionFormValue,
-    coordinates: PolygonCoordinate[]
-}
-
 export interface MassUpdatePlantsParams {
     coordinates: PolygonCoordinate[];
     occurrences?: string[];

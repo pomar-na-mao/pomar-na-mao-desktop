@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { injectSupabase } from '../supabase';
-import type { MassUpdatePlantsParams, MassUpdatePlantsResult, PolygonCoordinate } from '../../../domain/models/mass-inclusion';
+import type { MassUpdatePlantsParams, MassUpdatePlantsResult } from '../../../domain/models/mass-inclusion';
 
 
 @Injectable({
