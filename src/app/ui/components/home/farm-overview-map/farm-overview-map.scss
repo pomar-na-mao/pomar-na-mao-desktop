@@ -16,7 +16,9 @@
     flex-wrap: wrap;
     gap: 12px;
     align-items: end;
-    height: 80px;
+    min-height: 80px;
+    position: relative;
+    z-index: 10;
 
     app-select {
       flex: 1 1 240px;
