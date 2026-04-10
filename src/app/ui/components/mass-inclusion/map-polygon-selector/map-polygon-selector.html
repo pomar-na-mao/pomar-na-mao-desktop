@@ -199,5 +199,16 @@
         </div>
       }
     </div>
+    
+    @if (drawingMode && pointsCount > 0){
+      <div class="points-list">
+        @for (point of activePoints; track point; let i = $index) {
+          <div class="point-item">
+            <span class="point-index">{{ i + 1 }}</span>
+            <span class="point-coords">{{ point.lat.toFixed(6) }}, {{ point.lng.toFixed(6) }}</span>
+          </div>
+        }
+      </div>
+    }
   }
 </div>
