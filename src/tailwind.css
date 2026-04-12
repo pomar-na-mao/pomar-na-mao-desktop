@@ -32,10 +32,12 @@
   --color-success: #166534;
   --color-success-container: #dcfce7;
   --color-on-success: #ffffff;
+  --color-on-success-container: #14532d;
 
   --color-warn: #d97706;
   --color-warn-container: #fef3c7;
   --color-on-warn: #ffffff;
+  --color-on-warn-container: #78350f;
 
   --color-info: #0369a1;
   --color-info-container: #e0f2fe;
@@ -66,6 +68,88 @@
   --font-label: "Inter", sans-serif;
 
   --radius-xl: 0.75rem;
+
+  /* Sidebar defaults (light theme) */
+  --color-sidebar-bg-from: #3d5a3e;
+  --color-sidebar-bg-to: #2b4c2c;
+  --color-on-sidebar: #ffffff;
+  --color-on-sidebar-muted: rgba(255, 255, 255, 0.65);
+  --color-on-sidebar-border: rgba(255, 255, 255, 0.10);
+  --color-sidebar-hover: rgba(255, 255, 255, 0.12);
+  --color-sidebar-active: rgba(255, 255, 255, 0.22);
+}
+
+/* Dark Theme Overrides */
+@layer base {
+  :root.dark {
+    /* ── Backgrounds ──────────────────────────────────── */
+    --color-background: #0f110f;
+    --color-on-background: #e0e3e0;
+
+    /* ── Surfaces (progressively darker, higher elevation = lighter) ── */
+    --color-surface: #151815;           /* page/canvas */
+    --color-on-surface: #e0e3e0;
+    --color-on-surface-variant: #b0b5b0;
+    --color-surface-bright: #2e312e;    /* elevated elements (buttons, inputs) */
+    --color-surface-dim: #0f110f;
+    --color-surface-container-lowest: #0a0c0a;
+    --color-surface-container-low: #1a1d1a;   /* card subtle bg */
+    --color-surface-container: #202320;       /* card default bg */
+    --color-surface-container-high: #272a27;  /* card elevated */
+    --color-surface-container-highest: #2e312e;
+
+    /* ── Borders ──────────────────────────────────────── */
+    --color-outline: #5a5f5a;
+    --color-outline-variant: #333633;
+
+    /* ── Primary (inverted for dark — use a lighter shade) ─────────── */
+    --color-primary: #7ec882;
+    --color-primary-container: #1a3d1b;
+    --color-on-primary: #002108;
+    --color-on-primary-container: #a8edac;
+
+    /* ── Secondary ────────────────────────────────────── */
+    --color-secondary: #ffb58a;
+    --color-secondary-container: #5a2800;
+    --color-on-secondary: #3d1100;
+    --color-on-secondary-container: #ffdcc8;
+
+    /* ── Tertiary ─────────────────────────────────────── */
+    --color-tertiary: #bed17d;
+    --color-tertiary-container: #2e3d00;
+    --color-on-tertiary: #1e2900;
+    --color-on-tertiary-container: #d9ee97;
+
+    /* ── Semantic colors ──────────────────────────────── */
+    --color-error: #ff897d;
+    --color-error-container: #4a0e0e;
+    --color-on-error: #3b0808;
+    --color-on-error-container: #ffd3ce;
+
+    --color-success: #6ee78f;
+    --color-success-container: #0a2e18;
+    --color-on-success: #002111;
+    --color-on-success-container: #a0f5c0;
+
+    --color-warn: #ffcc70;
+    --color-warn-container: #3d2700;
+    --color-on-warn: #2b1a00;
+    --color-on-warn-container: #ffe5a4;
+
+    --color-info: #69c9f5;
+    --color-info-container: #003549;
+    --color-on-info: #001e2f;
+    --color-on-info-container: #b8e9ff;
+
+    /* ── Sidebar – keeps the dark forest green brand identity ── */
+    --color-sidebar-bg-from: #1a2e1b;
+    --color-sidebar-bg-to: #0f1e10;
+    --color-on-sidebar: #d5e8d6;
+    --color-on-sidebar-muted: rgba(213, 232, 214, 0.55);
+    --color-on-sidebar-border: rgba(213, 232, 214, 0.10);
+    --color-sidebar-hover: rgba(213, 232, 214, 0.12);
+    --color-sidebar-active: rgba(213, 232, 214, 0.20);
+  }
 }
 
 /*
@@ -83,5 +167,18 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+  }
+
+  /* Sidebar nav link hover / active states */
+  .sidebar-nav-link {
+    color: var(--color-on-sidebar-muted) !important;
+  }
+  .sidebar-nav-link:hover {
+    background: var(--color-sidebar-hover);
+    color: var(--color-on-sidebar) !important;
+  }
+  .sidebar-nav-link.active-nav-link {
+    background: var(--color-sidebar-active);
+    color: var(--color-on-sidebar) !important;
   }
 }

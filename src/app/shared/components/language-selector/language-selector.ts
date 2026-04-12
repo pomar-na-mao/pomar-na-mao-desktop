@@ -52,18 +52,19 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         width: 36px;
         height: 36px;
         padding: 0;
-        border: none;
+        border: 1px solid var(--color-outline-variant);
         border-radius: 50%;
-        background: #e0e7ff;
+        background: var(--color-surface-container-high);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        transition: opacity 0.15s ease;
+        transition: all 0.2s ease;
 
         &:hover {
-          opacity: 0.85;
+          background: var(--color-primary-container);
+          border-color: var(--color-primary);
         }
       }
 
@@ -77,12 +78,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         position: absolute;
         top: calc(100% + 12px);
         right: 0;
-        background: white;
+        background: var(--color-surface-container-highest);
         border-radius: 12px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        border: 1px solid #f3f4f6;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--color-outline-variant);
         padding: 8px;
-        min-width: 160px;
+        min-width: 170px;
         z-index: 100;
         display: flex;
         flex-direction: column;
@@ -101,22 +102,24 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         gap: 12px;
         padding: 10px 12px;
         border-radius: 8px;
-        border: none;
+        border: 1px solid transparent;
         background: transparent;
         cursor: pointer;
         font-size: 14px;
         font-weight: 500;
-        color: #374151;
+        color: var(--color-on-surface);
         text-align: left;
-        transition: background 0.15s ease;
+        transition: all 0.15s ease;
 
         &:hover {
-          background: #f9fafb;
+          background: var(--color-surface-container-high);
+          border-color: var(--color-outline-variant);
         }
 
         &--active {
-          background: #f0f4ff;
-          color: #6366f1;
+          background: var(--color-primary-container);
+          color: var(--color-on-primary-container);
+          border-color: var(--color-primary);
         }
       }
 
@@ -125,7 +128,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         height: 24px;
         border-radius: 50%;
         object-fit: cover;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--color-outline-variant);
       }
 
       &__backdrop {

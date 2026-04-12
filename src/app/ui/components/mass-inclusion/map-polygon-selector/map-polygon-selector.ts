@@ -11,12 +11,15 @@ import {
     OnChanges,
     SimpleChanges,
     HostListener,
+    inject,
+    effect,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
 import type { Plant } from '../../../../domain/models/plant-data.model';
 import type { PolygonSelection } from '../../../../domain/models/mass-inclusion';
 import type { PolygonCoordinate } from '../../../../domain/models/mass-inclusion';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
 
 @Component({
     selector: 'app-map-polygon-selector',
@@ -26,6 +29,8 @@ import type { PolygonCoordinate } from '../../../../domain/models/mass-inclusion
 })
 export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('mapContainer') mapContainer!: ElementRef;
+
+    private themeService = inject(ThemeService);
 
     @Input() center: [number, number] = [-23.398772, -49.148646];
 
@@ -100,6 +105,10 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
             attribution: '© OpenStreetMap contributors',
             maxZoom: 24,
         }).addTo(this.map);
+
+        // Apply dark filter if theme is dark
+        const isDark = this.themeService.currentTheme() === 'dark';
+        this.mapContainer.nativeElement.classList.toggle('map-dark', isDark);
 
         this.map.on('click', (e: L.LeafletMouseEvent) => this.onMapClick(e));
         this.map.on('mousemove', (e: L.LeafletMouseEvent) => this.onMouseMove(e));

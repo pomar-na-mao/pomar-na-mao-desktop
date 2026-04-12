@@ -66,7 +66,7 @@
   <button
     [disabled]="selectedAnnotation()?.is_approved || inspectRoutineSyncViewModel.isApproving()"
     (click)="inspectRoutineSyncViewModel.onApproveInspectAnnotation(selectedAnnotation()?.id!)"
-    class="flex items-center justify-center gap-2 py-4 bg-linear-to-br from-primary to-primary-container text-white rounded-2xl font-headline font-bold shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-95 disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100 disabled:cursor-not-allowed transition-all text-sm"
+    class="flex items-center justify-center gap-2 py-4 bg-linear-to-br from-primary to-primary-container text-white rounded-2xl font-headline font-bold transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02] active:scale-95 cursor-pointer disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100 disabled:cursor-not-allowed text-sm"
   >
     @if (inspectRoutineSyncViewModel.isApproving()) {
     <div

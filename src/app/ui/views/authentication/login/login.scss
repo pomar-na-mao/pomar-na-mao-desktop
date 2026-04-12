@@ -181,7 +181,7 @@
 .form-panel {
   width: 40%;
   min-height: 100vh;
-  background: #f8fafc;
+  background: var(--color-background);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,7 +194,7 @@
     left: 0;
     width: 6px;
     height: 100%;
-    background: linear-gradient(180deg, #22c55e 0%, #10b981 50%, #0d9488 100%);
+    background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     opacity: 0.8;
   }
 }
@@ -219,24 +219,24 @@
 .form-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #16a34a, #059669);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 0.25rem;
-  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 
   .material-symbols-outlined {
     font-size: 24px;
-    color: #fff;
+    color: var(--color-on-primary);
   }
 }
 
 .form-title {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-on-background);
   margin: 0;
   letter-spacing: -0.01em;
   line-height: 1.2;
@@ -244,15 +244,16 @@
 
 .form-subtitle {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--color-on-background);
+  opacity: 0.7;
   margin: 0;
   line-height: 1.5;
 }
 
 /* Form Card */
 .form-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
   border-radius: 16px;
   padding: 2rem;
   box-shadow:

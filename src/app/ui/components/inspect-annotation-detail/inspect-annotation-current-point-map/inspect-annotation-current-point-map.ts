@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, computed, inject, Input, OnChanges, OnDestroy, PLATFORM_ID, signal, SimpleChanges, effect } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, Input, OnChanges, OnDestroy, PLATFORM_ID, signal, SimpleChanges, effect, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
 import { InspectAnnotationRepository } from '../../../../data/repositories/inspect-annotation/inspect-annotation-repository';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
 
 @Component({
   selector: 'app-inspect-annotation-current-point-map',
@@ -18,6 +19,8 @@ export class InspectAnnotationCurrentPointMap implements AfterViewInit, OnChange
 
   private platformId = inject(PLATFORM_ID);
   private repository = inject(InspectAnnotationRepository);
+  private themeService = inject(ThemeService);
+  private elRef = inject(ElementRef);
 
   private map?: L.Map;
   private mapReady = signal(false);
@@ -55,6 +58,14 @@ export class InspectAnnotationCurrentPointMap implements AfterViewInit, OnChange
 
       this.focusAnnotation(coords);
     });
+
+    effect(() => {
+      const isDark = this.themeService.currentTheme() === 'dark';
+      const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
+      if (container) {
+        container.classList.toggle('map-dark', isDark);
+      }
+    });
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -84,6 +95,11 @@ export class InspectAnnotationCurrentPointMap implements AfterViewInit, OnChange
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(this.map);
+
+    // Initial dark state
+    const isDark = this.themeService.currentTheme() === 'dark';
+    const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
+    if (container) container.classList.toggle('map-dark', isDark);
 
     const defaultIcon = L.icon({
       iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',

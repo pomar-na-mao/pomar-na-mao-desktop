@@ -30,15 +30,15 @@
   }
 
   &--vigor {
-    background: #eff6ff;
+    background: var(--color-info-container);
     .material-symbols-outlined {
-      color: #3b82f6;
+      color: var(--color-on-info-container);
     }
   }
   &--progress {
-    background: #fff7ed;
+    background: var(--color-warn-container);
     .material-symbols-outlined {
-      color: #f97316;
+      color: var(--color-on-warn-container);
     }
   }
 }
@@ -57,7 +57,7 @@
   font-weight: 600;
 
   &--positive {
-    color: #22c55e;
+    color: var(--color-success);
   }
 }
 
@@ -71,8 +71,8 @@
   margin-bottom: 4px;
 
   &--healthy {
-    background: #dcfce7;
-    color: #166534;
+    background: var(--color-success-container);
+    color: var(--color-on-success-container);
   }
 }
 
@@ -80,27 +80,27 @@
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: #9ca3af;
+  color: var(--color-on-surface-variant);
   text-transform: uppercase;
 }
 
 .stat-card__value {
   font-size: 24px;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-on-surface);
   line-height: 1.2;
   margin: 2px 0;
 }
 
 .stat-card__sub {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--color-on-surface-variant);
   margin-top: 2px;
 }
 
 .stat-card__progress-bar {
   height: 5px;
-  background: #f1f3f5;
+  background: var(--color-surface-container-low);
   border-radius: 9999px;
   overflow: hidden;
   margin: 6px 0 2px;
@@ -108,11 +108,11 @@
 
 .stat-card__progress-fill {
   height: 100%;
-  background: #3b82f6;
+  background: var(--color-primary);
   border-radius: 9999px;
 
   &--orange {
-    background: #f97316;
+    background: var(--color-secondary);
   }
 }
 
@@ -132,20 +132,20 @@
 .dashboard__section-title {
   font-size: 16px;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-on-surface);
   margin: 0 0 2px;
 }
 
 .dashboard__section-sub {
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--color-on-surface-variant);
   margin: 0;
 }
 
 .dashboard__view-all {
   font-size: 12px;
   font-weight: 600;
-  color: #6366f1;
+  color: var(--color-primary);
   text-decoration: none;
 
   &:hover {
@@ -162,17 +162,17 @@
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.05em;
-    color: #9ca3af;
+    color: var(--color-on-surface-variant);
     text-transform: uppercase;
     padding: 0 12px 10px 0;
     text-align: left;
-    border-bottom: 1px solid #f1f3f5;
+    border-bottom: 1px solid var(--color-outline-variant);
   }
 
   td {
     padding: 12px 12px 12px 0;
-    color: #374151;
-    border-bottom: 1px solid #f9fafb;
+    color: var(--color-on-surface);
+    border-bottom: 1px solid var(--color-surface-container-low);
     vertical-align: middle;
   }
 
@@ -183,9 +183,9 @@
 
 .table__id {
   font-weight: 600;
-  font-family: monospace;
+  font-family: var(--font-label);
   font-size: 12px;
-  color: #6366f1;
+  color: var(--color-primary);
 }
 
 .table__user {
@@ -198,8 +198,8 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #e0e7ff;
-  color: #4f46e5;
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
   font-size: 10px;
   font-weight: 700;
   display: inline-flex;
@@ -208,17 +208,17 @@
   flex-shrink: 0;
 
   &--b {
-    background: #fce7f3;
-    color: #be185d;
+    background: var(--color-secondary-container);
+    color: var(--color-on-secondary-container);
   }
   &--c {
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--color-tertiary-container);
+    color: var(--color-on-tertiary-container);
   }
 }
 
 .table__time {
-  color: #9ca3af;
+  color: var(--color-on-surface-variant);
   font-size: 12px;
   white-space: nowrap;
 }
@@ -232,15 +232,15 @@
   border-radius: 6px;
 
   &--optimal {
-    background: #dcfce7;
-    color: #166534;
+    background: var(--color-success-container);
+    color: var(--color-on-success-container);
   }
   &--moderate {
-    background: #fef9c3;
-    color: #854d0e;
+    background: var(--color-warn-container);
+    color: var(--color-on-warn-container);
   }
   &--alert {
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--color-error-container);
+    color: var(--color-on-error-container);
   }
 }

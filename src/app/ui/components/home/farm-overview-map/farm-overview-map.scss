@@ -37,7 +37,7 @@
 
 .leaflet-container {
   font-family: inherit;
-  background-color: #f8fafc;
+  background-color: var(--color-surface-container-low);
 }
 
 .leaflet-control-zoom {
@@ -47,8 +47,8 @@
 
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  background-color: #ffffff !important;
-  color: #64748b !important;
+  background-color: var(--color-surface-bright) !important;
+  color: var(--color-on-surface-variant) !important;
   border: none !important;
 }
 
@@ -74,7 +74,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #ef4444;
+  color: var(--color-error);
 
   .material-symbols-outlined {
     font-size: 32px;
@@ -87,7 +87,7 @@
     position: absolute;
     width: 24px;
     height: 24px;
-    background: rgba(239, 68, 68, 0.4);
+    background: color-mix(in srgb, var(--color-error) 40%, transparent);
     border-radius: 50%;
     animation: pulse 2s infinite;
     z-index: 1;
@@ -110,12 +110,12 @@
 }
 
 .region-tooltip {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #4ade80;
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  border: 1px solid var(--color-outline-variant);
   border-radius: 4px;
   padding: 2px 8px;
   font-weight: 600;
-  color: #166534;
+  color: var(--color-on-surface);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   pointer-events: none;
 
