@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { PlantsService } from './plants-service';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase';
-import type { Plant } from '../../../domain/models/plant-data.model';
+import type { PlantInsert } from '../../../domain/models/plant-data.model';
 
 describe('PlantsService', () => {
   let service: PlantsService;
@@ -116,7 +116,7 @@ describe('PlantsService', () => {
 
   describe('insert', () => {
     it('should call insert, select, and single', async () => {
-      const plant = { id: '1', variety: 'Apple' } as Plant;
+      const plant = { id: '1', variety: 'Apple' } as PlantInsert;
       const mockResponse = { data: plant, error: null };
       const single = vi.fn().mockResolvedValue(mockResponse);
       const select = vi.fn().mockReturnValue({ single });

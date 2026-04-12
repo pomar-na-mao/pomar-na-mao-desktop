@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { PlantsRepository } from './plants-repository';
 import { PlantsService } from '../../services/plants/plants-service';
-import type { Plant } from '../../../domain/models/plant-data.model';
+import type { Plant, PlantInsert } from '../../../domain/models/plant-data.model';
 
 describe('PlantsRepository', () => {
   let repo: PlantsRepository;
@@ -80,7 +80,7 @@ describe('PlantsRepository', () => {
   });
 
   it('insert should add plant to signal', async () => {
-    const newPlant = { id: '3', variety: 'Orange' } as Plant;
+    const newPlant = { id: '3', variety: 'Orange' } as PlantInsert;
     mockInsert.mockResolvedValue({ data: newPlant, error: null });
 
     await repo.insert(newPlant);
