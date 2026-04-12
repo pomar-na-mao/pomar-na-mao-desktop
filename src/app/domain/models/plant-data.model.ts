@@ -33,6 +33,12 @@ export interface Plant {
   updated_at: string;
 }
 
+export type NullablePlant<T> = {
+  [K in keyof T]: T[K] | null;
+};
+
+export type PlantInsert = Partial<NullablePlant<Plant>>;
+
 export interface PlantData {
   id: string;
   created_at: string;

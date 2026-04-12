@@ -120,24 +120,18 @@
               (click)="onEditAnnotation(annotation?.id!)"
               class="cursor-pointer inline-flex h-8 items-center justify-center rounded-full text-primary transition-all opacity-80 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-30 disabled:grayscale"
             >
-              <span class="material-symbols-outlined text-[20px]">edit</span>
+              <span class="material-symbols-outlined text-[20px]"
+                >{{ annotation.is_approved ? 'visibility' : 'edit' }}</span
+              >
             </button>
           </td>
         </tr>
         } @empty {
         <tr>
           <td colspan="5" class="py-12">
-            <div
-              class="flex flex-col items-center justify-center text-center opacity-40"
-            >
-              <span
-                class="material-symbols-outlined text-[48px] mb-2 text-slate-300"
-                >list_alt_off</span
-              >
-              <p class="text-[13px] font-medium text-slate-400">
-                {{ 'PAGES.SYNCS.NO_ANNOTATIONS' | translate }}
-              </p>
-            </div>
+            <p class="text-[13px] text-center font-medium text-slate-400">
+              {{ 'PAGES.SYNCS.NO_ANNOTATIONS' | translate }}
+            </p>
           </td>
         </tr>
         } }
