@@ -1,5 +1,4 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import type { PlantInsert } from '../../../domain/models/plant-data.model';
 import { NewPlantsRepository } from '../../../data/repositories/new-plants/new-plants-repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { MessageService } from '../../../data/services/message/message.service';
@@ -58,7 +57,7 @@ export class NewPlantsViewModel {
 
     try {
       const { error } = await this.newPlantsService.approveNewPlant(selectedNewPlant.id);
-      
+
       if (error) throw error;
 
       this.messageService.show('COMMON.TOAST.SUCCESS', 'success');

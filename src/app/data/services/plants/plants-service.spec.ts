@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { PlantsService } from './plants-service';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase';
-import type { Plant, PlantInsert } from '../../../domain/models/plant-data.model';
+import type { PlantInsert } from '../../../domain/models/plant-data.model';
 
 describe('PlantsService', () => {
   let service: PlantsService;
