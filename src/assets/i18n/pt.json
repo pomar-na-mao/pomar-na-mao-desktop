@@ -179,7 +179,8 @@
       "SEARCH_ARIA": "Buscar árvores e setores",
       "NOTIFICATIONS_ARIA": "Notificações",
       "HELP_ARIA": "Ajuda",
-      "PROFILE_ARIA": "Perfil do usuário"
+      "PROFILE_ARIA": "Perfil do usuário",
+      "THEME_TOGGLE_ARIA": "Alternar Tema"
     },
     "LANGUAGES": {
       "PT": "Português",

@@ -11,12 +11,14 @@ import {
     OnChanges,
     SimpleChanges,
     HostListener,
+    inject,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
 import type { Plant } from '../../../../domain/models/plant-data.model';
 import type { PolygonSelection } from '../../../../domain/models/mass-inclusion';
 import type { PolygonCoordinate } from '../../../../domain/models/mass-inclusion';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
 
 @Component({
     selector: 'app-map-polygon-selector',
@@ -26,6 +28,8 @@ import type { PolygonCoordinate } from '../../../../domain/models/mass-inclusion
 })
 export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('mapContainer') mapContainer!: ElementRef;
+
+    private themeService = inject(ThemeService);
 
     @Input() center: [number, number] = [-23.398772, -49.148646];
 
@@ -49,12 +53,12 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
     @Output() polygonCleared = new EventEmitter<void>();
 
-    @HostListener('window:keydown', ['$event']) handleKeyboardEvent(event: KeyboardEvent){
-            if (event.ctrlKey && event.key.toLowerCase() === 'z'){
-                event?.preventDefault();
-                this.undoLastPoint();
-            }
+    @HostListener('window:keydown', ['$event']) handleKeyboardEvent(event: KeyboardEvent) {
+        if (event.ctrlKey && event.key.toLowerCase() === 'z') {
+            event?.preventDefault();
+            this.undoLastPoint();
         }
+    }
 
     private map!: L.Map;
     private drawnLayers: L.Polygon[] = [];
@@ -93,13 +97,17 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
             center: this.center,
             zoom: this.zoom,
             zoomControl: true,
-        
+
         });
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 24,
         }).addTo(this.map);
+
+        // Apply dark filter if theme is dark
+        const isDark = this.themeService.currentTheme() === 'dark';
+        this.mapContainer.nativeElement.classList.toggle('map-dark', isDark);
 
         this.map.on('click', (e: L.LeafletMouseEvent) => this.onMapClick(e));
         this.map.on('mousemove', (e: L.LeafletMouseEvent) => this.onMouseMove(e));
@@ -299,7 +307,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
         this.polygonCleared.emit();
     }
 
-    public undoLastPoint(): void { 
+    public undoLastPoint(): void {
         if (this.tempPoints.length === 0) return;
 
         this.tempPoints.pop();
@@ -342,7 +350,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
         return this.selectedPolygonCoords.length > 0;
     }
 
-    get activePoints(): L.LatLng[]{
+    get activePoints(): L.LatLng[] {
         return [...this.tempPoints]
     }
 }

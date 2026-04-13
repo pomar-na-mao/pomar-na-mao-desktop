@@ -3,7 +3,6 @@ import { isLoggedGuard } from './core/guards/is-logged/is-logged.guard';
 import { PageNotFound } from './shared/components';
 import { AppLayout } from './ui/views/layout/layout';
 
-
 export const ROUTES: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {

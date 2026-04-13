@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, OnInit, inject, PLATFORM_ID, effect, signal } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit, inject, PLATFORM_ID, effect, signal, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
 import type { BooleanKeys, Plant } from '../../../../domain/models/plant-data.model';
@@ -8,6 +8,9 @@ import { getConvexHull } from '../../../../shared/utils/geolocation-math';
 import { getRandomColor } from '../../../../shared/utils/colors';
 import { FarmOverviewMapViewModel } from '../../../view-models/farm-overview-map/farm-overview-map.view-model';
 import { RegionsRepository } from '../../../../data/repositories/regions/regions-repository';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
+
+const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
 @Component({
   selector: 'app-farm-overview-map',
@@ -17,12 +20,15 @@ import { RegionsRepository } from '../../../../data/repositories/regions/regions
 })
 export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
   private map?: L.Map;
+  private tileLayer?: L.TileLayer;
   private regionPolygons: Map<string, L.Polygon> = new Map();
   private plantCircles: L.Circle[] = [];
   private assignedColors: Map<string, string> = new Map();
   private platformId = inject(PLATFORM_ID);
+  private elRef = inject(ElementRef);
   public farmOverviewMapViewModel = inject(FarmOverviewMapViewModel);
   private regionsRepository = inject(RegionsRepository);
+  private themeService = inject(ThemeService);
 
   public selectedRegionId = signal('');
   public selectedOccurrenceKey = signal<BooleanKeys | ''>('');
@@ -60,6 +66,15 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       this.renderPlantCircles(this.farmOverviewMapViewModel.plants());
     });
+
+    // Reactively toggle 'map-dark' class on map container
+    effect(() => {
+      const isDark = this.themeService.currentTheme() === 'dark';
+      const container = this.elRef.nativeElement.querySelector('#map') as HTMLElement | null;
+      if (container) {
+        container.classList.toggle('map-dark', isDark);
+      }
+    });
   }
 
   async ngOnInit() {
@@ -95,6 +110,15 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
   public onVarietyChange(variety: string | string[]): void {
     const value = Array.isArray(variety) ? variety[0] : variety;
     this.selectedVariety.set(value);
+  }
+
+  private initTileLayer(): void {
+    if (!this.map) return;
+    this.tileLayer = L.tileLayer(TILE_URL, { maxZoom: 19 }).addTo(this.map);
+    // Apply dark class immediately if needed
+    const isDark = this.themeService.currentTheme() === 'dark';
+    const container = this.elRef.nativeElement.querySelector('#map') as HTMLElement | null;
+    if (container) container.classList.toggle('map-dark', isDark);
   }
 
   private renderPolygons(): void {
@@ -156,9 +180,7 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
       attributionControl: false
     });
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-    }).addTo(this.map);
+    this.initTileLayer();
 
     setTimeout(() => {
       this.map?.invalidateSize();

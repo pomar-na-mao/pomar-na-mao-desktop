@@ -3,32 +3,32 @@
   <!-- Skeletons -->
   @for (i of [1,2,3]; track i) {
   <div
-    class="mt-[80px] bg-white rounded-[14px] p-[16px_18px] flex gap-[14px] animate-pulse"
+    class="mt-[80px] bg-surface rounded-[14px] p-[16px_18px] flex gap-[14px] animate-pulse"
   >
-    <div class="w-[38px] h-[38px] rounded-[10px] bg-gray-200"></div>
+    <div class="w-[38px] h-[38px] rounded-[10px] bg-surface-container"></div>
     <div class="flex-1 space-y-2 py-1">
-      <div class="h-2 bg-gray-200 rounded w-1/2"></div>
-      <div class="h-6 bg-gray-200 rounded w-3/4"></div>
-      <div class="h-2 bg-gray-200 rounded w-1/4"></div>
+      <div class="h-2 bg-surface-container rounded w-1/2"></div>
+      <div class="h-6 bg-surface-container rounded w-3/4"></div>
+      <div class="h-2 bg-surface-container rounded w-1/4"></div>
     </div>
   </div>
   } } @else if (viewModel.hasError()) {
   <!-- Error State -->
   <div
-    class="mt-[80px] bg-red-50 border border-red-100 rounded-[14px] p-[20px] text-center"
+    class="mt-[80px] bg-error-container border border-error rounded-[14px] p-[20px] text-center"
   >
-    <span class="material-symbols-outlined text-red-400 text-[32px] mb-2"
+    <span class="material-symbols-outlined text-on-error-container text-[32px] mb-2"
       >error_outline</span
     >
-    <div class="text-red-800 font-semibold text-[14px]">
+    <div class="text-on-error-container font-semibold text-[14px]">
       {{ 'PAGES.HOME.DASHBOARD.LOAD_ERROR_TITLE' | translate }}
     </div>
-    <div class="text-red-600 text-[12px] mt-1">
+    <div class="text-on-error-container opacity-80 text-[12px] mt-1">
       {{ 'PAGES.HOME.DASHBOARD.LOAD_ERROR_SUB' | translate }}
     </div>
     <button
       (click)="viewModel.initialize()"
-      class="mt-3 text-[12px] font-bold text-red-700 underline uppercase tracking-wider"
+      class="mt-3 text-[12px] font-bold text-on-error-container underline uppercase tracking-wider"
     >
       {{ 'COMMON.RETRY' | translate }}
     </button>

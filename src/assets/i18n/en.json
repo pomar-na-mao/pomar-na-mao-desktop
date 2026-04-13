@@ -179,7 +179,8 @@
       "SEARCH_ARIA": "Search trees and sectors",
       "NOTIFICATIONS_ARIA": "Notifications",
       "HELP_ARIA": "Help",
-      "PROFILE_ARIA": "User profile"
+      "PROFILE_ARIA": "User profile",
+      "THEME_TOGGLE_ARIA": "Toggle Theme"
     },
     "LANGUAGES": {
       "PT": "Portuguese",

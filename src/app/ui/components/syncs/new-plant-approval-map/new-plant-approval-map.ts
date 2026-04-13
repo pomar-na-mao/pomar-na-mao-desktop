@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ElementRef, inject, Input, OnChanges, OnDestroy, PLATFORM_ID, SimpleChanges, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Input, OnChanges, OnDestroy, PLATFORM_ID, SimpleChanges, viewChild, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
 import type { INewPlant } from '../../../../domain/models/new-plant.model';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
 
 @Component({
   selector: 'app-new-plant-approval-map',
@@ -18,10 +19,21 @@ export class NewPlantApprovalMapComponent implements AfterViewInit, OnChanges, O
   @Input() newPlant: INewPlant | null = null;
 
   private platformId = inject(PLATFORM_ID);
+  private themeService = inject(ThemeService);
   private mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
 
   private map?: L.Map;
   private plantMarker?: L.Marker;
+
+  constructor() {
+    effect(() => {
+      const isDark = this.themeService.currentTheme() === 'dark';
+      const container = this.mapContainer().nativeElement;
+      if (container) {
+        container.classList.toggle('map-dark', isDark);
+      }
+    });
+  }
 
   public ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -57,6 +69,10 @@ export class NewPlantApprovalMapComponent implements AfterViewInit, OnChanges, O
       zoomControl: false,
       attributionControl: false,
     });
+
+    // Apply dark class immediately if needed
+    const isDark = this.themeService.currentTheme() === 'dark';
+    mapElement.classList.toggle('map-dark', isDark);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,

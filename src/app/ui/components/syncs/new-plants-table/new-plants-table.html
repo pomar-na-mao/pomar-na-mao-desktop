@@ -1,17 +1,24 @@
 <div
-  class="relative flex h-full flex-col overflow-hidden rounded-[20px] border border-slate-100 bg-linear-to-br from-white to-slate-50 p-6 shadow-sm shadow-slate-200/50 ring-1 ring-inset ring-white"
+  class="relative flex h-full flex-col overflow-hidden rounded-[20px] border border-outline-variant bg-surface-container p-6 shadow-sm"
 >
   <div
-    class="pointer-events-none absolute -right-[20%] -top-1/2 z-0 h-[300px] w-[300px] bg-[radial-gradient(circle,var(--color-emerald-50)_0%,transparent_70%)] opacity-40"
+    class="pointer-events-none absolute -right-[20%] -top-1/2 z-0 h-[300px] w-[300px] opacity-10"
+    style="
+      background: radial-gradient(
+        circle,
+        var(--color-primary) 0%,
+        transparent 70%
+      );
+    "
   ></div>
 
   <div class="z-10 mb-6 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div>
-        <h2 class="text-[16px] font-bold leading-tight text-slate-900">
+        <h2 class="text-[16px] font-bold leading-tight text-on-surface">
           {{ 'PAGES.SYNCS.NEW_PLANTS' | translate }}
         </h2>
-        <p class="mt-0.5 text-[12px] font-medium text-slate-400">
+        <p class="mt-0.5 text-[12px] font-medium text-on-surface-variant">
           {{ 'PAGES.SYNCS.NEW_PLANTS_HISTORY_DESCRIPTION' | translate }}
         </p>
       </div>
@@ -23,84 +30,126 @@
       <thead>
         <tr>
           <th
-            class="sticky top-0 z-10 border-b-2 border-slate-100 bg-white/90 p-4 pl-6 pr-4 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 backdrop-blur-md"
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-6 pr-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
           >
             ID
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-slate-100 bg-white/90 p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 backdrop-blur-md"
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
           >
             {{ 'COMMON.DATE' | translate }}
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-slate-100 bg-white/90 p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 backdrop-blur-md"
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
           >
             {{ 'COMMON.REGION' | translate }}
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-slate-100 bg-white/90 p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 backdrop-blur-md"
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
           >
             {{ 'COMMON.COORDINATES' | translate }}
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-slate-100 bg-white/90 p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 backdrop-blur-md"
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
           >
             {{ 'COMMON.STATUS' | translate }}
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-slate-100 bg-white/90 p-4 pl-4 pr-6 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 backdrop-blur-md"
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-4 pr-6 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
           ></th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-50">
+      <tbody class="divide-y divide-outline-variant">
         @if (newPlantsViewModel.isLoading()) { @for (item of [1,2,3,4,5]; track
         item) {
         <tr class="animate-pulse">
           <td class="py-4 pl-6 pr-4">
-            <div class="h-6 w-16 rounded-md bg-slate-100"></div>
+            <div class="h-6 w-16 rounded-md bg-surface-container-high"></div>
           </td>
           <td class="px-4 py-4">
-            <div class="h-6 w-24 rounded-md bg-slate-100"></div>
+            <div class="h-6 w-24 rounded-md bg-surface-container-high"></div>
           </td>
           <td class="px-4 py-4">
-            <div class="h-4 w-24 rounded bg-slate-100"></div>
+            <div class="h-4 w-24 rounded bg-surface-container-high"></div>
           </td>
           <td class="px-4 py-4">
-            <div class="h-4 w-40 rounded bg-slate-100"></div>
+            <div class="h-4 w-40 rounded bg-surface-container-high"></div>
           </td>
           <td class="px-4 py-4">
-            <div class="h-6 w-20 rounded-full bg-slate-100"></div>
+            <div class="h-6 w-20 rounded-full bg-surface-container-high"></div>
           </td>
           <td class="pl-4 pr-6 py-4">
-            <div class="h-8 w-8 rounded-full bg-slate-100"></div>
+            <div class="h-8 w-8 rounded-full bg-surface-container-high"></div>
           </td>
         </tr>
         } } @else { @for (newPlant of newPlantsViewModel.sortedNewPlants();
         track newPlant.id; let odd = $odd) {
         <tr
-          class="group border-b border-slate-50 last:border-b-0"
-          [class.bg-white]="odd"
-          [class.bg-emerald-50/60]="!odd"
+          class="group border-b border-outline-variant last:border-b-0 transition-colors duration-150"
+          [class.bg-surface-container]="odd"
+          [class.bg-surface-container-high]="!odd"
         >
           <td class="py-3.5 pl-6 pr-4">
             <span
-              class="rounded-lg border border-emerald-100 bg-emerald-50 px-2.5 py-1 font-mono text-[11px] font-bold text-emerald-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
+              class="rounded-lg border border-outline-variant bg-surface-container-highest px-2.5 py-1 font-mono text-[11px] font-bold text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
             >
               #{{ newPlant.id.substring(0, 8) }}
             </span>
           </td>
           <td class="px-4 py-3.5">
-            <span class="text-[13px] font-semibold text-slate-700">
+            <span class="text-[13px] font-semibold text-on-surface">
               {{ newPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
             </span>
           </td>
           <td class="px-4 py-3.5">
-            <span class="text-[12px] text-slate-500">
+            <span class="text-[12px] text-on-surface-variant">
               {{ newPlant.region || ('COMMON.UNKNOWN' | translate) }}
             </span>
           </td>
           <td class="px-4 py-3.5">
-            <span class="text-[12px] text-slate-500">
+            <span class="text-[12px] text-on-surface-variant">
               {{ newPlant.latitude }}, {{ newPlant.longitude }}
             </span>
           </td>
@@ -109,15 +158,15 @@
               <span
                 class="inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-tight transition-all duration-200"
                 [ngClass]="{
-                    'bg-emerald-50 text-emerald-700 border-emerald-100': newPlant.is_approved,
-                    'bg-amber-50 text-amber-700 border-amber-100': !newPlant.is_approved
+                    'bg-success-container text-on-success-container border-success-container': newPlant.is_approved,
+                    'bg-warn-container text-on-warn-container border-warn-container': !newPlant.is_approved
                   }"
               >
                 <span
                   class="mr-2 h-1.5 w-1.5 rounded-full shadow-[0_0_8px_currentColor]"
                   [ngClass]="{
-                      'bg-emerald-500': newPlant.is_approved,
-                      'bg-amber-500': !newPlant.is_approved
+                      'bg-success': newPlant.is_approved,
+                      'bg-warn': !newPlant.is_approved
                     }"
                 ></span>
                 {{ (newPlant.is_approved ? 'COMMON.DONE' : 'COMMON.PENDING') |
@@ -139,7 +188,9 @@
         } @empty {
         <tr>
           <td colspan="6" class="py-12">
-            <p class="text-[13px] text-center font-medium text-slate-400">
+            <p
+              class="text-[13px] text-center font-medium text-on-surface-variant"
+            >
               {{ 'PAGES.SYNCS.NO_NEW_PLANTS' | translate }}
             </p>
           </td>
@@ -156,12 +207,12 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
   class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm"
 >
   <div
-    class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-white shadow-2xl"
+    class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-surface shadow-2xl"
   >
     <div
       class="grid max-h-[90vh] grid-cols-1 overflow-y-auto lg:grid-cols-[1.15fr_0.85fr]"
     >
-      <div class="min-h-[22rem] bg-slate-100 p-4 lg:p-6">
+      <div class="min-h-[22rem] bg-surface-container p-4 lg:p-6">
         <app-new-plant-approval-map [newPlant]="selectedNewPlant" />
       </div>
 
@@ -245,7 +296,7 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
           <button
             (click)="approveSelectedNewPlant()"
             [disabled]="newPlantsViewModel.isApproving() || selectedNewPlant.is_approved"
-            class="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-primary to-primary-container px-5 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100"
+            class="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-primary to-primary-container px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02] active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100"
           >
             @if (newPlantsViewModel.isApproving()) {
             <div
@@ -253,7 +304,7 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
             ></div>
             {{ 'COMMON.APPROVING' | translate }} } @else {
             <span class="material-symbols-outlined">check_circle</span>
-            {{ 'COMMON.APPROVED' | translate }} }
+            {{ 'COMMON.APPROVE' | translate }} }
           </button>
         </div>
       </section>
