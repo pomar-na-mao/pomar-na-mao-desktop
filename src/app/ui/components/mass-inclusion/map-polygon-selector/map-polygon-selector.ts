@@ -12,7 +12,6 @@ import {
     SimpleChanges,
     HostListener,
     inject,
-    effect,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
@@ -54,12 +53,12 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
     @Output() polygonCleared = new EventEmitter<void>();
 
-    @HostListener('window:keydown', ['$event']) handleKeyboardEvent(event: KeyboardEvent){
-            if (event.ctrlKey && event.key.toLowerCase() === 'z'){
-                event?.preventDefault();
-                this.undoLastPoint();
-            }
+    @HostListener('window:keydown', ['$event']) handleKeyboardEvent(event: KeyboardEvent) {
+        if (event.ctrlKey && event.key.toLowerCase() === 'z') {
+            event?.preventDefault();
+            this.undoLastPoint();
         }
+    }
 
     private map!: L.Map;
     private drawnLayers: L.Polygon[] = [];
@@ -98,7 +97,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
             center: this.center,
             zoom: this.zoom,
             zoomControl: true,
-        
+
         });
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -308,7 +307,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
         this.polygonCleared.emit();
     }
 
-    public undoLastPoint(): void { 
+    public undoLastPoint(): void {
         if (this.tempPoints.length === 0) return;
 
         this.tempPoints.pop();
@@ -351,7 +350,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
         return this.selectedPolygonCoords.length > 0;
     }
 
-    get activePoints(): L.LatLng[]{
+    get activePoints(): L.LatLng[] {
         return [...this.tempPoints]
     }
 }
