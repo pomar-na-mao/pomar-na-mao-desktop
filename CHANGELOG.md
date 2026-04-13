@@ -1,3 +1,7 @@
+## <small>1.1.1 (2026-04-13)</small>
+
+* feat: Update application version to 1.1.1 ([0000000](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/0000000))
+
 ## <small>1.0.1 (2026-04-10)</small>
 
 * feat: Add `CountOccurrencesPipe` for counting plant occurrences and introduce unit tests for the `Ho ([f1dba13](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/f1dba13))
