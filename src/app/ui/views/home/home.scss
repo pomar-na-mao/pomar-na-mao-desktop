@@ -2,8 +2,6 @@
   display: block;
 }
 
-
-
 .dashboard__stat-card {
   display: flex;
   gap: 14px;
@@ -116,8 +114,6 @@
   }
 }
 
-
-
 .dashboard__table-card {
   padding: 20px;
 }
@@ -183,7 +179,6 @@
 
 .table__id {
   font-weight: 600;
-  font-family: var(--font-label);
   font-size: 12px;
   color: var(--color-primary);
 }

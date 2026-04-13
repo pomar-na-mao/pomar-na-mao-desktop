@@ -4,7 +4,6 @@
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
-  font-family: "Poppins", sans-serif;
 }
 
 /* ─── LEFT HERO PANEL (60%) ──────────────────────────────────────────────────── */
@@ -174,9 +173,6 @@
   margin: 0;
 }
 
-
-
-
 /* ─── RIGHT FORM PANEL (40%) ─────────────────────────────────────────────────── */
 .form-panel {
   width: 40%;
@@ -194,7 +190,11 @@
     left: 0;
     width: 6px;
     height: 100%;
-    background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    background: linear-gradient(
+      180deg,
+      var(--color-primary) 0%,
+      var(--color-secondary) 100%
+    );
     opacity: 0.8;
   }
 }
@@ -219,7 +219,11 @@
 .form-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-container)
+  );
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -309,4 +313,3 @@
     padding: 1.5rem;
   }
 }
-

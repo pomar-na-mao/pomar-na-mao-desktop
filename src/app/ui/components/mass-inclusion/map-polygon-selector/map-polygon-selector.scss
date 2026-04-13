@@ -8,7 +8,6 @@
   border: 1px solid #252a38;
   border-radius: 12px;
   overflow: hidden;
-  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
 }
 
 .map-toolbar {
@@ -108,7 +107,6 @@
   border: 1px solid #2e3548;
   background: #1a1e28;
   color: #7a8099;
-  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -186,7 +184,6 @@
 
   :deep(.leaflet-container) {
     background: #0a0c10;
-    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   }
 
   :deep(.leaflet-tile) {
@@ -291,7 +288,6 @@
   border: 1px solid #2e3548;
   background: #1a1e28;
   color: #7a8099;
-  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 11px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -369,7 +365,6 @@
 
   pre {
     margin: 0;
-    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
     font-size: 11px;
     color: #00d4ff;
     line-height: 1.6;
