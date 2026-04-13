@@ -29,5 +29,18 @@
     />
   </div>
 
+  <!-- Loading indicator while fetching plant details -->
+  @if (isLoadingPlant()) {
+    <div class="map-loading-overlay">
+      <span class="material-symbols-outlined map-loading-overlay__icon">more_horiz</span>
+    </div>
+  }
+
   <div id="map"></div>
 </div>
+
+<!-- Plant Detail Modal -->
+<app-plant-detail-modal
+  [plant]="selectedPlant()"
+  (closed)="closePlantDetail()"
+/>

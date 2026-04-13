@@ -1,0 +1,167 @@
+@if (plant) {
+  <div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-panel" role="dialog" aria-modal="true">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="modal-header__left">
+          <span class="modal-id">{{ formattedId }}</span>
+          <div class="modal-header__meta">
+            <h2 class="modal-title">
+              {{ plant.variety | titlecase }}
+            </h2>
+            <span class="modal-region">
+              <span class="material-symbols-outlined">location_on</span>
+              {{ plant.region | titlecase }}
+            </span>
+          </div>
+        </div>
+
+        <div class="modal-header__right">
+          <span
+            class="status-badge"
+            [class.status-badge--healthy]="statusLevel === 'healthy'"
+            [class.status-badge--moderate]="statusLevel === 'moderate'"
+            [class.status-badge--critical]="statusLevel === 'critical'"
+          >
+            <span class="status-badge__dot"></span>
+            @switch (statusLevel) {
+              @case ('healthy') {
+                {{ 'PAGES.HOME.DASHBOARD.OPTIMAL' | translate }}
+              }
+              @case ('moderate') {
+                {{ 'PAGES.HOME.DASHBOARD.MODERATE' | translate }}
+              }
+              @case ('critical') {
+                {{ 'PAGES.HOME.DASHBOARD.CRITICAL' | translate }}
+              }
+            }
+          </span>
+
+          <button class="modal-close" (click)="close()" [attr.aria-label]="'COMMON.BACK' | translate">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+
+        <!-- Info grid -->
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-card__icon material-symbols-outlined">schedule</span>
+            <div class="info-card__content">
+              <span class="info-card__label">
+                {{ 'PAGES.HOME.DASHBOARD.LAST_UPDATE' | translate }}
+              </span>
+              <span class="info-card__value">{{ plant.updated_at | timeAgo }}</span>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <span class="info-card__icon material-symbols-outlined">eco</span>
+            <div class="info-card__content">
+              <span class="info-card__label">
+                {{ 'PAGES.HOME.DASHBOARD.VARIETY' | translate }}
+              </span>
+              <span class="info-card__value">{{ plant.variety | titlecase }}</span>
+            </div>
+          </div>
+
+          @if (plantingDate) {
+            <div class="info-card">
+              <span class="info-card__icon material-symbols-outlined">calendar_today</span>
+              <div class="info-card__content">
+                <span class="info-card__label">
+                  {{ 'PAGES.HOME.DASHBOARD.PLANTING_DATE' | translate }}
+                </span>
+                <span class="info-card__value">{{ plantingDate }}</span>
+              </div>
+            </div>
+          }
+
+          @if (lifeOfTree) {
+            <div class="info-card">
+              <span class="info-card__icon material-symbols-outlined">forest</span>
+              <div class="info-card__content">
+                <span class="info-card__label">
+                  {{ 'PAGES.HOME.DASHBOARD.LIFE_OF_TREE' | translate }}
+                </span>
+                <span class="info-card__value">{{ lifeOfTree }}</span>
+              </div>
+            </div>
+          }
+
+          @if (!plantingDate && !lifeOfTree) {
+            <div class="info-card">
+              <span class="info-card__icon material-symbols-outlined">pin_drop</span>
+              <div class="info-card__content">
+                <span class="info-card__label">
+                  {{ 'PAGES.HOME.DASHBOARD.REGION' | translate }}
+                </span>
+                <span class="info-card__value">{{ plant.region | titlecase }}</span>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <span class="info-card__icon material-symbols-outlined">bug_report</span>
+              <div class="info-card__content">
+                <span class="info-card__label">
+                  {{ 'PAGES.HOME.DASHBOARD.OCCURRENCES' | translate }}
+                </span>
+                <span class="info-card__value">{{ occurrenceCount }}</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Coordinates (only when coming from map) -->
+        @if (hasLocationData) {
+          <div class="coords-card">
+            <span class="material-symbols-outlined coords-card__icon">my_location</span>
+            <div class="coords-card__content">
+              <span class="coords-card__label">Coordenadas GPS</span>
+              <span class="coords-card__value">
+                {{ latitude!.toFixed(6) }}, {{ longitude!.toFixed(6) }}
+              </span>
+            </div>
+          </div>
+        }
+
+        <!-- Occurrences section -->
+        <div class="occurrences-section">
+          <h3 class="occurrences-section__title">
+            <span class="material-symbols-outlined">fact_check</span>
+            {{ 'PAGES.HOME.DASHBOARD.OCCURRENCES' | translate }}
+          </h3>
+
+          @if (activeOccurrences.length > 0) {
+            <div class="occurrences-grid">
+              @for (key of activeOccurrences; track key) {
+                <span class="occurrence-tag">
+                  <span class="occurrence-tag__dot"></span>
+                  {{ occurencesLabels[key] | translate }}
+                </span>
+              }
+            </div>
+          } @else {
+            <div class="occurrences-empty">
+              <span class="material-symbols-outlined">check_circle</span>
+              <p>{{ 'PAGES.HOME.DASHBOARD.OPTIMAL' | translate }}</p>
+            </div>
+          }
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="close()">
+          {{ 'COMMON.BACK' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
