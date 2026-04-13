@@ -74,104 +74,96 @@
   --color-sidebar-bg-to: #2b4c2c;
   --color-on-sidebar: #ffffff;
   --color-on-sidebar-muted: rgba(255, 255, 255, 0.65);
-  --color-on-sidebar-border: rgba(255, 255, 255, 0.10);
+  --color-on-sidebar-border: rgba(255, 255, 255, 0.1);
   --color-sidebar-hover: rgba(255, 255, 255, 0.12);
   --color-sidebar-active: rgba(255, 255, 255, 0.22);
 }
 
-/* Dark Theme Overrides */
+/* Dark Theme Overrides - Terra Precision Premium Dark */
 @layer base {
   :root.dark {
-    /* ── Backgrounds ──────────────────────────────────── */
-    --color-background: #0f110f;
-    --color-on-background: #e0e3e0;
+    /* ── Backgrounds ── */
+    --color-background: #0d0f0d; /* Fundo quase preto com matiz verde */
+    --color-on-background: #e1e4e1;
 
-    /* ── Surfaces (progressively darker, higher elevation = lighter) ── */
-    --color-surface: #151815;           /* page/canvas */
-    --color-on-surface: #e0e3e0;
-    --color-on-surface-variant: #b0b5b0;
-    --color-surface-bright: #2e312e;    /* elevated elements (buttons, inputs) */
-    --color-surface-dim: #0f110f;
-    --color-surface-container-lowest: #0a0c0a;
-    --color-surface-container-low: #1a1d1a;   /* card subtle bg */
-    --color-surface-container: #202320;       /* card default bg */
-    --color-surface-container-high: #272a27;  /* card elevated */
-    --color-surface-container-highest: #2e312e;
+    /* ── Surfaces (Elevations) ── */
+    --color-surface: #121512; /* Base da página */
+    --color-on-surface: #e1e4e1;
+    --color-on-surface-variant: #939a93; /* Texto secundário com mais contraste */
+    --color-surface-bright: #232a23; /* Botões/Inputs elevados */
+    --color-surface-dim: #0d0f0d;
+    --color-surface-container-lowest: #080a08;
+    --color-surface-container-low: #181c18;
+    --color-surface-container: #1e241e; /* Cards padrão */
+    --color-surface-container-high: #283028; /* Cards hover/elevados */
+    --color-surface-container-highest: #323c32;
 
-    /* ── Borders ──────────────────────────────────────── */
-    --color-outline: #5a5f5a;
-    --color-outline-variant: #333633;
+    /* ── Borders ── */
+    --color-outline: #414a41;
+    --color-outline-variant: #2d342d;
 
-    /* ── Primary (inverted for dark — use a lighter shade) ─────────── */
-    --color-primary: #7ec882;
-    --color-primary-container: #1a3d1b;
-    --color-on-primary: #002108;
-    --color-on-primary-container: #a8edac;
+    /* ── Primary (Vibrant Green for Dark Mode) ── */
+    --color-primary: #97d69b;
+    --color-primary-container: #1d361e;
+    --color-on-primary: #00390c;
+    --color-on-primary-container: #b3f3b6;
 
-    /* ── Secondary ────────────────────────────────────── */
-    --color-secondary: #ffb58a;
-    --color-secondary-container: #5a2800;
-    --color-on-secondary: #3d1100;
-    --color-on-secondary-container: #ffdcc8;
+    /* ── Secondary (Earth Tones) ── */
+    --color-secondary: #f4b48d;
+    --color-secondary-container: #6e3600;
+    --color-on-secondary: #4a2100;
+    --color-on-secondary-container: #ffdbca;
 
-    /* ── Tertiary ─────────────────────────────────────── */
-    --color-tertiary: #bed17d;
-    --color-tertiary-container: #2e3d00;
-    --color-on-tertiary: #1e2900;
-    --color-on-tertiary-container: #d9ee97;
+    /* ── Tertiary (Mossy accents) ── */
+    --color-tertiary: #c5d491;
+    --color-tertiary-container: #3d4c0c;
+    --color-on-tertiary: #273400;
+    --color-on-tertiary-container: #e1f1ac;
 
-    /* ── Semantic colors ──────────────────────────────── */
-    --color-error: #ff897d;
-    --color-error-container: #4a0e0e;
-    --color-on-error: #3b0808;
-    --color-on-error-container: #ffd3ce;
+    /* ── Semantic Colors (Optimized for dark background) ── */
+    --color-error: #ffb4ab;
+    --color-error-container: #93000a;
+    --color-on-error: #690005;
+    --color-on-error-container: #ffdad6;
 
-    --color-success: #6ee78f;
-    --color-success-container: #0a2e18;
-    --color-on-success: #002111;
-    --color-on-success-container: #a0f5c0;
+    --color-success: #88d99c;
+    --color-success-container: #005324;
+    --color-on-success: #003916;
+    --color-on-success-container: #a4f5b7;
 
-    --color-warn: #ffcc70;
-    --color-warn-container: #3d2700;
-    --color-on-warn: #2b1a00;
-    --color-on-warn-container: #ffe5a4;
+    --color-warn: #ffba4b;
+    --color-warn-container: #623f00;
+    --color-on-warn: #412800;
+    --color-on-warn-container: #ffdca4;
 
-    --color-info: #69c9f5;
-    --color-info-container: #003549;
-    --color-on-info: #001e2f;
-    --color-on-info-container: #b8e9ff;
+    --color-info: #94d1ff;
+    --color-info-container: #004c6b;
+    --color-on-info: #00344b;
+    --color-on-info-container: #c9e6ff;
 
-    /* ── Sidebar – keeps the dark forest green brand identity ── */
-    --color-sidebar-bg-from: #1a2e1b;
-    --color-sidebar-bg-to: #0f1e10;
-    --color-on-sidebar: #d5e8d6;
-    --color-on-sidebar-muted: rgba(213, 232, 214, 0.55);
-    --color-on-sidebar-border: rgba(213, 232, 214, 0.10);
-    --color-sidebar-hover: rgba(213, 232, 214, 0.12);
-    --color-sidebar-active: rgba(213, 232, 214, 0.20);
+    /* ── Sidebar (Deep Forest Brand Identity) ── */
+    --color-sidebar-bg-from: #152516;
+    --color-sidebar-bg-to: #0c150c;
+    --color-on-sidebar: #d9e6d9;
+    --color-on-sidebar-muted: rgba(217, 230, 217, 0.55);
+    --color-on-sidebar-border: rgba(217, 230, 217, 0.1);
+    --color-sidebar-hover: rgba(217, 230, 217, 0.08);
+    --color-sidebar-active: rgba(217, 230, 217, 0.15);
   }
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--color-outline-variant, #dfe3df);
   }
 
-  /* Sidebar nav link hover / active states */
   .sidebar-nav-link {
     color: var(--color-on-sidebar-muted) !important;
+    transition: all 0.2s ease;
   }
   .sidebar-nav-link:hover {
     background: var(--color-sidebar-hover);
@@ -180,5 +172,6 @@
   .sidebar-nav-link.active-nav-link {
     background: var(--color-sidebar-active);
     color: var(--color-on-sidebar) !important;
+    font-weight: 600;
   }
 }

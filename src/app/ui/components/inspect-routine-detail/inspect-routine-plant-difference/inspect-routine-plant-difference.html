@@ -1,8 +1,8 @@
 <section
-  class="flex h-full w-full flex-col space-y-6 overflow-y-auto border-outline-variant/10 bg-surface-container-low p-4 sm:p-6 lg:border-r lg:p-12"
+  class="flex h-full w-full flex-col space-y-6 overflow-y-auto border-outline-variant/10 bg-surface-container-low p-2 sm:p-3 lg:border-r lg:p-6"
 >
   <div class="flex flex-col gap-4 mb-2">
-    <div class="flex items-center justify-between">
+    <div class="flex items-start justify-between">
       <div>
         <div class="flex items-center gap-3">
           <h2
@@ -14,18 +14,14 @@
           <div
             class="px-3 py-1 bg-secondary-container/50 text-on-secondary-container text-xs font-bold rounded-full flex items-center gap-1"
           >
-            {{ 'PAGES.SYNCS.ZONE_NUMBER' | translate: { number: inspectRoutineSyncViewModel.currentRoutineRegion() } }}
+            {{ 'PAGES.SYNCS.ZONE_NUMBER' | translate: { number:
+            inspectRoutineSyncViewModel.currentRoutineRegion() } }}
           </div>
           }
         </div>
         <p class="text-on-surface-variant text-sm mt-1">
           {{ 'PAGES.SYNCS.SUBTITLE' | translate }}
         </p>
-      </div>
-      <div
-        class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
-      >
-        {{ 'COMMON.PENDING_COUNT' | translate: { count: inspectRoutineSyncViewModel.totalPlants() } }}
       </div>
     </div>
   </div>
@@ -146,7 +142,9 @@
       class="material-symbols-outlined text-[48px] text-on-surface-variant/50 mb-4"
       >eco</span
     >
-    <p class="text-on-surface-variant font-bold">{{ 'PAGES.SYNCS.NO_PLANTS_FOUND' | translate }}</p>
+    <p class="text-on-surface-variant font-bold">
+      {{ 'PAGES.SYNCS.NO_PLANTS_FOUND' | translate }}
+    </p>
   </div>
   }
 

@@ -1,8 +1,8 @@
 <section
-  class="flex h-full w-full flex-col space-y-6 overflow-y-auto border-outline-variant/10 bg-surface-container-low p-4 sm:p-6 lg:border-r lg:p-12"
+  class="flex h-full w-full flex-col space-y-6 overflow-y-auto border-outline-variant/10 bg-surface-container-low p-2 sm:p-3 lg:border-r lg:p-6"
 >
   <div class="flex flex-col gap-4 mb-2">
-    <div class="flex items-center justify-between">
+    <div class="flex items-start justify-between">
       <div>
         <div class="flex items-center gap-3">
           <h2
@@ -15,11 +15,6 @@
         <p class="text-on-surface-variant text-sm mt-1">
           {{ 'PAGES.SYNCS.SUBTITLE' | translate }}
         </p>
-      </div>
-      <div
-        class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full"
-      >
-        {{ 'COMMON.PENDING_COUNT' | translate: { count: pendingCount() } }}
       </div>
     </div>
   </div>
