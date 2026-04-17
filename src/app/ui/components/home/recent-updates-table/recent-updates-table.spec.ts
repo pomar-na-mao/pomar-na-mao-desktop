@@ -15,8 +15,60 @@ describe('RecentUpdatesTableComponent', () => {
   beforeEach(async () => {
     mockHomeViewModel = {
       recentUpdates: signal([
-        { id: '1-uuid', variety: 'Gala', region: 'Sector A', updated_at: new Date().toISOString() } as PlantRecentUpdate,
-        { id: '2-uuid', variety: 'Fuji', region: 'Sector B', updated_at: new Date().toISOString() } as PlantRecentUpdate
+        {
+          id: '1-uuid',
+          variety: 'Gala',
+          region: 'Sector A',
+          updated_at: new Date().toISOString(),
+          stick: false,
+          broken_branch: false,
+          vine_growing: false,
+          burnt_branch: false,
+          struck_by_lightning: false,
+          drill: false,
+          anthill: false,
+          in_experiment: false,
+          weeds_in_the_basin: false,
+          fertilization_or_manuring: false,
+          mites: false,
+          thrips: false,
+          empty_collection_box_near: false,
+          is_new: false,
+          non_existent: false,
+          frost: false,
+          flowers: false,
+          buds: false,
+          dehydrated: false,
+          is_dead: false,
+          wasUpdated: true
+        } as PlantRecentUpdate,
+        {
+          id: '2-uuid',
+          variety: 'Fuji',
+          region: 'Sector B',
+          updated_at: new Date().toISOString(),
+          stick: false,
+          broken_branch: false,
+          vine_growing: false,
+          burnt_branch: false,
+          struck_by_lightning: false,
+          drill: false,
+          anthill: false,
+          in_experiment: false,
+          weeds_in_the_basin: false,
+          fertilization_or_manuring: false,
+          mites: false,
+          thrips: false,
+          empty_collection_box_near: false,
+          is_new: false,
+          non_existent: false,
+          frost: false,
+          flowers: false,
+          buds: false,
+          dehydrated: false,
+          is_dead: false,
+          wasUpdated: true
+        } as PlantRecentUpdate
       ]),
       isLoading: signal(false)
     };
@@ -52,7 +104,7 @@ describe('RecentUpdatesTableComponent', () => {
     mockHomeViewModel.recentUpdates!.set([]);
     fixture.detectChanges();
 
-    const emptyMessage = fixture.debugElement.query(By.css('tbody .text-slate-400'));
+    const emptyMessage = fixture.debugElement.query(By.css('tbody p.text-on-surface-variant'));
     // The @empty block renders a table row with the message
     expect(emptyMessage.nativeElement.textContent).toContain('PAGES.HOME.DASHBOARD.NO_RECENT_UPDATES');
     

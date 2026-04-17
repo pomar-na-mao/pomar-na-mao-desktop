@@ -1,7 +1,7 @@
 
 import { Injectable } from "@angular/core";
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
-import type { Plant } from "../../../domain/models/plant-data.model";
+import type { Plant, PlantInsert } from "../../../domain/models/plant-data.model";
 import { injectSupabase } from "../supabase";
 
 export type InspectRoutineFilter = {
@@ -14,7 +14,7 @@ export interface IPlantsService {
   findAll(filters: InspectRoutineFilter | null): Promise<PostgrestSingleResponse<Plant[]>>;
   findById(id: string): Promise<PostgrestSingleResponse<Plant>>;
   delete(id: string): Promise<PostgrestSingleResponse<null>>;
-  insert(plant: Plant): Promise<PostgrestSingleResponse<Plant>>;
+  insert(plant: PlantInsert): Promise<PostgrestSingleResponse<Plant>>;
   getTotalCount(): Promise<number>;
   getAliveCount(): Promise<number>;
   getUpdatedCount(): Promise<number>;
@@ -57,7 +57,7 @@ export class PlantsService implements IPlantsService {
     return await this.supabase.from('plants').delete().eq('id', id);
   }
 
-  public async insert(plant: Plant): Promise<PostgrestSingleResponse<Plant>> {
+  public async insert(plant: PlantInsert): Promise<PostgrestSingleResponse<Plant>> {
     return await this.supabase.from('plants').insert([plant]).select().single();
   }
 

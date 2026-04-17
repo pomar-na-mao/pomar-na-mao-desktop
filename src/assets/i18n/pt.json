@@ -78,7 +78,7 @@
       "TAGLINE": "Controle e Rastreabilidade",
       "FORM_TITLE": "Acesse sua conta",
       "FORM_SUBTITLE": "Insira suas credenciais para continuar",
-      "FOOTER": "Pomar na mão • v1.0.0 • Controle e Rastreabilidade"
+      "FOOTER": "Pomar na mão • v1.1.1 • Controle e Rastreabilidade"
     },
     "FORGOT_PASSWORD": {
       "TITLE": "Recuperar senha",
@@ -160,6 +160,11 @@
       "INSPECT_ANNOTATIONS": "Anotações de Inspeção",
       "ANNOTATIONS_HISTORY_DESCRIPTION": "Histórico de anotações de inspeção",
       "NO_ANNOTATIONS": "Nenhuma anotação encontrada.",
+      "NEW_PLANTS": "Novas Plantas",
+      "NEW_PLANTS_HISTORY_DESCRIPTION": "Histórico de novas plantas",
+      "NO_NEW_PLANTS": "Nenhuma nova planta encontrada.",
+      "NEW_PLANT_ID": "Nova Planta {{ id }}",
+      "NEW_PLANT_MODAL_SUBTITLE": "Revise as coordenadas e aprove a adição da nova planta.",
       "INSPECTION_ID": "Inspeção {{ id }}",
       "ANNOTATION_ID": "Anotação {{ id }}",
       "SUBTITLE": "Detalhamento e aprovação de ocorrências",
@@ -176,7 +181,8 @@
       "SEARCH_ARIA": "Buscar árvores e setores",
       "NOTIFICATIONS_ARIA": "Notificações",
       "HELP_ARIA": "Ajuda",
-      "PROFILE_ARIA": "Perfil do usuário"
+      "PROFILE_ARIA": "Perfil do usuário",
+      "THEME_TOGGLE_ARIA": "Alternar Tema"
     },
     "LANGUAGES": {
       "PT": "Português",
@@ -208,6 +214,7 @@
     "DONE": "Concluído",
     "PENDING": "Pendente",
     "EDIT": "Editar",
+    "CANCEL": "Cancelar",
     "PENDING_COUNT": "{{ count }} Pendentes",
     "APPROVING": "Aprovando...",
     "APPROVED": "Aprovado",
@@ -215,6 +222,9 @@
     "BACK": "Voltar",
     "PREVIOUS": "Anterior",
     "NEXT": "Próximo",
+    "LATITUDE": "Latitude",
+    "LONGITUDE": "Longitude",
+    "COORDINATES": "Coordenadas",
     "UNKNOWN": "Desconhecido",
     "OCCURRENCES_LABELS": {
       "STICK": "Galho Seco",

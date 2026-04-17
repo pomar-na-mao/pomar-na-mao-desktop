@@ -1,4 +1,4 @@
-import { enableProdMode, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { APP_INITIALIZER, enableProdMode, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
@@ -8,6 +8,7 @@ import { APP_CONFIG } from './environments/environment';
 
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ThemeService } from './app/core/services/theme/theme.service';
 
 
 if (APP_CONFIG.production) {
@@ -32,5 +33,11 @@ bootstrapApplication(AppComponent, {
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
       withEnabledBlockingInitialNavigation()
     ),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (themeService: ThemeService) => () => themeService.initializeTheme(),
+      deps: [ThemeService],
+      multi: true,
+    },
   ]
 }).catch(err => console.error(err));

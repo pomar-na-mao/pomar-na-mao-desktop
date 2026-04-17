@@ -1,8 +1,14 @@
-## 1.0.0 (2026-04-08)
+## <small>1.1.1 (2026-04-13)</small>
+
+* feat: Update application version to 1.1.1 ([0000000](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/0000000))
+
+## <small>1.0.1 (2026-04-10)</small>
 
 * feat: Add `CountOccurrencesPipe` for counting plant occurrences and introduce unit tests for the `Ho ([f1dba13](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/f1dba13))
 * feat: add RecentUpdatesTable component and integrate it into the home dashboard view ([41d0c18](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/41d0c18))
 * feat: Add shared input and select components, map card, regions data management, occurrences utility ([6a186a1](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/6a186a1))
+* feat: add styles for farm overview map component and leaflet integration ([75f46c1](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/75f46c1))
+* feat: implement authentication login view and internationalization support ([2dd6519](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/2dd6519))
 * feat: implement authentication login view with localized UI, styling, and Tailwind configuration ([187db08](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/187db08))
 * feat: implement core UI components and layout views with Tailwind CSS integration ([958296f](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/958296f))
 * feat: implement farm overview map and recent updates dashboard components with localization support ([9eaf6ba](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/9eaf6ba))
@@ -20,6 +26,7 @@
 * feat: implement inspection routine synchronization and annotation detail views with map integration ([1c16049](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/1c16049))
 * feat: implement inspection routines synchronization dashboard and detail components with associated  ([3249cad](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/3249cad))
 * feat: implement internationalization, sidebar navigation, and inspection synchronization features wi ([d07d593](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/d07d593))
+* feat: implement login view with responsive styling and internationalization support ([f476e79](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/f476e79))
 * feat: implement map polygon selection component and associated view model for mass inclusion feature ([54c2a2a](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/54c2a2a))
 * feat: implement map polygon selector component and associated mass inclusion view models ([14642ad](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/14642ad))
 * feat: implement mass inclusion feature with polygon map selector and form management ([df3a37d](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/df3a37d))
@@ -37,6 +44,8 @@
 * feat: implement syncs view with routine and annotation management components and view models ([8903a36](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/8903a36))
 * feat: Include view components in specifig folder in components ([d73bfb8](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/d73bfb8))
 * feat: Introduce map card component with Leaflet integration and geolocation utilities. ([978522b](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/978522b))
+* Container not scrolling when smaller than map bug fixed ([fac3d9b](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/fac3d9b))
+* Control + z now removing last point from polygon ([afcd8f0](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/afcd8f0))
 * delete AI txt helper files ([b2514b6](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/b2514b6))
 * migration current project ([f4e94ba](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/f4e94ba))
 * refactor: clean up AppSelect component and improve region normalization in FarmOverviewMap ([89619c7](https://github.com/pomar-na-mao/pomar-na-mao-desktop/commit/89619c7))

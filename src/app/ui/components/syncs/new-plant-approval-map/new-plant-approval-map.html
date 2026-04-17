@@ -1,0 +1,18 @@
+<section class="relative h-full min-h-[18rem] overflow-hidden rounded-2xl bg-surface-dim lg:min-h-0">
+  <div #mapContainer class="absolute inset-0 z-0"></div>
+
+  <div class="absolute bottom-2 right-8 z-10 flex flex-col gap-2">
+    <button
+      (click)="zoomIn()"
+      class="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-container-lowest/95 text-on-surface shadow-2xl backdrop-blur transition-all hover:bg-primary hover:text-white active:scale-95"
+    >
+      <span class="material-symbols-outlined">add</span>
+    </button>
+    <button
+      (click)="zoomOut()"
+      class="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-container-lowest/95 text-on-surface shadow-2xl backdrop-blur transition-all hover:bg-primary hover:text-white active:scale-95"
+    >
+      <span class="material-symbols-outlined">remove</span>
+    </button>
+  </div>
+</section>

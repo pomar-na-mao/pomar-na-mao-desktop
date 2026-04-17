@@ -1,7 +1,8 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { PlantsService, type InspectRoutineFilter } from "../../services/plants/plants-service";
 import { HomeStatsService, type HomeStats } from "../../services/home-stats/home-stats-service";
-import type { Plant, PlantData, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
+import type { Plant, PlantData, PlantInsert, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
+import type { PostgrestError } from "@supabase/supabase-js";
 
 @Injectable({
   providedIn: 'root',
@@ -58,11 +59,12 @@ export class PlantsRepository {
     }
   }
 
-  public async insert(plant: Plant): Promise<void> {
+  public async insert(plant: PlantInsert): Promise<{ data: Plant | null; error: PostgrestError | null }> {
     const { data, error } = await this.plantsService.insert(plant);
     if (!error && data) {
       this.plants.update(prev => [data, ...prev]);
     }
+    return { data, error };
   }
 
   public async getTotalCount(): Promise<number> {

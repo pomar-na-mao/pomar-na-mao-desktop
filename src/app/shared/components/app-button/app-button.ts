@@ -18,11 +18,11 @@ export class AppButton {
 
   public get variantClasses(): Record<string, boolean> {
     return {
-      'bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-lg hover:opacity-95!': this.variant === 'primary',
-      'bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80!': this.variant === 'secondary',
-      'border-2 border-primary/20 text-primary hover:bg-primary/5!': this.variant === 'outline',
-      'text-on-surface-variant hover:bg-surface-container-low!': this.variant === 'ghost',
-      'bg-error text-on-error hover:bg-error/90!': this.variant === 'error',
+      'bg-linear-to-br from-primary to-primary-container text-white hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02] active:scale-95 disabled:shadow-none disabled:scale-100 disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50': this.variant === 'primary',
+      'bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 hover:scale-[1.02] active:scale-95': this.variant === 'secondary',
+      'border-2 border-primary/20 text-primary hover:bg-primary/5 hover:scale-[1.02] active:scale-95': this.variant === 'outline',
+      'text-on-surface-variant hover:bg-surface-container-low hover:scale-[1.02] active:scale-95': this.variant === 'ghost',
+      'bg-error text-on-error hover:bg-error/90 hover:scale-[1.02] active:scale-95': this.variant === 'error',
     };
   }
 }

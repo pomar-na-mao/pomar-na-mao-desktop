@@ -4,17 +4,63 @@ html {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
+  background: var(--color-background);
+  color: var(--color-on-background);
   margin: 0;
   padding: 0;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.2;
+  color-scheme: light dark;
+}
+
+/* Global Input Styles */
+input, select, textarea {
+  /* Autofill reset */
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-on-surface) !important;
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-surface-container-low) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* Force background inherit for dark mode stability */
+  .dark & {
+    background-color: var(--color-surface-container-low);
+    color: var(--color-on-surface);
+  }
 }
 
 a {
   text-decoration: none;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-outline) var(--color-surface-container-low);
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-surface-container-low);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-outline);
+  border-radius: 999px;
+
+  &:hover {
+    background: var(--color-outline-variant);
+  }
 }
 
 /* Material Symbols configuration */
@@ -26,9 +72,18 @@ a {
 
 /* Stitch Theme Helpers */
 .glass-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-outline-variant);
+}
+
+/* ─── Dark Map Filter ───────────────────────────────────────────────────────── */
+.map-dark .leaflet-layer,
+.map-dark .leaflet-control-zoom-in,
+.map-dark .leaflet-control-zoom-out,
+.map-dark .leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg);
 }
 
 .bg-orchard-gradient {

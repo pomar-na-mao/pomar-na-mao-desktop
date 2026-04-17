@@ -78,7 +78,7 @@
       "TAGLINE": "Control and Traceability",
       "FORM_TITLE": "Access your account",
       "FORM_SUBTITLE": "Enter your credentials to continue",
-      "FOOTER": "Pomar na mão • v1.0.0 • Control and Traceability"
+      "FOOTER": "Pomar na mão • v1.1.1 • Control and Traceability"
     },
     "FORGOT_PASSWORD": {
       "TITLE": "Recover password",
@@ -160,6 +160,11 @@
       "INSPECT_ANNOTATIONS": "Inspection Annotations",
       "ANNOTATIONS_HISTORY_DESCRIPTION": "History of inspect annotations",
       "NO_ANNOTATIONS": "No annotations found.",
+      "NEW_PLANTS": "New Plants",
+      "NEW_PLANTS_HISTORY_DESCRIPTION": "History of newly plants",
+      "NO_NEW_PLANTS": "No new plants found.",
+      "NEW_PLANT_ID": "New Plant {{ id }}",
+      "NEW_PLANT_MODAL_SUBTITLE": "Review the coordinates and approve the plant inclusion.",
       "INSPECTION_ID": "Inspection {{ id }}",
       "ANNOTATION_ID": "Annotation {{ id }}",
       "SUBTITLE": "Detailing and approval of occurrences",
@@ -176,7 +181,8 @@
       "SEARCH_ARIA": "Search trees and sectors",
       "NOTIFICATIONS_ARIA": "Notifications",
       "HELP_ARIA": "Help",
-      "PROFILE_ARIA": "User profile"
+      "PROFILE_ARIA": "User profile",
+      "THEME_TOGGLE_ARIA": "Toggle Theme"
     },
     "LANGUAGES": {
       "PT": "Portuguese",
@@ -208,6 +214,7 @@
     "DONE": "Done",
     "PENDING": "Pending",
     "EDIT": "Edit",
+    "CANCEL": "Cancel",
     "PENDING_COUNT": "{{ count }} Pending",
     "APPROVING": "Approving...",
     "APPROVED": "Approved",
@@ -215,6 +222,9 @@
     "BACK": "Back",
     "PREVIOUS": "Previous",
     "NEXT": "Next",
+    "LATITUDE": "Latitude",
+    "LONGITUDE": "Longitude",
+    "COORDINATES": "Coordinates",
     "UNKNOWN": "Unknown",
     "OCCURRENCES_LABELS": {
       "STICK": "Dry Branch",

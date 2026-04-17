@@ -1,10 +1,11 @@
-import { Component, inject, Input, AfterViewInit, OnDestroy, PLATFORM_ID, effect, OnInit, signal } from '@angular/core';
+import { Component, inject, Input, AfterViewInit, OnDestroy, PLATFORM_ID, effect, OnInit, signal, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
 import { InspectRoutinePlantsRepository } from '../../../../data/repositories/inspect-routine-plants/inspect-routine-plants-repository';
 import { InspectRoutineRepository } from '../../../../data/repositories/inspect-routine/inspect-routine-repository';
 import { RegionsRepository } from '../../../../data/repositories/regions/regions-repository';
 import { getConvexHull } from '../../../../shared/utils/geolocation-math';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
 
 @Component({
   selector: 'app-inspect-routine-current-plant-map',
@@ -21,6 +22,8 @@ export class InspectRoutineCurrentPlantMap implements OnInit, AfterViewInit, OnD
   private repository = inject(InspectRoutinePlantsRepository);
   private inspectRoutineRepository = inject(InspectRoutineRepository);
   private regionsRepository = inject(RegionsRepository);
+  private themeService = inject(ThemeService);
+  private elRef = inject(ElementRef);
 
   private map?: L.Map;
   private mapReady = signal<boolean>(false);
@@ -81,6 +84,14 @@ export class InspectRoutineCurrentPlantMap implements OnInit, AfterViewInit, OnD
         }
       }
     });
+
+    effect(() => {
+      const isDark = this.themeService.currentTheme() === 'dark';
+      const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
+      if (container) {
+        container.classList.toggle('map-dark', isDark);
+      }
+    });
   }
 
   public async ngOnInit(): Promise<void> {
@@ -114,6 +125,11 @@ export class InspectRoutineCurrentPlantMap implements OnInit, AfterViewInit, OnD
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(this.map);
+
+    // Initial dark state
+    const isDark = this.themeService.currentTheme() === 'dark';
+    const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
+    if (container) container.classList.toggle('map-dark', isDark);
 
     const defaultIcon = L.icon({
       iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',

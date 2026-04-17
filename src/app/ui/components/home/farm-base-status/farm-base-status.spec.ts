@@ -50,7 +50,7 @@ describe('FarmBaseStatus', () => {
     mockHomeViewModel.hasError!.set(true);
     fixture.detectChanges();
  
-    const errorContainer = fixture.debugElement.query(By.css('.bg-red-50'));
+    const errorContainer = fixture.debugElement.query(By.css('.bg-error-container'));
     expect(errorContainer).toBeTruthy();
   });
 

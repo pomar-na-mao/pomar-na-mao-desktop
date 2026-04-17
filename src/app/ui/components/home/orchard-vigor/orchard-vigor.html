@@ -1,21 +1,21 @@
-<div class="bg-white rounded-[14px] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] flex gap-[14px] items-start p-[16px_18px]">
-  <div class="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center shrink-0" [ngClass]="isHealthy() ? 'bg-[#eff6ff]' : 'bg-red-50'">
-    <span class="material-symbols-outlined text-[20px]!" [ngClass]="isHealthy() ? 'text-[#3b82f6]' : 'text-red-500'">shield</span>
+<div class="bg-surface rounded-[14px] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] flex gap-[14px] items-start p-[16px_18px]">
+  <div class="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center shrink-0" [ngClass]="isHealthy() ? 'bg-info-container' : 'bg-error-container'">
+    <span class="material-symbols-outlined text-[20px]!" [ngClass]="isHealthy() ? 'text-on-info-container' : 'text-on-error-container'">shield</span>
   </div>
   <div class="flex-1 min-w-0">
     <span class="text-[9px] font-bold tracking-[0.05em] px-[6px] py-[2px] rounded-[4px] mb-[4px] inline-block"
-      [ngClass]="isHealthy() ? 'bg-success-container text-[#166534]' : 'bg-red-100 text-red-700'">
+      [ngClass]="isHealthy() ? 'bg-success-container text-on-success-container' : 'bg-error-container text-on-error-container'">
       {{ (isHealthy() ? 'PAGES.HOME.DASHBOARD.HEALTHY' : 'PAGES.HOME.DASHBOARD.UNHEALTHY') | translate }}
     </span>
-    <div class="text-[10px] font-semibold tracking-[0.06em] text-[#9ca3af] uppercase">
+    <div class="text-[10px] font-semibold tracking-[0.06em] text-on-surface-variant uppercase">
       {{ 'PAGES.HOME.DASHBOARD.ORCHARD_VIGOR' | translate }}
     </div>
-    <div class="text-[24px] font-bold text-[#111827] leading-[1.2] my-[2px]">
+    <div class="text-[24px] font-bold text-on-surface leading-[1.2] my-[2px]">
       {{ percent() }}%
     </div>
-    <div class="h-[5px] bg-[#f1f3f5] rounded-full overflow-hidden my-[6px]">
+    <div class="h-[5px] bg-surface-container-low rounded-full overflow-hidden my-[6px]">
       <div class="h-full rounded-full transition-all duration-300"
-        [ngClass]="isHealthy() ? 'bg-[#3b82f6]' : 'bg-red-500'"
+        [ngClass]="isHealthy() ? 'bg-info' : 'bg-error'"
         [style.width.%]="percent()">
       </div>
     </div>
