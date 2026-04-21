@@ -6,7 +6,6 @@
       [placeholder]="farmOverviewMapViewModel.regionOptions().length === 0 ? 'PAGES.MAP.NO_ZONES' : 'PAGES.MAP.ZONE_PLACEHOLDER'"
       [value]="selectedRegionId()"
       [options]="farmOverviewMapViewModel.regionOptions()"
-      [disabled]="farmOverviewMapViewModel.isLoadingRegions() || farmOverviewMapViewModel.regionOptions().length === 0"
       (valueChange)="onRegionChange($event)"
     />
 
@@ -28,13 +27,6 @@
       (valueChange)="onVarietyChange($event)"
     />
   </div>
-
-  <!-- Loading indicator while fetching plant details -->
-  @if (isLoadingPlant()) {
-    <div class="map-loading-overlay">
-      <span class="material-symbols-outlined map-loading-overlay__icon">more_horiz</span>
-    </div>
-  }
 
   <div id="map"></div>
 </div>

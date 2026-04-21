@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TitleCasePipe } from '@angular/common';
@@ -18,8 +18,6 @@ import type { PlantRecentUpdate } from '../../../../domain/models/plant-data.mod
 export class RecentUpdatesTableComponent {
   public viewModel = inject(HomeViewModel);
 
-  public selectedPlant = signal<PlantRecentUpdate | null>(null);
-
   public formattedUpdates = computed(() => {
     return this.viewModel.recentUpdates().map(plant => ({
       ...plant,
@@ -28,10 +26,6 @@ export class RecentUpdatesTableComponent {
   });
 
   public openPlantDetail(plant: PlantRecentUpdate): void {
-    this.selectedPlant.set(plant);
-  }
-
-  public closePlantDetail(): void {
-    this.selectedPlant.set(null);
+    this.viewModel.openPlantDetail(plant);
   }
 }

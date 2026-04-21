@@ -46,31 +46,6 @@
   cursor: pointer;
 }
 
-// Loading overlay enquanto busca detalhes da planta
-.map-loading-overlay {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  z-index: 10;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 6px 10px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-
-  &__icon {
-    font-size: 18px;
-    color: #94a3b8;
-    animation: loading-pulse 1s ease-in-out infinite;
-  }
-}
-
-@keyframes loading-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
 
 .leaflet-container {
   background-color: var(--color-surface-container-low);
