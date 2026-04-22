@@ -15,6 +15,9 @@ export class PlantsRepository {
   private _inspectRoutineCurrentPlants = signal<PlantData[]>([]);
   public inspectRoutineCurrentPlants = this._inspectRoutineCurrentPlants.asReadonly();
 
+  private _workRoutineCurrentPlants = signal<PlantData[]>([]);
+  public workRoutineCurrentPlants = this._workRoutineCurrentPlants.asReadonly();
+
   public addInspectRoutineCurrentPlantsItem(plant: PlantData): void {
     this._inspectRoutineCurrentPlants.update(plants => {
       const index = plants.findIndex(p => p.id === plant.id);
@@ -27,8 +30,21 @@ export class PlantsRepository {
     });
   }
 
+  public addWorkRoutineCurrentPlantsItem(plant: PlantData): void {
+    this._workRoutineCurrentPlants.update(plants => {
+      const index = plants.findIndex(p => p.id === plant.id);
+      if (index !== -1) {
+        const newPlants = [...plants];
+        newPlants[index] = plant;
+        return newPlants;
+      }
+      return [...plants, plant as PlantData];
+    });
+  }
+
   public clearPlants(): void {
     this._inspectRoutineCurrentPlants.set([]);
+    this._workRoutineCurrentPlants.set([]);
   }
 
   public async findAll(filters: InspectRoutineFilter | null = null): Promise<void> {
