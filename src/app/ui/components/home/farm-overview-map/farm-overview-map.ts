@@ -196,6 +196,23 @@ export class FarmOverviewMap implements OnInit, AfterViewInit, OnDestroy {
             });
             circle.getElement()?.classList.add('plant-circle--clickable');
             this.plantCircles.push(circle);
+            circle.on('mouseover', () => {
+                circle.setStyle({
+                    color: '#7d22d3',
+                    fillColor: '#A855F7',
+                    fillOpacity: 1,
+                    weight: 3,
+                });
+            });
+            circle.on('mouseout', () => {
+                circle.setStyle({
+                    color: '#166534',
+                    fillColor: '#22C55E',
+                    fillOpacity: 0.9,
+                    weight: 2,
+                });
+            })
+
         });
     }
     private initMap(): void {
