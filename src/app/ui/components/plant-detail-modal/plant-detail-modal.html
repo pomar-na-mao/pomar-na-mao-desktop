@@ -1,10 +1,10 @@
 @if (plant) {
   <div
-    class="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-slate-900/45 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]"
+    class="fixed inset-0 z-[1000] flex items-start justify-center p-6 overflow-y-auto bg-slate-900/45 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]"
     (click)="onBackdropClick($event)"
   >
     <div
-      class="modal-backdrop w-full max-w-lg bg-white rounded-[20px] border border-slate-100 shadow-[0_20px_60px_rgba(15,23,42,0.12),0_4px_16px_rgba(15,23,42,0.06)] flex flex-col overflow-hidden animate-[slideUp_0.18s_ease-out]"
+      class="modal-backdrop w-full max-w-lg my-auto bg-white rounded-[20px] border border-slate-100 shadow-[0_20px_60px_rgba(15,23,42,0.12),0_4px_16px_rgba(15,23,42,0.06)] flex flex-col overflow-hidden animate-[slideUp_0.18s_ease-out]"
       role="dialog"
       aria-modal="true"
     >
@@ -26,30 +26,6 @@
         </div>
 
         <div class="flex items-center gap-3 shrink-0">
-          <!-- Status badge -->
-          <span
-            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border"
-            [ngClass]="{
-              'bg-emerald-50 text-emerald-700 border-emerald-100': statusLevel === 'healthy',
-              'bg-amber-50 text-amber-700 border-amber-100': statusLevel === 'moderate',
-              'bg-rose-50 text-rose-700 border-rose-100': statusLevel === 'critical'
-            }"
-          >
-            <span
-              class="w-1.5 h-1.5 rounded-full"
-              [ngClass]="{
-                'bg-emerald-500 shadow-[0_0_6px_#22c55e]': statusLevel === 'healthy',
-                'bg-amber-500 shadow-[0_0_6px_#f59e0b]': statusLevel === 'moderate',
-                'bg-rose-500 shadow-[0_0_6px_#f43f5e]': statusLevel === 'critical'
-              }"
-            ></span>
-            @switch (statusLevel) {
-              @case ('healthy') { {{ 'PAGES.HOME.DASHBOARD.OPTIMAL' | translate }} }
-              @case ('moderate') { {{ 'PAGES.HOME.DASHBOARD.MODERATE' | translate }} }
-              @case ('critical') { {{ 'PAGES.HOME.DASHBOARD.CRITICAL' | translate }} }
-            }
-          </span>
-
           <button
             class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-600 hover:border-slate-300 transition-all"
             (click)="close()"
@@ -133,7 +109,7 @@
           </div>
         }
 
-        <!-- Occurrences — all items, active and inactive -->
+        <!-- Occurrences — active only -->
         <div>
           <h3 class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">
             <span class="material-symbols-outlined text-[15px] text-slate-400">fact_check</span>
@@ -145,30 +121,21 @@
             }
           </h3>
 
-          <div class="grid grid-cols-2 gap-2">
-            @for (key of occurenceKeys; track key) {
-              @let isActive = activeOccurrences.includes(key);
-              <div
-                class="flex items-center gap-2 px-3 py-2.5 rounded-lg border text-[12px] font-medium transition-colors"
-                [ngClass]="isActive
-                  ? 'bg-amber-50 border-amber-200 text-amber-800'
-                  : 'bg-slate-50 border-slate-100 text-slate-400'"
-              >
-                <span
-                  class="w-2 h-2 rounded-full shrink-0"
-                  [ngClass]="isActive ? 'bg-amber-500' : 'bg-slate-200'"
-                ></span>
-                <span class="truncate leading-tight">
+          @if (activeOccurrences.length > 0) {
+            <div class="flex flex-wrap gap-2">
+              @for (key of activeOccurrences; track key) {
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-[11px] font-semibold text-amber-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
                   {{ occurencesLabels[key] | translate }}
                 </span>
-                @if (isActive) {
-                  <span class="material-symbols-outlined text-[14px] text-amber-500 ml-auto shrink-0" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">
-                    warning
-                  </span>
-                }
-              </div>
-            }
-          </div>
+              }
+            </div>
+          } @else {
+            <div class="flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-700">
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+              <span class="text-[13px] font-semibold">{{ 'PAGES.HOME.DASHBOARD.OPTIMAL' | translate }}</span>
+            </div>
+          }
         </div>
 
       </div>
