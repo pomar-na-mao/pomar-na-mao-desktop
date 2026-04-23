@@ -42,7 +42,9 @@
         "GROWTH_FORECAST": "Growth Forecast",
         "ESTIMATED_YIELD_Q3": "Estimated yield Q3.",
         "TONS": "{{ value }} Tons",
-        "TIME_AGO": "{{ time }}h ago"
+        "TIME_AGO": "{{ time }}h ago",
+        "PLANTING_DATE": "Planting Date",
+        "LIFE_OF_TREE": "Life of Tree"
       }
     },
     "DETAIL": {

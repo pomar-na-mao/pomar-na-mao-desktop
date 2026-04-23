@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { PlantsRepository } from "../../../data/repositories/plants/plants-repository";
 import type { PlantRecentUpdate } from "../../../domain/models/plant-data.model";
+import type { PlantDetailInput } from "../../components/plant-detail-modal/plant-detail-modal";
 
 @Injectable()
 export class HomeViewModel {
@@ -14,6 +15,8 @@ export class HomeViewModel {
   public isLoading = signal<boolean>(true);
   public hasError = signal<boolean>(false);
 
+  public selectedPlant = signal<PlantDetailInput | null>(null);
+
   public vigorPercent = computed(() => {
     const total = this.totalPlants();
     if (total === 0) return 0;
@@ -25,6 +28,14 @@ export class HomeViewModel {
     if (total === 0) return 0;
     return Math.round((this.updatedPlants() / total) * 100);
   });
+
+  public openPlantDetail(plant: PlantDetailInput): void {
+    this.selectedPlant.set(plant);
+  }
+
+  public closePlantDetail(): void {
+    this.selectedPlant.set(null);
+  }
 
   public async initialize(): Promise<void> {
     this.isLoading.set(true);

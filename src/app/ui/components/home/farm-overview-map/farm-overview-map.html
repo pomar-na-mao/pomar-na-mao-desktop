@@ -6,7 +6,6 @@
       [placeholder]="farmOverviewMapViewModel.regionOptions().length === 0 ? 'PAGES.MAP.NO_ZONES' : 'PAGES.MAP.ZONE_PLACEHOLDER'"
       [value]="selectedRegionId()"
       [options]="farmOverviewMapViewModel.regionOptions()"
-      [disabled]="farmOverviewMapViewModel.isLoadingRegions() || farmOverviewMapViewModel.regionOptions().length === 0"
       (valueChange)="onRegionChange($event)"
     />
 
@@ -31,3 +30,9 @@
 
   <div id="map"></div>
 </div>
+
+<!-- Plant Detail Modal -->
+<app-plant-detail-modal
+  [plant]="selectedPlant()"
+  (closed)="closePlantDetail()"
+/>
