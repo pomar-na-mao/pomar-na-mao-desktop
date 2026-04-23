@@ -1,0 +1,23 @@
+<section class="relative h-full min-h-[18rem] overflow-hidden bg-surface-dim lg:min-h-0">
+  <div id="map-detail" class="absolute inset-0 z-0"></div>
+
+  <div class="absolute bottom-2 right-8 z-10 flex flex-col gap-2">
+    <button
+      (click)="zoomIn()"
+      class="w-12 h-12 bg-surface-container-lowest/95 backdrop-blur shadow-2xl rounded-xl flex items-center justify-center text-on-surface hover:bg-primary hover:text-white transition-all active:scale-95"
+    >
+      <span class="material-symbols-outlined">add</span>
+    </button>
+    <button
+      (click)="zoomOut()"
+      class="w-12 h-12 bg-surface-container-lowest/95 backdrop-blur shadow-2xl rounded-xl flex items-center justify-center text-on-surface hover:bg-primary hover:text-white transition-all active:scale-95"
+    >
+      <span class="material-symbols-outlined">remove</span>
+    </button>
+    <button
+      class="w-12 h-12 bg-surface-container-lowest/95 backdrop-blur shadow-2xl rounded-xl flex items-center justify-center text-on-surface hover:bg-primary hover:text-white transition-all active:scale-95"
+    >
+      <span class="material-symbols-outlined">layers</span>
+    </button>
+  </div>
+</section>
