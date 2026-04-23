@@ -70,7 +70,10 @@ describe('RecentUpdatesTableComponent', () => {
           wasUpdated: true
         } as PlantRecentUpdate
       ]),
-      isLoading: signal(false)
+      isLoading: signal(false),
+       selectedPlant: signal(null),
+      openPlantDetail: vi.fn(),
+      closePlantDetail: vi.fn(),
     };
 
     await TestBed.configureTestingModule({

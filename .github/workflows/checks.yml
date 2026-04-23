@@ -1,12 +1,14 @@
-name: 'Checks (Lint and Test)'
+name: "Checks (Lint and Test)"
 
 on:
   push:
     branches:
       - main
+      - release/**
   pull_request:
     branches:
       - main
+      - release/**
 
   workflow_dispatch:
 

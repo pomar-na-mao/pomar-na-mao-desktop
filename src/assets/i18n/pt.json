@@ -42,7 +42,9 @@
         "GROWTH_FORECAST": "Previsão de Crescimento",
         "ESTIMATED_YIELD_Q3": "Estimativa de produção Q3.",
         "TONS": "{{ value }} Toneladas",
-        "TIME_AGO": "há {{ time }}h"
+        "TIME_AGO": "há {{ time }}h",
+        "PLANTING_DATE": "Data de Plantio",
+        "LIFE_OF_TREE": "Vida da Planta"
       }
     },
     "DETAIL": {
@@ -153,8 +155,11 @@
     "SYNCS": {
       "TITLE": "Sincronizações",
       "INSPECT_ROUTINES": "Rotinas de Inspeção",
+      "WORK_ROUTINES": "Rotinas de Trabalho",
       "HISTORY_DESCRIPTION": "Histórico de rotinas de inspeção",
+      "WORK_HISTORY_DESCRIPTION": "Histórico de rotinas de trabalho",
       "NO_ROUTINES": "Nenhuma rotina de inspeção encontrada.",
+      "NO_WORK_ROUTINES": "Nenhuma rotina de trabalho encontrada.",
       "INSPECT_ANNOTATIONS": "Anotações de Inspeção",
       "ANNOTATIONS_HISTORY_DESCRIPTION": "Histórico de anotações de inspeção",
       "NO_ANNOTATIONS": "Nenhuma anotação encontrada.",
@@ -164,10 +169,13 @@
       "NEW_PLANT_ID": "Nova Planta {{ id }}",
       "NEW_PLANT_MODAL_SUBTITLE": "Revise as coordenadas e aprove a adição da nova planta.",
       "INSPECTION_ID": "Inspeção {{ id }}",
+      "WORK_ROUTINE_ID": "Rotina de Trabalho {{ id }}",
       "ANNOTATION_ID": "Anotação {{ id }}",
+      "WORK_ANNOTATION_ID": "Anotação de Trabalho {{ id }}",
       "SUBTITLE": "Detalhamento e aprovação de ocorrências",
       "ZONE_NUMBER": "Zona {{ number }}",
       "APPROVED_INSPECTION": "Esta inspeção já foi aprovada e sincronizada.",
+      "APPROVED_WORK_ROUTINE": "Esta rotina de trabalho já foi aprovada e sincronizada.",
       "NO_DIFFERENCES": "Nenhuma diferença de ocorrências encontrada para esta planta.",
       "ANNOTATION_NOT_FOUND": "Anotação não encontrada",
       "NO_PLANTS_FOUND": "Nenhuma planta encontrada para esta rotina."

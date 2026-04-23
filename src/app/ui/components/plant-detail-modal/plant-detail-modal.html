@@ -1,0 +1,286 @@
+@if (plant) {
+<div
+  class="fixed inset-0 z-[1000] flex items-start justify-center p-6 overflow-y-auto bg-[rgba(0,0,0,0.5)] backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="modal-backdrop w-full max-w-lg my-auto bg-surface-container rounded-[24px] border border-outline-variant shadow-2xl flex flex-col overflow-hidden animate-[slideUp_0.18s_ease-out]"
+    role="dialog"
+    aria-modal="true"
+  >
+    <!-- Header -->
+    <div
+      class="flex items-start justify-between gap-4 px-6 pt-6 pb-5 border-b border-outline-variant"
+    >
+      <div class="flex items-center gap-4 min-w-0">
+        <div
+          class="flex items-center justify-center w-14 h-14 rounded-2xl bg-surface-container-high border border-outline-variant shrink-0"
+        >
+          <span class="material-symbols-outlined text-[24px] text-primary"
+            >eco</span
+          >
+        </div>
+        <div class="flex flex-col gap-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <h2
+              class="font-headline text-[18px] font-bold text-on-surface leading-tight truncate"
+            >
+              {{ plant.variety | titlecase }}
+            </h2>
+            <span
+              class="shrink-0 font-mono text-[10px] font-bold text-primary bg-surface-container-highest border border-outline-variant px-2.5 py-1 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+            >
+              #{{ formattedId }}
+            </span>
+          </div>
+          <span
+            class="flex items-center gap-1 text-[13px] text-on-surface-variant font-medium"
+          >
+            <span class="material-symbols-outlined text-[14px]"
+              >location_on</span
+            >
+            {{ plant.region | titlecase }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 shrink-0">
+        <button
+          class="w-9 h-9 hover:cursor-pointer flex items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant hover:brightness-95 dark:hover:brightness-110 transition-colors"
+          (click)="close()"
+          [attr.aria-label]="'COMMON.BACK' | translate"
+        >
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="flex flex-col gap-6 px-6 py-6">
+      <!-- Info grid -->
+      <div class="grid grid-cols-2 gap-3">
+        <div
+          class="flex items-center gap-3.5 p-4 bg-surface-container-high border border-outline-variant rounded-2xl transition-colors hover:brightness-95 dark:hover:brightness-110"
+        >
+          <div
+            class="w-10 h-10 rounded-full bg-surface-container-highest shadow-sm border border-outline-variant flex items-center justify-center shrink-0"
+          >
+            <span
+              class="material-symbols-outlined text-[16px] text-on-surface-variant"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >schedule</span
+            >
+          </div>
+          <div class="flex flex-col gap-0.5 min-w-0">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant"
+              >{{ 'PAGES.HOME.DASHBOARD.LAST_UPDATE' | translate }}</span
+            >
+            <span class="text-[13px] font-semibold text-on-surface truncate"
+              >{{ formattedUpdatedAt }}</span
+            >
+          </div>
+        </div>
+
+        <div
+          class="flex items-center gap-3.5 p-4 bg-surface-container-high border border-outline-variant rounded-2xl transition-colors hover:brightness-95 dark:hover:brightness-110"
+        >
+          <div
+            class="w-10 h-10 rounded-full bg-surface-container-highest shadow-sm border border-outline-variant flex items-center justify-center shrink-0"
+          >
+            <span
+              class="material-symbols-outlined text-[16px] text-on-surface-variant"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >park</span
+            >
+          </div>
+          <div class="flex flex-col gap-0.5 min-w-0">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant"
+              >{{ 'PAGES.HOME.DASHBOARD.VARIETY' | translate }}</span
+            >
+            <span class="text-[13px] font-semibold text-on-surface truncate"
+              >{{ plant.variety | titlecase }}</span
+            >
+          </div>
+        </div>
+
+        @if (formattedPlantingDate) {
+        <div
+          class="flex items-center gap-3.5 p-4 bg-surface-container-high border border-outline-variant rounded-2xl transition-colors hover:brightness-95 dark:hover:brightness-110"
+        >
+          <div
+            class="w-10 h-10 rounded-full bg-surface-container-highest shadow-sm border border-outline-variant flex items-center justify-center shrink-0"
+          >
+            <span
+              class="material-symbols-outlined text-[16px] text-on-surface-variant"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >calendar_today</span
+            >
+          </div>
+          <div class="flex flex-col gap-0.5 min-w-0">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant"
+              >{{ 'PAGES.HOME.DASHBOARD.PLANTING_DATE' | translate }}</span
+            >
+            <span class="text-[13px] font-semibold text-on-surface truncate"
+              >{{ formattedPlantingDate }}</span
+            >
+          </div>
+        </div>
+        } @if (lifeOfTree) {
+        <div
+          class="flex items-center gap-3.5 p-4 bg-surface-container-high border border-outline-variant rounded-2xl transition-colors hover:brightness-95 dark:hover:brightness-110"
+        >
+          <div
+            class="w-10 h-10 rounded-full bg-surface-container-highest shadow-sm border border-outline-variant flex items-center justify-center shrink-0"
+          >
+            <span
+              class="material-symbols-outlined text-[16px] text-on-surface-variant"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >forest</span
+            >
+          </div>
+          <div class="flex flex-col gap-0.5 min-w-0">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant"
+              >{{ 'PAGES.HOME.DASHBOARD.LIFE_OF_TREE' | translate }}</span
+            >
+            <span class="text-[13px] font-semibold text-on-surface truncate"
+              >{{ lifeOfTree }}</span
+            >
+          </div>
+        </div>
+        } @if (!formattedPlantingDate && !lifeOfTree) {
+        <div
+          class="flex items-center gap-3.5 p-4 bg-surface-container-high border border-outline-variant rounded-2xl transition-colors hover:brightness-95 dark:hover:brightness-110"
+        >
+          <div
+            class="w-10 h-10 rounded-full bg-surface-container-highest shadow-sm border border-outline-variant flex items-center justify-center shrink-0"
+          >
+            <span
+              class="material-symbols-outlined text-[16px] text-on-surface-variant"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >pin_drop</span
+            >
+          </div>
+          <div class="flex flex-col gap-0.5 min-w-0">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant"
+              >{{ 'PAGES.HOME.DASHBOARD.REGION' | translate }}</span
+            >
+            <span class="text-[13px] font-semibold text-on-surface truncate"
+              >{{ plant.region | titlecase }}</span
+            >
+          </div>
+        </div>
+
+        <div
+          class="flex items-center gap-3.5 p-4 bg-surface-container-high border border-outline-variant rounded-2xl transition-colors hover:brightness-95 dark:hover:brightness-110"
+        >
+          <div
+            class="w-10 h-10 rounded-full bg-surface-container-highest shadow-sm border border-outline-variant flex items-center justify-center shrink-0"
+          >
+            <span
+              class="material-symbols-outlined text-[16px] text-on-surface-variant"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >bug_report</span
+            >
+          </div>
+          <div class="flex flex-col gap-0.5 min-w-0">
+            <span
+              class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant"
+              >{{ 'PAGES.HOME.DASHBOARD.OCCURRENCES' | translate }}</span
+            >
+            <span class="text-[13px] font-semibold text-on-surface"
+              >{{ occurrenceCount }}</span
+            >
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- GPS coordinates (map only) -->
+      @if (hasLocationData) {
+      <div
+        class="flex items-center justify-between px-5 py-4 bg-surface-container-highest border border-outline-variant rounded-2xl"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="flex items-center justify-center w-10 h-10 rounded-full text-primary"
+          >
+            <span
+              class="material-symbols-outlined text-[16px]"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >my_location</span
+            >
+          </div>
+          <span class="text-[13px] font-semibold text-on-surface"
+            >Coordenadas GPS</span
+          >
+        </div>
+        <span
+          class="font-mono text-[13px] font-medium text-primary px-2.5 py-1 rounded-lg"
+        >
+          {{ latitude!.toFixed(6) }}, {{ longitude!.toFixed(6) }}
+        </span>
+      </div>
+      }
+
+      <!-- Occurrences — active only -->
+      <div class="pt-2">
+        <div class="flex items-center justify-between mb-4">
+          <h3
+            class="flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-on-surface"
+          >
+            <span
+              class="material-symbols-outlined text-[16px] text-on-surface-variant"
+              >fact_check</span
+            >
+            {{ 'PAGES.HOME.DASHBOARD.OCCURRENCES' | translate }}
+          </h3>
+          @if (occurrenceCount > 0) {
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-error-container/40 text-on-error-container border border-error-container/30 rounded-full text-[11px] font-bold"
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full bg-error shadow-[0_0_8px_currentColor]"
+            ></span>
+            {{ occurrenceCount }} {{ (occurrenceCount === 1 ?
+            'COMMON.OCCURRENCE' : 'COMMON.OCCURRENCES') | translate }}
+          </span>
+          }
+        </div>
+
+        @if (activeOccurrences.length > 0) {
+        <div class="flex flex-wrap gap-2">
+          @for (key of activeOccurrences; track key) {
+          <span
+            class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-error-container/40 text-on-error-container border border-error-container/30 rounded-xl text-[12px] font-semibold shadow-sm"
+          >
+            <span class="material-symbols-outlined text-[14px]">warning</span>
+            {{ occurencesLabels[key] | translate }}
+          </span>
+          }
+        </div>
+        } @else {
+        <div
+          class="flex items-center gap-3 px-4 py-3.5 bg-success-container text-on-success-container border border-success-container rounded-2xl"
+        >
+          <div class="flex items-center justify-center w-10 h-10 rounded-full">
+            <span
+              class="material-symbols-outlined text-[16px]"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >check_circle</span
+            >
+          </div>
+          <span class="text-[13px] font-medium">
+            Nenhuma ocorrência registrada
+          </span>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+}

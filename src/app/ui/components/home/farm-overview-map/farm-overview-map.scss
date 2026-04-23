@@ -10,6 +10,7 @@
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 12px;
+  position: relative;
 
   .controls-container {
     display: flex;
@@ -34,6 +35,17 @@
   overflow: hidden;
   border-radius: 14px;
 }
+
+// Cursor pointer nos círculos de planta
+.plant-circle--clickable {
+  cursor: pointer !important;
+}
+
+// Quando o mapa tem plantas clicáveis, muda o cursor via path do SVG do Leaflet
+.leaflet-interactive {
+  cursor: pointer;
+}
+
 
 .leaflet-container {
   background-color: var(--color-surface-container-low);
