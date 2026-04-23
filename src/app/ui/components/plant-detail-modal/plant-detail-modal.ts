@@ -6,9 +6,8 @@ import {
     HostListener,
     inject,
 } from '@angular/core';
-import { CommonModule, TitleCasePipe} from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { ThemeService } from '../../../core/services/theme/theme.service';
 import { occurenceKeys, occurencesLabels } from '../../../shared/utils/occurrences';
 import type { Plant, PlantRecentUpdate } from '../../../domain/models/plant-data.model';
@@ -18,7 +17,7 @@ export type PlantDetailInput = Plant | PlantRecentUpdate;
 @Component({
     selector: 'app-plant-detail-modal',
     standalone: true,
-    imports: [CommonModule, TranslateModule, TitleCasePipe, TimeAgoPipe],
+    imports: [CommonModule, TranslateModule, TitleCasePipe],
     templateUrl: './plant-detail-modal.html',
     styleUrls: ['./plant-detail-modal.scss'],
 })
