@@ -4,10 +4,12 @@ import {
     Output,
     EventEmitter,
     HostListener,
+    inject,
 } from '@angular/core';
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe} from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { ThemeService } from '../../../core/services/theme/theme.service';
 import { occurenceKeys, occurencesLabels } from '../../../shared/utils/occurrences';
 import type { Plant, PlantRecentUpdate } from '../../../domain/models/plant-data.model';
 
@@ -23,6 +25,8 @@ export type PlantDetailInput = Plant | PlantRecentUpdate;
 export class PlantDetailModalComponent {
     @Input() plant: PlantDetailInput | null = null;
     @Output() closed = new EventEmitter<void>();
+
+    private themeService = inject(ThemeService);
 
     public readonly occurenceKeys = occurenceKeys;
     public readonly occurencesLabels = occurencesLabels;
@@ -76,5 +80,34 @@ export class PlantDetailModalComponent {
 
     public get hasLocationData(): boolean {
         return this.latitude !== null && this.longitude !== null;
+    }
+
+    public get isDark(): boolean {
+        return this.themeService.currentTheme() === 'dark';
+    }
+
+    public get formattedUpdatedAt(): string {
+        if (!this.plant) return '';
+        const updatedAt = (this.plant as unknown as Plant)?.updated_at || (this.plant as unknown as PlantRecentUpdate)?.updated_at;
+        return this.formatDate(updatedAt);
+    }
+
+    public get formattedPlantingDate(): string | null {
+        const date = this.plantingDate;
+        if (!date) return null;
+        return this.formatDate(date);
+    }
+
+    private formatDate(dateString: string): string {
+        if (!dateString) return '';
+        try {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        } catch {
+            return '';
+        }
     }
 }
