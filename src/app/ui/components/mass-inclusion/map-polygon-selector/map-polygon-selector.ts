@@ -11,6 +11,7 @@ import {
     OnChanges,
     SimpleChanges,
     HostListener,
+    effect,
     inject,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -77,6 +78,17 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
     public selectedPolygonCoords: PolygonCoordinate[] = [];
     public showCoords = false;
     public copiedFeedback = false;
+
+    constructor() {
+        effect(() => {
+            const isDark = this.themeService.currentTheme() === 'dark';
+            const container = this.mapContainer?.nativeElement as HTMLElement | undefined;
+
+            if (container) {
+                container.classList.toggle('map-dark', isDark);
+            }
+        });
+    }
 
     public ngAfterViewInit(): void {
         this.initMap();
