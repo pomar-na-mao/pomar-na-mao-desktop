@@ -1,0 +1,163 @@
+<section
+  class="flex h-full w-full flex-col space-y-6 overflow-y-auto border-outline-variant/10 bg-surface-container-low p-2 sm:p-3 lg:border-r lg:p-6"
+>
+  <div class="flex flex-col gap-4 mb-2">
+    <div class="flex items-start justify-between">
+      <div>
+        <div class="flex items-center gap-3">
+          <h2
+            class="text-3xl font-headline font-extrabold text-on-surface tracking-tight"
+          >
+            {{ 'PAGES.SYNCS.ROUTINE_ID' | translate: { id: id } }}
+          </h2>
+          @if (routineSyncViewModel.currentRoutineRegion()) {
+          <div
+            class="px-3 py-1 bg-secondary-container/50 text-on-secondary-container text-xs font-bold rounded-full flex items-center gap-1"
+          >
+            {{ 'PAGES.SYNCS.ZONE_NUMBER' | translate: { number:
+            routineSyncViewModel.currentRoutineRegion() } }}
+          </div>
+          }
+        </div>
+        <p class="text-on-surface-variant text-sm mt-1">
+          {{ 'PAGES.SYNCS.SUBTITLE' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  @if (routineSyncViewModel.totalPlants() > 0) {
+  <!-- Carousel Card Container -->
+  <div class="relative group">
+    <div
+      class="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 p-8 border border-outline-variant/10"
+    >
+      <div class="flex flex-col gap-4 mb-8">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="text-2xl font-headline font-bold text-primary">
+              TRE-{{routineSyncViewModel.currentRoutinePlant()?.plant_id!.split("-")[0]}}...
+            </h3>
+          </div>
+        </div>
+        <!-- Updated Occurrence Badges List -->
+        <div class="flex flex-wrap gap-2 pt-2">
+          @if (routineSyncViewModel.isPlantLoading()) {
+          <div
+            class="w-full bg-surface-container-high animate-pulse h-10 rounded-xl"
+          ></div>
+          } @else if
+          (routineSyncViewModel.occurrencesChanges().exclusions.length
+          === 0 &&
+          routineSyncViewModel.occurrencesChanges().inclusions.length ===
+          0) {
+          <div
+            class="w-full bg-secondary-container/20 text-on-surface-variant px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 border border-outline-variant/20 tracking-wide"
+          >
+            <span class="material-symbols-outlined text-lg text-secondary"
+              >info</span
+            >
+            {{ 'PAGES.SYNCS.NO_DIFFERENCES' | translate }}
+          </div>
+          } @else {
+          <!-- Exclusion Style (Negative/Issues) -->
+          @for (exclusion of
+          routineSyncViewModel.occurrencesChanges().exclusions; track
+          exclusion) {
+          <div
+            class="bg-error-container/40 text-on-error-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">remove</span>
+            {{ routineSyncViewModel.occurrencesLabels[exclusion] |
+            translate }}
+          </div>
+          }
+          <!-- Inclusion Style (Positive/Actions/Added) -->
+          @for (inclusion of
+          routineSyncViewModel.occurrencesChanges().inclusions; track
+          inclusion) {
+          <div
+            class="bg-secondary-container/50 text-on-secondary-container px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">add</span>
+            {{ routineSyncViewModel.occurrencesLabels[inclusion] |
+            translate }}
+          </div>
+          } }
+        </div>
+        <div class="pt-4 border-t border-outline-variant/10">
+          <p class="text-on-surface-variant text-xs font-medium"><br /></p>
+        </div>
+      </div>
+      <!-- Carousel Controls -->
+      <div class="flex items-center justify-between">
+        <button
+          (click)="routineSyncViewModel.previousPlant()"
+          [disabled]="routineSyncViewModel.currentPlantIndex() === 0"
+          class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-bold text-sm transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span class="material-symbols-outlined">chevron_left</span>
+          {{ 'COMMON.PREVIOUS' | translate }}
+        </button>
+        <div class="text-xs font-bold text-on-surface-variant">
+          {{ routineSyncViewModel.currentPlantIndex() + 1 }} / {{
+          routineSyncViewModel.totalPlants() }}
+        </div>
+        <button
+          (click)="routineSyncViewModel.nextPlant()"
+          [disabled]="routineSyncViewModel.currentPlantIndex() === routineSyncViewModel.totalPlants() - 1"
+          class="flex items-center gap-2 text-on-surface-variant hover:text-primary font-bold text-sm transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ 'COMMON.NEXT' | translate }}
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+    <!-- Visual Accents -->
+    <div
+      class="absolute -top-4 -right-4 w-16 h-16 bg-secondary-container/20 rounded-full blur-2xl -z-10"
+    ></div>
+  </div>
+
+  <button
+    [disabled]="routineSyncViewModel.currentRoutinePlant()?.is_approved || routineSyncViewModel.isApproving()"
+    (click)="routineSyncViewModel.onApproveRoutine()"
+    class="flex items-center justify-center gap-2 py-4 bg-linear-to-br from-primary to-primary-container text-white rounded-2xl font-headline font-bold transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02] active:scale-95 cursor-pointer disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100 disabled:cursor-not-allowed text-sm"
+  >
+    @if (routineSyncViewModel.isApproving()) {
+    <div
+      class="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+    ></div>
+    {{ 'COMMON.APPROVING' | translate }} } @else {
+    <span class="material-symbols-outlined"
+      >{{ routineSyncViewModel.currentRoutinePlant()?.is_approved
+      ? 'check_circle' : 'check_circle_outline' }}</span
+    >
+    {{ (routineSyncViewModel.currentRoutinePlant()?.is_approved ?
+    'COMMON.APPROVED' : 'COMMON.APPROVE') | translate }} }
+  </button>
+  } @else {
+  <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+    <span
+      class="material-symbols-outlined text-[48px] text-on-surface-variant/50 mb-4"
+      >eco</span
+    >
+    <p class="text-on-surface-variant font-bold">
+      {{ 'PAGES.SYNCS.NO_PLANTS_FOUND' | translate }}
+    </p>
+  </div>
+  }
+
+  <div class="flex justify-start mt-auto pt-6">
+    <button
+      (click)="routineSyncViewModel.goBack()"
+      class="flex items-center gap-2 px-1 py-2 text-on-surface-variant hover:text-primary transition-all active:scale-95 text-sm font-bold group"
+    >
+      <span
+        class="material-symbols-outlined text-[20px] transition-transform group-hover:-translate-x-1"
+        >arrow_back</span
+      >
+      {{ 'COMMON.BACK' | translate }}
+    </button>
+  </div>
+</section>

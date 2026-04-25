@@ -15,8 +15,8 @@ export class PlantsRepository {
   private _inspectRoutineCurrentPlants = signal<PlantData[]>([]);
   public inspectRoutineCurrentPlants = this._inspectRoutineCurrentPlants.asReadonly();
 
-  private _workRoutineCurrentPlants = signal<PlantData[]>([]);
-  public workRoutineCurrentPlants = this._workRoutineCurrentPlants.asReadonly();
+  private _routineCurrentPlants = signal<PlantData[]>([]);
+  public routineCurrentPlants = this._routineCurrentPlants.asReadonly();
 
   public addInspectRoutineCurrentPlantsItem(plant: PlantData): void {
     this._inspectRoutineCurrentPlants.update(plants => {
@@ -30,8 +30,8 @@ export class PlantsRepository {
     });
   }
 
-  public addWorkRoutineCurrentPlantsItem(plant: PlantData): void {
-    this._workRoutineCurrentPlants.update(plants => {
+  public addRoutineCurrentPlantsItem(plant: PlantData): void {
+    this._routineCurrentPlants.update(plants => {
       const index = plants.findIndex(p => p.id === plant.id);
       if (index !== -1) {
         const newPlants = [...plants];
@@ -44,7 +44,7 @@ export class PlantsRepository {
 
   public clearPlants(): void {
     this._inspectRoutineCurrentPlants.set([]);
-    this._workRoutineCurrentPlants.set([]);
+    this._routineCurrentPlants.set([]);
   }
 
   public async findAll(filters: InspectRoutineFilter | null = null): Promise<void> {
