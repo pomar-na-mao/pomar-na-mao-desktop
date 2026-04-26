@@ -4,14 +4,14 @@ import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 import type { Plant, PlantInsert } from "../../../domain/models/plant-data.model";
 import { injectSupabase } from "../supabase";
 
-export type InspectRoutineFilter = {
+export type PlantsFilter = {
   region: string;
   occurrence: string;
   variety?: string;
 }
 
 export interface IPlantsService {
-  findAll(filters: InspectRoutineFilter | null): Promise<PostgrestSingleResponse<Plant[]>>;
+  findAll(filters: PlantsFilter | null): Promise<PostgrestSingleResponse<Plant[]>>;
   findById(id: string): Promise<PostgrestSingleResponse<Plant>>;
   delete(id: string): Promise<PostgrestSingleResponse<null>>;
   insert(plant: PlantInsert): Promise<PostgrestSingleResponse<Plant>>;
@@ -28,7 +28,7 @@ export class PlantsService implements IPlantsService {
 
   public supabase = injectSupabase();
 
-  public async findAll(filters: InspectRoutineFilter | null): Promise<PostgrestSingleResponse<Plant[]>> {
+  public async findAll(filters: PlantsFilter | null): Promise<PostgrestSingleResponse<Plant[]>> {
     let query = this.supabase.from('plants').select('*').order('created_at', { ascending: false });
 
     if (filters) {
