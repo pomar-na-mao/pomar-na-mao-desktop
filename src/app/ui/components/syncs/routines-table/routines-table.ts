@@ -1,5 +1,5 @@
+import { CommonModule, DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { CommonModule, TitleCasePipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import type { IRoutine } from '../../../../domain/models/routine.model';
@@ -17,6 +17,6 @@ export class RoutinesTableComponent {
   public routinesViewModel = inject(RoutinesViewModel);
 
   public onEditRoutine(routine: IRoutine): void {
-    this.router.navigate(['/pomar-na-mao/sincronizacoes/rotinas-de-trabalho/', routine.id]);
+    this.router.navigate(['/pomar-na-mao/sincronizacoes/rotinas/', routine.id]);
   }
 }

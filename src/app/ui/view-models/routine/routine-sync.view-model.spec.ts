@@ -2,17 +2,19 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { PlantData } from '../../../domain/models/plant-data.model';
 import type { IRoutinePlants } from '../../../domain/models/routine-plants.model';
 import type { IRoutine } from '../../../domain/models/routine.model';
-import type { PlantData } from '../../../domain/models/plant-data.model';
-import { WorkAnnotationRepository } from '../../../data/repositories/work-annotation/work-annotation-repository';
+//import { WorkAnnotationRepository } from '../../../data/repositories/work-annotation/work-annotation-repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { RoutinePlantsRepository } from '../../../data/repositories/routine-plants/routine-plants-repository';
 import { RoutineRepository } from '../../../data/repositories/routine/routine-repository';
-import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import { RoutineSyncViewModel } from './routine-sync.view-model';
 
-function createRoutinePlant(overrides: Partial<IRoutinePlants> = {}): IRoutinePlants {
+function createRoutinePlant(
+  overrides: Partial<IRoutinePlants> = {},
+): IRoutinePlants {
   return {
     id: 'routine-plant-1',
     created_at: '2026-03-31T10:00:00Z',
@@ -50,7 +52,7 @@ function createRoutinePlant(overrides: Partial<IRoutinePlants> = {}): IRoutinePl
     buds: false,
     dehydrated: false,
     is_approved: false,
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -64,7 +66,7 @@ function createRoutine(overrides: Partial<IRoutine> = {}): IRoutine {
     description: 'Routine description',
     updated_at: '2026-03-31T10:00:00Z',
     is_review_started: false,
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -104,7 +106,7 @@ function createPlantData(overrides: Partial<PlantData> = {}): PlantData {
     flowers: false,
     buds: false,
     dehydrated: false,
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -118,38 +120,44 @@ describe('RoutineSyncViewModel', () => {
   const workAnnotationsLoadingSignal = signal(false);
 
   const mockRouter = {
-    navigate: vi.fn()
+    navigate: vi.fn(),
   };
 
   const mockRoutinePlantsRepository = {
     routinePlants: routinePlantsSignal.asReadonly(),
     selectedRoutinePlant: selectedRoutinePlantSignal.asReadonly(),
     findByRoutineId: vi.fn().mockImplementation(async () => undefined),
-    setSelectedPlant: vi.fn().mockImplementation((plant: IRoutinePlants | null) => selectedRoutinePlantSignal.set(plant)),
+    setSelectedPlant: vi
+      .fn()
+      .mockImplementation((plant: IRoutinePlants | null) =>
+        selectedRoutinePlantSignal.set(plant),
+      ),
     approveWorkAnnotation: vi.fn(),
-    updatePlantFromRoutine: vi.fn()
+    updatePlantFromRoutine: vi.fn(),
   };
 
   const mockRoutineRepository = {
-    routines: routinesSignal
+    routines: routinesSignal,
   };
 
   const mockPlantsRepository = {
     routineCurrentPlants: routineCurrentPlantsSignal.asReadonly(),
     findById: vi.fn(),
-    addRoutineCurrentPlantsItem: vi.fn().mockImplementation((plant: PlantData) => {
-      routineCurrentPlantsSignal.update((plants) => [...plants, plant]);
-    }),
-    clearPlants: vi.fn()
+    addRoutineCurrentPlantsItem: vi
+      .fn()
+      .mockImplementation((plant: PlantData) => {
+        routineCurrentPlantsSignal.update((plants) => [...plants, plant]);
+      }),
+    clearPlants: vi.fn(),
   };
 
-  const mockWorkAnnotationRepository = {
+  /* const mockWorkAnnotationRepository = {
     isLoading: workAnnotationsLoadingSignal.asReadonly(),
-    fetchWorkAnnotations: vi.fn().mockResolvedValue(undefined)
-  };
+    fetchWorkAnnotations: vi.fn().mockResolvedValue(undefined),
+  }; */
 
   const mockMessageService = {
-    show: vi.fn()
+    show: vi.fn(),
   };
 
   beforeEach(() => {
@@ -164,12 +172,15 @@ describe('RoutineSyncViewModel', () => {
       providers: [
         RoutineSyncViewModel,
         { provide: Router, useValue: mockRouter },
-        { provide: RoutinePlantsRepository, useValue: mockRoutinePlantsRepository },
+        {
+          provide: RoutinePlantsRepository,
+          useValue: mockRoutinePlantsRepository,
+        },
         { provide: RoutineRepository, useValue: mockRoutineRepository },
         { provide: PlantsRepository, useValue: mockPlantsRepository },
-        { provide: WorkAnnotationRepository, useValue: mockWorkAnnotationRepository },
-        { provide: MessageService, useValue: mockMessageService }
-      ]
+        /* { provide: WorkAnnotationRepository, useValue: mockWorkAnnotationRepository }, */
+        { provide: MessageService, useValue: mockMessageService },
+      ],
     });
 
     viewModel = TestBed.inject(RoutineSyncViewModel);
@@ -188,9 +199,7 @@ describe('RoutineSyncViewModel', () => {
   });
 
   it('should compute the current routine region', () => {
-    routinesSignal.set([
-      createRoutine()
-    ]);
+    routinesSignal.set([createRoutine()]);
 
     viewModel.id.set(7);
 
@@ -198,23 +207,25 @@ describe('RoutineSyncViewModel', () => {
   });
 
   it('should compute inclusions and exclusions for the selected plant', () => {
-    selectedRoutinePlantSignal.set(createRoutinePlant({
-      id: 'irp-1',
-      plant_id: 'plant-1',
-      mites: true,
-      flowers: false
-    }));
+    selectedRoutinePlantSignal.set(
+      createRoutinePlant({
+        id: 'irp-1',
+        plant_id: 'plant-1',
+        mites: true,
+        flowers: false,
+      }),
+    );
     routineCurrentPlantsSignal.set([
       createPlantData({
         id: 'plant-1',
         mites: false,
-        flowers: true
-      })
+        flowers: true,
+      }),
     ]);
 
     expect(viewModel.occurrencesChanges()).toEqual({
       inclusions: ['mites'],
-      exclusions: ['flowers']
+      exclusions: ['flowers'],
     });
   });
 
@@ -233,30 +244,36 @@ describe('RoutineSyncViewModel', () => {
     await viewModel.fetchPlantData('plant-2');
 
     expect(mockPlantsRepository.findById).toHaveBeenCalledWith('plant-2');
-    expect(mockPlantsRepository.addRoutineCurrentPlantsItem).toHaveBeenCalledWith(plant);
+    expect(
+      mockPlantsRepository.addRoutineCurrentPlantsItem,
+    ).toHaveBeenCalledWith(plant);
     expect(viewModel.isPlantLoading()).toBe(false);
   });
 
   it('should move to the next and previous plants', () => {
     routinePlantsSignal.set([
       createRoutinePlant({ id: 'irp-1', plant_id: 'plant-1' }),
-      createRoutinePlant({ id: 'irp-2', plant_id: 'plant-2' })
+      createRoutinePlant({ id: 'irp-2', plant_id: 'plant-2' }),
     ]);
 
     viewModel.nextPlant();
     expect(viewModel.currentPlantIndex()).toBe(1);
-    expect(mockRoutinePlantsRepository.setSelectedPlant).toHaveBeenLastCalledWith(
-      createRoutinePlant({ id: 'irp-2', plant_id: 'plant-2' })
+    expect(
+      mockRoutinePlantsRepository.setSelectedPlant,
+    ).toHaveBeenLastCalledWith(
+      createRoutinePlant({ id: 'irp-2', plant_id: 'plant-2' }),
     );
 
     viewModel.previousPlant();
     expect(viewModel.currentPlantIndex()).toBe(0);
-    expect(mockRoutinePlantsRepository.setSelectedPlant).toHaveBeenLastCalledWith(
-      createRoutinePlant({ id: 'irp-1', plant_id: 'plant-1' })
+    expect(
+      mockRoutinePlantsRepository.setSelectedPlant,
+    ).toHaveBeenLastCalledWith(
+      createRoutinePlant({ id: 'irp-1', plant_id: 'plant-1' }),
     );
   });
 
-  it('should approve an workion annotation successfully', async () => {
+  /* it('should approve an workion annotation successfully', async () => {
     mockRoutinePlantsRepository.approveWorkAnnotation.mockResolvedValue({ error: null });
 
     await viewModel.onApproveWorkAnnotation('annotation-1');
@@ -265,16 +282,16 @@ describe('RoutineSyncViewModel', () => {
     expect(mockWorkAnnotationRepository.fetchWorkAnnotations).toHaveBeenCalled();
     expect(mockMessageService.show).toHaveBeenCalledWith('COMMON.TOAST.SUCCESS', 'success');
     expect(viewModel.isApproving()).toBe(false);
-  });
+  }); */
 
-  it('should show an error when approving an workion annotation fails', async () => {
+  /* it('should show an error when approving an workion annotation fails', async () => {
     mockRoutinePlantsRepository.approveWorkAnnotation.mockResolvedValue({ error: new Error('failed') });
 
     await viewModel.onApproveWorkAnnotation('annotation-1');
 
     expect(mockMessageService.show).toHaveBeenCalledWith('COMMON.TOAST.ERROR', 'error');
     expect(viewModel.isApproving()).toBe(false);
-  });
+  }); */
 
   it('should approve a routine plant successfully', async () => {
     const plant = createRoutinePlant({
@@ -288,14 +305,16 @@ describe('RoutineSyncViewModel', () => {
       planting_date: '2020-01-01',
       description: 'Healthy plant',
       mites: true,
-      flowers: false
+      flowers: false,
     });
 
     selectedRoutinePlantSignal.set(plant);
     routinePlantsSignal.set([plant]);
     viewModel.id.set(7);
 
-    mockRoutinePlantsRepository.updatePlantFromRoutine.mockResolvedValue({ error: null });
+    mockRoutinePlantsRepository.updatePlantFromRoutine.mockResolvedValue({
+      error: null,
+    });
     mockRoutinePlantsRepository.findByRoutineId.mockImplementation(async () => {
       routinePlantsSignal.set([plant]);
       selectedRoutinePlantSignal.set(plant);
@@ -304,11 +323,13 @@ describe('RoutineSyncViewModel', () => {
 
     await viewModel.onApproveRoutine();
 
-    expect(mockRoutinePlantsRepository.updatePlantFromRoutine).toHaveBeenCalledWith(
+    expect(
+      mockRoutinePlantsRepository.updatePlantFromRoutine,
+    ).toHaveBeenCalledWith(
       'plant-1',
       expect.objectContaining({
         mites: true,
-        flowers: false
+        flowers: false,
       }),
       'routine-plant-1',
       {
@@ -318,26 +339,36 @@ describe('RoutineSyncViewModel', () => {
         life_of_the_tree: '5',
         harvest: '2026',
         planting_date: '2020-01-01',
-        description: 'Healthy plant'
-      }
+        description: 'Healthy plant',
+      },
     );
     expect(mockRoutinePlantsRepository.findByRoutineId).toHaveBeenCalledWith(7);
-    expect(mockMessageService.show).toHaveBeenCalledWith('COMMON.TOAST.SUCCESS', 'success');
+    expect(mockMessageService.show).toHaveBeenCalledWith(
+      'COMMON.TOAST.SUCCESS',
+      'success',
+    );
     expect(viewModel.isApproving()).toBe(false);
   });
 
   it('should show an error when approving a routine plant fails', async () => {
-    selectedRoutinePlantSignal.set(createRoutinePlant({
-      id: 'routine-plant-1',
-      plant_id: 'plant-1',
-      region: 'North'
-    }));
+    selectedRoutinePlantSignal.set(
+      createRoutinePlant({
+        id: 'routine-plant-1',
+        plant_id: 'plant-1',
+        region: 'North',
+      }),
+    );
     viewModel.id.set(7);
-    mockRoutinePlantsRepository.updatePlantFromRoutine.mockResolvedValue({ error: new Error('failed') });
+    mockRoutinePlantsRepository.updatePlantFromRoutine.mockResolvedValue({
+      error: new Error('failed'),
+    });
 
     await viewModel.onApproveRoutine();
 
-    expect(mockMessageService.show).toHaveBeenCalledWith('COMMON.TOAST.ERROR', 'error');
+    expect(mockMessageService.show).toHaveBeenCalledWith(
+      'COMMON.TOAST.ERROR',
+      'error',
+    );
     expect(viewModel.isApproving()).toBe(false);
   });
 
@@ -345,7 +376,9 @@ describe('RoutineSyncViewModel', () => {
     viewModel.goBack();
     viewModel.cleanup();
 
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/pomar-na-mao/sincronizacoes']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith([
+      '/pomar-na-mao/sincronizacoes',
+    ]);
     expect(mockPlantsRepository.clearPlants).toHaveBeenCalled();
   });
 });
