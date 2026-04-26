@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { PlantsService, type InspectRoutineFilter } from "../../services/plants/plants-service";
+import { PlantsService, type PlantsFilter } from "../../services/plants/plants-service";
 import { HomeStatsService, type HomeStats } from "../../services/home-stats/home-stats-service";
 import type { Plant, PlantData, PlantInsert, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
 import type { PostgrestError } from "@supabase/supabase-js";
@@ -12,26 +12,11 @@ export class PlantsRepository {
   private homeStatsService = inject(HomeStatsService);
 
   public plants = signal<Plant[]>([]);
-  private _inspectRoutineCurrentPlants = signal<PlantData[]>([]);
-  public inspectRoutineCurrentPlants = this._inspectRoutineCurrentPlants.asReadonly();
+  private _routineCurrentPlants = signal<PlantData[]>([]);
+  public routineCurrentPlants = this._routineCurrentPlants.asReadonly();
 
-  private _workRoutineCurrentPlants = signal<PlantData[]>([]);
-  public workRoutineCurrentPlants = this._workRoutineCurrentPlants.asReadonly();
-
-  public addInspectRoutineCurrentPlantsItem(plant: PlantData): void {
-    this._inspectRoutineCurrentPlants.update(plants => {
-      const index = plants.findIndex(p => p.id === plant.id);
-      if (index !== -1) {
-        const newPlants = [...plants];
-        newPlants[index] = plant;
-        return newPlants;
-      }
-      return [...plants, plant as PlantData];
-    });
-  }
-
-  public addWorkRoutineCurrentPlantsItem(plant: PlantData): void {
-    this._workRoutineCurrentPlants.update(plants => {
+  public addRoutineCurrentPlantsItem(plant: PlantData): void {
+    this._routineCurrentPlants.update(plants => {
       const index = plants.findIndex(p => p.id === plant.id);
       if (index !== -1) {
         const newPlants = [...plants];
@@ -43,11 +28,10 @@ export class PlantsRepository {
   }
 
   public clearPlants(): void {
-    this._inspectRoutineCurrentPlants.set([]);
-    this._workRoutineCurrentPlants.set([]);
+    this._routineCurrentPlants.set([]);
   }
 
-  public async findAll(filters: InspectRoutineFilter | null = null): Promise<void> {
+  public async findAll(filters: PlantsFilter | null = null): Promise<void> {
     const { data, error } = await this.plantsService.findAll(filters);
     if (!error && data) {
       this.plants.set(data);
@@ -55,7 +39,7 @@ export class PlantsRepository {
   }
 
   /** Loads plants for the given filters without updating the shared `plants` signal. */
-  public async queryPlants(filters: InspectRoutineFilter | null): Promise<Plant[]> {
+  public async queryPlants(filters: PlantsFilter | null): Promise<Plant[]> {
     const { data, error } = await this.plantsService.findAll(filters);
     if (!error && data) {
       return data;

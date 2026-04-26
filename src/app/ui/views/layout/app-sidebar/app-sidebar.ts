@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostBinding, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -20,11 +20,22 @@ export class AppSidebar {
   private authRepository = inject(AuthenticationRepository);
   private router = inject(Router);
 
+  public isCollapsed = false;
+
+  @HostBinding('class.sidebar-collapsed')
+  get sidebarCollapsed(): boolean {
+    return this.isCollapsed;
+  }
+
   public navItems: NavItem[] = [
     { icon: 'dashboard', label: 'LAYOUT.SIDEBAR.MENU.DASHBOARD', route: '/pomar-na-mao/home' },
     { icon: 'sync', label: 'LAYOUT.SIDEBAR.MENU.SYNCS', route: '/pomar-na-mao/sincronizacoes' },
     { icon: 'add_circle', label: 'LAYOUT.SIDEBAR.MENU.MASS_INCLUSION', route: '/pomar-na-mao/inclusoes-em-massa' },
   ];
+
+  toggleSidebar(): void {
+    this.isCollapsed = !this.isCollapsed;
+  }
 
   async logout(): Promise<void> {
     const { error } = await this.authRepository.signOut();

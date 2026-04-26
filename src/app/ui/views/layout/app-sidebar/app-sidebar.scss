@@ -3,4 +3,9 @@
   display: block;
   width: 240px;
   flex-shrink: 0;
+  transition: width 200ms ease-in-out;
+}
+
+:host(.sidebar-collapsed) {
+  width: 72px;
 }
