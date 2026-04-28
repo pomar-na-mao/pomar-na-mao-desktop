@@ -1,0 +1,247 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.spraying-detail-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface-container) 92%, white 8%), var(--color-surface-container)),
+    linear-gradient(135deg, rgb(14 165 233 / 0.06), transparent 28%),
+    linear-gradient(315deg, rgb(245 158 11 / 0.05), transparent 24%);
+}
+
+.detail-panel-scroll {
+  min-height: 0;
+  scrollbar-gutter: stable;
+}
+
+.detail-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.25rem 0.75rem;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.detail-badge--id {
+  border-color: rgb(14 116 144 / 0.35);
+  background: linear-gradient(135deg, rgb(14 165 233 / 0.26), rgb(6 182 212 / 0.14));
+  color: rgb(8 47 73);
+}
+
+.detail-badge--region {
+  border-color: rgb(124 58 237 / 0.28);
+  background: linear-gradient(135deg, rgb(168 85 247 / 0.22), rgb(139 92 246 / 0.12));
+  color: rgb(76 29 149);
+}
+
+.detail-badge--status-completed {
+  border-color: rgb(5 150 105 / 0.3);
+  background: linear-gradient(135deg, rgb(16 185 129 / 0.22), rgb(52 211 153 / 0.1));
+  color: rgb(6 78 59);
+}
+
+.detail-badge--status-progress {
+  border-color: rgb(217 119 6 / 0.3);
+  background: linear-gradient(135deg, rgb(245 158 11 / 0.24), rgb(251 191 36 / 0.1));
+  color: rgb(120 53 15);
+}
+
+.detail-badge--status-cancelled {
+  border-color: rgb(225 29 72 / 0.28);
+  background: linear-gradient(135deg, rgb(244 63 94 / 0.22), rgb(251 113 133 / 0.1));
+  color: rgb(136 19 55);
+}
+
+.metric-card {
+  border: 1px solid transparent;
+}
+
+.metric-card__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.metric-card__value {
+  color: var(--color-on-surface);
+}
+
+.metric-card--route {
+  border-color: rgb(14 116 144 / 0.22);
+  background: linear-gradient(135deg, rgb(14 165 233 / 0.22), rgb(103 232 249 / 0.1));
+}
+
+.metric-card--route .metric-card__label,
+.metric-card--route .metric-card__value {
+  color: rgb(12 74 110);
+}
+
+.metric-card--plants {
+  border-color: rgb(5 150 105 / 0.22);
+  background: linear-gradient(135deg, rgb(16 185 129 / 0.2), rgb(132 204 22 / 0.08));
+}
+
+.metric-card--plants .metric-card__label,
+.metric-card--plants .metric-card__value {
+  color: rgb(6 95 70);
+}
+
+.metric-card--products {
+  border-color: rgb(217 119 6 / 0.22);
+  background: linear-gradient(135deg, rgb(245 158 11 / 0.24), rgb(251 146 60 / 0.1));
+}
+
+.metric-card--products .metric-card__label,
+.metric-card--products .metric-card__value {
+  color: rgb(154 52 18);
+}
+
+.info-panel {
+  border: 1px solid transparent;
+}
+
+.info-panel__title {
+  color: var(--color-on-surface);
+}
+
+.info-panel--session {
+  border-color: rgb(5 150 105 / 0.18);
+  background: linear-gradient(180deg, rgb(16 185 129 / 0.1), rgb(255 255 255 / 0.22));
+}
+
+.info-panel--session .info-panel__title {
+  color: rgb(6 95 70);
+}
+
+.info-panel--products {
+  border-color: rgb(217 119 6 / 0.18);
+  background: linear-gradient(180deg, rgb(245 158 11 / 0.1), rgb(255 255 255 / 0.2));
+}
+
+.info-panel--products .info-panel__title {
+  color: rgb(154 52 18);
+}
+
+.info-panel__count {
+  background: rgb(245 158 11 / 0.2);
+  color: rgb(146 64 14);
+}
+
+.product-row {
+  border: 1px solid rgb(217 119 6 / 0.14);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.72), rgb(255 247 237 / 0.9));
+}
+
+.notes-panel {
+  border: 1px solid rgb(124 58 237 / 0.16);
+  background: linear-gradient(180deg, rgb(168 85 247 / 0.08), rgb(255 255 255 / 0.2));
+}
+
+.notes-panel__label {
+  color: rgb(91 33 182);
+}
+
+:host-context(.dark) {
+  .detail-badge--id {
+    border-color: rgb(125 211 252 / 0.35);
+    background: linear-gradient(135deg, rgb(14 165 233 / 0.2), rgb(6 182 212 / 0.12));
+    color: rgb(186 230 253);
+  }
+
+  .detail-badge--region {
+    border-color: rgb(196 181 253 / 0.3);
+    background: linear-gradient(135deg, rgb(139 92 246 / 0.22), rgb(168 85 247 / 0.12));
+    color: rgb(221 214 254);
+  }
+
+  .detail-badge--status-completed {
+    border-color: rgb(110 231 183 / 0.32);
+    background: linear-gradient(135deg, rgb(16 185 129 / 0.18), rgb(52 211 153 / 0.1));
+    color: rgb(167 243 208);
+  }
+
+  .detail-badge--status-progress {
+    border-color: rgb(253 230 138 / 0.32);
+    background: linear-gradient(135deg, rgb(245 158 11 / 0.18), rgb(251 191 36 / 0.1));
+    color: rgb(254 240 138);
+  }
+
+  .detail-badge--status-cancelled {
+    border-color: rgb(253 164 175 / 0.3);
+    background: linear-gradient(135deg, rgb(244 63 94 / 0.18), rgb(251 113 133 / 0.1));
+    color: rgb(254 205 211);
+  }
+
+  .metric-card--route {
+    border-color: rgb(56 189 248 / 0.24);
+    background: linear-gradient(135deg, rgb(14 165 233 / 0.18), rgb(22 78 99 / 0.32));
+  }
+
+  .metric-card--route .metric-card__label,
+  .metric-card--route .metric-card__value {
+    color: rgb(224 242 254);
+  }
+
+  .metric-card--plants {
+    border-color: rgb(52 211 153 / 0.24);
+    background: linear-gradient(135deg, rgb(16 185 129 / 0.16), rgb(20 83 45 / 0.34));
+  }
+
+  .metric-card--plants .metric-card__label,
+  .metric-card--plants .metric-card__value {
+    color: rgb(220 252 231);
+  }
+
+  .metric-card--products {
+    border-color: rgb(251 191 36 / 0.24);
+    background: linear-gradient(135deg, rgb(245 158 11 / 0.16), rgb(120 53 15 / 0.34));
+  }
+
+  .metric-card--products .metric-card__label,
+  .metric-card--products .metric-card__value {
+    color: rgb(254 243 199);
+  }
+
+  .info-panel--session {
+    border-color: rgb(52 211 153 / 0.18);
+    background: linear-gradient(180deg, rgb(16 185 129 / 0.1), rgb(15 23 42 / 0.16));
+  }
+
+  .info-panel--session .info-panel__title {
+    color: rgb(167 243 208);
+  }
+
+  .info-panel--products {
+    border-color: rgb(251 191 36 / 0.18);
+    background: linear-gradient(180deg, rgb(245 158 11 / 0.1), rgb(15 23 42 / 0.16));
+  }
+
+  .info-panel--products .info-panel__title {
+    color: rgb(253 230 138);
+  }
+
+  .info-panel__count {
+    background: rgb(245 158 11 / 0.16);
+    color: rgb(253 230 138);
+  }
+
+  .product-row {
+    border-color: rgb(251 191 36 / 0.16);
+    background: linear-gradient(180deg, rgb(30 41 59 / 0.9), rgb(51 65 85 / 0.7));
+  }
+
+  .notes-panel {
+    border-color: rgb(167 139 250 / 0.18);
+    background: linear-gradient(180deg, rgb(139 92 246 / 0.1), rgb(15 23 42 / 0.14));
+  }
+
+  .notes-panel__label {
+    color: rgb(221 214 254);
+  }
+}

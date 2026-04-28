@@ -1,0 +1,160 @@
+<div
+  class="spraying-sessions-card relative flex flex-col overflow-hidden rounded-[20px] border border-outline-variant bg-surface-container p-6 shadow-sm"
+>
+  <div
+    class="pointer-events-none absolute -right-[25%] -top-[35%] z-0 h-[240px] w-[240px] opacity-10"
+    style="
+      background: radial-gradient(
+        circle,
+        var(--color-primary) 0%,
+        transparent 70%
+      );
+    "
+  ></div>
+
+  <div class="z-10 mb-5 flex items-start justify-between gap-3">
+    <div>
+      <h2 class="text-[16px] font-bold leading-tight text-on-surface">
+        {{ 'PAGES.SPRAYING_FLOW.TABLE.TITLE' | translate }}
+      </h2>
+      <p class="mt-1 text-[12px] font-medium text-on-surface-variant">
+        {{ 'PAGES.SPRAYING_FLOW.TABLE.SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <span
+      class="inline-flex items-center rounded-full border border-outline-variant bg-surface-container-high px-3 py-1 text-[11px] font-bold text-on-surface-variant"
+    >
+      {{ viewModel.totalSessions() }}
+    </span>
+  </div>
+
+  @if (viewModel.error() && !viewModel.isLoadingSessions()) {
+  <div
+    class="z-10 mb-4 rounded-2xl border border-error-container bg-error-container/40 px-4 py-3 text-[13px] text-on-error-container"
+  >
+    {{ viewModel.error() }}
+  </div>
+  }
+
+  <div class="sessions-table-scroll z-10 flex-1 overflow-auto">
+    <table class="w-full border-separate border-spacing-0 text-left">
+      <thead>
+        <tr>
+          <th
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-5 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
+          >
+            {{ 'COMMON.DATE' | translate }}
+          </th>
+          <th
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
+          >
+            {{ 'COMMON.REGION' | translate }}
+          </th>
+          <th
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
+          >
+            {{ 'COMMON.STATUS' | translate }}
+          </th>
+          <th
+            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pr-5 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+            style="
+              background: color-mix(
+                in srgb,
+                var(--color-surface-container) 90%,
+                transparent
+              );
+            "
+          >
+            {{ 'PAGES.SPRAYING_FLOW.TABLE.WATER_VOLUME' | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (viewModel.isLoadingSessions()) { @for (i of [1,2,3,4,5]; track i) {
+        <tr class="animate-pulse">
+          <td class="py-4 pl-5">
+            <div class="h-6 w-28 rounded-md bg-surface-container-high"></div>
+          </td>
+          <td class="py-4">
+            <div class="h-6 w-24 rounded-md bg-surface-container-high"></div>
+          </td>
+          <td class="py-4">
+            <div class="h-6 w-24 rounded-full bg-surface-container-high"></div>
+          </td>
+          <td class="py-4 pr-5">
+            <div class="h-6 w-20 rounded-md bg-surface-container-high"></div>
+          </td>
+        </tr>
+        } } @else { @for (session of viewModel.sessions(); track session.id; let
+        odd = $odd) {
+        <tr
+          (click)="onSelectSession(session)"
+          class="session-row border-b border-outline-variant transition-colors duration-150"
+          [class.session-row--odd]="odd && viewModel.selectedSessionId() !== session.id"
+          [class.session-row--even]="!odd && viewModel.selectedSessionId() !== session.id"
+          [class.session-row--selected]="viewModel.selectedSessionId() === session.id"
+        >
+          <td class="session-row__date py-3.5 pl-5 pr-4 text-[13px] font-semibold">
+            {{ (session.started_at || session.created_at) | date: 'dd/MM/yyyy
+            HH:mm' }}
+          </td>
+          <td class="session-row__region py-3.5 px-4 text-[12px]">
+            {{ (session.region || ('COMMON.UNKNOWN' | translate)) | titlecase }}
+          </td>
+          <td class="py-3.5 px-4">
+            <span
+              class="session-row__status inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-tight"
+              [ngClass]="{
+                'bg-success-container text-on-success-container border-success-container': session.status === 'completed',
+                'bg-warn-container text-on-warn-container border-warn-container': session.status === 'in_progress',
+                'bg-error-container text-on-error-container border-error-container': session.status === 'cancelled'
+              }"
+            >
+              {{ ('PAGES.SPRAYING_FLOW.STATUS.' + (session.status ||
+              'in_progress')) | translate }}
+            </span>
+          </td>
+          <td class="session-row__volume py-3.5 pl-4 pr-5 text-[12px]">
+            @if (session.water_volume_liters !== null &&
+            session.water_volume_liters !== undefined) { {{
+            session.water_volume_liters | number: '1.0-2' }} L } @else {
+            <span>--</span>
+            }
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td
+            colspan="4"
+            class="py-12 text-center text-[13px] font-medium text-on-surface-variant"
+          >
+            {{ 'PAGES.SPRAYING_FLOW.TABLE.EMPTY' | translate }}
+          </td>
+        </tr>
+        } }
+      </tbody>
+    </table>
+  </div>
+</div>

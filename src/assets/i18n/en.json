@@ -178,6 +178,33 @@
       "NO_DIFFERENCES": "No differences in occurrences found for this plant.",
       "ANNOTATION_NOT_FOUND": "Annotation not found",
       "NO_PLANTS_FOUND": "No plants found for this routine."
+    },
+    "SPRAYING_FLOW": {
+      "TABLE": {
+        "TITLE": "Spraying Sessions",
+        "SUBTITLE": "Select a session to visualize the route, nearby plants, and applied products.",
+        "WATER_VOLUME": "Spray Mix",
+        "EMPTY": "No spraying sessions found."
+      },
+      "DETAIL": {
+        "TITLE": "Flow Visualization",
+        "SUBTITLE": "Recorded route map with associated plants and applied products.",
+        "EMPTY": "Select a session to load the visualization.",
+        "SESSION_INFO": "Session Summary",
+        "ROUTE_POINTS": "Points",
+        "PLANTS": "Plants",
+        "PRODUCTS": "Products",
+        "OPERATOR": "Operator",
+        "WATER_VOLUME": "Spray Mix Volume",
+        "END_TIME": "Finished At",
+        "APPLIED_PRODUCTS": "Applied Products",
+        "NO_PRODUCTS": "No applied products were found for this session."
+      },
+      "STATUS": {
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      }
     }
   },
   "LAYOUT": {
@@ -202,6 +229,7 @@
         "INVENTORY": "Tree Inventory",
         "ALERTS": "Alerts",
         "SYNCS": "Syncs",
+        "SPRAYING_FLOW": "Spraying Flow",
         "MASS_INCLUSION": "Mass Inclusion",
         "SETTINGS": "Settings"
       },
