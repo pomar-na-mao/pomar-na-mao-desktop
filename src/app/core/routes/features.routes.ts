@@ -5,12 +5,14 @@ import { AnnotationDetail } from '../../ui/views/annotation-detail/annotation-de
 import { Home } from '../../ui/views/home/home';
 import { MassInclusion } from '../../ui/views/mass-inclusion/mass-inclusion';
 import { RoutineDetail } from '../../ui/views/routine-detail/routine-detail';
+import { SprayingFlow } from '../../ui/views/spraying-flow/spraying-flow';
 import { Syncs } from '../../ui/views/syncs/syncs';
 
 export default [
   { path: 'home', component: Home },
   { path: 'sincronizacoes', component: Syncs },
   { path: 'sincronizacoes/rotinas/:id', component: RoutineDetail },
+  { path: 'fluxo-pulverizacao', component: SprayingFlow },
   {
     path: 'sincronizacoes/anotacoes-de-inspecao/:id',
     component: AnnotationDetail,

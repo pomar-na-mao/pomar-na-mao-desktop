@@ -179,6 +179,33 @@
       "NO_DIFFERENCES": "Nenhuma diferença de ocorrências encontrada para esta planta.",
       "ANNOTATION_NOT_FOUND": "Anotação não encontrada",
       "NO_PLANTS_FOUND": "Nenhuma planta encontrada para esta rotina."
+    },
+    "SPRAYING_FLOW": {
+      "TABLE": {
+        "TITLE": "Sessões de Pulverização",
+        "SUBTITLE": "Selecione uma sessão para visualizar rota, plantas e produtos aplicados.",
+        "WATER_VOLUME": "Calda",
+        "EMPTY": "Nenhuma sessão de pulverização encontrada."
+      },
+      "DETAIL": {
+        "TITLE": "Visualização do Fluxo",
+        "SUBTITLE": "Mapa da rota registrada com as plantas associadas e os produtos aplicados.",
+        "EMPTY": "Selecione uma sessão para carregar a visualização.",
+        "SESSION_INFO": "Resumo da Sessão",
+        "ROUTE_POINTS": "Pontos",
+        "PLANTS": "Plantas",
+        "PRODUCTS": "Produtos",
+        "OPERATOR": "Operador",
+        "WATER_VOLUME": "Volume de Calda",
+        "END_TIME": "Finalizada em",
+        "APPLIED_PRODUCTS": "Produtos Aplicados",
+        "NO_PRODUCTS": "Nenhum produto aplicado foi encontrado para esta sessão."
+      },
+      "STATUS": {
+        "in_progress": "Em andamento",
+        "completed": "Concluída",
+        "cancelled": "Cancelada"
+      }
     }
   },
   "LAYOUT": {
@@ -203,6 +230,7 @@
         "INVENTORY": "Inventário",
         "ALERTS": "Alertas",
         "SYNCS": "Sincronizações",
+        "SPRAYING_FLOW": "Fluxo de Pulverização",
         "MASS_INCLUSION": "Inclusões em Massa",
         "SETTINGS": "Configurações"
       },
