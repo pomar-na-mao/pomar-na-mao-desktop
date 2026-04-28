@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { SprayingFlowViewModel } from '../../../view-models/spraying-flow/spraying-flow.view-model';
 import { SprayingSessionMapComponent } from '../spraying-session-map/spraying-session-map';
 import { SprayingFlowDetailPanelComponent } from './spraying-flow-detail-panel';
@@ -34,11 +34,15 @@ describe('SprayingFlowDetailPanelComponent', () => {
       session: { id: 'session-1234-abcd' },
       routePoints: [{ id: 'route-1' }],
       plants: [{ id: 'plant-1' }],
-      products: [{ id: 'product-1', name: 'Copper', dose: 10, dose_unit: 'ml/L' }],
+      products: [
+        { id: 'product-1', name: 'Copper', dose: 10, dose_unit: 'ml/L' },
+      ],
     }),
     routePoints: signal([{ id: 'route-1' }]),
     plants: signal([{ id: 'plant-1' }]),
-    products: signal([{ id: 'product-1', name: 'Copper', dose: 10, dose_unit: 'ml/L' }]),
+    products: signal([
+      { id: 'product-1', name: 'Copper', dose: 10, dose_unit: 'ml/L' },
+    ]),
     totalRoutePoints: signal(1),
     totalPlants: signal(1),
     totalProducts: signal(1),

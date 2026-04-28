@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { SprayingFlowService } from '../../services/spraying-flow/spraying-flow-service';
 import type {
   SprayingSession,
   SprayingSessionVisualization,
 } from '../../../domain/models/spraying-session.model';
+import { SprayingFlowService } from '../../services/spraying-flow/spraying-flow-service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,9 @@ export class SprayingFlowRepository {
 
   public sessions = signal<SprayingSession[]>([]);
   public selectedSessionId = signal<string | null>(null);
-  public selectedVisualization = signal<SprayingSessionVisualization | null>(null);
+  public selectedVisualization = signal<SprayingSessionVisualization | null>(
+    null,
+  );
   public isLoadingSessions = signal<boolean>(false);
   public isLoadingVisualization = signal<boolean>(false);
   public error = signal<string | null>(null);
@@ -34,14 +36,10 @@ export class SprayingFlowRepository {
         this.selectedVisualization.set(null);
         return;
       }
-
-      const currentSelectedId = this.selectedSessionId();
-      const nextSessionId =
-        currentSelectedId && sessions.some((session) => session.id === currentSelectedId)
-          ? currentSelectedId
-          : sessions[0].id;
     } catch (error) {
-      this.error.set(`Error fetching spraying sessions\n${JSON.stringify(error)}`);
+      this.error.set(
+        `Error fetching spraying sessions\n${JSON.stringify(error)}`,
+      );
     } finally {
       this.isLoadingSessions.set(false);
     }
@@ -53,7 +51,8 @@ export class SprayingFlowRepository {
     }
 
     const nextSessionId =
-      currentSelectedId && sessions.some((session) => session.id === currentSelectedId)
+      currentSelectedId &&
+      sessions.some((session) => session.id === currentSelectedId)
         ? currentSelectedId
         : sessions[0].id;
 
@@ -66,12 +65,15 @@ export class SprayingFlowRepository {
     this.error.set(null);
 
     try {
-      const { data, error } = await this.sprayingFlowService.getSessionVisualization(sessionId);
+      const { data, error } =
+        await this.sprayingFlowService.getSessionVisualization(sessionId);
       if (error) throw error;
       this.selectedVisualization.set(data);
     } catch (error) {
       this.selectedVisualization.set(null);
-      this.error.set(`Error fetching spraying session visualization\n${JSON.stringify(error)}`);
+      this.error.set(
+        `Error fetching spraying session visualization\n${JSON.stringify(error)}`,
+      );
     } finally {
       this.isLoadingVisualization.set(false);
     }
