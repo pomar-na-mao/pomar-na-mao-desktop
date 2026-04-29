@@ -63,6 +63,9 @@
   --color-inverse-on-surface: #f0f1f0;
   --color-inverse-primary: #97d69b;
 
+  /* Page background (routes area) */
+  --color-page: var(--color-surface-container-low);
+
   --font-headline: "Manrope", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-label: "Inter", sans-serif;
@@ -97,6 +100,9 @@
     --color-surface-container: #1e241e; /* Cards padrão */
     --color-surface-container-high: #283028; /* Cards hover/elevados */
     --color-surface-container-highest: #323c32;
+
+    /* Page background (routes area) */
+    --color-page: var(--color-surface);
 
     /* ── Borders ── */
     --color-outline: #414a41;
