@@ -42,7 +42,7 @@ import { FarmOverviewMapViewModel } from '../../view-models/farm-overview-map/fa
     .layout-content {
       flex: 1;
       overflow-y: auto;
-      background: var(--color-background);
+      background: var(--color-page, var(--color-background));
     }
   `],
 })

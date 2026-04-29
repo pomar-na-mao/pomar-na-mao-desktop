@@ -37,11 +37,15 @@
   </div>
 
   @if (isLoading) {
-  <div class="flex flex-1 items-center justify-center px-6 py-16 text-center text-sm font-medium text-on-surface-variant">
+  <div
+    class="flex flex-1 items-center justify-center px-6 py-16 text-center text-sm font-medium text-on-surface-variant"
+  >
     {{ 'PAGES.ADMIN.PRODUCTS.TABLE.LOADING' | translate }}
   </div>
   } @else if (products.length === 0) {
-  <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
+  <div
+    class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center"
+  >
     <div
       class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-surface-container-high text-primary"
     >
@@ -55,9 +59,11 @@
     </p>
   </div>
   } @else {
-  <div class="flex min-h-0 flex-1 flex-col gap-5 px-6 py-5">
+  <div class="flex min-h-0 flex-1 flex-col gap-5 px-4 py-4">
     <div class="grid grid-cols-3 gap-3">
-      <article class="rounded-2xl bg-surface-container p-4">
+      <article
+        class="rounded-2xl border border-outline-variant bg-surface-container-high p-4"
+      >
         <p
           class="text-[10px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
         >
@@ -67,7 +73,9 @@
           {{ stats.total }}
         </strong>
       </article>
-      <article class="rounded-2xl bg-surface-container p-4">
+      <article
+        class="rounded-2xl border border-outline-variant bg-surface-container-high p-4"
+      >
         <p
           class="text-[10px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
         >
@@ -77,7 +85,9 @@
           {{ stats.active }}
         </strong>
       </article>
-      <article class="rounded-2xl bg-surface-container p-4">
+      <article
+        class="rounded-2xl border border-outline-variant bg-surface-container-high p-4"
+      >
         <p
           class="text-[10px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
         >
@@ -96,51 +106,126 @@
         {{ 'PAGES.ADMIN.PRODUCTS.MODULE.RECENT_PRODUCTS' | translate }}
       </h3>
       <span class="text-xs text-on-surface-variant">
-        {{ 'PAGES.ADMIN.PRODUCTS.MODULE.RECENT_PRODUCTS_COUNT' | translate:{ count: products.length } }}
+        {{
+          'PAGES.ADMIN.PRODUCTS.MODULE.RECENT_PRODUCTS_COUNT'
+            | translate: { count: products.length }
+        }}
       </span>
     </div>
 
-    <div class="min-h-0 flex-1 overflow-y-auto pr-1">
-      <div class="flex flex-col gap-3">
-      @for (product of products; track trackByProductId($index, product)) {
-      <article
-        class="flex items-start justify-between gap-3 rounded-2xl border border-outline-variant bg-surface-container-low px-4 py-3"
-      >
-        <div class="min-w-0">
-          <div class="truncate font-semibold text-on-surface">
-            {{ product.name }}
-          </div>
-          <div
-            class="mt-1 flex flex-wrap items-center gap-2 text-xs text-on-surface-variant"
-          >
-            <span>{{ product.category ?? ('COMMON.UNKNOWN' | translate) }}</span>
-            <span>•</span>
-            <span>{{ product.active_ingredient ?? ('COMMON.UNKNOWN' | translate) }}</span>
-          </div>
-        </div>
+    <div class="min-h-0 flex-1 overflow-auto">
+      <table class="w-full border-separate border-spacing-0 text-left">
+        <thead>
+          <tr>
+            <th
+              class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-4 pr-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+              style="background: color-mix(in srgb, var(--color-surface) 90%, transparent)"
+            >
+              {{ 'PAGES.ADMIN.PRODUCTS.FORM.NAME' | translate }}
+            </th>
+            <th
+              class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+              style="background: color-mix(in srgb, var(--color-surface) 90%, transparent)"
+            >
+              {{ 'PAGES.ADMIN.PRODUCTS.FORM.CATEGORY' | translate }}
+            </th>
+            <th
+              class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+              style="background: color-mix(in srgb, var(--color-surface) 90%, transparent)"
+            >
+              {{ 'PAGES.ADMIN.PRODUCTS.FORM.ACTIVE_INGREDIENT' | translate }}
+            </th>
+            <th
+              class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+              style="background: color-mix(in srgb, var(--color-surface) 90%, transparent)"
+            >
+              {{ 'COMMON.STATUS' | translate }}
+            </th>
+            <th
+              class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pr-0 pl-4 text-right text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
+              style="background: color-mix(in srgb, var(--color-surface) 90%, transparent)"
+            >
+            </th>
+          </tr>
+        </thead>
 
-        <div class="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            class="flex h-9 w-9 items-center justify-center rounded-xl border border-outline-variant bg-surface text-on-surface-variant transition-colors hover:bg-surface-container-high"
-            [attr.aria-label]="'COMMON.EDIT' | translate"
-            (click)="edited.emit(product)"
-          >
-            <span class="material-symbols-outlined text-[16px]">edit</span>
-          </button>
+        <tbody>
+          @for (product of products; track trackByProductId($index, product); let odd = $odd) {
+            <tr
+              class="group border-b border-outline-variant last:border-b-0 transition-colors duration-150 hover:brightness-95 dark:hover:brightness-110"
+              [class.bg-surface-container]="odd"
+              [class.bg-surface-container-high]="!odd"
+            >
+              <td class="py-3.5 pl-4 pr-4">
+                <span class="text-[13px] font-semibold text-on-surface">
+                  {{ product.name }}
+                </span>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="text-[12px] text-on-surface-variant">
+                  {{ product.category ?? ('COMMON.UNKNOWN' | translate) }}
+                </span>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="text-[12px] text-on-surface-variant">
+                  {{ product.active_ingredient ?? ('COMMON.UNKNOWN' | translate) }}
+                </span>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center">
+                  <span
+                    class="inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-tight transition-all duration-200"
+                    [ngClass]="{
+                      'bg-success-container text-on-success-container border-success-container': product.is_active === true,
+                      'bg-error-container text-on-error-container border-error-container': product.is_active === false,
+                      'bg-surface-container-highest text-on-surface-variant border-outline-variant': product.is_active === null
+                    }"
+                  >
+                    <span
+                      class="mr-2 h-1.5 w-1.5 rounded-full shadow-[0_0_8px_currentColor]"
+                      [ngClass]="{
+                        'bg-success': product.is_active === true,
+                        'bg-error': product.is_active === false,
+                        'bg-outline': product.is_active === null
+                      }"
+                    ></span>
+                    {{
+                      (
+                        product.is_active === true
+                          ? 'PAGES.ADMIN.PRODUCTS.STATS.ACTIVE'
+                          : product.is_active === false
+                            ? 'PAGES.ADMIN.PRODUCTS.STATS.INACTIVE'
+                            : 'COMMON.UNKNOWN'
+                      ) | translate
+                    }}
+                  </span>
+                </div>
+              </td>
+              <td class="py-3.5 pr-4 pl-4 text-right">
+                <div class="inline-flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-full text-primary transition-all opacity-80 hover:opacity-100"
+                    [attr.aria-label]="'COMMON.EDIT' | translate"
+                    (click)="edited.emit(product)"
+                  >
+                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                  </button>
 
-          <button
-            type="button"
-            class="flex h-9 w-9 items-center justify-center rounded-xl border border-error/25 bg-error-container/25 text-error transition-colors hover:bg-error-container/45"
-            [attr.aria-label]="'COMMON.DELETE' | translate"
-            (click)="deleted.emit(product)"
-          >
-            <span class="material-symbols-outlined text-[16px]">delete</span>
-          </button>
-        </div>
-      </article>
-      }
-      </div>
+                  <button
+                    type="button"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-full text-error transition-all opacity-80 hover:opacity-100"
+                    [attr.aria-label]="'COMMON.DELETE' | translate"
+                    (click)="deleted.emit(product)"
+                  >
+                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
   }
