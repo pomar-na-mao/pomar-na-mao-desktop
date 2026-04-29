@@ -39,7 +39,7 @@ describe('isAdminGuard', () => {
     expect(mockNavigateByUrl).not.toHaveBeenCalled();
   });
 
-  it('should deny access and redirect to /plataforma-ipr/painel when user is not admin', async () => {
+  it('should deny access and redirect to /pomar-na-mao/home when user is not admin', async () => {
     mockIsUserAdmin.mockReturnValue(false);
 
     const result = await TestBed.runInInjectionContext(() =>
@@ -48,7 +48,7 @@ describe('isAdminGuard', () => {
 
     expect(result).toBe(false);
     expect(mockNavigateByUrl).toHaveBeenCalledOnce();
-    expect(mockNavigateByUrl).toHaveBeenCalledWith('/plataforma-ipr/painel');
+    expect(mockNavigateByUrl).toHaveBeenCalledWith('/pomar-na-mao/home');
   });
 
   it('should call isUserAdmin on the repository', async () => {

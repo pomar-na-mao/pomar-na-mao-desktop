@@ -11,7 +11,7 @@ export const isAdminGuard: CanActivateFn = async (_route, _state) => {
   if (userRolesRepository.isUserAdmin()) {
     return true;
   } else {
-    router.navigateByUrl('/plataforma-ipr/painel');
+    router.navigateByUrl('/pomar-na-mao/home');
     return false;
   }
 };

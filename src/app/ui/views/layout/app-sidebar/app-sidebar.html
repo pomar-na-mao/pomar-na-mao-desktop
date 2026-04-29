@@ -1,13 +1,22 @@
 <nav
   class="h-screen flex flex-col p-0 overflow-hidden z-100 border-r border-solid transition-[width] duration-200 ease-in-out"
   [ngClass]="isCollapsed ? 'w-[72px]' : 'w-[240px]'"
-  style="background: linear-gradient(to bottom, var(--color-sidebar-bg-from, var(--color-primary-container)), var(--color-sidebar-bg-to, var(--color-primary))); border-color: var(--color-on-sidebar-border, rgba(255,255,255,0.06));"
+  style="
+    background: linear-gradient(
+      to bottom,
+      var(--color-sidebar-bg-from, var(--color-primary-container)),
+      var(--color-sidebar-bg-to, var(--color-primary))
+    );
+    border-color: var(--color-on-sidebar-border, rgba(255, 255, 255, 0.06));
+  "
 >
   <!-- Brand -->
   <div
     class="flex items-center gap-2.5 pt-5 pb-[18px] border-b border-solid"
     [ngClass]="isCollapsed ? 'flex-col justify-center px-2 gap-2' : 'px-5'"
-    style="border-color: var(--color-on-sidebar-border, rgba(255,255,255,0.08));"
+    style="
+      border-color: var(--color-on-sidebar-border, rgba(255, 255, 255, 0.08));
+    "
   >
     <div class="w-10 h-10 flex items-center justify-center shrink-0">
       <img
@@ -22,12 +31,12 @@
     >
       <span
         class="text-[13px] font-bold tracking-tight whitespace-nowrap"
-        style="color: var(--color-on-sidebar, var(--color-on-primary));"
+        style="color: var(--color-on-sidebar, var(--color-on-primary))"
         >{{ 'LAYOUT.SIDEBAR.BRAND_NAME' | translate }}</span
       >
       <span
         class="text-[10px] font-normal tracking-wider mt-0.5"
-        style="color: var(--color-on-sidebar-muted, rgba(255,255,255,0.45));"
+        style="color: var(--color-on-sidebar-muted, rgba(255, 255, 255, 0.45))"
         >{{ 'LAYOUT.SIDEBAR.TAGLINE' | translate }}</span
       >
     </div>
@@ -35,7 +44,10 @@
       type="button"
       class="w-8 h-8 flex items-center justify-center shrink-0 rounded-[8px] border border-solid bg-transparent cursor-pointer transition-colors duration-150 hover:bg-white/10"
       [ngClass]="isCollapsed ? 'ml-0' : 'ml-auto'"
-      style="border-color: var(--color-on-sidebar-border, rgba(255,255,255,0.14)); color: var(--color-on-sidebar, var(--color-on-primary));"
+      style="
+        border-color: var(--color-on-sidebar-border, rgba(255, 255, 255, 0.14));
+        color: var(--color-on-sidebar, var(--color-on-primary));
+      "
       [attr.aria-label]="isCollapsed ? 'Mostrar menu' : 'Ocultar menu'"
       [attr.title]="isCollapsed ? 'Mostrar menu' : 'Ocultar menu'"
       (click)="toggleSidebar()"
@@ -48,7 +60,7 @@
 
   <!-- Navigation -->
   <ul class="list-none m-0 px-2 py-3 flex-1 overflow-y-auto">
-    @for (item of navItems; track item.route) {
+    @for (item of navItems(); track item.route) { @if(item.show) {
     <li class="mb-0.5">
       <a
         [routerLink]="item.route"
@@ -70,13 +82,15 @@
         >
       </a>
     </li>
-    }
+    } }
   </ul>
 
   <!-- Logout -->
   <div
     class="px-4 pt-4 pb-5 border-t border-solid"
-    style="border-color: var(--color-on-sidebar-border, rgba(255,255,255,0.08));"
+    style="
+      border-color: var(--color-on-sidebar-border, rgba(255, 255, 255, 0.08));
+    "
   >
     <button
       class="flex items-center justify-center w-full py-2.5 bg-error text-on-error border border-solid border-error rounded-[10px] text-[13px] font-semibold font-['Poppins'] cursor-pointer opacity-90 transition-all duration-150 hover:opacity-100 hover:-translate-y-px active:translate-y-0"

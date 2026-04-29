@@ -78,7 +78,7 @@
       "TAGLINE": "Control and Traceability",
       "FORM_TITLE": "Access your account",
       "FORM_SUBTITLE": "Enter your credentials to continue",
-      "FOOTER": "Pomar na mão • v1.3.1 • Control and Traceability"
+      "FOOTER": "Pomar na mão • v1.4.0 • Control and Traceability"
     },
     "FORGOT_PASSWORD": {
       "TITLE": "Recover password",
@@ -205,6 +205,79 @@
         "completed": "Completed",
         "cancelled": "Cancelled"
       }
+    },
+    "ADMIN": {
+      "PRODUCTS": {
+        "EYEBROW": "Administration",
+        "TITLE": "Product Management",
+        "SUBTITLE": "Create and maintain the products used in orchard operations directly from the Supabase `products` table.",
+        "CTA": {
+          "NEW": "New product"
+        },
+        "STATS": {
+          "TOTAL": "Products",
+          "ACTIVE": "Active",
+          "INACTIVE": "Inactive"
+        },
+        "TABLE": {
+          "TITLE": "Product catalog",
+          "SUBTITLE": "Quickly update operational details, active ingredient, concentration, and manufacturer.",
+          "LOADING": "Loading products...",
+          "EMPTY_TITLE": "No products registered",
+          "EMPTY_DESCRIPTION": "Add the first product to start building the application catalog.",
+          "UPDATED_AT": "Last updated"
+        },
+        "FORM": {
+          "NAME": "Name",
+          "NAME_PLACEHOLDER": "Ex.: Fungicide XYZ",
+          "NAME_REQUIRED": "Product name is required.",
+          "ACTIVE_INGREDIENT": "Active ingredient",
+          "ACTIVE_INGREDIENT_PLACEHOLDER": "Ex.: Copper, Sulfur, etc.",
+          "CATEGORY": "Category",
+          "CATEGORY_PLACEHOLDER": "Ex.: Fungicide, Insecticide",
+          "CONCENTRATION": "Concentration",
+          "CONCENTRATION_PLACEHOLDER": "0.5",
+          "UNIT": "Unit",
+          "MANUFACTURER": "Manufacturer",
+          "MANUFACTURER_PLACEHOLDER": "Responsible company",
+          "NOTES": "Notes",
+          "NOTES_PLACEHOLDER": "Internal notes, recommendations, or restrictions.",
+          "IS_ACTIVE": "Product available for use"
+        },
+        "MODAL": {
+          "EYEBROW": "Product record",
+          "CREATE_TITLE": "Add product",
+          "EDIT_TITLE": "Edit product"
+        },
+        "STATUS": {
+          "ACTIVE": "Active",
+          "INACTIVE": "Inactive"
+        },
+        "DELETE": {
+          "TITLE": "Delete product",
+          "DESCRIPTION": "Are you sure you want to delete \"{{ name }}\"? This action cannot be undone."
+        },
+        "TOAST": {
+          "LOAD_ERROR": "Unable to load products.",
+          "CREATE_SUCCESS": "Product created successfully.",
+          "CREATE_ERROR": "Unable to create the product.",
+          "UPDATE_SUCCESS": "Product updated successfully.",
+          "UPDATE_ERROR": "Unable to update the product.",
+          "DELETE_SUCCESS": "Product deleted successfully.",
+          "DELETE_ERROR": "Unable to delete the product."
+        },
+        "MODULE": {
+          "PRODUCTS_TITLE": "Products",
+          "PRODUCTS_DESCRIPTION": "Quick catalog summary with direct access to create, edit, and delete.",
+          "RECENT_PRODUCTS": "Recent products",
+          "RECENT_PRODUCTS_COUNT": "{{ count }} registered",
+          "PLACEHOLDER_1": "Prescriptions",
+          "PLACEHOLDER_2": "Cultivars",
+          "PLACEHOLDER_3": "Inventory",
+          "COMING_SOON_BADGE": "Coming soon",
+          "COMING_SOON_DESCRIPTION": "This space is reserved for the next administrative table. When you create that module, it can take over this card without changing the grid structure."
+        }
+      }
     }
   },
   "LAYOUT": {
@@ -231,6 +304,7 @@
         "SYNCS": "Syncs",
         "SPRAYING_FLOW": "Spraying Flow",
         "MASS_INCLUSION": "Mass Inclusion",
+        "ADMINISTRATION": "Administration",
         "SETTINGS": "Settings"
       },
       "LOGOUT": "Logout"
@@ -244,9 +318,11 @@
     "DESCRIPTION": "Description",
     "REGION": "Region",
     "STATUS": "Status",
+    "ACTIONS": "Actions",
     "DONE": "Done",
     "PENDING": "Pending",
     "EDIT": "Edit",
+    "DELETE": "Delete",
     "CANCEL": "Cancel",
     "PENDING_COUNT": "{{ count }} Pending",
     "APPROVING": "Approving...",
