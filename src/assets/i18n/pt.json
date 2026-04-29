@@ -206,6 +206,79 @@
         "completed": "Concluída",
         "cancelled": "Cancelada"
       }
+    },
+    "ADMIN": {
+      "PRODUCTS": {
+        "EYEBROW": "Administração",
+        "TITLE": "Gestão de Produtos",
+        "SUBTITLE": "Cadastre e mantenha os produtos usados nas operações do pomar diretamente a partir da tabela `products` no Supabase.",
+        "CTA": {
+          "NEW": "Novo produto"
+        },
+        "STATS": {
+          "TOTAL": "Produtos",
+          "ACTIVE": "Ativos",
+          "INACTIVE": "Inativos"
+        },
+        "TABLE": {
+          "TITLE": "Catálogo de produtos",
+          "SUBTITLE": "Edite rapidamente informações operacionais, ingrediente ativo, concentração e fabricante.",
+          "LOADING": "Carregando produtos...",
+          "EMPTY_TITLE": "Nenhum produto cadastrado",
+          "EMPTY_DESCRIPTION": "Adicione o primeiro produto para começar a montar o catálogo de aplicação.",
+          "UPDATED_AT": "Última atualização"
+        },
+        "FORM": {
+          "NAME": "Nome",
+          "NAME_PLACEHOLDER": "Ex.: Fungicida XYZ",
+          "NAME_REQUIRED": "O nome do produto é obrigatório.",
+          "ACTIVE_INGREDIENT": "Ingrediente ativo",
+          "ACTIVE_INGREDIENT_PLACEHOLDER": "Ex.: Cobre, Enxofre, etc.",
+          "CATEGORY": "Categoria",
+          "CATEGORY_PLACEHOLDER": "Ex.: Fungicida, Inseticida",
+          "CONCENTRATION": "Concentração",
+          "CONCENTRATION_PLACEHOLDER": "0,5",
+          "UNIT": "Unidade",
+          "MANUFACTURER": "Fabricante",
+          "MANUFACTURER_PLACEHOLDER": "Empresa responsável",
+          "NOTES": "Observações",
+          "NOTES_PLACEHOLDER": "Notas internas, recomendações ou restrições.",
+          "IS_ACTIVE": "Produto ativo para uso"
+        },
+        "MODAL": {
+          "EYEBROW": "Cadastro de produto",
+          "CREATE_TITLE": "Adicionar produto",
+          "EDIT_TITLE": "Editar produto"
+        },
+        "STATUS": {
+          "ACTIVE": "Ativo",
+          "INACTIVE": "Inativo"
+        },
+        "DELETE": {
+          "TITLE": "Excluir produto",
+          "DESCRIPTION": "Tem certeza que deseja excluir o produto \"{{ name }}\"? Esta ação não poderá ser desfeita."
+        },
+        "TOAST": {
+          "LOAD_ERROR": "Não foi possível carregar os produtos.",
+          "CREATE_SUCCESS": "Produto criado com sucesso.",
+          "CREATE_ERROR": "Não foi possível criar o produto.",
+          "UPDATE_SUCCESS": "Produto atualizado com sucesso.",
+          "UPDATE_ERROR": "Não foi possível atualizar o produto.",
+          "DELETE_SUCCESS": "Produto excluído com sucesso.",
+          "DELETE_ERROR": "Não foi possível excluir o produto."
+        },
+        "MODULE": {
+          "PRODUCTS_TITLE": "Produtos",
+          "PRODUCTS_DESCRIPTION": "Resumo rápido do catálogo com acesso direto para criar, editar e excluir.",
+          "RECENT_PRODUCTS": "Produtos recentes",
+          "RECENT_PRODUCTS_COUNT": "{{ count }} cadastrados",
+          "PLACEHOLDER_1": "Receituário",
+          "PLACEHOLDER_2": "Cultivares",
+          "PLACEHOLDER_3": "Estoque",
+          "COMING_SOON_BADGE": "Em breve",
+          "COMING_SOON_DESCRIPTION": "Este espaço fica reservado para a próxima tabela administrativa. Quando você criar o módulo, ele pode ocupar este card sem alterar a estrutura da grade."
+        }
+      }
     }
   },
   "LAYOUT": {
@@ -232,6 +305,7 @@
         "SYNCS": "Sincronizações",
         "SPRAYING_FLOW": "Fluxo de Pulverização",
         "MASS_INCLUSION": "Inclusões em Massa",
+        "ADMINISTRATION": "Administração",
         "SETTINGS": "Configurações"
       },
       "LOGOUT": "Sair"
@@ -245,9 +319,11 @@
     "DESCRIPTION": "Descrição",
     "REGION": "Região",
     "STATUS": "Status",
+    "ACTIONS": "Ações",
     "DONE": "Concluído",
     "PENDING": "Pendente",
     "EDIT": "Editar",
+    "DELETE": "Excluir",
     "CANCEL": "Cancelar",
     "PENDING_COUNT": "{{ count }} Pendentes",
     "APPROVING": "Aprovando...",

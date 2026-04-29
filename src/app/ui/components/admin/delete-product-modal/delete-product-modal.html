@@ -1,0 +1,45 @@
+<div
+  class="modal-backdrop fixed inset-0 z-[1000] flex items-start justify-center bg-[rgba(10,18,13,0.55)] p-6 backdrop-blur-sm"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="my-auto w-full max-w-lg overflow-hidden rounded-[28px] border border-outline-variant bg-surface shadow-2xl"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="px-6 py-6">
+      <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-error-container/40 text-error">
+        <span class="material-symbols-outlined text-[28px]">delete</span>
+      </div>
+
+      <h2 class="mt-5 text-2xl font-bold text-on-surface">
+        {{ 'PAGES.ADMIN.PRODUCTS.DELETE.TITLE' | translate }}
+      </h2>
+      <p class="mt-3 text-sm leading-6 text-on-surface-variant">
+        {{
+          'PAGES.ADMIN.PRODUCTS.DELETE.DESCRIPTION' | translate:{ name: product?.name ?? '' }
+        }}
+      </p>
+
+      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <app-button
+          type="button"
+          variant="ghost"
+          [label]="'COMMON.CANCEL' | translate"
+          [disabled]="isDeleting"
+          [fullWidth]="false"
+          (click)="close()"
+        />
+        <app-button
+          type="button"
+          variant="error"
+          [label]="'COMMON.DELETE' | translate"
+          [loading]="isDeleting"
+          [disabled]="isDeleting"
+          [fullWidth]="false"
+          (click)="confirmed.emit()"
+        />
+      </div>
+    </div>
+  </div>
+</div>

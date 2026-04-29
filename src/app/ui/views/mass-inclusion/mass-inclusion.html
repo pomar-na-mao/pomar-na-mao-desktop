@@ -1,6 +1,4 @@
-<div
-  class="flex h-full flex-1 flex-col overflow-y-auto lg:flex-row"
->
+<div class="flex h-full flex-1 flex-col overflow-y-auto lg:flex-row">
   <div
     class="order-1 min-h-72 shrink-0 lg:order-2 lg:min-h-0 lg:flex-1 flex flex-col p-4"
   >
@@ -15,12 +13,14 @@
       [clearSignal]="massInclusionViewModel.clearMapSignal()"
       (polygonSelected)="onPolygonSelected($event)"
       (polygonCleared)="onPolygonCleared()"
-    ></app-map-polygon-selector>
+    />
   </div>
 
-  <div class="order-2 w-full lg:order-1 lg:w-[40%] lg:shrink-0">
-    <div class="lg:h-full w-full border-r border-outline-variant bg-surface p-4">
-      <app-mass-inclusion-form class="block lg:h-full"></app-mass-inclusion-form>
+  <div class="order-2 w-full h-full lg:order-1 lg:w-[40%] lg:shrink-0">
+    <div class="w-full h-full border-r border-outline-variant bg-surface p-4">
+      <app-mass-inclusion-form
+        class="block lg:h-full"
+      ></app-mass-inclusion-form>
     </div>
   </div>
 </div>

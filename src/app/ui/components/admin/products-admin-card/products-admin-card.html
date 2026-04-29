@@ -1,0 +1,147 @@
+<section
+  class="admin-module admin-module--products flex h-full flex-col overflow-hidden rounded-[28px] border border-outline-variant bg-surface shadow-sm"
+>
+  <div
+    class="flex items-center justify-between border-b border-outline-variant px-6 py-5"
+  >
+    <div>
+      <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+        {{ 'PAGES.ADMIN.PRODUCTS.MODULE.PRODUCTS_TITLE' | translate }}
+      </p>
+      <h2 class="mt-2 text-lg font-bold text-on-surface">
+        {{ 'PAGES.ADMIN.PRODUCTS.TABLE.TITLE' | translate }}
+      </h2>
+      <p class="mt-1 text-sm text-on-surface-variant">
+        {{ 'PAGES.ADMIN.PRODUCTS.MODULE.PRODUCTS_DESCRIPTION' | translate }}
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        class="flex h-11 w-11 items-center justify-center rounded-2xl border border-outline-variant bg-surface-container text-on-surface-variant transition-colors hover:bg-surface-container-high"
+        [attr.aria-label]="'COMMON.REFRESH' | translate"
+        (click)="refreshed.emit()"
+      >
+        <span class="material-symbols-outlined text-[20px]">refresh</span>
+      </button>
+      <button
+        type="button"
+        class="flex h-11 w-11 items-center justify-center rounded-2xl border border-outline-variant bg-surface-container text-primary transition-colors hover:bg-surface-container-high"
+        [attr.aria-label]="'PAGES.ADMIN.PRODUCTS.CTA.NEW' | translate"
+        (click)="created.emit()"
+      >
+        <span class="material-symbols-outlined text-[20px]">add</span>
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading) {
+  <div class="flex flex-1 items-center justify-center px-6 py-16 text-center text-sm font-medium text-on-surface-variant">
+    {{ 'PAGES.ADMIN.PRODUCTS.TABLE.LOADING' | translate }}
+  </div>
+  } @else if (products.length === 0) {
+  <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
+    <div
+      class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-surface-container-high text-primary"
+    >
+      <span class="material-symbols-outlined text-[30px]">inventory_2</span>
+    </div>
+    <h3 class="mt-4 text-lg font-semibold text-on-surface">
+      {{ 'PAGES.ADMIN.PRODUCTS.TABLE.EMPTY_TITLE' | translate }}
+    </h3>
+    <p class="mt-2 text-sm text-on-surface-variant">
+      {{ 'PAGES.ADMIN.PRODUCTS.TABLE.EMPTY_DESCRIPTION' | translate }}
+    </p>
+  </div>
+  } @else {
+  <div class="flex min-h-0 flex-1 flex-col gap-5 px-6 py-5">
+    <div class="grid grid-cols-3 gap-3">
+      <article class="rounded-2xl bg-surface-container p-4">
+        <p
+          class="text-[10px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
+        >
+          {{ 'PAGES.ADMIN.PRODUCTS.STATS.TOTAL' | translate }}
+        </p>
+        <strong class="mt-2 block text-2xl font-bold text-on-surface">
+          {{ stats.total }}
+        </strong>
+      </article>
+      <article class="rounded-2xl bg-surface-container p-4">
+        <p
+          class="text-[10px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
+        >
+          {{ 'PAGES.ADMIN.PRODUCTS.STATS.ACTIVE' | translate }}
+        </p>
+        <strong class="mt-2 block text-2xl font-bold text-success">
+          {{ stats.active }}
+        </strong>
+      </article>
+      <article class="rounded-2xl bg-surface-container p-4">
+        <p
+          class="text-[10px] font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
+        >
+          {{ 'PAGES.ADMIN.PRODUCTS.STATS.INACTIVE' | translate }}
+        </p>
+        <strong class="mt-2 block text-2xl font-bold text-error">
+          {{ stats.inactive }}
+        </strong>
+      </article>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <h3
+        class="text-sm font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
+      >
+        {{ 'PAGES.ADMIN.PRODUCTS.MODULE.RECENT_PRODUCTS' | translate }}
+      </h3>
+      <span class="text-xs text-on-surface-variant">
+        {{ 'PAGES.ADMIN.PRODUCTS.MODULE.RECENT_PRODUCTS_COUNT' | translate:{ count: products.length } }}
+      </span>
+    </div>
+
+    <div class="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div class="flex flex-col gap-3">
+      @for (product of products; track trackByProductId($index, product)) {
+      <article
+        class="flex items-start justify-between gap-3 rounded-2xl border border-outline-variant bg-surface-container-low px-4 py-3"
+      >
+        <div class="min-w-0">
+          <div class="truncate font-semibold text-on-surface">
+            {{ product.name }}
+          </div>
+          <div
+            class="mt-1 flex flex-wrap items-center gap-2 text-xs text-on-surface-variant"
+          >
+            <span>{{ product.category ?? ('COMMON.UNKNOWN' | translate) }}</span>
+            <span>•</span>
+            <span>{{ product.active_ingredient ?? ('COMMON.UNKNOWN' | translate) }}</span>
+          </div>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-xl border border-outline-variant bg-surface text-on-surface-variant transition-colors hover:bg-surface-container-high"
+            [attr.aria-label]="'COMMON.EDIT' | translate"
+            (click)="edited.emit(product)"
+          >
+            <span class="material-symbols-outlined text-[16px]">edit</span>
+          </button>
+
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-xl border border-error/25 bg-error-container/25 text-error transition-colors hover:bg-error-container/45"
+            [attr.aria-label]="'COMMON.DELETE' | translate"
+            (click)="deleted.emit(product)"
+          >
+            <span class="material-symbols-outlined text-[16px]">delete</span>
+          </button>
+        </div>
+      </article>
+      }
+      </div>
+    </div>
+  </div>
+  }
+</section>
