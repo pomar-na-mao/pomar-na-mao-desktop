@@ -1,18 +1,16 @@
 import { Component, inject } from '@angular/core';
-
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LoginViewModel } from './login.view-model';
-import { InputComponent } from '../../shared/components/input/input.component';
+import { Input } from '../../shared/components/input/input';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, InputComponent],
-  templateUrl: './login.component.html',
+  imports: [ReactiveFormsModule, RouterModule, Input],
+  templateUrl: './login.html',
   providers: [LoginViewModel], // ViewModel provided here for component-specific state
 })
-export class LoginComponent {
+export class Login {
   // View exposes the ViewModel
   public vm = inject(LoginViewModel);
 

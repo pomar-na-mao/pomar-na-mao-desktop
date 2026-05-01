@@ -1,10 +1,9 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input as NgInput, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-input',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="space-y-1 w-full">
@@ -17,7 +16,7 @@ import { CommonModule } from '@angular/common';
       <div class="relative">
         @if (icon) {
           <div
-            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"
+            class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400"
             [innerHTML]="icon"
           ></div>
         }
@@ -30,8 +29,8 @@ import { CommonModule } from '@angular/common';
           (blur)="onBlur()"
           class="block w-full py-2.5 bg-slate-50 border rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition-all outline-none"
           [ngClass]="{
-            'pl-10': icon,
-            'px-4': !icon,
+            'pl-5': icon,
+            'px-3': !icon,
             'border-red-500 bg-red-50 focus:ring-red-500 focus:border-red-500': error,
             'border-slate-200': !error,
           }"
@@ -47,20 +46,20 @@ import { CommonModule } from '@angular/common';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputComponent),
+      useExisting: forwardRef(() => Input),
       multi: true,
     },
   ],
 })
-export class InputComponent implements ControlValueAccessor {
-  @Input() label = '';
-  @Input() placeholder = '';
-  @Input() type = 'text';
-  @Input() id = 'input-' + Math.random().toString(36).substring(2, 9);
-  @Input() icon = '';
-  @Input() error = '';
+export class Input implements ControlValueAccessor {
+  @NgInput() label = '';
+  @NgInput() placeholder = '';
+  @NgInput() type = 'text';
+  @NgInput() id = 'input-' + Math.random().toString(36).substring(2, 9);
+  @NgInput() icon = '';
+  @NgInput() error = '';
 
-  @Input() set value(val: string | null) {
+  @NgInput() set value(val: string | null) {
     this._value = val || '';
   }
   get value(): string {
@@ -68,8 +67,8 @@ export class InputComponent implements ControlValueAccessor {
   }
 
   private _value = '';
-  private onChange: (value: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string) => void = () => { };
+  private onTouched: () => void = () => { };
 
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;

@@ -1,16 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardViewModel } from './dashboard.view-model';
-
-import { SelectComponent } from '../../shared/components/select/select.component';
+import { Select } from '../../shared/components/select/select';
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
-  imports: [CommonModule, SelectComponent],
-  templateUrl: './dashboard.component.html',
+  imports: [CommonModule, Select],
+  templateUrl: './dashboard.html',
   providers: [DashboardViewModel]
 })
-export class DashboardComponent {
+export class Dashboard {
   public vm = inject(DashboardViewModel);
 }

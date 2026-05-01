@@ -1,15 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { InputComponent } from '../../shared/components/input/input.component';
+import { Input } from '../../shared/components/input/input';
 
 @Component({
   selector: 'app-settings',
-  standalone: true,
-  imports: [CommonModule, InputComponent],
-  templateUrl: './settings.component.html',
+  imports: [CommonModule, Input],
+  templateUrl: './settings.html',
 })
-export class SettingsComponent {
+export class Settings {
   activeTab = 'perfil';
 
   tabs = [

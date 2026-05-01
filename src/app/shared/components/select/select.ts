@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input as NgInput, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
 export interface SelectOption {
@@ -8,7 +8,6 @@ export interface SelectOption {
 
 @Component({
   selector: 'app-select',
-  standalone: true,
   imports: [ReactiveFormsModule],
   template: `
     <div class="space-y-1 w-full">
@@ -31,17 +30,17 @@ export interface SelectOption {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectComponent),
+      useExisting: forwardRef(() => Select),
       multi: true,
     },
   ],
 })
-export class SelectComponent implements ControlValueAccessor {
-  @Input() label = '';
-  @Input() id = 'select-' + Math.random().toString(36).substring(2, 9);
-  @Input() options: SelectOption[] = [];
+export class Select implements ControlValueAccessor {
+  @NgInput() label = '';
+  @NgInput() id = 'select-' + Math.random().toString(36).substring(2, 9);
+  @NgInput() options: SelectOption[] = [];
 
-  @Input() set value(val: string | number | null) {
+  @NgInput() set value(val: string | number | null) {
     this._value = val !== null ? val : '';
   }
   get value(): string | number {
@@ -49,8 +48,8 @@ export class SelectComponent implements ControlValueAccessor {
   }
 
   private _value: string | number = '';
-  private onChange: (value: string | number) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string | number) => void = () => { };
+  private onTouched: () => void = () => { };
 
   onInput(event: Event): void {
     const target = event.target as HTMLSelectElement;

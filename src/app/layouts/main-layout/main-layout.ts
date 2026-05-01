@@ -1,20 +1,16 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+import { Header } from './components/header/header';
+import { Sidebar } from './components/sidebar/sidebar';
 
 @Component({
   selector: 'app-main-layout',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './main-layout.component.html',
+  imports: [CommonModule, RouterModule, Header, Sidebar],
+  templateUrl: './main-layout.html',
 })
-export class MainLayoutComponent {
-  private authService = inject(AuthService);
-  
+export class MainLayout {
   isSidebarCollapsed = signal<boolean>(false);
-  isUserDropdownOpen = signal<boolean>(false);
-  currentUser = this.authService.currentUser;
 
   menuItems = [
     { label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', path: '/home' },
@@ -25,13 +21,5 @@ export class MainLayoutComponent {
 
   toggleSidebar() {
     this.isSidebarCollapsed.update(v => !v);
-  }
-
-  toggleUserDropdown() {
-    this.isUserDropdownOpen.update(v => !v);
-  }
-
-  logout() {
-    this.authService.logout();
   }
 }

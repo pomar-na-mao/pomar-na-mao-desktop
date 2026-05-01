@@ -4,28 +4,28 @@ import { authGuard } from './core/guards/auth.guard';
 export const ROUTES: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('./features/login/login').then(m => m.Login)
   },
   {
     path: '',
-    loadComponent: () => import('./layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
+    loadComponent: () => import('./layouts/main-layout/main-layout').then(m => m.MainLayout),
     canActivate: [authGuard],
     children: [
       {
         path: 'home',
-        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+        loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard)
       },
       {
         path: 'reports',
-        loadComponent: () => import('./features/reports/reports.component').then(m => m.ReportsComponent)
+        loadComponent: () => import('./features/reports/reports').then(m => m.Reports)
       },
       {
         path: 'users',
-        loadComponent: () => import('./features/users/users.component').then(m => m.UsersComponent)
+        loadComponent: () => import('./features/users/users').then(m => m.Users)
       },
       {
         path: 'settings',
-        loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+        loadComponent: () => import('./features/settings/settings').then(m => m.Settings)
       },
       {
         path: '',

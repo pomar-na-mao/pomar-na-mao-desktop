@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { InputComponent } from '../../shared/components/input/input.component';
-import { SelectComponent } from '../../shared/components/select/select.component';
+import { Input } from '../../shared/components/input/input';
+import { Select } from '../../shared/components/select/select';
 
 export interface Report {
   id: number;
@@ -14,11 +13,10 @@ export interface Report {
 
 @Component({
   selector: 'app-reports',
-  standalone: true,
-  imports: [CommonModule, InputComponent, SelectComponent],
-  templateUrl: './reports.component.html',
+  imports: [CommonModule, Input, Select],
+  templateUrl: './reports.html',
 })
-export class ReportsComponent {
+export class Reports {
   reports: Report[] = [
     { id: 1, name: 'Vendas Mensais', date: '30/04/2026', type: 'Financeiro', status: 'Concluído' },
     { id: 2, name: 'Inventário de Estoque', date: '28/04/2026', type: 'Operacional', status: 'Concluído' },

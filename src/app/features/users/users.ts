@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { InputComponent } from '../../shared/components/input/input.component';
+import { Input } from '../../shared/components/input/input';
 
 export interface User {
   id: number;
@@ -14,11 +13,10 @@ export interface User {
 
 @Component({
   selector: 'app-users',
-  standalone: true,
-  imports: [CommonModule, InputComponent],
-  templateUrl: './users.component.html',
+  imports: [CommonModule, Input],
+  templateUrl: './users.html',
 })
-export class UsersComponent {
+export class Users {
   users: User[] = [
     { id: 1, name: 'Admin User', email: 'admin@example.com', role: 'Administrador', status: 'Ativo', avatar: 'https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff' },
     { id: 2, name: 'João Silva', email: 'joao.silva@example.com', role: 'Editor', status: 'Ativo', avatar: 'https://ui-avatars.com/api/?name=Joao+Silva&background=10b981&color=fff' },
