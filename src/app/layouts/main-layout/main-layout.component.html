@@ -1,0 +1,203 @@
+<div class="min-h-screen bg-slate-50 font-sans text-slate-900">
+  <!-- Header -->
+  <header
+    class="fixed top-0 left-0 right-0 h-[60px] bg-white border-b border-slate-200 shadow-sm z-30 flex items-center justify-between px-4"
+  >
+    <div class="flex items-center gap-4">
+      <button
+        (click)="toggleSidebar()"
+        class="p-2 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none"
+        aria-label="Toggle Sidebar"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 text-slate-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-emerald-600 rounded flex items-center justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            />
+          </svg>
+        </div>
+        <span class="font-bold text-xl tracking-tight hidden sm:block">Pomar na Mão</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <!-- Notifications -->
+      <button class="p-2 hover:bg-slate-100 rounded-lg relative transition-colors">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 text-slate-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+          />
+        </svg>
+        <span
+          class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"
+        ></span>
+      </button>
+
+      <!-- User Profile -->
+      <div class="relative">
+        <button
+          (click)="toggleUserDropdown()"
+          class="flex items-center gap-2 p-1 pl-2 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none"
+        >
+          @if (currentUser()) {
+            <div class="hidden text-right lg:block">
+              <p class="text-xs font-semibold text-slate-900 leading-tight">
+                {{ currentUser()?.name }}
+              </p>
+              <p class="text-[10px] text-slate-500">{{ currentUser()?.role }}</p>
+            </div>
+          }
+          <img
+            [src]="currentUser()?.avatar"
+            alt="User Avatar"
+            class="w-8 h-8 rounded-lg shadow-sm"
+          />
+        </button>
+
+        <!-- Dropdown Menu -->
+        @if (isUserDropdownOpen()) {
+          <div
+            (mouseleave)="isUserDropdownOpen.set(false)"
+            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          >
+            <a
+              href="#"
+              class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              Meu Perfil
+            </a>
+            <div class="h-px bg-slate-100 my-1"></div>
+            <button
+              (click)="logout()"
+              class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              Sair
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside
+    class="fixed top-[60px] left-0 h-[calc(100vh-60px)] bg-white border-r border-slate-200 transition-all duration-300 ease-in-out z-20 shadow-sm"
+    [ngClass]="isSidebarCollapsed() ? 'w-[64px]' : 'w-[240px]'"
+  >
+    <nav class="p-3 space-y-1">
+      @for (item of menuItems; track item) {
+        <div>
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="bg-emerald-50 text-emerald-600"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="relative flex items-center h-12 rounded-xl transition-all group hover:bg-slate-50 overflow-hidden"
+            [ngClass]="isSidebarCollapsed() ? 'justify-center px-0 gap-0' : 'px-4 gap-3'"
+            [title]="isSidebarCollapsed() ? item.label : ''"
+          >
+            <!-- Active Indicator (Only visible when expanded) -->
+            @if (!isSidebarCollapsed()) {
+              <div
+                routerLinkActive="scale-y-100 opacity-100"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="absolute left-0 top-3 bottom-3 w-1 bg-emerald-600 rounded-r-full scale-y-0 opacity-0 transition-all duration-300"
+              ></div>
+            }
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 flex-shrink-0 transition-colors group-hover:text-emerald-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                [attr.d]="item.icon"
+              />
+            </svg>
+            <span
+              class="font-medium transition-all duration-300 whitespace-nowrap"
+              [ngClass]="isSidebarCollapsed() ? 'opacity-0 w-0' : 'opacity-100'"
+            >
+              {{ item.label }}
+            </span>
+          </a>
+        </div>
+      }
+    </nav>
+  </aside>
+
+  <!-- Content Area -->
+  <main
+    class="transition-all duration-300 ease-in-out pt-[60px]"
+    [ngClass]="isSidebarCollapsed() ? 'pl-[64px]' : 'pl-[240px]'"
+  >
+    <div class="p-6 lg:p-8 min-h-[calc(100vh-60px)]">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

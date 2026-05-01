@@ -1,20 +1,41 @@
 import { Routes } from '@angular/router';
-import { isLoggedGuard } from './core/guards/is-logged/is-logged.guard';
-import { PageNotFound } from './shared/components';
-import { AppLayout } from './ui/views/layout/layout';
+import { authGuard } from './core/guards/auth.guard';
 
-export const ROUTES: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./ui/views/authentication/login/login').then(c => c.Login),
+    loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent)
   },
   {
     path: '',
-    component: AppLayout,
-    canActivate: [isLoggedGuard],
-    children: [{ path: 'pomar-na-mao', loadChildren: () => import('./core/routes/features.routes') }],
+    loadComponent: () => import('./layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./features/reports/reports.component').then(m => m.ReportsComponent)
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/users/users.component').then(m => m.UsersComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+      }
+    ]
   },
-  { path: 'notfound', component: PageNotFound },
-  { path: '**', redirectTo: '/notfound' },
+  {
+    path: '**',
+    redirectTo: 'login'
+  }
 ];

@@ -1,21 +1,24 @@
 import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app';
-import { TranslateModule } from '@ngx-translate/core';
-import { TauriService } from './core/services';
+import { App } from './app';
 import { provideRouter } from '@angular/router';
 
-describe('AppComponent', () => {
+describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [],
-      imports: [AppComponent, TranslateModule.forRoot()],
-      providers: [provideRouter([]), TauriService]
+      imports: [App],
+      providers: [provideRouter([])]
     }).compileComponents();
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  it('should have a router outlet', () => {
+    const fixture = TestBed.createComponent(App);
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

@@ -1,29 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { TauriService } from './core/services';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AppToast } from './shared/components';
 
 @Component({
   selector: 'app-root',
-  template: `
-    <router-outlet />
-    <app-toast />
-  `,
-  imports: [RouterOutlet, AppToast]
+  standalone: true,
+  imports: [RouterOutlet],
+  template: '<router-outlet></router-outlet>'
 })
-export class AppComponent {
-  private readonly tauriService = inject(TauriService);
-  private readonly translate = inject(TranslateService);
-
-  constructor() {
-    this.translate.setFallbackLang('pt');
-
-    if (this.tauriService.isTauri) {
-      console.log('Run in Tauri');
-      this.tauriService.callHelloWorld();
-    } else {
-      console.log('Run in browser');
-    }
-  }
-}
+export class App {}

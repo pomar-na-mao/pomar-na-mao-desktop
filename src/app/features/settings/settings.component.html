@@ -1,0 +1,130 @@
+<div class="max-w-4xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <div>
+    <h1 class="text-3xl font-bold text-slate-900">Configurações</h1>
+    <p class="text-slate-500 mt-1">
+      Gerencie suas preferências de conta e configurações do sistema.
+    </p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <!-- Tabs Header -->
+    <div class="flex border-b border-slate-100 overflow-x-auto bg-slate-50/50">
+      @for (tab of tabs; track tab) {
+        <button
+          (click)="setActiveTab(tab.id)"
+          [ngClass]="
+            activeTab === tab.id
+              ? 'text-emerald-600 border-emerald-600 bg-white'
+              : 'text-slate-500 border-transparent hover:text-slate-700'
+          "
+          class="px-6 py-4 text-sm font-semibold border-b-2 transition-all whitespace-nowrap focus:outline-none"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Tab Content: Perfil -->
+    @if (activeTab === 'perfil') {
+      <div class="p-8 space-y-8 animate-in fade-in duration-300">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div class="relative group">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff&size=128"
+              class="w-24 h-24 rounded-2xl object-cover ring-4 ring-slate-50 shadow-sm"
+              alt="Profile"
+            />
+            <button
+              class="absolute -bottom-2 -right-2 p-2 bg-white rounded-xl shadow-md border border-slate-100 text-slate-600 hover:text-emerald-600 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </button>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Foto de Perfil</h3>
+            <p class="text-sm text-slate-500 mt-1">
+              Recomendado: JPG ou PNG de pelo menos 400x400px.
+            </p>
+            <div class="flex gap-2 mt-4">
+              <button
+                class="px-3 py-1.5 text-xs font-bold bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors"
+              >
+                Alterar foto
+              </button>
+              <button
+                class="px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                Remover
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <app-input label="Nome Completo" value="Admin User"></app-input>
+          <app-input label="E-mail" type="email" value="admin@example.com"></app-input>
+          <app-input label="Cargo / Título" value="Administrador do Sistema"></app-input>
+          <app-input label="Telefone" value="+55 (11) 99999-9999"></app-input>
+        </div>
+        <div class="pt-6 border-t border-slate-100 flex justify-end gap-3">
+          <button
+            class="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-lg transition-all"
+          >
+            Cancelar
+          </button>
+          <button
+            class="px-6 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition-all shadow-sm"
+          >
+            Salvar Alterações
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Other Tabs (Placeholders) -->
+    @if (activeTab !== 'perfil') {
+      <div class="p-12 text-center animate-in fade-in duration-300">
+        <div
+          class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8 text-slate-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+            />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Módulo em Desenvolvimento</h3>
+        <p class="text-slate-500 mt-2">
+          Esta seção de configurações está sendo preparada para você.
+        </p>
+      </div>
+    }
+  </div>
+</div>
