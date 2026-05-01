@@ -11,7 +11,7 @@ import { AuthService } from '../../../../core/services/auth.service';
     >
       <div class="flex items-center gap-4">
         <button
-          (click)="onToggleSidebar.emit()"
+          (click)="sidebarToggled.emit()"
           class="p-2 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none"
           aria-label="Toggle Sidebar"
         >
@@ -138,7 +138,7 @@ import { AuthService } from '../../../../core/services/auth.service';
   `,
 })
 export class Header {
-  @Output() onToggleSidebar = new EventEmitter<void>();
+  @Output() sidebarToggled = new EventEmitter<void>();
 
   private authService = inject(AuthService);
   currentUser = this.authService.currentUser;

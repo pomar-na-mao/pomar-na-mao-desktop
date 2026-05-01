@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let routerSpy: any;
+  let routerSpy: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     routerSpy = { navigate: vi.fn() };

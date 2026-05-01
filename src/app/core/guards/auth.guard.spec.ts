@@ -5,8 +5,8 @@ import { AuthService } from '../services/auth.service';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 describe('authGuard', () => {
-  let authServiceSpy: any;
-  let routerSpy: any;
+  let authServiceSpy: { isAuthenticated: ReturnType<typeof vi.fn> };
+  let routerSpy: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     authServiceSpy = { isAuthenticated: vi.fn() };

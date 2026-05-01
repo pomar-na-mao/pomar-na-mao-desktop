@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-slate-50 font-sans text-slate-900">
-  <app-header (onToggleSidebar)="toggleSidebar()"></app-header>
+  <app-header (sidebarToggled)="toggleSidebar()"></app-header>
 
   <app-sidebar
     [isCollapsed]="isSidebarCollapsed()"

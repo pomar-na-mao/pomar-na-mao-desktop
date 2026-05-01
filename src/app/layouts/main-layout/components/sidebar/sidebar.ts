@@ -2,6 +2,12 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+export interface MenuItem {
+  label: string;
+  icon: string;
+  path: string;
+}
+
 @Component({
   selector: 'app-sidebar',
   imports: [CommonModule, RouterModule],
@@ -58,5 +64,5 @@ import { RouterModule } from '@angular/router';
 })
 export class Sidebar {
   @Input() isCollapsed = false;
-  @Input() menuItems: any[] = [];
+  @Input() menuItems: MenuItem[] = [];
 }
