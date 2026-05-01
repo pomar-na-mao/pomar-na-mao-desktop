@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Session, User as SupabaseUser, AuthError, type WeakPassword, type Subscription } from '@supabase/supabase-js';
+import { Session, User, AuthError, type WeakPassword, type Subscription } from '@supabase/supabase-js';
 
 export interface IAuthCredentials {
   email: string;
@@ -7,14 +7,14 @@ export interface IAuthCredentials {
 }
 
 export interface IAuthResponse {
-  user: SupabaseUser | null;
+  user: User | null;
   session: Session | null;
   error: AuthError | null;
 }
 
 export interface ILoginResponse {
   data: {
-    user: SupabaseUser;
+    user: User;
     session: Session;
     weakPassword?: WeakPassword;
   } | {
@@ -49,17 +49,3 @@ export interface IUserRole { user_id: string, role: string }
 
 export interface AuthChangesResponse { data: { subscription: Subscription }; }
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'Administrador' | 'Editor' | 'Visualizador';
-  avatar?: string;
-  status: 'Ativo' | 'Inativo' | 'Pendente';
-}
-
-export interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-}

@@ -1,0 +1,149 @@
+<div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <!-- Welcome Section -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-900">Dashboard</h1>
+      <p class="text-slate-500 mt-1">
+        Bem-vindo de volta! Aqui está o resumo do seu pomar.
+      </p>
+    </div>
+    <button
+      (click)="vm.refreshData()"
+      class="p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5 text-slate-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Metrics Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    @for (metric of vm.metrics(); track metric) {
+    <div
+      class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              [attr.d]="metric.icon"
+            />
+          </svg>
+        </div>
+        <span
+          class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-50 text-emerald-600"
+        >
+          {{ metric.change }}
+        </span>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">
+          {{ metric.label }}
+        </p>
+        <h3 class="text-2xl font-bold text-slate-900 mt-1">
+          {{ metric.value }}
+        </h3>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Panels Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Chart Placeholder -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-slate-900">Crescimento de Vendas</h2>
+        <app-select
+          [options]="[
+            { label: 'Últimos 7 dias', value: 7 },
+            { label: 'Últimos 30 dias', value: 30 },
+          ]"
+          class="w-40"
+        ></app-select>
+      </div>
+      <div class="h-64 w-full flex items-end gap-2 px-2">
+        <div
+          class="flex-1 bg-emerald-100 rounded-t-lg h-[40%] hover:bg-emerald-200 transition-colors"
+        ></div>
+        <div
+          class="flex-1 bg-emerald-200 rounded-t-lg h-[60%] hover:bg-emerald-300 transition-colors"
+        ></div>
+        <div
+          class="flex-1 bg-emerald-300 rounded-t-lg h-[45%] hover:bg-emerald-400 transition-colors"
+        ></div>
+        <div
+          class="flex-1 bg-emerald-400 rounded-t-lg h-[80%] hover:bg-emerald-500 transition-colors"
+        ></div>
+        <div
+          class="flex-1 bg-emerald-500 rounded-t-lg h-[55%] hover:bg-emerald-600 transition-colors"
+        ></div>
+        <div
+          class="flex-1 bg-emerald-600 rounded-t-lg h-[90%] hover:bg-emerald-700 transition-colors"
+        ></div>
+        <div
+          class="flex-1 bg-emerald-400 rounded-t-lg h-[70%] hover:bg-emerald-500 transition-colors"
+        ></div>
+      </div>
+      <div
+        class="flex justify-between mt-4 px-2 text-xs text-slate-400 font-medium uppercase"
+      >
+        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span
+        ><span>Sex</span><span>Sab</span><span>Dom</span>
+      </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-slate-900">Atividades Recentes</h2>
+        <button class="text-emerald-600 text-sm font-medium hover:underline">
+          Ver tudo
+        </button>
+      </div>
+      <div class="space-y-6">
+        @for (activity of vm.recentActivities(); track activity) {
+        <div class="flex items-start gap-4">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm"
+            [ngClass]="{
+                'bg-emerald-50 text-emerald-600': activity.type === 'success',
+                'bg-blue-50 text-blue-600': activity.type === 'info',
+                'bg-amber-50 text-amber-600': activity.type === 'warning',
+              }"
+          >
+            {{ activity.type === 'success' ? 'C' : activity.type === 'info' ?
+            'I' : 'W' }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-slate-900">{{ activity.text }}</p>
+            <p class="text-xs text-slate-400 mt-1">{{ activity.time }}</p>
+          </div>
+          <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2"></div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

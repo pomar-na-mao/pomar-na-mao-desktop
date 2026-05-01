@@ -1,31 +1,31 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { isLoggedGuard } from './core/guards/is-logged/is-logged.guard';
 
 export const ROUTES: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./features/login/login').then(m => m.Login)
+    loadComponent: () => import('./ui/views/authentication/login/login').then(m => m.Login)
   },
   {
     path: '',
-    loadComponent: () => import('./layouts/main-layout/main-layout').then(m => m.MainLayout),
-    canActivate: [authGuard],
+    loadComponent: () => import('./ui/views/layout/main-layout').then(m => m.MainLayout),
+    canActivate: [isLoggedGuard],
     children: [
       {
         path: 'home',
-        loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard)
+        loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
       },
       {
         path: 'reports',
-        loadComponent: () => import('./features/reports/reports').then(m => m.Reports)
+        loadComponent: () => import('./ui/views/reports/reports').then(m => m.Reports)
       },
       {
         path: 'users',
-        loadComponent: () => import('./features/users/users').then(m => m.Users)
+        loadComponent: () => import('./ui/views/users/users').then(m => m.Users)
       },
       {
         path: 'settings',
-        loadComponent: () => import('./features/settings/settings').then(m => m.Settings)
+        loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
       },
       {
         path: '',

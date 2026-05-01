@@ -1,5 +1,5 @@
-import { Component, Input as NgInput, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input as NgInput, Optional, Self } from '@angular/core';
+import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -31,25 +31,18 @@ import { CommonModule } from '@angular/common';
           [ngClass]="{
             'pl-5': icon,
             'px-3': !icon,
-            'border-red-500 bg-red-50 focus:ring-red-500 focus:border-red-500': error,
-            'border-slate-200': !error,
+            'border-red-500 bg-red-50 focus:ring-red-500 focus:border-red-500': errorMessage,
+            'border-slate-200': !errorMessage,
           }"
         />
       </div>
-      @if (error) {
+      @if (errorMessage) {
         <p class="mt-1 text-xs text-red-500 animate-in slide-in-from-top-1">
-          {{ error }}
+          {{ errorMessage }}
         </p>
       }
     </div>
   `,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => Input),
-      multi: true,
-    },
-  ],
 })
 export class Input implements ControlValueAccessor {
   @NgInput() label = '';
@@ -57,13 +50,28 @@ export class Input implements ControlValueAccessor {
   @NgInput() type = 'text';
   @NgInput() id = 'input-' + Math.random().toString(36).substring(2, 9);
   @NgInput() icon = '';
-  @NgInput() error = '';
+  @NgInput() errors: Record<string, string> = {};
 
   @NgInput() set value(val: string | null) {
     this._value = val || '';
   }
   get value(): string {
     return this._value;
+  }
+
+  constructor(@Optional() @Self() public ngControl: NgControl) {
+    if (this.ngControl) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
+
+  get errorMessage(): string {
+    if (!this.ngControl || !this.ngControl.errors || !this.ngControl.touched) {
+      return '';
+    }
+
+    const firstErrorKey = Object.keys(this.ngControl.errors)[0];
+    return this.errors[firstErrorKey] || '';
   }
 
   private _value = '';
