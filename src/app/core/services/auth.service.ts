@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../models/auth.model';
 
@@ -13,7 +13,8 @@ export class AuthService {
   public currentUser = computed(() => this.userSignal());
   public isAuthenticated = computed(() => !!this.tokenSignal());
 
-  constructor(private router: Router) {}
+  private router = inject(Router);
+  constructor() {}
 
   login(email: string, password: string): boolean {
     if (email.length > 3 && password.length > 3) {

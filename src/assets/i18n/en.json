@@ -1,0 +1,365 @@
+{
+  "PAGES": {
+    "HOME": {
+      "TITLE": "Orchard in Hand",
+      "DESCRIPTION": "Manage your orchard with ease and precision. Everything you need in the palm of your hand.",
+      "GO_TO_DETAIL": "Start now",
+      "DASHBOARD": {
+        "OPTIMAL": "Optimal",
+        "MODERATE": "Moderate",
+        "CRITICAL": "Critical",
+        "TOTAL_TREES": "TOTAL TREES",
+        "UPDATED_MINS_AGO": "Updated {{ time }} ago",
+        "HEALTHY": "HEALTHY",
+        "UNHEALTHY": "UNHEALTHY",
+        "ORCHARD_VIGOR": "ORCHARD VIGOR",
+        "PROGRESS": "PROGRESS",
+        "RECENT_UPDATES": "Recent Updates",
+        "REAL_TIME_REPORTING": "Real-time field reporting",
+        "VIEW_ALL": "View All",
+        "TREE_ID": "TREE ID",
+        "SPECIES": "SPECIES",
+        "STATUS": "Status",
+        "ASSIGNED": "ASSIGNED",
+        "LAST_UPDATE": "Last update",
+        "VARIETY": "Variety",
+        "REGION": "Region",
+        "OCCURRENCES": "Occurrences",
+        "NO_ALERTS": "No alerts found.",
+        "ALERTS_LOAD_ERROR": "Unable to load alerts.",
+        "ZONE_LABEL": "Zone",
+        "ROW_LABEL": "Row",
+        "TREE_LABEL": "Tree",
+        "NO_RECENT_UPDATES": "No recent updates found.",
+        "MONITORING": "MONITORING",
+        "PEST_ALERT": "PEST ALERT",
+        "URGENT_HEALTH_ALERTS": "Health Alerts",
+        "APHID_INFESTATION": "Aphid Infestation",
+        "IRRIGATION_FAULT": "Irrigation Fault",
+        "SECTOR_B_ROW_12": "Zone B, Row 12. 4 trees.",
+        "SECTOR_D_ZONE_4": "Zone D, Zone 4. Pressure drop.",
+        "INSPECT": "Inspect →",
+        "GROWTH_FORECAST": "Growth Forecast",
+        "ESTIMATED_YIELD_Q3": "Estimated yield Q3.",
+        "TONS": "{{ value }} Tons",
+        "TIME_AGO": "{{ time }}h ago",
+        "PLANTING_DATE": "Planting Date",
+        "LIFE_OF_TREE": "Life of Tree"
+      }
+    },
+    "DETAIL": {
+      "TITLE": "Orchard Dashboard",
+      "BACK_TO_HOME": "Back",
+      "ORCHARD_INFO": "General Information",
+      "TREE_COUNT": "Total Trees",
+      "WEATHER": "Current Weather",
+      "TASKS": "Active Tasks",
+      "HARVEST": "Next Harvest",
+      "STATUS_OK": "Everything in order"
+    },
+    "LOGIN": {
+      "TITLE": "Welcome back",
+      "SUBTITLE": "Access your account to manage your orchard.",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "your@email.com",
+      "PASSWORD_LABEL": "Password",
+      "PASSWORD_PLACEHOLDER": "••••••••",
+      "SUBMIT": "Sign In",
+      "ERROR_REQUIRED": "This field is required",
+      "ERROR_EMAIL": "Invalid email",
+      "ERROR_MINLENGTH": "Password must be at least 3 characters",
+      "INVALID_CREDENTIALS": "Invalid credentials! Please fill in email and password correctly.",
+      "FORGOT_PASSWORD": "Forgot password?",
+      "SHOW_PASSWORD": "Show password",
+      "HIDE_PASSWORD": "Hide password",
+      "BADGE_MONITORING": "Real-time monitoring",
+      "BADGE_MAP": "Plant-by-plant management",
+      "BADGE_SYNC": "Smart synchronization",
+      "TAGLINE": "Control and Traceability",
+      "FORM_TITLE": "Access your account",
+      "FORM_SUBTITLE": "Enter your credentials to continue",
+      "FOOTER": "Pomar na mão • v1.4.0 • Control and Traceability"
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Recover password",
+      "SUBTITLE": "Enter your email to receive instructions.",
+      "SUBMIT": "Send recovery email",
+      "BACK_TO_LOGIN": "Back to login",
+      "GO_TO_RESET": "Reset password",
+      "SUCCESS_MESSAGE": "Recovery email sent! Check your inbox to reset your password."
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "New password",
+      "SUBTITLE": "Choose a new secure password for your account.",
+      "SUBMIT": "Confirm new password",
+      "SUCCESS_MESSAGE": "Password changed successfully!",
+      "PASSWORD_LABEL": "New password",
+      "PASSWORD_PLACEHOLDER": "••••••••",
+      "BACK_TO_LOGIN": "Back to login"
+    },
+    "NOT_FOUND": {
+      "TITLE": "404 - Page Not Found",
+      "SUBTITLE": "The page you are looking for doesn't exist or has been moved.",
+      "GO_HOME": "Back to Dashboard"
+    },
+    "MAP": {
+      "ZONE_LABEL": "Zone",
+      "ZONE_PLACEHOLDER": "Select a zone",
+      "NO_ZONES": "No zones available",
+      "OCCURRENCE_LABEL": "Occurrence",
+      "OCCURRENCE_PLACEHOLDER": "Select an occurrence",
+      "VARIETY_LABEL": "Variety",
+      "VARIETY_PLACEHOLDER": "Select a variety"
+    },
+    "MASS_INCLUSION": {
+      "MAP_POLYGON_SELECTOR": {
+        "TITLE": "Region Selector",
+        "STATUS_DRAWING": "Drawing... ({{ count }} pts)",
+        "STATUS_SELECTED": "Region selected",
+        "STATUS_WAITING": "Waiting",
+        "UNDO_LAST_POINT": "Undo last point",
+        "FINISH_POLYGON": "Finish polygon",
+        "FINISH": "Finish",
+        "CANCEL_DRAWING": "Cancel drawing",
+        "DRAW_POLYGON": "Draw polygon",
+        "CANCEL": "Cancel",
+        "DRAW": "Draw",
+        "CLEAR_ALL": "Clear all",
+        "DRAWING_HINT": "Click to add points · Double click or \"Finish\" to complete · Minimum 3 points",
+        "COORDINATES_COUNT": "{{ count }} coordinates",
+        "HIDE": "Hide",
+        "VIEW": "View",
+        "COORDS": "coords",
+        "COPIED": "Copied!",
+        "COPY_JSON": "Copy JSON",
+        "COPY_GEOJSON": "GeoJSON"
+      },
+      "FORM": {
+        "TITLE": "Mass Inclusion",
+        "SUBTITLE": "Fill in the data to apply inclusion to the selected polygon.",
+        "DISABLED_HINT": "Draw and finish a polygon on the map to enable the form.",
+        "OCCURRENCES": "Occurrences",
+        "VARIETY": "Variety",
+        "VARIETY_PLACEHOLDER": "Select a variety",
+        "LIFE_OF_TREE": "Life of Tree",
+        "LIFE_OF_TREE_PLACEHOLDER": "Ex.: first, second, third, etc...",
+        "PLANTING_DATE": "Planting Date",
+        "DESCRIPTION": "Description",
+        "DESCRIPTION_PLACEHOLDER": "Add a note for this mass inclusion.",
+        "CLEAR": "Clear",
+        "SAVE": "Save",
+        "SAVE_SUCCESS": "Plants updated successfully!",
+        "SAVE_ERROR": "Error updating plants. Please try again."
+      }
+    },
+    "SYNCS": {
+      "TITLE": "Syncs",
+      "INSPECT_ROUTINES": "Inspection Routines",
+      "ROUTINES": "Routines",
+      "HISTORY_DESCRIPTION": "History of inspection routines",
+      "WORK_HISTORY_DESCRIPTION": "History of routines",
+      "NO_ROUTINES": "No routines found.",
+      "ANNOTATIONS": "Inspection Annotations",
+      "ANNOTATIONS_HISTORY_DESCRIPTION": "History of inspection annotations",
+      "NO_ANNOTATIONS": "No annotations found.",
+      "NEW_PLANTS": "New Plants",
+      "NEW_PLANTS_HISTORY_DESCRIPTION": "History of newly plants",
+      "NO_NEW_PLANTS": "No new plants found.",
+      "NEW_PLANT_ID": "New Plant {{ id }}",
+      "NEW_PLANT_MODAL_SUBTITLE": "Review the coordinates and approve the plant inclusion.",
+      "INSPECTION_ID": "Inspection {{ id }}",
+      "ROUTINE_ID": "Routine {{ id }}",
+      "ANNOTATION_ID": "Annotation {{ id }}",
+      "WORK_ANNOTATION_ID": "Annotation {{ id }}",
+      "SUBTITLE": "Detailing and approval of occurrences",
+      "ZONE_NUMBER": "Zone {{ number }}",
+      "APPROVED_INSPECTION": "This inspection has already been approved and synchronized.",
+      "APPROVED_ROUTINE": "This routine has already been approved and synchronized.",
+      "NO_DIFFERENCES": "No differences in occurrences found for this plant.",
+      "ANNOTATION_NOT_FOUND": "Annotation not found",
+      "NO_PLANTS_FOUND": "No plants found for this routine."
+    },
+    "SPRAYING_FLOW": {
+      "TABLE": {
+        "TITLE": "Spraying Sessions",
+        "SUBTITLE": "Select a session to visualize the route, nearby plants, and applied products.",
+        "WATER_VOLUME": "Spray Mix",
+        "EMPTY": "No spraying sessions found."
+      },
+      "DETAIL": {
+        "TITLE": "Flow Visualization",
+        "SUBTITLE": "Recorded route map with associated plants and applied products.",
+        "EMPTY": "Select a session to load the visualization.",
+        "SESSION_INFO": "Session Summary",
+        "ROUTE_POINTS": "Points",
+        "PLANTS": "Plants",
+        "PRODUCTS": "Products",
+        "OPERATOR": "Operator",
+        "WATER_VOLUME": "Spray Mix Volume",
+        "END_TIME": "Finished At",
+        "APPLIED_PRODUCTS": "Applied Products",
+        "NO_PRODUCTS": "No applied products were found for this session."
+      },
+      "STATUS": {
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      }
+    },
+    "ADMIN": {
+      "PRODUCTS": {
+        "EYEBROW": "Administration",
+        "TITLE": "Product Management",
+        "SUBTITLE": "Create and maintain the products used in orchard operations directly from the Supabase `products` table.",
+        "CTA": {
+          "NEW": "New product"
+        },
+        "STATS": {
+          "TOTAL": "Products",
+          "ACTIVE": "Active",
+          "INACTIVE": "Inactive"
+        },
+        "TABLE": {
+          "TITLE": "Product catalog",
+          "SUBTITLE": "Quickly update operational details, active ingredient, concentration, and manufacturer.",
+          "LOADING": "Loading products...",
+          "EMPTY_TITLE": "No products registered",
+          "EMPTY_DESCRIPTION": "Add the first product to start building the application catalog.",
+          "UPDATED_AT": "Last updated"
+        },
+        "FORM": {
+          "NAME": "Name",
+          "NAME_PLACEHOLDER": "Ex.: Fungicide XYZ",
+          "NAME_REQUIRED": "Product name is required.",
+          "ACTIVE_INGREDIENT": "Active ingredient",
+          "ACTIVE_INGREDIENT_PLACEHOLDER": "Ex.: Copper, Sulfur, etc.",
+          "CATEGORY": "Category",
+          "CATEGORY_PLACEHOLDER": "Ex.: Fungicide, Insecticide",
+          "CONCENTRATION": "Concentration",
+          "CONCENTRATION_PLACEHOLDER": "0.5",
+          "UNIT": "Unit",
+          "MANUFACTURER": "Manufacturer",
+          "MANUFACTURER_PLACEHOLDER": "Responsible company",
+          "NOTES": "Notes",
+          "NOTES_PLACEHOLDER": "Internal notes, recommendations, or restrictions.",
+          "IS_ACTIVE": "Product available for use"
+        },
+        "MODAL": {
+          "EYEBROW": "Product record",
+          "CREATE_TITLE": "Add product",
+          "EDIT_TITLE": "Edit product"
+        },
+        "STATUS": {
+          "ACTIVE": "Active",
+          "INACTIVE": "Inactive"
+        },
+        "DELETE": {
+          "TITLE": "Delete product",
+          "DESCRIPTION": "Are you sure you want to delete \"{{ name }}\"? This action cannot be undone."
+        },
+        "TOAST": {
+          "LOAD_ERROR": "Unable to load products.",
+          "CREATE_SUCCESS": "Product created successfully.",
+          "CREATE_ERROR": "Unable to create the product.",
+          "UPDATE_SUCCESS": "Product updated successfully.",
+          "UPDATE_ERROR": "Unable to update the product.",
+          "DELETE_SUCCESS": "Product deleted successfully.",
+          "DELETE_ERROR": "Unable to delete the product."
+        },
+        "MODULE": {
+          "PRODUCTS_TITLE": "Products",
+          "PRODUCTS_DESCRIPTION": "Quick catalog summary with direct access to create, edit, and delete.",
+          "RECENT_PRODUCTS": "Recent products",
+          "RECENT_PRODUCTS_COUNT": "{{ count }} registered",
+          "PLACEHOLDER_1": "Prescriptions",
+          "PLACEHOLDER_2": "Cultivars",
+          "PLACEHOLDER_3": "Inventory",
+          "COMING_SOON_BADGE": "Coming soon",
+          "COMING_SOON_DESCRIPTION": "This space is reserved for the next administrative table. When you create that module, it can take over this card without changing the grid structure."
+        }
+      }
+    }
+  },
+  "LAYOUT": {
+    "HEADER": {
+      "SEARCH_PLACEHOLDER": "Search trees, sectors...",
+      "SEARCH_ARIA": "Search trees and sectors",
+      "NOTIFICATIONS_ARIA": "Notifications",
+      "HELP_ARIA": "Help",
+      "PROFILE_ARIA": "User profile",
+      "THEME_TOGGLE_ARIA": "Toggle Theme"
+    },
+    "LANGUAGES": {
+      "PT": "Portuguese",
+      "EN": "English"
+    },
+    "SIDEBAR": {
+      "BRAND_NAME": "Pomar na mão",
+      "TAGLINE": "Control and Traceability",
+      "MENU": {
+        "DASHBOARD": "Dashboard",
+        "MAP": "Map View",
+        "INVENTORY": "Tree Inventory",
+        "ALERTS": "Alerts",
+        "SYNCS": "Syncs",
+        "SPRAYING_FLOW": "Spraying Flow",
+        "MASS_INCLUSION": "Mass Inclusion",
+        "ADMINISTRATION": "Administration",
+        "SETTINGS": "Settings"
+      },
+      "LOGOUT": "Logout"
+    }
+  },
+  "COMMON": {
+    "OCCURRENCE": "Occurrence",
+    "OCCURRENCES": "Occurrences",
+    "REFRESH": "Refresh",
+    "DATE": "Date",
+    "DESCRIPTION": "Description",
+    "REGION": "Region",
+    "STATUS": "Status",
+    "ACTIONS": "Actions",
+    "DONE": "Done",
+    "PENDING": "Pending",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "CANCEL": "Cancel",
+    "PENDING_COUNT": "{{ count }} Pending",
+    "APPROVING": "Approving...",
+    "APPROVED": "Approved",
+    "APPROVE": "Approve",
+    "BACK": "Back",
+    "PREVIOUS": "Previous",
+    "NEXT": "Next",
+    "LATITUDE": "Latitude",
+    "LONGITUDE": "Longitude",
+    "COORDINATES": "Coordinates",
+    "UNKNOWN": "Unknown",
+    "OCCURRENCES_LABELS": {
+      "STICK": "Dry Branch",
+      "BROKEN_BRANCH": "Broken Branch",
+      "VINE_GROWING": "Vine Growing",
+      "BURNT_BRANCH": "Burnt Branch",
+      "STRUCK_BY_LIGHTNING": "Struck by Lightning",
+      "DRILL": "Drill (Pest)",
+      "ANTHILL": "Anthill",
+      "IN_EXPERIMENT": "In Experiment/Testing",
+      "WEEDS_IN_THE_BASIN": "Weeds in the Basin",
+      "IS_DEAD": "Dead Plant",
+      "MITES": "Presence of Mites",
+      "THRIPS": "Presence of Thrips",
+      "EMPTY_COLLECTION_BOX_NEAR": "Empty Collection Box Nearby",
+      "FERTILIZATION_OR_MANURING": "Spraying/Fertilizing Stop",
+      "IS_NEW": "New Plant",
+      "NON_EXISTENT": "Non-existent Plant",
+      "FROST": "Affected by Frost",
+      "FLOWERS": "Presence of Flowers",
+      "BUDS": "Presence of Buds",
+      "DEHYDRATED": "Dehydrated Tree"
+    },
+    "TOAST": {
+      "SUCCESS": "Action completed successfully",
+      "ERROR": "An error occurred processing the request"
+    }
+  }
+}
