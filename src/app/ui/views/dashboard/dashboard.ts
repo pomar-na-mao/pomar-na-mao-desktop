@@ -10,5 +10,5 @@ import { Select } from '../../../shared/components/select/select';
   providers: [DashboardViewModel]
 })
 export class Dashboard {
-  public vm = inject(DashboardViewModel);
+  public dashboardViewModel = inject(DashboardViewModel);
 }
