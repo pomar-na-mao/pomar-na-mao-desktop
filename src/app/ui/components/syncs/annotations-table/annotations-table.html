@@ -1,0 +1,106 @@
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+  <!-- Header -->
+  <div class="p-6 border-b border-slate-200 bg-white flex items-center justify-between">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900">
+        Anotações
+      </h2>
+      <p class="mt-1 text-sm text-slate-500">
+        Histórico de anotações
+      </p>
+    </div>
+  </div>
+
+  <!-- Table Layer -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            ID
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Data
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Ocorrências
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Status
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
+            Ações
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        @if (annotationsViewModel.isLoading()) { 
+          @for (i of [1,2,3,4,5]; track i) {
+          <tr class="animate-pulse">
+            <td class="px-6 py-4">
+              <div class="h-6 w-16 bg-slate-200 rounded-md"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-6 w-24 bg-slate-200 rounded-md"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-4 w-32 bg-slate-200 rounded"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-6 w-20 bg-slate-200 rounded-full"></div>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="h-8 w-8 bg-slate-200 rounded-full ml-auto"></div>
+            </td>
+          </tr>
+          } 
+        } @else { 
+          @for (annotation of sortedAnnotations(); track annotation.id; let odd = $odd) {
+          <tr class="hover:bg-slate-50 transition-colors group">
+            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+              #{{ annotation.id.substring(0, 8) }}
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">
+              {{ annotation.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">
+              {{ getOccurrencesCount(annotation) }}
+            </td>
+            <td class="px-6 py-4">
+              <span
+                class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
+                [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-200': annotation.is_approved,
+                    'bg-amber-50 text-amber-700 border-amber-200': !annotation.is_approved
+                  }"
+              >
+                {{ annotation.is_approved ? 'Concluído' : 'Pendente' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button
+                (click)="onEditAnnotation(annotation?.id!)"
+                class="p-2 text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg *ngIf="!annotation.is_approved" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <svg *ngIf="annotation.is_approved" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-sm font-medium text-slate-500">
+              Nenhuma anotação encontrada.
+            </td>
+          </tr>
+          } 
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

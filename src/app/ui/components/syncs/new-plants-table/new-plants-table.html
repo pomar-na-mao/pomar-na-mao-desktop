@@ -1,0 +1,260 @@
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+  <!-- Header -->
+  <div class="p-6 border-b border-slate-200 bg-white flex items-center justify-between">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900">
+        Novas Plantas
+      </h2>
+      <p class="mt-1 text-sm text-slate-500">
+        Histórico de novas plantas
+      </p>
+    </div>
+  </div>
+
+  <!-- Table Layer -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            ID
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Data
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Região
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Coordenadas
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Status
+          </th>
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
+            Ações
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        @if (newPlantsViewModel.isLoading()) { 
+          @for (item of [1,2,3,4,5]; track item) {
+          <tr class="animate-pulse">
+            <td class="px-6 py-4">
+              <div class="h-6 w-16 bg-slate-200 rounded-md"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-6 w-24 bg-slate-200 rounded-md"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-4 w-24 bg-slate-200 rounded"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-4 w-40 bg-slate-200 rounded"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-6 w-20 bg-slate-200 rounded-full"></div>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="h-8 w-8 bg-slate-200 rounded-full ml-auto"></div>
+            </td>
+          </tr>
+          } 
+        } @else { 
+          @for (newPlant of newPlantsViewModel.sortedNewPlants(); track newPlant.id; let odd = $odd) {
+          <tr class="hover:bg-slate-50 transition-colors group">
+            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+              #{{ newPlant.id.substring(0, 8) }}
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">
+              {{ newPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">
+              {{ newPlant.region || 'Desconhecido' }}
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600">
+              {{ newPlant.latitude }}, {{ newPlant.longitude }}
+            </td>
+            <td class="px-6 py-4">
+              <span
+                class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
+                [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-200': newPlant.is_approved,
+                    'bg-amber-50 text-amber-700 border-amber-200': !newPlant.is_approved
+                  }"
+              >
+                {{ newPlant.is_approved ? 'Concluído' : 'Pendente' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button
+                (click)="openApprovalModal(newPlant.id)"
+                class="p-2 text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg *ngIf="!newPlant.is_approved" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <svg *ngIf="newPlant.is_approved" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-sm font-medium text-slate-500">
+              Nenhuma nova planta encontrada.
+            </td>
+          </tr>
+          } 
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (newPlantsViewModel.isApprovalModalOpen() &&
+newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm"
+>
+  <div
+    class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-white shadow-2xl"
+  >
+    <div
+      class="grid max-h-[90vh] grid-cols-1 overflow-y-auto lg:grid-cols-[1.15fr_0.85fr]"
+    >
+      <div class="min-h-[22rem] bg-slate-50 p-4 lg:p-6 border-r border-slate-200">
+        <app-new-plant-approval-map [newPlant]="selectedNewPlant" />
+      </div>
+
+      <section class="flex flex-col gap-6 p-6 lg:p-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-2xl font-extrabold tracking-tight text-slate-900">
+              Nova Planta #{{ selectedNewPlant.id.slice(0, 8) }}
+            </h3>
+            <p class="mt-1 text-sm text-slate-500">
+              Revise as coordenadas e aprove a adição da nova planta.
+            </p>
+          </div>
+          <span
+            class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
+            [ngClass]="{
+              'bg-emerald-50 text-emerald-700 border-emerald-200': selectedNewPlant.is_approved,
+              'bg-amber-50 text-amber-700 border-amber-200': !selectedNewPlant.is_approved
+            }"
+          >
+            {{ selectedNewPlant.is_approved ? 'Concluído' : 'Pendente' }}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Data -->
+          <div class="group rounded-2xl border border-amber-100 bg-amber-50/40 p-4 transition-all hover:bg-amber-50 hover:shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-600 shadow-sm transition-transform group-hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-widest text-amber-700/70">Data</span>
+            </div>
+            <p class="text-sm font-bold text-slate-900 ml-1">
+              {{ selectedNewPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+
+          <!-- Região -->
+          <div class="group rounded-2xl border border-emerald-100 bg-emerald-50/40 p-4 transition-all hover:bg-emerald-50 hover:shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 shadow-sm transition-transform group-hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-widest text-emerald-700/70">Região</span>
+            </div>
+            <p class="text-sm font-bold text-slate-900 ml-1">
+              {{ selectedNewPlant.region || 'Desconhecido' }}
+            </p>
+          </div>
+
+          <!-- Latitude -->
+          <div class="group rounded-2xl border border-blue-100 bg-blue-50/40 p-4 transition-all hover:bg-blue-50 hover:shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 text-blue-600 shadow-sm transition-transform group-hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 11V9" />
+                </svg>
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-widest text-blue-700/70">Latitude</span>
+            </div>
+            <p class="text-sm font-mono font-bold text-slate-900 ml-1">
+              {{ selectedNewPlant.latitude }}
+            </p>
+          </div>
+
+          <!-- Longitude -->
+          <div class="group rounded-2xl border border-indigo-100 bg-indigo-50/40 p-4 transition-all hover:bg-indigo-50 hover:shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 shadow-sm transition-transform group-hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 11V9" />
+                </svg>
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-widest text-indigo-700/70">Longitude</span>
+            </div>
+            <p class="text-sm font-mono font-bold text-slate-900 ml-1">
+              {{ selectedNewPlant.longitude }}
+            </p>
+          </div>
+
+          <!-- GPS Timestamp -->
+          <div class="group rounded-2xl border border-slate-100 bg-slate-50/40 p-4 transition-all hover:bg-slate-50 hover:shadow-sm col-span-2">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-200 text-slate-600 shadow-sm transition-transform group-hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-widest text-slate-700/70">GPS Timestamp</span>
+            </div>
+            <p class="text-xs font-medium text-slate-900 ml-1">
+              {{ selectedNewPlant.gps_timestamp ?? '-' }}
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="mt-auto flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"
+        >
+          <button
+            (click)="closeApprovalModal()"
+            class="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="approveSelectedNewPlant()"
+            [disabled]="newPlantsViewModel.isApproving() || selectedNewPlant.is_approved"
+            class="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-emerald-700 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+          >
+            @if (newPlantsViewModel.isApproving()) {
+            <div
+              class="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"
+            ></div>
+            Aprovando... } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Aprovar }
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+}

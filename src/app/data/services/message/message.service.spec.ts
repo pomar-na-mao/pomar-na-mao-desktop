@@ -25,11 +25,11 @@ describe('MessageService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('show should store the translated message and make it visible', () => {
+  it('show should store the message and make it visible', () => {
     service.show('COMMON.TOAST.SUCCESS', 'success');
 
     expect(service.currentMessage()).toEqual({
-      text: 'translated:COMMON.TOAST.SUCCESS',
+      text: 'COMMON.TOAST.SUCCESS',
       type: 'success'
     });
     expect(service.showMessage()).toBe(true);
