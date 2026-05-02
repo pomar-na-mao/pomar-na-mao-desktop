@@ -1,12 +1,13 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import type { IAnnotation } from '../../../../domain/models/annotation.model';
 import { AnnotationsViewModel } from '../../../view-models/annotation/annotations.view-model';
+import { AnnotationDetail } from '../../../views/annotation-detail/annotation-detail';
 
 @Component({
   selector: 'app-annotations-table',
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, AnnotationDetail],
   templateUrl: './annotations-table.html',
   styleUrl: './annotations-table.scss',
 })
@@ -14,6 +15,9 @@ export class AnnotationsTableComponent {
   private router = inject(Router);
 
   public annotationsViewModel = inject(AnnotationsViewModel);
+
+  public isModalOpen = signal(false);
+  public selectedId = signal<string | null>(null);
 
   public sortedAnnotations = computed(() => {
     return [...this.annotationsViewModel.annotations()].sort((a, b) => {
@@ -29,6 +33,12 @@ export class AnnotationsTableComponent {
   }
 
   public onEditAnnotation(id: string): void {
-    this.router.navigate(['/sincronizacoes/anotacoes-de-inspecao', id]);
+    this.selectedId.set(id);
+    this.isModalOpen.set(true);
+  }
+
+  public closeModal(): void {
+    this.isModalOpen.set(false);
+    this.selectedId.set(null);
   }
 }

@@ -122,25 +122,27 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
   <div
     class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-white shadow-2xl"
   >
+    <!-- Modal Header -->
     <div
-      class="grid max-h-[90vh] grid-cols-1 overflow-y-auto lg:grid-cols-[1.15fr_0.85fr]"
+      class="py-4 px-6 border-b border-slate-200 bg-white flex items-center justify-between"
     >
-      <div class="min-h-[22rem] bg-slate-50 p-4 lg:p-6 border-r border-slate-200">
-        <app-new-plant-approval-map [newPlant]="selectedNewPlant" />
-      </div>
-
-      <section class="flex flex-col gap-6 p-6 lg:p-8">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="text-2xl font-extrabold tracking-tight text-slate-900">
-              Nova Planta #{{ selectedNewPlant.id.slice(0, 8) }}
-            </h3>
-            <p class="mt-1 text-sm text-slate-500">
-              Revise as coordenadas e aprove a adição da nova planta.
-            </p>
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center gap-3">
+          <h2 class="text-xl font-black tracking-tight text-slate-900">
+            Nova Planta #{{ selectedNewPlant.id.slice(0, 8) }}
+          </h2>
+          <div
+            class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-wider"
+          >
+            Região: {{ selectedNewPlant.region || 'Desconhecido' }}
           </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <p class="text-xs font-medium text-slate-500">
+            Revisão e aprovação de nova planta
+          </p>
           <span
-            class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
+            class="px-2 py-0.5 text-[10px] font-black rounded-full border transition-all duration-200 uppercase tracking-widest"
             [ngClass]="{
               'bg-emerald-50 text-emerald-700 border-emerald-200': selectedNewPlant.is_approved,
               'bg-amber-50 text-amber-700 border-amber-200': !selectedNewPlant.is_approved
@@ -149,6 +151,37 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
             {{ selectedNewPlant.is_approved ? 'Concluído' : 'Pendente' }}
           </span>
         </div>
+      </div>
+      <button
+        (click)="closeApprovalModal()"
+        class="group flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-all hover:bg-slate-900 hover:text-white"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 transition-transform group-hover:rotate-90"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div
+      class="grid max-h-[calc(90vh-73px)] grid-cols-1 overflow-y-auto lg:grid-cols-[1.15fr_0.85fr]"
+    >
+      <div class="min-h-[22rem] bg-slate-50 p-4 lg:p-6 border-r border-slate-200">
+        <app-new-plant-approval-map [newPlant]="selectedNewPlant" />
+      </div>
+
+      <section class="flex flex-col gap-6 p-6 lg:p-8">
+        <!-- Status removed from here -->
 
         <div class="grid grid-cols-2 gap-3">
           <!-- Data -->

@@ -16,6 +16,11 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
       },
       {
+        path: 'sincronizacoes',
+        loadComponent: () => import('./ui/views/syncs/syncs').then(m => m.Syncs)
+      },
+
+      {
         path: 'reports',
         loadComponent: () => import('./ui/views/reports/reports').then(m => m.Reports)
       },
@@ -28,22 +33,11 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
       },
       {
-        path: 'sincronizacoes',
-        loadComponent: () => import('./ui/views/syncs/syncs').then(m => m.Syncs)
-      },
-      {
-        path: 'sincronizacoes/rotinas/:id',
-        loadComponent: () => import('./ui/views/routine-detail/routine-detail').then(m => m.RoutineDetail)
-      },
-      {
-        path: 'sincronizacoes/anotacoes-de-inspecao/:id',
-        loadComponent: () => import('./ui/views/annotation-detail/annotation-detail').then(m => m.AnnotationDetail)
-      },
-      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'
-      }
+      },
+
     ]
   },
   {
