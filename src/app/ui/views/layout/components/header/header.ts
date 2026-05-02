@@ -150,7 +150,7 @@ export class Header {
 
   public isUserDropdownOpen = signal(false);
 
-  toggleUserDropdown() {
+  public toggleUserDropdown() {
     this.isUserDropdownOpen.update(v => !v);
   }
 

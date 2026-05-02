@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Input } from '../../../shared/components/input/input';
+import { UsersRepository } from '../../../data/repositories/users/users-repository';
 
 @Component({
   selector: 'app-settings',
@@ -8,6 +9,7 @@ import { Input } from '../../../shared/components/input/input';
   templateUrl: './settings.html',
 })
 export class Settings {
+  public usersRepository = inject(UsersRepository);
   activeTab = 'perfil';
 
   tabs = [

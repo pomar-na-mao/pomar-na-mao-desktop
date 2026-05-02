@@ -30,7 +30,7 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
           <div class="relative group">
             <img
-              src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff&size=128"
+              [src]="usersRepository.currentUser()?.avatar_url || 'https://ui-avatars.com/api/?name=' + usersRepository.currentUser()?.full_name + '&background=6366f1&color=fff&size=128'"
               class="w-24 h-24 rounded-2xl object-cover ring-4 ring-slate-50 shadow-sm"
               alt="Profile"
             />
@@ -60,9 +60,11 @@
             </button>
           </div>
           <div>
-            <h3 class="text-lg font-bold text-slate-900">Foto de Perfil</h3>
+            <h3 class="text-lg font-bold text-slate-900">
+              {{ usersRepository.currentUser()?.full_name }}
+            </h3>
             <p class="text-sm text-slate-500 mt-1">
-              Recomendado: JPG ou PNG de pelo menos 400x400px.
+              {{ usersRepository.currentUser()?.isAdmin ? 'Administrador' : 'Operador' }}
             </p>
             <div class="flex gap-2 mt-4">
               <button
@@ -79,10 +81,24 @@
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <app-input label="Nome Completo" value="Admin User"></app-input>
-          <app-input label="E-mail" type="email" value="admin@example.com"></app-input>
-          <app-input label="Cargo / Título" value="Administrador do Sistema"></app-input>
-          <app-input label="Telefone" value="+55 (11) 99999-9999"></app-input>
+          <app-input 
+            label="Nome Completo" 
+            [value]="usersRepository.currentUser()?.full_name || ''"
+          ></app-input>
+          <app-input 
+            label="E-mail" 
+            type="email" 
+            [value]="usersRepository.currentUser()?.email || ''"
+          ></app-input>
+          <app-input 
+            label="Cargo / Título" 
+            [value]="usersRepository.currentUser()?.isAdmin ? 'Administrador' : 'Operador'"
+          ></app-input>
+          <app-input 
+            label="Telefone" 
+            value=""
+            placeholder="Não informado"
+          ></app-input>
         </div>
         <div class="pt-6 border-t border-slate-100 flex justify-end gap-3">
           <button

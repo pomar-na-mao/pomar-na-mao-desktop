@@ -31,7 +31,10 @@ export const ROUTES: Routes = [
         path: 'administracao',
         loadComponent: () => import('./ui/views/admin/admin').then(m => m.Admin)
       },
-
+      {
+        path: 'settings',
+        loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
+      },
       {
         path: 'reports',
         loadComponent: () => import('./ui/views/reports/reports').then(m => m.Reports)
@@ -39,10 +42,6 @@ export const ROUTES: Routes = [
       {
         path: 'users',
         loadComponent: () => import('./ui/views/users/users').then(m => m.Users)
-      },
-      {
-        path: 'settings',
-        loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
       },
       {
         path: '',
