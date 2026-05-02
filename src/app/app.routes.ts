@@ -27,6 +27,10 @@ export const ROUTES: Routes = [
         path: 'fluxo-pulverizacao',
         loadComponent: () => import('./ui/views/spraying-flow/spraying-flow').then(m => m.SprayingFlow)
       },
+      {
+        path: 'administracao',
+        loadComponent: () => import('./ui/views/admin/admin').then(m => m.Admin)
+      },
 
       {
         path: 'reports',

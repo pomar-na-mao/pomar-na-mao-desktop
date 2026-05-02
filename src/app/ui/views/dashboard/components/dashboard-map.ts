@@ -9,7 +9,7 @@ import { Select } from '../../../../shared/components/select/select';
   template: `
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-bold text-slate-900">Mapa do Pomar</h2>
+        <h2 class="text-lg font-bold text-slate-900">Meu pomar</h2>
       </div>
 
       <!-- Filters -->

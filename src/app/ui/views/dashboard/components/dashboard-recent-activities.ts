@@ -9,7 +9,7 @@ import { DashboardViewModel, DashboardActivity } from '../../../view-models/dash
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full relative">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-bold text-slate-900">Atividades Recentes</h2>
-        <button class="text-emerald-600 text-sm font-medium hover:underline">
+        <button class="text-blue-600 text-sm font-medium hover:underline">
           Ver tudo
         </button>
       </div>
@@ -19,7 +19,7 @@ import { DashboardViewModel, DashboardActivity } from '../../../view-models/dash
        
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <p class="text-sm font-bold text-slate-900 truncate group-hover:text-emerald-700 transition-colors">
+              <p class="text-sm font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
                 {{ activity.plantName }}
               </p>
               <p class="text-xs font-medium text-slate-400 whitespace-nowrap ml-2">
@@ -43,7 +43,7 @@ import { DashboardViewModel, DashboardActivity } from '../../../view-models/dash
             </div>
           </div>
           
-          <button (click)="dashboardViewModel.openDetails(activity)" class="absolute bottom-2 right-2 p-1.5 text-amber-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Ver detalhes">
+          <button (click)="dashboardViewModel.openDetails(activity)" class="absolute bottom-2 right-2 p-1.5 text-blue-600 hover:opacity-70 transition-all" title="Ver detalhes">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
             </svg>

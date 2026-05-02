@@ -1,0 +1,111 @@
+<div class="h-full overflow-auto">
+  <div class="max-w-7xl mx-auto space-y-8">
+    <!-- Header Section -->
+    <div
+      class="flex items-end justify-between animate-in fade-in slide-in-from-bottom-4 duration-500"
+    >
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900">Administração</h1>
+        <p class="text-slate-500 mt-1">
+          Gerencie as configurações centrais e cadastros base do sistema.
+        </p>
+      </div>
+      <div
+        class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm"
+      >
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        SISTEMA ONLINE
+      </div>
+    </div>
+
+    <!-- Modules Grid -->
+    <div
+      class="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
+    >
+      @for (module of adminModules; track module.id) {
+      <div
+        class="group relative overflow-hidden rounded-2xl border transition-all duration-300"
+        [ngClass]="module.active 
+            ? 'bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-200' 
+            : 'bg-slate-50/50 border-slate-200/60 opacity-80 cursor-not-allowed'"
+      >
+        @if (!module.active) {
+        <div class="absolute top-4 right-4 z-10">
+          <span
+            class="bg-slate-200 text-slate-500 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full"
+          >
+            Em breve
+          </span>
+        </div>
+        }
+
+        <div class="p-6">
+          <div
+            class="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors"
+            [ngClass]="module.active ? 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white' : 'bg-slate-200 text-slate-400'"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                [attr.d]="module.icon"
+              />
+            </svg>
+          </div>
+
+          <h3 class="text-lg font-bold text-slate-800 mb-2">
+            {{ module.label }}
+          </h3>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            {{ module.description }}
+          </p>
+        </div>
+
+        @if (module.active) {
+        <div
+          class="absolute bottom-0 left-0 w-full h-1 bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+        ></div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Active Module Content (Products) -->
+    <div
+      class="grid grid-cols-1 gap-8 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-1000"
+    >
+      <app-products-admin-card
+        [products]="viewModel.products()"
+        [stats]="viewModel.stats()"
+        [isLoading]="viewModel.isLoading()"
+        (refreshed)="viewModel.loadProducts()"
+        (created)="viewModel.openCreateModal()"
+        (edited)="viewModel.openEditModal($event)"
+        (deleted)="viewModel.openDeleteModal($event)"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+@if (viewModel.isModalOpen()) {
+<app-product-form-modal
+  [product]="viewModel.editingProduct()"
+  [isSaving]="viewModel.isSaving()"
+  (closed)="viewModel.closeModal()"
+  (submitted)="viewModel.saveProduct($event)"
+/>
+} @if (viewModel.deletingProduct()) {
+<app-delete-product-modal
+  [product]="viewModel.deletingProduct()"
+  [isDeleting]="viewModel.isDeleting()"
+  (closed)="viewModel.closeDeleteModal()"
+  (confirmed)="viewModel.deleteProduct()"
+/>
+}

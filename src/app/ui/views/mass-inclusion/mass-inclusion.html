@@ -1,30 +1,40 @@
-<div class="flex h-full flex-1 flex-col overflow-hidden lg:flex-row bg-slate-50">
-  <!-- Sidebar / Form -->
-  <div class="order-2 w-full h-full lg:order-1 lg:w-[450px] lg:shrink-0">
-    <div class="w-full h-full p-4">
+<div class="flex flex-col h-full space-y-6 overflow-hidden">
+  <!-- Header Section -->
+  <div class="flex-shrink-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <h1 class="text-3xl font-bold text-slate-900">Inclusões em Massa</h1>
+    <p class="text-slate-500 mt-1">
+      Cadastre múltiplos dados de campo de forma rápida e eficiente.
+    </p>
+  </div>
+
+  <div class="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <!-- Sidebar / Form -->
+    <div class="order-2 w-full lg:order-1 lg:w-[450px] lg:shrink-0 flex flex-col min-h-0">
       <app-mass-inclusion-form
         class="block h-full"
       ></app-mass-inclusion-form>
     </div>
-  </div>
 
-  <!-- Main Content / Map -->
-  <div
-    class="order-1 min-h-[400px] shrink-0 lg:order-2 lg:min-h-0 lg:flex-1 flex flex-col p-4 gap-4"
-  >
-    <app-mass-inclusion-map-filters />
+    <!-- Main Content / Map -->
+    <div
+      class="order-1 flex-1 flex flex-col gap-4 min-h-0"
+    >
+      <div class="flex-shrink-0">
+        <app-mass-inclusion-map-filters />
+      </div>
 
-    <div class="flex-1 relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white">
-      <app-map-polygon-selector
-        class="absolute inset-0"
-        [center]="[-23.398772, -49.148646]"
-        [zoom]="16"
-        [backgroundPolygon]="massInclusionViewModel.backgroundPolygon()"
-        [plants]="massInclusionViewModel.plants()"
-        [clearSignal]="massInclusionViewModel.clearMapSignal()"
-        (polygonSelected)="onPolygonSelected($event)"
-        (polygonCleared)="onPolygonCleared()"
-      />
+      <div class="flex-1 relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white min-h-0">
+        <app-map-polygon-selector
+          class="absolute inset-0 w-full h-full"
+          [center]="[-23.398772, -49.148646]"
+          [zoom]="16"
+          [backgroundPolygon]="massInclusionViewModel.backgroundPolygon()"
+          [plants]="massInclusionViewModel.plants()"
+          [clearSignal]="massInclusionViewModel.clearMapSignal()"
+          (polygonSelected)="onPolygonSelected($event)"
+          (polygonCleared)="onPolygonCleared()"
+        />
+      </div>
     </div>
   </div>
 </div>
