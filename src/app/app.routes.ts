@@ -23,6 +23,10 @@ export const ROUTES: Routes = [
         path: 'inclusoes-em-massa',
         loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
       },
+      {
+        path: 'fluxo-pulverizacao',
+        loadComponent: () => import('./ui/views/spraying-flow/spraying-flow').then(m => m.SprayingFlow)
+      },
 
       {
         path: 'reports',
