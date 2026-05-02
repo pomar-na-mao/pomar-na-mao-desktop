@@ -1,0 +1,233 @@
+<div class="flex flex-col w-full h-full bg-white relative overflow-hidden">
+  <!-- Toolbar -->
+  <div
+    class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50/50 backdrop-blur-sm z-10 shrink-0"
+  >
+    <div class="flex items-center gap-3">
+      <span
+        class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+      >
+        Área de Seleção
+      </span>
+      <div
+        class="flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-300"
+        [class.bg-emerald-50]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.text-emerald-700]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.border]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.border-emerald-100]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.bg-slate-100]="!drawingMode && !hasPolygon"
+        [class.text-slate-500]="!drawingMode && !hasPolygon"
+      >
+        <span
+          class="w-2 h-2 rounded-full transition-colors"
+          [class.bg-emerald-500]="drawingMode || (hasPolygon && !drawingMode)"
+          [class.animate-pulse-slow]="drawingMode"
+          [class.bg-slate-300]="!drawingMode && !hasPolygon"
+        ></span>
+        {{ drawingMode ? 'Desenhando (' + pointsCount + ' pontos)' : hasPolygon
+        ? 'Área Selecionada' : 'Aguardando' }}
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Undo -->
+      <button
+        class="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-slate-800 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        [disabled]="!drawingMode || pointsCount === 0"
+        (click)="undoLastPoint()"
+        title="Desfazer último ponto"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M3 7v6h6" />
+          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+        </svg>
+      </button>
+
+      <!-- Finish -->
+      <button
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-semibold"
+        [disabled]="!drawingMode || pointsCount < 3"
+        (click)="completePolygon()"
+        title="Finalizar área"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        Finalizar
+      </button>
+
+      <!-- Toggle Draw -->
+      <button
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold"
+        [class.border-emerald-500]="!drawingMode"
+        [class.bg-emerald-600]="!drawingMode"
+        [class.text-white]="!drawingMode"
+        [class.hover:bg-emerald-700]="!drawingMode"
+        [class.border-red-200]="drawingMode"
+        [class.bg-red-50]="drawingMode"
+        [class.text-red-700]="drawingMode"
+        [class.hover:bg-red-100]="drawingMode"
+        (click)="toggleDrawingMode()"
+        [title]="drawingMode ? 'Cancelar desenho' : 'Desenhar nova área'"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polygon points="3 11 22 2 13 21 11 13 3 11" />
+        </svg>
+        {{ drawingMode ? 'Cancelar' : 'Desenhar' }}
+      </button>
+
+      <!-- Clear -->
+      <button
+        class="p-1.5 rounded-lg border border-red-200 bg-white text-red-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        [disabled]="!hasPolygon && !drawingMode"
+        (click)="clearAll()"
+        title="Limpar tudo"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14H6L5 6" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="flex-1 map-container" #mapContainer></div>
+
+  <!-- Drawing hint -->
+  @if (drawingMode) {
+  <div
+    class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-[11px] font-medium shadow-lg z-[1000] border border-white/20 animate-bounce"
+  >
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+    Clique no mapa para adicionar pontos. Clique duplo para finalizar.
+  </div>
+  }
+
+  <!-- Info Panel -->
+  @if (hasPolygon) {
+  <div
+    class="absolute bottom-4 right-4 flex flex-col gap-2 max-w-[300px] z-[1000]"
+  >
+    <div
+      class="p-3 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200 shadow-xl"
+    >
+      <div class="flex items-center justify-between mb-2">
+        <span class="flex items-center gap-2 text-xs font-bold text-slate-700">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          {{ selectedPolygonCoords.length }} Pontos
+        </span>
+        <div class="flex gap-1">
+          <button
+            class="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+            (click)="showCoords = !showCoords"
+            title="Ver coordenadas"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+          <button
+            class="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+            [class.text-emerald-600]="copiedFeedback"
+            (click)="copyCoordinates()"
+            title="Copiar JSON"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path
+                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      @if (showCoords) {
+      <div
+        class="max-h-[150px] overflow-y-auto pr-2 space-y-1 custom-scrollbar"
+      >
+        @for (coord of selectedPolygonCoords; track coord; let i = $index) {
+        <div
+          class="flex items-center justify-between py-1 border-b border-slate-50 last:border-0"
+        >
+          <span class="text-[9px] font-bold text-slate-400 w-4"
+            >{{ i + 1 }}</span
+          >
+          <span class="text-[10px] font-mono text-emerald-600"
+            >{{ coord.lat.toFixed(6) }}, {{ coord.lng.toFixed(6) }}</span
+          >
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

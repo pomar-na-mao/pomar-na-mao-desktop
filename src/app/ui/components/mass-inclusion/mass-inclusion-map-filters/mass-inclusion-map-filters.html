@@ -1,0 +1,11 @@
+<div class="flex w-full">
+  <app-select
+    id="mass-inclusion-region-select"
+    label="Filtrar por Região"
+    [placeholder]="massInclusionViewModel.regionOptions().length === 0 ? 'Nenhuma região disponível' : 'Selecione uma região para visualizar no mapa'"
+    [value]="massInclusionViewModel.selectedRegionId()"
+    [options]="massInclusionViewModel.regionOptions()"
+    [disabled]="massInclusionViewModel.isLoadingRegions() || massInclusionViewModel.regionOptions().length === 0"
+    (valueChange)="massInclusionViewModel.onRegionChange($event)"
+  />
+</div>

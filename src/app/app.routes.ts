@@ -19,6 +19,10 @@ export const ROUTES: Routes = [
         path: 'sincronizacoes',
         loadComponent: () => import('./ui/views/syncs/syncs').then(m => m.Syncs)
       },
+      {
+        path: 'inclusoes-em-massa',
+        loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
+      },
 
       {
         path: 'reports',
