@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, signal } from '@angular/core';
+import { Component, Output, EventEmitter, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthenticationRepository } from '../../../../../data/repositories/authentication/authentication-repository';
 import { UsersRepository } from '../../../../../data/repositories/users/users-repository';
@@ -9,17 +9,17 @@ import { Router } from '@angular/router';
   imports: [CommonModule],
   template: `
     <header
-      class="fixed top-0 left-0 right-0 h-[60px] bg-white border-b border-slate-200 shadow-sm z-30 flex items-center justify-between px-4"
+      class="fixed top-0 left-0 right-0 h-[60px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm z-30 flex items-center justify-between px-4 transition-colors"
     >
       <div class="flex items-center gap-4">
         <button
           (click)="sidebarToggled.emit()"
-          class="p-2 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none"
+          class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none"
           aria-label="Toggle Sidebar"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-slate-600"
+            class="h-6 w-6 text-slate-600 dark:text-slate-300"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -38,16 +38,35 @@ import { Router } from '@angular/router';
             alt="Logo"
             class="w-10 h-10 object-contain drop-shadow-sm"
           />
-          <span class="font-bold text-xl tracking-tight hidden sm:block">Pomar na mão</span>
+          <span class="font-bold text-xl tracking-tight hidden sm:block dark:text-white">Pomar na mão</span>
         </div>
       </div>
 
       <div class="flex items-center gap-3">
+        <!-- Theme Toggle -->
+        <button
+          (click)="toggleTheme()"
+          class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none"
+          aria-label="Toggle Theme"
+        >
+          @if (isDarkMode()) {
+            <!-- Sun Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          } @else {
+            <!-- Moon Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          }
+        </button>
+
         <!-- Notifications -->
-        <button class="p-2 hover:bg-slate-100 rounded-lg relative transition-colors">
+        <button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg relative transition-colors focus:outline-none">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-slate-600"
+            class="h-6 w-6 text-slate-600 dark:text-slate-300"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -68,14 +87,14 @@ import { Router } from '@angular/router';
         <div class="relative">
           <button
             (click)="toggleUserDropdown()"
-            class="flex items-center gap-2 p-1 pl-2 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none"
+            class="flex items-center gap-2 p-1 pl-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none"
           >
             @if (usersRepository.currentUser()) {
               <div class="hidden text-right lg:block">
-                <p class="text-xs font-semibold text-slate-900 leading-tight">
+                <p class="text-xs font-semibold text-slate-900 dark:text-white leading-tight">
                   Olá {{''}}{{ usersRepository.currentUser()?.full_name!.split(' ')[0] }}
                 </p>
-                <p class="text-[10px] text-slate-500">Bem-vindo!</p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400">Bem-vindo!</p>
               </div>
             }
             <img
@@ -89,11 +108,11 @@ import { Router } from '@angular/router';
           @if (isUserDropdownOpen()) {
             <div
               (mouseleave)="isUserDropdownOpen.set(false)"
-              class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+              class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
             >
               <a
                 href="/settings"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -111,10 +130,10 @@ import { Router } from '@angular/router';
                 </svg>
                 Meu Perfil
               </a>
-              <div class="h-px bg-slate-100 my-1"></div>
+              <div class="h-px bg-slate-100 dark:bg-slate-700 my-1"></div>
               <button
                 (click)="logout()"
-                class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-left"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +158,7 @@ import { Router } from '@angular/router';
     </header>
   `,
 })
-export class Header {
+export class Header implements OnInit {
   @Output() sidebarToggled = new EventEmitter<void>();
 
   private authenticationRepository = inject(AuthenticationRepository);
@@ -149,6 +168,24 @@ export class Header {
   private router = inject(Router);
 
   public isUserDropdownOpen = signal(false);
+  public isDarkMode = signal(false);
+
+  ngOnInit() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      this.isDarkMode.set(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      this.isDarkMode.set(false);
+    }
+  }
+
+  public toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    this.isDarkMode.set(isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }
 
   public toggleUserDropdown() {
     this.isUserDropdownOpen.update(v => !v);

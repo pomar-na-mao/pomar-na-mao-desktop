@@ -1,28 +1,34 @@
-<div class="flex flex-col w-full h-full bg-white relative overflow-hidden">
+<div class="flex flex-col w-full h-full bg-white dark:bg-slate-900 relative overflow-hidden transition-colors">
   <!-- Toolbar -->
   <div
-    class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50/50 backdrop-blur-sm z-10 shrink-0"
+    class="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 shrink-0 transition-colors"
   >
     <div class="flex items-center gap-3">
       <span
-        class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+        class="text-[10px] font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase transition-colors"
       >
         Área de Seleção
       </span>
       <div
         class="flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-300"
         [class.bg-emerald-50]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.dark:bg-emerald-500/10]="drawingMode || (hasPolygon && !drawingMode)"
         [class.text-emerald-700]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.dark:text-emerald-400]="drawingMode || (hasPolygon && !drawingMode)"
         [class.border]="drawingMode || (hasPolygon && !drawingMode)"
         [class.border-emerald-100]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.dark:border-emerald-500/20]="drawingMode || (hasPolygon && !drawingMode)"
         [class.bg-slate-100]="!drawingMode && !hasPolygon"
+        [class.dark:bg-slate-800]="!drawingMode && !hasPolygon"
         [class.text-slate-500]="!drawingMode && !hasPolygon"
+        [class.dark:text-slate-400]="!drawingMode && !hasPolygon"
       >
         <span
           class="w-2 h-2 rounded-full transition-colors"
           [class.bg-emerald-500]="drawingMode || (hasPolygon && !drawingMode)"
           [class.animate-pulse-slow]="drawingMode"
           [class.bg-slate-300]="!drawingMode && !hasPolygon"
+          [class.dark:bg-slate-600]="!drawingMode && !hasPolygon"
         ></span>
         {{ drawingMode ? 'Desenhando (' + pointsCount + ' pontos)' : hasPolygon
         ? 'Área Selecionada' : 'Aguardando' }}
@@ -32,7 +38,7 @@
     <div class="flex items-center gap-2">
       <!-- Undo -->
       <button
-        class="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-slate-800 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
         [disabled]="!drawingMode || pointsCount === 0"
         (click)="undoLastPoint()"
         title="Desfazer último ponto"
@@ -52,7 +58,7 @@
 
       <!-- Finish -->
       <button
-        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-semibold"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-semibold"
         [disabled]="!drawingMode || pointsCount < 3"
         (click)="completePolygon()"
         title="Finalizar área"
@@ -99,7 +105,7 @@
 
       <!-- Clear -->
       <button
-        class="p-1.5 rounded-lg border border-red-200 bg-white text-red-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        class="p-1.5 rounded-lg border border-red-200 dark:border-red-500/20 bg-white dark:bg-slate-800 text-red-400 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
         [disabled]="!hasPolygon && !drawingMode"
         (click)="clearAll()"
         title="Limpar tudo"
@@ -122,7 +128,7 @@
   </div>
 
   <!-- Map -->
-  <div class="flex-1 map-container" #mapContainer></div>
+  <div class="flex-1 map-container dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)]" #mapContainer></div>
 
   <!-- Drawing hint -->
   @if (drawingMode) {
@@ -151,10 +157,10 @@
     class="absolute bottom-4 right-4 flex flex-col gap-2 max-w-[300px] z-[1000]"
   >
     <div
-      class="p-3 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200 shadow-xl"
+      class="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-xl transition-colors"
     >
       <div class="flex items-center justify-between mb-2">
-        <span class="flex items-center gap-2 text-xs font-bold text-slate-700">
+        <span class="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors">
           <svg
             width="14"
             height="14"
@@ -170,7 +176,7 @@
         </span>
         <div class="flex gap-1">
           <button
-            class="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
             (click)="showCoords = !showCoords"
             title="Ver coordenadas"
           >
@@ -187,8 +193,9 @@
             </svg>
           </button>
           <button
-            class="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
             [class.text-emerald-600]="copiedFeedback"
+            [class.dark:text-emerald-400]="copiedFeedback"
             (click)="copyCoordinates()"
             title="Copiar JSON"
           >
@@ -215,12 +222,12 @@
       >
         @for (coord of selectedPolygonCoords; track coord; let i = $index) {
         <div
-          class="flex items-center justify-between py-1 border-b border-slate-50 last:border-0"
+          class="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/50 last:border-0 transition-colors"
         >
-          <span class="text-[9px] font-bold text-slate-400 w-4"
+          <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 w-4 transition-colors"
             >{{ i + 1 }}</span
           >
-          <span class="text-[10px] font-mono text-emerald-600"
+          <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 transition-colors"
             >{{ coord.lat.toFixed(6) }}, {{ coord.lng.toFixed(6) }}</span
           >
         </div>

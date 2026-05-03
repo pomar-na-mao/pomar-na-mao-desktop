@@ -1,11 +1,11 @@
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-6 transition-colors">
   <!-- Header -->
-  <div class="p-6 border-b border-slate-200 bg-white flex items-center justify-between">
+  <div class="p-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors">
     <div>
-      <h2 class="text-xl font-bold text-slate-900">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">
         Novas Plantas
       </h2>
-      <p class="mt-1 text-sm text-slate-500">
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors">
         Histórico de novas plantas
       </p>
     </div>
@@ -15,72 +15,72 @@
   <div class="overflow-x-auto">
     <table class="w-full text-left border-collapse">
       <thead>
-        <tr class="bg-slate-50 border-b border-slate-200">
-          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 transition-colors">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
             ID
           </th>
-          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
             Data
           </th>
-          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
             Região
           </th>
-          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
             Coordenadas
           </th>
-          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">
             Status
           </th>
-          <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
+          <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right transition-colors">
             Ações
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-100">
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800 transition-colors">
         @if (newPlantsViewModel.isLoading()) { 
           @for (item of [1,2,3,4,5]; track item) {
           <tr class="animate-pulse">
             <td class="px-6 py-4">
-              <div class="h-6 w-16 bg-slate-200 rounded-md"></div>
+              <div class="h-6 w-16 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
             </td>
             <td class="px-6 py-4">
-              <div class="h-6 w-24 bg-slate-200 rounded-md"></div>
+              <div class="h-6 w-24 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
             </td>
             <td class="px-6 py-4">
-              <div class="h-4 w-24 bg-slate-200 rounded"></div>
+              <div class="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
             </td>
             <td class="px-6 py-4">
-              <div class="h-4 w-40 bg-slate-200 rounded"></div>
+              <div class="h-4 w-40 bg-slate-200 dark:bg-slate-800 rounded"></div>
             </td>
             <td class="px-6 py-4">
-              <div class="h-6 w-20 bg-slate-200 rounded-full"></div>
+              <div class="h-6 w-20 bg-slate-200 dark:bg-slate-800 rounded-full"></div>
             </td>
             <td class="px-6 py-4 text-right">
-              <div class="h-8 w-8 bg-slate-200 rounded-full ml-auto"></div>
+              <div class="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-full ml-auto"></div>
             </td>
           </tr>
           } 
         } @else { 
           @for (newPlant of newPlantsViewModel.sortedNewPlants(); track newPlant.id; let odd = $odd) {
-          <tr class="hover:bg-slate-50 transition-colors group">
-            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+            <td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 transition-colors">
               #{{ newPlant.id.substring(0, 8) }}
             </td>
-            <td class="px-6 py-4 text-sm text-slate-600">
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               {{ newPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
             </td>
-            <td class="px-6 py-4 text-sm text-slate-600">
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               {{ newPlant.region || 'Desconhecido' }}
             </td>
-            <td class="px-6 py-4 text-sm text-slate-600">
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               {{ newPlant.latitude }}, {{ newPlant.longitude }}
             </td>
             <td class="px-6 py-4">
               <span
                 class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
                 [ngClass]="{
-                    'bg-emerald-50 text-emerald-700 border-emerald-200': newPlant.is_approved,
-                    'bg-amber-50 text-amber-700 border-amber-200': !newPlant.is_approved
+                    'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20': newPlant.is_approved,
+                    'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20': !newPlant.is_approved
                   }"
               >
                 {{ newPlant.is_approved ? 'Concluído' : 'Pendente' }}
@@ -103,7 +103,7 @@
           </tr>
           } @empty {
           <tr>
-            <td colspan="6" class="px-6 py-12 text-center text-sm font-medium text-slate-500">
+            <td colspan="6" class="px-6 py-12 text-center text-sm font-medium text-slate-500 dark:text-slate-600 transition-colors">
               Nenhuma nova planta encontrada.
             </td>
           </tr>
@@ -120,33 +120,33 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
   class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm"
 >
   <div
-    class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-white shadow-2xl"
+    class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-white dark:bg-slate-900 shadow-2xl transition-colors"
   >
     <!-- Modal Header -->
     <div
-      class="py-4 px-6 border-b border-slate-200 bg-white flex items-center justify-between"
+      class="py-4 px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors"
     >
       <div class="flex flex-col gap-0.5">
         <div class="flex items-center gap-3">
-          <h2 class="text-xl font-black tracking-tight text-slate-900">
+          <h2 class="text-xl font-black tracking-tight text-slate-900 dark:text-white transition-colors">
             Nova Planta #{{ selectedNewPlant.id.slice(0, 8) }}
           </h2>
           <div
-            class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-wider"
+            class="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-100 dark:border-emerald-500/20 uppercase tracking-wider transition-colors"
           >
             Região: {{ selectedNewPlant.region || 'Desconhecido' }}
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <p class="text-xs font-medium text-slate-500">
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
             Revisão e aprovação de nova planta
           </p>
           <span
             class="px-2 py-0.5 text-[10px] font-black rounded-full border transition-all duration-200 uppercase tracking-widest"
             [ngClass]="{
-              'bg-emerald-50 text-emerald-700 border-emerald-200': selectedNewPlant.is_approved,
-              'bg-amber-50 text-amber-700 border-amber-200': !selectedNewPlant.is_approved
-            }"
+            'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20': selectedNewPlant.is_approved,
+            'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20': !selectedNewPlant.is_approved
+          }"
           >
             {{ selectedNewPlant.is_approved ? 'Concluído' : 'Pendente' }}
           </span>
@@ -154,7 +154,7 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
       </div>
       <button
         (click)="closeApprovalModal()"
-        class="group flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-all hover:bg-slate-900 hover:text-white"
+        class="group flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +176,7 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
     <div
       class="grid max-h-[calc(90vh-73px)] grid-cols-1 overflow-y-auto lg:grid-cols-[1.15fr_0.85fr]"
     >
-      <div class="min-h-[22rem] bg-slate-50 p-4 lg:p-6 border-r border-slate-200">
+      <div class="min-h-[22rem] bg-slate-50 dark:bg-slate-800 p-4 lg:p-6 border-r border-slate-200 dark:border-slate-700 transition-colors">
         <app-new-plant-approval-map [newPlant]="selectedNewPlant" />
       </div>
 
@@ -185,77 +185,77 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
 
         <div class="grid grid-cols-2 gap-3">
           <!-- Data -->
-          <div class="group rounded-2xl border border-amber-100 bg-amber-50/40 p-4 transition-all hover:bg-amber-50 hover:shadow-sm">
+          <div class="group rounded-2xl border border-amber-100 dark:border-amber-500/20 bg-amber-50/40 dark:bg-amber-500/5 p-4 transition-all hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:shadow-sm">
             <div class="flex items-center gap-3 mb-2">
-              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-600 shadow-sm transition-transform group-hover:scale-105">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 shadow-sm transition-transform group-hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <span class="text-[10px] font-black uppercase tracking-widest text-amber-700/70">Data</span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-amber-700/70 dark:text-amber-400/70 transition-colors">Data</span>
             </div>
-            <p class="text-sm font-bold text-slate-900 ml-1">
+            <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors ml-1">
               {{ selectedNewPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
             </p>
           </div>
 
           <!-- Região -->
-          <div class="group rounded-2xl border border-emerald-100 bg-emerald-50/40 p-4 transition-all hover:bg-emerald-50 hover:shadow-sm">
+          <div class="group rounded-2xl border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-500/5 p-4 transition-all hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:shadow-sm">
             <div class="flex items-center gap-3 mb-2">
-              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 shadow-sm transition-transform group-hover:scale-105">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 shadow-sm transition-transform group-hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <span class="text-[10px] font-black uppercase tracking-widest text-emerald-700/70">Região</span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-emerald-700/70 dark:text-emerald-400/70 transition-colors">Região</span>
             </div>
-            <p class="text-sm font-bold text-slate-900 ml-1">
+            <p class="text-sm font-bold text-slate-900 dark:text-white transition-colors ml-1">
               {{ selectedNewPlant.region || 'Desconhecido' }}
             </p>
           </div>
 
           <!-- Latitude -->
-          <div class="group rounded-2xl border border-blue-100 bg-blue-50/40 p-4 transition-all hover:bg-blue-50 hover:shadow-sm">
+          <div class="group rounded-2xl border border-blue-100 dark:border-blue-500/20 bg-blue-50/40 dark:bg-blue-500/5 p-4 transition-all hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:shadow-sm">
             <div class="flex items-center gap-3 mb-2">
-              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 text-blue-600 shadow-sm transition-transform group-hover:scale-105">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 shadow-sm transition-transform group-hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 11V9" />
                 </svg>
               </div>
-              <span class="text-[10px] font-black uppercase tracking-widest text-blue-700/70">Latitude</span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-blue-700/70 dark:text-blue-400/70 transition-colors">Latitude</span>
             </div>
-            <p class="text-sm font-mono font-bold text-slate-900 ml-1">
+            <p class="text-sm font-mono font-bold text-slate-900 dark:text-white transition-colors ml-1">
               {{ selectedNewPlant.latitude }}
             </p>
           </div>
 
           <!-- Longitude -->
-          <div class="group rounded-2xl border border-indigo-100 bg-indigo-50/40 p-4 transition-all hover:bg-indigo-50 hover:shadow-sm">
+          <div class="group rounded-2xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50/40 dark:bg-indigo-500/5 p-4 transition-all hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:shadow-sm">
             <div class="flex items-center gap-3 mb-2">
-              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 shadow-sm transition-transform group-hover:scale-105">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 shadow-sm transition-transform group-hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 11V9" />
                 </svg>
               </div>
-              <span class="text-[10px] font-black uppercase tracking-widest text-indigo-700/70">Longitude</span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-indigo-700/70 dark:text-indigo-400/70 transition-colors">Longitude</span>
             </div>
-            <p class="text-sm font-mono font-bold text-slate-900 ml-1">
+            <p class="text-sm font-mono font-bold text-slate-900 dark:text-white transition-colors ml-1">
               {{ selectedNewPlant.longitude }}
             </p>
           </div>
 
           <!-- GPS Timestamp -->
-          <div class="group rounded-2xl border border-slate-100 bg-slate-50/40 p-4 transition-all hover:bg-slate-50 hover:shadow-sm col-span-2">
+          <div class="group rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 p-4 transition-all hover:bg-slate-50 dark:hover:bg-slate-800 hover:shadow-sm col-span-2">
             <div class="flex items-center gap-3 mb-2">
-              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-200 text-slate-600 shadow-sm transition-transform group-hover:scale-105">
+              <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 shadow-sm transition-transform group-hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <span class="text-[10px] font-black uppercase tracking-widest text-slate-700/70">GPS Timestamp</span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-slate-700/70 dark:text-slate-400/70 transition-colors">GPS Timestamp</span>
             </div>
-            <p class="text-xs font-medium text-slate-900 ml-1">
+            <p class="text-xs font-medium text-slate-900 dark:text-white transition-colors ml-1">
               {{ selectedNewPlant.gps_timestamp ?? '-' }}
             </p>
           </div>
@@ -266,14 +266,14 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
         >
           <button
             (click)="closeApprovalModal()"
-            class="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+            class="rounded-xl border border-slate-200 dark:border-slate-700 px-5 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 transition-all hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95"
           >
             Cancelar
           </button>
           <button
             (click)="approveSelectedNewPlant()"
             [disabled]="newPlantsViewModel.isApproving() || selectedNewPlant.is_approved"
-            class="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-emerald-700 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+            class="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-emerald-700 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500"
           >
             @if (newPlantsViewModel.isApproving()) {
             <div

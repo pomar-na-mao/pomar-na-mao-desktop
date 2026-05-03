@@ -31,25 +31,25 @@ export interface ProductFormValue {
   imports: [CommonModule, ReactiveFormsModule, AppInput, AppSelect],
   template: `
     <div 
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300"
       (click)="onBackdropClick($event)"
       id="modal-backdrop"
     >
       <div 
-        class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all duration-300 scale-100 flex flex-col max-h-[90vh]"
+        class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all duration-300 scale-100 flex flex-col max-h-[90vh]"
         (click)="$event.stopPropagation()"
       >
         <!-- Modal Header -->
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 flex-shrink-0">
+        <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50 flex-shrink-0 transition-colors">
           <div>
-            <h2 class="text-lg font-bold text-slate-800">
+            <h2 class="text-lg font-bold text-slate-800 dark:text-white transition-colors">
               {{ product ? 'Editar Produto' : 'Novo Produto' }}
             </h2>
-            <p class="text-sm text-slate-500">Preencha os campos abaixo para salvar o produto.</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">Preencha os campos abaixo para salvar o produto.</p>
           </div>
           <button 
             (click)="close()"
-            class="p-2 rounded-xl hover:bg-white hover:shadow-sm text-slate-400 hover:text-slate-600 transition-all"
+            class="p-2 rounded-xl hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-all"
           >
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -108,23 +108,23 @@ export interface ProductFormValue {
             </div>
 
             <div class="space-y-2">
-              <label class="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Observações</label>
+              <label class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1 transition-colors">Observações</label>
               <textarea
                 formControlName="notes"
                 rows="3"
-                class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-sm text-slate-700 resize-none"
+                class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-sm text-slate-700 dark:text-slate-200 resize-none placeholder-slate-400 dark:placeholder-slate-500"
                 placeholder="Informações adicionais sobre o produto..."
               ></textarea>
             </div>
 
-            <div class="flex items-center gap-3 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+            <div class="flex items-center gap-3 p-4 bg-emerald-50/50 dark:bg-emerald-500/5 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 transition-colors">
               <input 
                 type="checkbox" 
                 id="is_active" 
                 formControlName="is_active"
-                class="w-5 h-5 rounded-lg border-emerald-200 text-emerald-600 focus:ring-emerald-500/20 transition-all cursor-pointer"
+                class="w-5 h-5 rounded-lg border-emerald-200 dark:border-emerald-500/20 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 focus:ring-emerald-500/20 transition-all cursor-pointer"
               >
-              <label for="is_active" class="text-sm font-bold text-emerald-800 cursor-pointer select-none">
+              <label for="is_active" class="text-sm font-bold text-emerald-800 dark:text-emerald-400 cursor-pointer select-none transition-colors">
                 Produto Ativo para Uso
               </label>
             </div>
@@ -132,11 +132,11 @@ export interface ProductFormValue {
         </div>
 
         <!-- Modal Footer -->
-        <div class="px-8 py-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3 flex-shrink-0">
+        <div class="px-8 py-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex items-center justify-end gap-3 flex-shrink-0 transition-colors">
           <button 
             type="button"
             (click)="close()"
-            class="px-6 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-white hover:shadow-sm transition-all"
+            class="px-6 py-2.5 rounded-xl font-bold text-sm text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm transition-all"
           >
             Cancelar
           </button>

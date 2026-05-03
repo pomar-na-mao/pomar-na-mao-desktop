@@ -9,14 +9,14 @@ import { CommonModule } from '@angular/common';
     <div class="space-y-1 w-full">
       @if (label) {
         <div class="flex items-center justify-between">
-          <label [for]="id" class="block text-sm font-medium text-slate-700">{{ label }}</label>
+          <label [for]="id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ label }}</label>
           <ng-content select="[label-extra]"></ng-content>
         </div>
       }
       <div class="relative">
         @if (icon) {
           <div
-            class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400"
+            class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500"
             [innerHTML]="icon"
           ></div>
         }
@@ -27,12 +27,12 @@ import { CommonModule } from '@angular/common';
           [value]="value"
           (input)="onInput($event)"
           (blur)="onBlur()"
-          class="block w-full py-2.5 bg-slate-50 border rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition-all outline-none"
+          class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition-all outline-none"
           [ngClass]="{
             'pl-5': icon,
             'px-3': !icon,
-            'border-red-500 bg-red-50 focus:ring-red-500 focus:border-red-500': errorMessage,
-            'border-slate-200': !errorMessage,
+            'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500': errorMessage,
+            'border-slate-200 dark:border-slate-700': !errorMessage,
           }"
         />
       </div>

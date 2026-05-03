@@ -27,4 +27,11 @@ export class SprayingFlowDetailPanelComponent {
       default: return 'Desconhecido';
     }
   }
+
+  public formatOperatorName(name: string | null | undefined): string {
+    if (!name) return 'Desconhecido';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length <= 1) return name;
+    return `${parts[0]} ${parts[parts.length - 1]}`;
+  }
 }

@@ -1,13 +1,13 @@
 <div
-  class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-6"
+  class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-6 transition-colors"
 >
   <!-- Header -->
   <div
-    class="p-6 border-b border-slate-200 bg-white flex items-center justify-between"
+    class="p-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors"
   >
     <div>
-      <h2 class="text-xl font-bold text-slate-900">Rotinas</h2>
-      <p class="mt-1 text-sm text-slate-500">Histórico de rotinas</p>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Rotinas</h2>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors">Histórico de rotinas</p>
     </div>
   </div>
 
@@ -15,71 +15,71 @@
   <div class="overflow-x-auto">
     <table class="w-full text-left border-collapse">
       <thead>
-        <tr class="bg-slate-50 border-b border-slate-200">
+        <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 transition-colors">
           <th
-            class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
             ID
           </th>
           <th
-            class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
             Data
           </th>
           <th
-            class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
             Região
           </th>
           <th
-            class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
             Status
           </th>
           <th
-            class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right transition-colors"
           >
             Ações
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-100">
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800 transition-colors">
         @if (routinesViewModel.isLoading()) { @for (i of [1,2,3,4,5]; track i) {
         <tr class="animate-pulse">
           <td class="px-6 py-4">
-            <div class="h-6 w-16 bg-slate-200 rounded-md"></div>
+            <div class="h-6 w-16 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
           </td>
           <td class="px-6 py-4">
-            <div class="h-6 w-24 bg-slate-200 rounded-md"></div>
+            <div class="h-6 w-24 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
           </td>
           <td class="px-6 py-4">
-            <div class="h-4 w-32 bg-slate-200 rounded"></div>
+            <div class="h-4 w-32 bg-slate-200 dark:bg-slate-800 rounded"></div>
           </td>
           <td class="px-6 py-4">
-            <div class="h-6 w-20 bg-slate-200 rounded-full"></div>
+            <div class="h-6 w-20 bg-slate-200 dark:bg-slate-800 rounded-full"></div>
           </td>
           <td class="px-6 py-4 text-right">
-            <div class="h-8 w-8 bg-slate-200 rounded-full ml-auto"></div>
+            <div class="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-full ml-auto"></div>
           </td>
         </tr>
         } } @else { @for (routine of routinesViewModel.sortedRoutines(); track
         routine.id; let odd = $odd) {
-        <tr class="hover:bg-slate-50 transition-colors group">
-          <td class="px-6 py-4 text-sm font-medium text-slate-700">
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+          <td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 transition-colors">
             #{{ routine.id }}
           </td>
-          <td class="px-6 py-4 text-sm text-slate-600">
+          <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
             {{ routine.created_at | date: 'dd/MM/yyyy HH:mm' }}
           </td>
-          <td class="px-6 py-4 text-sm text-slate-600">
+          <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
             {{ routine.region | titlecase }}
           </td>
           <td class="px-6 py-4">
             <span
               class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
               [ngClass]="{
-                    'bg-emerald-50 text-emerald-700 border-emerald-200': routine.is_done,
-                    'bg-amber-50 text-amber-700 border-amber-200': !routine.is_done
+                    'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20': routine.is_done,
+                    'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20': !routine.is_done
                   }"
             >
               {{ routine.is_done ? 'Concluído' : 'Pendente' }}
@@ -133,7 +133,7 @@
         <tr>
           <td
             colspan="5"
-            class="px-6 py-12 text-center text-sm font-medium text-slate-500"
+            class="px-6 py-12 text-center text-sm font-medium text-slate-500 dark:text-slate-600 transition-colors"
           >
             Nenhuma rotina encontrada.
           </td>
@@ -150,32 +150,32 @@
   class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
 >
   <div
-    class="bg-slate-50 w-full max-w-7xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-white/20 animate-in zoom-in-95 duration-300"
+    class="bg-slate-50 dark:bg-slate-900 w-full max-w-7xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-white/20 dark:border-slate-800 transition-all animate-in zoom-in-95 duration-300"
   >
     <!-- Modal Header -->
     <div
-      class="py-4 px-6 border-b border-slate-200 bg-white flex items-center justify-between"
+      class="py-4 px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors"
     >
       <div class="flex flex-col gap-0.5">
         <div class="flex items-center gap-3">
-          <h2 class="text-lg font-bold text-slate-800">
+          <h2 class="text-lg font-bold text-slate-800 dark:text-white transition-colors">
             Rotina #{{ selectedId() }}
           </h2>
           @if (selectedRegion()) {
           <div
-            class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-wider"
+            class="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-100 dark:border-emerald-500/20 uppercase tracking-wider transition-colors"
           >
             Região: {{ selectedRegion() }}
           </div>
           }
         </div>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">
           Detalhamento e aprovação de ocorrências
         </p>
       </div>
       <button
         (click)="closeModal()"
-        class="group flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-all hover:bg-slate-900 hover:text-white"
+        class="group flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -195,7 +195,7 @@
     </div>
 
     <!-- Modal Content -->
-    <div class="flex-1 overflow-y-auto bg-slate-50">
+    <div class="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 transition-colors">
       <app-routine-detail [id]="selectedId()"></app-routine-detail>
     </div>
   </div>

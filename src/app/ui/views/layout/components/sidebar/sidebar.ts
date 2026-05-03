@@ -13,7 +13,7 @@ export interface MenuItem {
   imports: [CommonModule, RouterModule],
   template: `
     <aside
-      class="fixed top-[60px] left-0 h-[calc(100vh-60px)] bg-white border-r border-slate-200 transition-all duration-300 ease-in-out z-20 shadow-sm"
+      class="fixed top-[60px] left-0 h-[calc(100vh-60px)] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out z-20 shadow-sm"
       [ngClass]="isCollapsed ? 'w-[64px]' : 'w-[240px]'"
     >
       <nav class="p-3 space-y-1">
@@ -21,9 +21,9 @@ export interface MenuItem {
           <div>
             <a
               [routerLink]="item.path"
-              routerLinkActive="bg-emerald-50 text-emerald-600"
+              routerLinkActive="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="relative flex items-center h-12 rounded-xl transition-all group hover:bg-slate-50 overflow-hidden"
+              class="relative flex items-center h-12 rounded-xl transition-all group hover:bg-slate-50 dark:hover:bg-slate-800 overflow-hidden text-slate-700 dark:text-slate-300"
               [ngClass]="isCollapsed ? 'justify-center px-0 gap-0' : 'px-4 gap-3'"
               [title]="isCollapsed ? item.label : ''"
             >

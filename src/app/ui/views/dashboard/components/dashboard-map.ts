@@ -7,10 +7,10 @@ import { Select } from '../../../../shared/components/select/select';
   selector: 'app-dashboard-map',
   imports: [Select, FormsModule],
   template: `
-    <div [class]="isFullscreen() ? 'fixed inset-0 z-[100] bg-white p-6 flex flex-col w-screen h-screen' : 'bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full'">
+    <div [class]="isFullscreen() ? 'fixed inset-0 z-[100] bg-white dark:bg-slate-900 p-6 flex flex-col w-screen h-screen transition-colors' : 'bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col h-full transition-colors'">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-bold text-slate-900">Meu pomar</h2>
-        <button (click)="toggleFullscreen()" class="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors" [title]="isFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white transition-colors">Meu pomar</h2>
+        <button (click)="toggleFullscreen()" class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none" [title]="isFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'">
           @if (isFullscreen()) {
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11v-5h5M15 13v5h-5M4 20l5-5M20 4l-5 5" /></svg>
           } @else {
@@ -47,7 +47,7 @@ import { Select } from '../../../../shared/components/select/select';
       </div>
 
       <!-- Map Container -->
-      <div id="dashboard-map" class="w-full flex-1 min-h-[300px] rounded-xl bg-slate-100 border border-slate-200 z-0 relative">
+      <div id="dashboard-map" class="w-full flex-1 min-h-[300px] rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 z-0 relative transition-all dark:invert dark:hue-rotate-180 dark:brightness-95">
         <!-- Leaflet map will be rendered here -->
       </div>
     </div>

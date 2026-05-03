@@ -6,14 +6,14 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
   template: `
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold text-slate-900">Dashboard</h1>
-      <p class="text-slate-500 mt-1">
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white transition-colors">Dashboard</h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-1 transition-colors">
         Bem-vindo de volta! Aqui está o resumo do seu pomar.
       </p>
     </div>
     <button
       (click)="dashboardViewModel.refreshData()"
-      class="p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200"
+      class="p-2 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700 focus:outline-none"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

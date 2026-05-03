@@ -14,7 +14,7 @@ export interface SelectOption {
   template: `
     <div class="space-y-1 w-full">
       @if (label) {
-        <label [for]="id" class="block text-sm font-medium text-slate-700">{{ label }}</label>
+        <label [for]="id" class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">{{ label }}</label>
       }
       <select
         [id]="id"
@@ -23,7 +23,7 @@ export interface SelectOption {
         [value]="value"
         (change)="onInput($event)"
         (blur)="onBlur()"
-        class="block w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        class="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         @if (placeholder && !multiple) {
           <option value="" disabled>{{ placeholder }}</option>
