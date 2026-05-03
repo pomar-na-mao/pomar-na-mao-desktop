@@ -47,7 +47,9 @@ export class DashboardViewModel {
     { label: 'Total de Plantas', value: '-', change: '', icon: 'M2.25 21h19.5m-18-18v18m10.5-18v18M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3.75-3h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h18a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0121 21H3a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 013 3z' },
     { label: 'Plantas Vivas', value: '-', change: '', icon: 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z' },
     { label: 'Plantas Atualizadas', value: '-', change: '', icon: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99' },
-    { label: 'Última Atualização', value: '-', change: '', icon: 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' }
+    { label: 'Última Atualização', value: '-', change: '', icon: 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' },
+    { label: 'Pulverizações (Mês)', value: '-', change: '', icon: 'M14.25 3H9.75v3h4.5V3zM14.25 6v3.75l6 9v2.25H3.75v-2.25l6-9V6h4.5z' },
+    { label: 'Novas Plantas (Mês)', value: '-', change: '', icon: 'M12 3l-6 8h4l-4 6h12l-4-6h4L12 3zM10 17v4h4v-4' }
   ]);
 
   public recentActivities = signal<DashboardActivity[]>([]);
@@ -293,7 +295,9 @@ export class DashboardViewModel {
         { label: 'Total de Plantas', value: stats.total_plants.toString(), change: '', icon: 'M2.25 21h19.5m-18-18v18m10.5-18v18M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3.75-3h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h18a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0121 21H3a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 013 3z' },
         { label: 'Plantas Vivas', value: stats.alive_plants.toString(), change: '', icon: 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z' },
         { label: 'Plantas Atualizadas', value: stats.updated_plants.toString(), change: '', icon: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99' },
-        { label: 'Última Atualização', value: lastUpdateStr, change: '', icon: 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' }
+        { label: 'Última Atualização', value: lastUpdateStr, change: '', icon: 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z' },
+        { label: 'Pulverizações (Mês)', value: (stats.total_spraying_sessions ?? 0).toString(), change: '', icon: 'M14.25 3H9.75v3h4.5V3zM14.25 6v3.75l6 9v2.25H3.75v-2.25l6-9V6h4.5z' },
+        { label: 'Novas Plantas (Mês)', value: (stats.total_new_plants ?? 0).toString(), change: '', icon: 'M12 3l-6 8h4l-4 6h12l-4-6h4L12 3zM10 17v4h4v-4' }
       ]);
 
       const recentUpdates = await this.plantsRepository.getRecentUpdates();

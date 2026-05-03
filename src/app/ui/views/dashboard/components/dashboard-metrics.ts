@@ -4,9 +4,9 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
 @Component({
   selector: 'app-dashboard-metrics',
   template: `
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full auto-rows-fr">
     @for (metric of dashboardViewModel.metrics(); track metric) {
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col justify-center">
       <div class="flex items-center justify-between mb-3">
         <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,7 +20,7 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
         }
       </div>
       <div>
-        <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">
+        <p class="text-sm font-medium text-slate-500 tracking-wider">
           {{ metric.label }}
         </p>
         <h3 class="text-xl font-bold text-slate-900 mt-1">
