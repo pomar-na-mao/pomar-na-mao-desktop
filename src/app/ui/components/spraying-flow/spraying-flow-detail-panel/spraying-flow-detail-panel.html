@@ -153,17 +153,7 @@
                   {{ session.operator_name || 'Desconhecido' }}
                 </dd>
               </div>
-              <div class="flex items-center justify-between">
-                <dt class="text-slate-500 font-medium">Volume</dt>
-                <dd
-                  class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100"
-                >
-                  @if (session.water_volume_liters !== null &&
-                  session.water_volume_liters !== undefined) { {{
-                  session.water_volume_liters | number: '1.0-2' }} L } @else {
-                  -- }
-                </dd>
-              </div>
+
               <div class="flex items-center justify-between">
                 <dt class="text-slate-500 font-medium">Término</dt>
                 <dd class="font-bold text-slate-700">

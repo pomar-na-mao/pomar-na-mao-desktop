@@ -24,4 +24,24 @@ export class SprayingSessionsTableComponent {
       default: return 'Desconhecido';
     }
   }
+
+  public getSessionDuration(session: SprayingSession): string {
+    if (!session.started_at || !session.ended_at) {
+      return '--:--';
+    }
+    const start = new Date(session.started_at).getTime();
+    const end = new Date(session.ended_at).getTime();
+    const diffMs = end - start;
+    
+    if (diffMs < 0) return '--:--';
+
+    const diffHrs = Math.floor(diffMs / 3600000);
+    const diffMins = Math.floor((diffMs % 3600000) / 60000);
+    const diffSecs = Math.floor((diffMs % 60000) / 1000);
+
+    if (diffHrs > 0) {
+      return `${diffHrs}h ${diffMins}m ${diffSecs}s`;
+    }
+    return `${diffMins}m ${diffSecs}s`;
+  }
 }
