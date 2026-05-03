@@ -57,7 +57,7 @@
           <th
             class="sticky top-0 z-10 border-b border-slate-200 py-3 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 backdrop-blur-sm"
           >
-            Status
+            Operador
           </th>
         </tr>
       </thead>
@@ -72,7 +72,7 @@
             <div class="h-4 w-24 rounded bg-slate-100"></div>
           </td>
           <td class="py-4 px-4">
-            <div class="h-6 w-20 rounded-full bg-slate-100"></div>
+            <div class="h-4 w-24 rounded bg-slate-100"></div>
           </td>
         </tr>
         } } @else { @for (session of viewModel.sessions(); track session.id) {
@@ -99,18 +99,8 @@
           <td class="py-3.5 px-4 text-xs text-slate-600">
             {{ (session.region || 'Desconhecida') | titlecase }}
           </td>
-          <td class="py-3.5 px-4">
-            <span
-              class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-tight"
-              [ngClass]="{
-                  'bg-emerald-100 text-emerald-700': session.status === 'completed',
-                  'bg-amber-100 text-amber-700': session.status === 'in_progress',
-                  'bg-rose-100 text-rose-700': session.status === 'cancelled',
-                  'bg-slate-100 text-slate-700': !session.status
-                }"
-            >
-              {{ getStatusLabel(session.status) }}
-            </span>
+          <td class="py-3.5 px-4 text-xs text-slate-600">
+            {{ session.operator_name || 'Não Informado' }}
           </td>
         </tr>
         } @empty {

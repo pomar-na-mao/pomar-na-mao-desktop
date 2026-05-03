@@ -142,6 +142,12 @@ export class DashboardViewModel {
     }
   }
 
+  invalidateMapSize() {
+    if (this.map) {
+      setTimeout(() => this.map!.invalidateSize(), 300);
+    }
+  }
+
   drawRegionPolygons() {
     if (!this.map) return;
     const regions = this.regionsRepository.regions();

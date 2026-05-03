@@ -6,6 +6,20 @@ export type LoginFormControl = {
   password: FormControl<string>;
 };
 
+export const emailErrors = (): Record<string, string> => {
+  return {
+    required: "Este campo é obrigatório",
+    email: "E-mail inválido",
+  };
+}
+
+export const passwordErrors = (): Record<string, string> => {
+  return {
+    required: "Este campo é obrigatório",
+    minlength: "A senha deve ter pelo menos 3 caracteres",
+  };
+}
+
 export function createLoginForm(): FormGroup<LoginFormControl> {
   const formBuilder = inject(NonNullableFormBuilder);
 

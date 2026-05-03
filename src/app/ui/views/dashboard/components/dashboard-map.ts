@@ -1,4 +1,4 @@
-import { Component, inject, AfterViewInit } from '@angular/core';
+import { Component, inject, AfterViewInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
 import { Select } from '../../../../shared/components/select/select';
@@ -7,9 +7,16 @@ import { Select } from '../../../../shared/components/select/select';
   selector: 'app-dashboard-map',
   imports: [Select, FormsModule],
   template: `
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full">
+    <div [class]="isFullscreen() ? 'fixed inset-0 z-[100] bg-white p-6 flex flex-col w-screen h-screen' : 'bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full'">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-slate-900">Meu pomar</h2>
+        <button (click)="toggleFullscreen()" class="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors" [title]="isFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'">
+          @if (isFullscreen()) {
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11v-5h5M15 13v5h-5M4 20l5-5M20 4l-5 5" /></svg>
+          } @else {
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+          }
+        </button>
       </div>
 
       <!-- Filters -->
@@ -48,8 +55,14 @@ import { Select } from '../../../../shared/components/select/select';
 })
 export class DashboardMap implements AfterViewInit {
   public dashboardViewModel = inject(DashboardViewModel);
+  public isFullscreen = signal(false);
 
   ngAfterViewInit() {
     this.dashboardViewModel.initMap('dashboard-map');
+  }
+
+  toggleFullscreen() {
+    this.isFullscreen.update(v => !v);
+    this.dashboardViewModel.invalidateMapSize();
   }
 }

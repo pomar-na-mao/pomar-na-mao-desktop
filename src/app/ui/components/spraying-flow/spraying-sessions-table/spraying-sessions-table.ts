@@ -16,14 +16,7 @@ export class SprayingSessionsTableComponent {
     await this.viewModel.selectSession(session.id);
   }
 
-  public getStatusLabel(status: string | null | undefined): string {
-    switch (status) {
-      case 'completed': return 'Concluído';
-      case 'in_progress': return 'Em Andamento';
-      case 'cancelled': return 'Cancelado';
-      default: return 'Desconhecido';
-    }
-  }
+
 
   public getSessionDuration(session: SprayingSession): string {
     if (!session.started_at || !session.ended_at) {
