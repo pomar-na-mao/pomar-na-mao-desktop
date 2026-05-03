@@ -33,6 +33,7 @@ import { Select } from '../../../../shared/components/select/select';
           [options]="dashboardViewModel.occurrenceOptions()"
           [ngModel]="dashboardViewModel.selectedOccurrence()"
           (ngModelChange)="dashboardViewModel.onOccurrenceChange($event)"
+          [disabled]="!dashboardViewModel.selectedRegion()"
           label="Ocorrência"
           class="w-full"
         ></app-select>
@@ -41,6 +42,7 @@ import { Select } from '../../../../shared/components/select/select';
           [options]="dashboardViewModel.varietyOptions()"
           [ngModel]="dashboardViewModel.selectedVariety()"
           (ngModelChange)="dashboardViewModel.onVarietyChange($event)"
+          [disabled]="!dashboardViewModel.selectedRegion()"
           label="Variedade"
           class="w-full"
         ></app-select>

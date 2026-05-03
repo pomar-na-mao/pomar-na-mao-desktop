@@ -13,7 +13,7 @@ import { Product } from '../../../../domain/models/product.model';
       id="delete-backdrop"
     >
       <div 
-        class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all duration-300 scale-100 transition-colors"
+        class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform duration-300 scale-100 transition-colors"
         (click)="$event.stopPropagation()"
       >
         <div class="p-8 text-center">

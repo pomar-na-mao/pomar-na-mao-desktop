@@ -20,16 +20,15 @@ export interface SelectOption {
         [id]="id"
         [disabled]="disabled"
         [multiple]="multiple"
-        [value]="value"
         (change)="onInput($event)"
         (blur)="onBlur()"
-        class="block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        [class]="multiple ? 'block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed h-32' : 'block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed'"
       >
         @if (placeholder && !multiple) {
           <option value="" disabled>{{ placeholder }}</option>
         }
         @for (option of options; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
+          <option [value]="option.value" [selected]="isSelected(option.value)">{{ option.label }}</option>
         }
       </select>
     </div>
@@ -58,14 +57,14 @@ export class Select implements ControlValueAccessor {
 
   @Output() valueChange = new EventEmitter<string | string[]>();
 
-  @NgInput() set value(val: string | number | null) {
+  @NgInput() set value(val: string | number | string[] | null) {
     this._value = val !== null ? val : '';
   }
-  get value(): string | number {
+  get value(): string | number | string[] {
     return this._value;
   }
 
-  private _value: string | number = '';
+  private _value: string | number | string[] = '';
   private onChange: (value: string | number | string[]) => void = () => { };
   private onTouched: () => void = () => { };
 
@@ -73,7 +72,7 @@ export class Select implements ControlValueAccessor {
     const target = event.target as HTMLSelectElement;
     if (this.multiple) {
       const selected = Array.from(target.selectedOptions).map(o => o.value);
-      this._value = selected.join(',');
+      this._value = selected;
       this.onChange(selected);
       this.valueChange.emit(selected);
     } else {
@@ -87,8 +86,15 @@ export class Select implements ControlValueAccessor {
     this.onTouched();
   }
 
-  writeValue(value: string | number | null): void {
+  writeValue(value: string | number | string[] | null): void {
     this._value = value !== null ? value : '';
+  }
+
+  isSelected(optionValue: string | number): boolean {
+    if (this.multiple && Array.isArray(this._value)) {
+      return this._value.includes(optionValue.toString());
+    }
+    return this._value == optionValue;
   }
 
   registerOnChange(fn: (value: string | number | string[]) => void): void {

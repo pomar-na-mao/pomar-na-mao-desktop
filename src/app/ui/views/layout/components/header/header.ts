@@ -63,7 +63,7 @@ import { Router } from '@angular/router';
         </button>
 
         <!-- Notifications -->
-        <button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg relative transition-colors focus:outline-none">
+        <!-- <button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg relative transition-colors focus:outline-none">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 text-slate-600 dark:text-slate-300"
@@ -81,7 +81,7 @@ import { Router } from '@angular/router';
           <span
             class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"
           ></span>
-        </button>
+        </button> -->
 
         <!-- User Profile -->
         <div class="relative">

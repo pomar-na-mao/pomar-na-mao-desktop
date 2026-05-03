@@ -56,12 +56,13 @@ export class MassInclusionViewModel {
     return Array.from(uniqueByName.values());
   });
 
-  public regionOptions = computed<SelectOption[]>(() =>
-    this.uniqueRegions().map((region) => ({
+  public regionOptions = computed<SelectOption[]>(() => [
+    { value: '', label: 'Nenhum' },
+    ...this.uniqueRegions().map((region) => ({
       value: region.id,
       label: region.region,
     }))
-  );
+  ]);
 
   public backgroundPolygon = computed(() => {
     const regionId = this.selectedRegionId();
@@ -149,6 +150,15 @@ export class MassInclusionViewModel {
   public async onRegionChange(regionId: string | string[]): Promise<void> {
     const normalizedRegionId = this.toSingleValue(regionId);
     this.selectedRegionId.set(normalizedRegionId);
+
+    if (normalizedRegionId === '') {
+      this.onPolygonCleared();
+      this.clearMapSignal.update((v) => v + 1);
+      this.regionsRepository.currentRegion.set(null);
+      this.plants.set([]);
+      return;
+    }
+
     const selectedRegion = this.findRegionById(normalizedRegionId);
 
     if (selectedRegion) {

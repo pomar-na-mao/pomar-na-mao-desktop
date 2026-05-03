@@ -32,7 +32,7 @@ export interface MenuItem {
                 <div
                   routerLinkActive="scale-y-100 opacity-100"
                   [routerLinkActiveOptions]="{ exact: true }"
-                  class="absolute left-0 top-3 bottom-3 w-1 bg-emerald-600 rounded-r-full scale-y-0 opacity-0 transition-all duration-300"
+                  class="absolute left-0 top-0 bottom-0 w-2 bg-emerald-600  scale-y-0 opacity-0 transition-all duration-300"
                 ></div>
               }
               <svg

@@ -84,20 +84,24 @@
           <app-input 
             label="Nome Completo" 
             [value]="usersRepository.currentUser()?.full_name || ''"
+            [disabled]="true"
           ></app-input>
           <app-input 
             label="E-mail" 
             type="email" 
             [value]="usersRepository.currentUser()?.email || ''"
+            [disabled]="true"
           ></app-input>
           <app-input 
             label="Cargo / Título" 
             [value]="usersRepository.currentUser()?.isAdmin ? 'Administrador' : 'Operador'"
+            [disabled]="true"
           ></app-input>
           <app-input 
             label="Telefone" 
             value=""
             placeholder="Não informado"
+            [disabled]="true"
           ></app-input>
         </div>
         <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 transition-colors">

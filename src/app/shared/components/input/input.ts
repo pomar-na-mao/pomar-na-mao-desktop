@@ -27,7 +27,8 @@ import { CommonModule } from '@angular/common';
           [value]="value"
           (input)="onInput($event)"
           (blur)="onBlur()"
-          class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition-all outline-none"
+          [disabled]="disabled"
+          class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           [ngClass]="{
             'pl-5': icon,
             'px-3': !icon,
@@ -51,6 +52,7 @@ export class Input implements ControlValueAccessor {
   @NgInput() id = 'input-' + Math.random().toString(36).substring(2, 9);
   @NgInput() icon = '';
   @NgInput() errors: Record<string, string> = {};
+  @NgInput() disabled = false;
 
   @NgInput() set value(val: string | null) {
     this._value = val || '';
@@ -98,5 +100,9 @@ export class Input implements ControlValueAccessor {
 
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 }
