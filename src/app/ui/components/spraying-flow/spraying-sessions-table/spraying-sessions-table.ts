@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import type { SprayingSession } from '../../../../domain/models/spraying-session.model';
 import { SprayingFlowViewModel } from '../../../view-models/spraying-flow/spraying-flow.view-model';
@@ -6,7 +6,7 @@ import { SprayingFlowViewModel } from '../../../view-models/spraying-flow/sprayi
 @Component({
   selector: 'app-spraying-sessions-table',
   standalone: true,
-  imports: [CommonModule, DatePipe, DecimalPipe, TitleCasePipe],
+  imports: [CommonModule, TitleCasePipe],
   templateUrl: './spraying-sessions-table.html',
 })
 export class SprayingSessionsTableComponent {
@@ -32,7 +32,7 @@ export class SprayingSessionsTableComponent {
     const start = new Date(session.started_at).getTime();
     const end = new Date(session.ended_at).getTime();
     const diffMs = end - start;
-    
+
     if (diffMs < 0) return '--:--';
 
     const diffHrs = Math.floor(diffMs / 3600000);
