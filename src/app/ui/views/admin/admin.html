@@ -1,8 +1,6 @@
 <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
   <!-- Header Section -->
-  <div
-    class="flex items-end justify-between"
-  >
+  <div class="flex items-end justify-between">
     <div>
       <h1 class="text-3xl font-bold text-slate-900 dark:text-white transition-colors">Administração</h1>
       <p class="text-slate-500 dark:text-slate-400 mt-1 transition-colors">
@@ -17,93 +15,92 @@
     </div>
   </div>
 
-  <!-- Modules Grid -->
-  <div
-    class="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
-  >
-    @for (module of adminModules; track module.id) {
-    <div
-      class="group relative overflow-hidden rounded-2xl border transition-all duration-300"
-      [ngClass]="module.active 
-          ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-500/50' 
-          : 'bg-slate-50/50 dark:bg-slate-800/50 border-slate-200/60 dark:border-slate-700/60 opacity-80 cursor-not-allowed'"
-    >
-      @if (!module.active) {
-      <div class="absolute top-4 right-4 z-10">
-        <span
-          class="bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full transition-colors"
+  <!-- Tabs Navigation -->
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+    <div class="flex border-b border-slate-100 dark:border-slate-800 overflow-x-auto bg-slate-50/50 dark:bg-slate-800/50">
+      @for (tab of tabs; track tab.id) {
+        <button
+          (click)="setActiveTab(tab.id)"
+          [ngClass]="
+            activeTab === tab.id
+              ? 'text-emerald-600 dark:text-emerald-400 border-emerald-600 dark:border-emerald-500 bg-white dark:bg-slate-900'
+              : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-slate-200'
+          "
+          class="px-8 py-5 text-sm font-bold border-b-2 transition-all whitespace-nowrap focus:outline-none flex items-center gap-2"
         >
-          Em breve
-        </span>
-      </div>
-      }
-
-      <div class="p-6">
-        <div
-          class="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors"
-          [ngClass]="module.active ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 dark:group-hover:bg-emerald-500 group-hover:text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600'"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              [attr.d]="module.icon"
-            />
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="tab.icon" />
           </svg>
-        </div>
-
-        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2 transition-colors">
-          {{ module.label }}
-        </h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed transition-colors">
-          {{ module.description }}
-        </p>
-      </div>
-
-      @if (module.active) {
-      <div
-        class="absolute bottom-0 left-0 w-full h-1 bg-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
-      ></div>
+          {{ tab.label }}
+        </button>
       }
     </div>
-    }
-  </div>
 
-  <!-- Active Module Content (Products) -->
-  <div
-    class="grid grid-cols-1 gap-8 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-1000"
-  >
-    <app-products-admin-card
-      [products]="viewModel.products()"
-      [stats]="viewModel.stats()"
-      [isLoading]="viewModel.isLoading()"
-      (refreshed)="viewModel.loadProducts()"
-      (created)="viewModel.openCreateModal()"
-      (edited)="viewModel.openEditModal($event)"
-      (deleted)="viewModel.openDeleteModal($event)"
-    />
+    <!-- Tab Content -->
+    <div class="p-6">
+      @if (activeTab === 'products') {
+        <div class="animate-in fade-in duration-500">
+          <app-products-admin-card
+            [products]="productsViewModel.products()"
+            [stats]="productsViewModel.stats()"
+            [isLoading]="productsViewModel.isLoading()"
+            (refreshed)="productsViewModel.loadProducts()"
+            (created)="productsViewModel.openCreateModal()"
+            (edited)="productsViewModel.openEditModal($event)"
+            (deleted)="productsViewModel.openDeleteModal($event)"
+          />
+        </div>
+      }
+
+      @if (activeTab === 'varieties') {
+        <div class="animate-in fade-in duration-500">
+          <app-varieties-admin-card
+            [varieties]="varietiesViewModel.varieties()"
+            [stats]="varietiesViewModel.stats()"
+            [isLoading]="varietiesViewModel.isLoading()"
+            (refreshed)="varietiesViewModel.loadVarieties()"
+            (created)="varietiesViewModel.openCreateModal()"
+            (edited)="varietiesViewModel.openEditModal($event)"
+            (deleted)="varietiesViewModel.openDeleteModal($event)"
+          />
+        </div>
+      }
+    </div>
   </div>
 </div>
 
-<!-- Modals -->
-@if (viewModel.isModalOpen()) {
-<app-product-form-modal
-  [product]="viewModel.editingProduct()"
-  [isSaving]="viewModel.isSaving()"
-  (closed)="viewModel.closeModal()"
-  (submitted)="viewModel.saveProduct($event)"
-/>
-} @if (viewModel.deletingProduct()) {
-<app-delete-product-modal
-  [product]="viewModel.deletingProduct()"
-  [isDeleting]="viewModel.isDeleting()"
-  (closed)="viewModel.closeDeleteModal()"
-  (confirmed)="viewModel.deleteProduct()"
-/>
+<!-- Products Modals -->
+@if (productsViewModel.isModalOpen()) {
+  <app-product-form-modal
+    [product]="productsViewModel.editingProduct()"
+    [isSaving]="productsViewModel.isSaving()"
+    (closed)="productsViewModel.closeModal()"
+    (submitted)="productsViewModel.saveProduct($event)"
+  />
+} 
+@if (productsViewModel.deletingProduct()) {
+  <app-delete-product-modal
+    [product]="productsViewModel.deletingProduct()"
+    [isDeleting]="productsViewModel.isDeleting()"
+    (closed)="productsViewModel.closeDeleteModal()"
+    (confirmed)="productsViewModel.deleteProduct()"
+  />
+}
+
+<!-- Varieties Modals -->
+@if (varietiesViewModel.isModalOpen()) {
+  <app-variety-form-modal
+    [variety]="varietiesViewModel.editingVariety()"
+    [isSaving]="varietiesViewModel.isSaving()"
+    (closed)="varietiesViewModel.closeModal()"
+    (submitted)="varietiesViewModel.saveVariety($event)"
+  />
+}
+@if (varietiesViewModel.deletingVariety()) {
+  <app-delete-variety-modal
+    [variety]="varietiesViewModel.deletingVariety()"
+    [isDeleting]="varietiesViewModel.isDeleting()"
+    (closed)="varietiesViewModel.closeDeleteModal()"
+    (confirmed)="varietiesViewModel.deleteVariety()"
+  />
 }

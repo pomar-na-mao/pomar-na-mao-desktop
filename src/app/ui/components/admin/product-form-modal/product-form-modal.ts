@@ -13,6 +13,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../../../domain/models/product.model';
 import { Input as AppInput } from '../../../../shared/components/input/input';
 import { Select as AppSelect } from '../../../../shared/components/select/select';
+import { Textarea as AppTextarea } from '../../../../shared/components/textarea/textarea';
 
 export interface ProductFormValue {
   name: string;
@@ -28,7 +29,7 @@ export interface ProductFormValue {
 @Component({
   selector: 'app-product-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AppInput, AppSelect],
+  imports: [CommonModule, ReactiveFormsModule, AppInput, AppSelect, AppTextarea],
   template: `
     <div 
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300"
@@ -107,17 +108,14 @@ export interface ProductFormValue {
               />
             </div>
 
-            <div class="space-y-2">
-              <label class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1 transition-colors">Observações</label>
-              <textarea
-                formControlName="notes"
-                rows="3"
-                class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none text-sm text-slate-700 dark:text-slate-200 resize-none placeholder-slate-400 dark:placeholder-slate-500"
-                placeholder="Informações adicionais sobre o produto..."
-              ></textarea>
-            </div>
+            <app-textarea
+              label="Observações"
+              placeholder="Informações adicionais sobre o produto..."
+              formControlName="notes"
+              [rows]="3"
+            />
 
-            <div class="flex items-center gap-3 p-4 bg-emerald-50/50 dark:bg-emerald-500/5 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 transition-colors">
+            <div class="mt-8 flex items-center gap-3 p-4 bg-emerald-50/50 dark:bg-emerald-500/5 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 transition-colors">
               <input 
                 type="checkbox" 
                 id="is_active" 
