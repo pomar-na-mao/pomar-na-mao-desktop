@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { TranslateService } from '@ngx-translate/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MessageService } from './message.service';
 
@@ -11,13 +10,7 @@ describe('MessageService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        MessageService,
-        {
-          provide: TranslateService,
-          useValue: {
-            instant: vi.fn((key: string) => `translated:${key}`)
-          }
-        }
+        MessageService
       ]
     });
 
@@ -32,11 +25,11 @@ describe('MessageService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('show should store the translated message and make it visible', () => {
+  it('show should store the message and make it visible', () => {
     service.show('COMMON.TOAST.SUCCESS', 'success');
 
     expect(service.currentMessage()).toEqual({
-      text: 'translated:COMMON.TOAST.SUCCESS',
+      text: 'COMMON.TOAST.SUCCESS',
       type: 'success'
     });
     expect(service.showMessage()).toBe(true);

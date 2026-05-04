@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { AppSelect } from '../../../../shared/components';
+import { Select } from '../../../../shared/components/select/select';
 import { MassInclusionViewModel } from '../../../view-models/mass-inclusion/mass-inclusion.view-model';
 
 @Component({
   selector: 'app-mass-inclusion-map-filters',
-  imports: [CommonModule, TranslateModule, AppSelect],
+  standalone: true,
+  imports: [CommonModule, Select],
   templateUrl: './mass-inclusion-map-filters.html',
 })
-export class MassInclusionMapFiltersComponent {
+export class MassInclusionMapFilters {
   public massInclusionViewModel = inject(MassInclusionViewModel);
 }

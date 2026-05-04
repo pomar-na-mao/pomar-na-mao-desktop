@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { UserRolesRepository } from '../../../data/repositories/user-roles/user-roles-repository';
 
+
 export const isAdminGuard: CanActivateFn = async (_route, _state) => {
   const userRolesRepository = inject(UserRolesRepository);
 
@@ -11,7 +12,7 @@ export const isAdminGuard: CanActivateFn = async (_route, _state) => {
   if (userRolesRepository.isUserAdmin()) {
     return true;
   } else {
-    router.navigateByUrl('/plataforma-ipr/painel');
+    router.navigateByUrl('/pomar-na-mao/home');
     return false;
   }
 };

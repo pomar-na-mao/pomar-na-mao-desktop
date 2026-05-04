@@ -25,15 +25,8 @@
             },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss",
-              "src/tailwind.css"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.css"],
             "scripts": [],
             "browser": "src/main.ts"
           },
@@ -93,15 +86,10 @@
           "options": {
             "runner": "vitest",
             "tsConfig": "src/tsconfig.spec.json",
-            "browsers": [
-              "chromium"
-            ],
+            "browsers": ["chromium"],
             "buildTarget": "pomar-na-mao:build:testing",
             "coverage": true,
-            "coverageReporters": [
-              "html",
-              "lcovonly"
-            ],
+            "coverageReporters": ["html", "lcovonly"],
             "reporters": [
               [
                 "default",
@@ -121,10 +109,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }

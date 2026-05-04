@@ -2,7 +2,6 @@ import { AfterViewInit, Component, computed, inject, Input, OnChanges, OnDestroy
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import * as L from 'leaflet';
 import { AnnotationRepository } from '../../../../data/repositories/annotation/annotation-repository';
-import { ThemeService } from '../../../../core/services/theme/theme.service';
 
 @Component({
   selector: 'app-annotation-current-point-map',
@@ -19,7 +18,6 @@ export class AnnotationCurrentPointMap implements AfterViewInit, OnChanges, OnDe
 
   private platformId = inject(PLATFORM_ID);
   private repository = inject(AnnotationRepository);
-  private themeService = inject(ThemeService);
   private elRef = inject(ElementRef);
 
   private map?: L.Map;
@@ -58,14 +56,6 @@ export class AnnotationCurrentPointMap implements AfterViewInit, OnChanges, OnDe
 
       this.focusAnnotation(coords);
     });
-
-    effect(() => {
-      const isDark = this.themeService.currentTheme() === 'dark';
-      const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
-      if (container) {
-        container.classList.toggle('map-dark', isDark);
-      }
-    });
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -95,11 +85,6 @@ export class AnnotationCurrentPointMap implements AfterViewInit, OnChanges, OnDe
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(this.map);
-
-    // Initial dark state
-    const isDark = this.themeService.currentTheme() === 'dark';
-    const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
-    if (container) container.classList.toggle('map-dark', isDark);
 
     const defaultIcon = L.icon({
       iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -136,13 +121,7 @@ export class AnnotationCurrentPointMap implements AfterViewInit, OnChanges, OnDe
     }, 100);
   }
 
-  public zoomIn(): void {
-    this.map?.zoomIn();
-  }
 
-  public zoomOut(): void {
-    this.map?.zoomOut();
-  }
 
   private focusAnnotation(coords: L.LatLngExpression): void {
     this.map?.setView(coords, AnnotationCurrentPointMap.ANNOTATION_ZOOM);

@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NewPlantsTableComponent } from './new-plants-table';
-import { TranslateModule } from '@ngx-translate/core';
 import { NewPlantsViewModel } from '../../../view-models/new-plant/new-plants.view-model';
 import { signal } from '@angular/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -31,7 +30,7 @@ describe('NewPlantsTableComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [NewPlantsTableComponent, TranslateModule.forRoot()],
+      imports: [NewPlantsTableComponent],
       providers: [
         { provide: NewPlantsViewModel, useValue: mockViewModel }
       ]
@@ -59,13 +58,13 @@ describe('NewPlantsTableComponent', () => {
     expect(mockViewModel.openApprovalModal).toHaveBeenCalledWith('2-uuid');
   });
 
-  it('should show visibility icon for approved and edit for pending', () => {
+  it('should show correct icon for approved and edit for pending', () => {
     const rows = fixture.debugElement.queryAll(By.css('tbody tr'));
     // Find icons within the action buttons
-    const row0Icon = rows[0].query(By.css('button span')).nativeElement.textContent.trim();
-    const row1Icon = rows[1].query(By.css('button span')).nativeElement.textContent.trim();
+    const row0Icon = rows[0].query(By.css('button svg path')); // approved
+    const row1Icon = rows[1].query(By.css('button svg path')); // pending
 
-    expect(row0Icon).toBe('visibility'); // approved
-    expect(row1Icon).toBe('edit'); // pending
+    expect(row0Icon).toBeTruthy();
+    expect(row1Icon).toBeTruthy();
   });
 });

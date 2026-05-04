@@ -1,17 +1,15 @@
-import { inject, Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { FormGroup } from "@angular/forms";
-import { AuthenticationRepository } from "../../../data/repositories/authentication/authentication-repository";
-import { LoadingService } from "../../../data/services/loading";
-import { LoginFormControl } from "./login-form";
-import { MessageService } from "../../../data/services/message/message.service";
-import { TranslateService } from "@ngx-translate/core";
+import { Injectable, inject } from '@angular/core';
 
+import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthenticationRepository } from '../../../data/repositories/authentication/authentication-repository';
+import { LoadingService } from '../../../data/services/loading';
+import { MessageService } from '../../../data/services/message/message.service';
+import type { LoginFormControl } from './login-form';
 
-@Injectable()
+@Injectable() // Not providedIn root, but provided in the component
 export class LoginViewModel {
   public router = inject(Router);
-  public translate = inject(TranslateService);
   public authenticationRepository = inject(AuthenticationRepository);
   public loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
@@ -23,13 +21,13 @@ export class LoginViewModel {
     const { error } = await this.authenticationRepository.loginUserHandler(email, password);
 
     if (error) {
-      this.messageService.error(this.translate.instant('PAGES.LOGIN.INVALID_CREDENTIALS'));
+      this.messageService.error("Dados inválidos!. Preencha email e senha corretamente!");
       this.loadingService.isLoading.set(false);
 
       return;
     }
 
-    this.router.navigateByUrl('/pomar-na-mao/home');
+    this.router.navigateByUrl('/home');
 
     await this.authenticationRepository.getUser();
 

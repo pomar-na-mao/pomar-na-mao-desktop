@@ -1,142 +1,171 @@
 <div
-  class="relative flex h-full flex-col overflow-hidden rounded-[20px] border border-outline-variant bg-surface-container p-6 shadow-sm"
+  class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-6 transition-colors"
 >
-  <div
-    class="pointer-events-none absolute -right-[20%] -top-1/2 z-0 h-[300px] w-[300px] opacity-10"
-    style="background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%)"
-  ></div>
-
   <!-- Header -->
-  <div class="z-10 mb-6 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div>
-        <h2 class="text-[16px] font-bold leading-tight text-on-surface">
-          {{ 'PAGES.SYNCS.ROUTINES' | translate }}
-        </h2>
-        <p class="mt-0.5 text-[12px] font-medium text-on-surface-variant">
-          {{ 'PAGES.SYNCS.WORK_HISTORY_DESCRIPTION' | translate }}
-        </p>
-      </div>
+  <div
+    class="p-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors"
+  >
+    <div>
+      <h2
+        class="text-xl font-bold text-slate-900 dark:text-white transition-colors"
+      >
+        Rotinas
+      </h2>
+      <p
+        class="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors"
+      >
+        Histórico de rotinas
+      </p>
     </div>
   </div>
 
   <!-- Table Layer -->
-  <div class="z-10 flex-1 overflow-auto">
-    <table class="w-full border-separate border-spacing-0 text-left">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
       <thead>
-        <tr>
+        <tr
+          class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 transition-colors"
+        >
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-6 pr-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="background: color-mix(in srgb, var(--color-surface-container) 90%, transparent)"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
             ID
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="background: color-mix(in srgb, var(--color-surface-container) 90%, transparent)"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
-            {{ 'COMMON.DATE' | translate }}
+            Data
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="background: color-mix(in srgb, var(--color-surface-container) 90%, transparent)"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
-            {{ 'COMMON.REGION' | translate }}
+            Região
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="background: color-mix(in srgb, var(--color-surface-container) 90%, transparent)"
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
-            {{ 'COMMON.STATUS' | translate }}
+            Status
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-4 pr-6 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="background: color-mix(in srgb, var(--color-surface-container) 90%, transparent)"
-          ></th>
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right transition-colors"
+          >
+            Ações
+          </th>
         </tr>
       </thead>
-      <tbody>
-        @if (routinesViewModel.isLoading()) { @for (i of [1,2,3,4,5];
-        track i) {
+      <tbody
+        class="divide-y divide-slate-100 dark:divide-slate-800 transition-colors"
+      >
+        @if (routinesViewModel.isLoading()) { @for (i of [1,2,3,4,5]; track i) {
         <tr class="animate-pulse">
-          <td class="py-4 pl-6 pr-4">
-            <div class="h-6 w-16 bg-surface-container-high rounded-md"></div>
+          <td class="px-6 py-4">
+            <div
+              class="h-6 w-16 bg-slate-200 dark:bg-slate-800 rounded-md"
+            ></div>
           </td>
-          <td class="py-4 px-4">
-            <div class="h-6 w-24 bg-surface-container-high rounded-md"></div>
+          <td class="px-6 py-4">
+            <div
+              class="h-6 w-24 bg-slate-200 dark:bg-slate-800 rounded-md"
+            ></div>
           </td>
-          <td class="py-4 px-4">
-            <div class="h-4 w-32 bg-surface-container-high rounded"></div>
+          <td class="px-6 py-4">
+            <div class="h-4 w-32 bg-slate-200 dark:bg-slate-800 rounded"></div>
           </td>
-          <td class="py-4 px-4">
-            <div class="h-6 w-20 bg-surface-container-high rounded-full"></div>
+          <td class="px-6 py-4">
+            <div
+              class="h-6 w-20 bg-slate-200 dark:bg-slate-800 rounded-full"
+            ></div>
           </td>
-          <td class="py-4 pl-4 pr-6">
-            <div class="h-8 w-8 bg-surface-container-high rounded-full"></div>
+          <td class="px-6 py-4 text-right">
+            <div
+              class="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-full ml-auto"
+            ></div>
           </td>
         </tr>
-        } } @else { @for (routine of routinesViewModel.sortedRoutines();
-        track routine.id; let odd = $odd) {
+        } } @else { @for (routine of routinesViewModel.sortedRoutines(); track
+        routine.id; let odd = $odd) {
         <tr
-          class="group border-b border-outline-variant last:border-b-0 transition-colors duration-150 hover:brightness-95 dark:hover:brightness-110"
-          [class.bg-surface-container]="odd"
-          [class.bg-surface-container-high]="!odd"
+          class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
         >
-          <td class="py-3.5 pl-6 pr-4">
+          <td
+            class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 transition-colors"
+          >
+            #{{ routine.id }}
+          </td>
+          <td
+            class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors"
+          >
+            {{ routine.created_at | date: 'dd/MM/yyyy HH:mm' }}
+          </td>
+          <td
+            class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors"
+          >
+            {{ routine.region | titlecase }}
+          </td>
+          <td class="px-6 py-4">
             <span
-              class="rounded-lg border border-outline-variant bg-surface-container-highest px-2.5 py-1 font-mono text-[11px] font-bold text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-            >
-              #{{ routine.id }}
-            </span>
-          </td>
-          <td class="py-3.5 px-4">
-            <span class="text-[13px] font-semibold text-on-surface">
-              {{ routine.created_at | date: 'dd/MM/yyyy HH:mm' }}
-            </span>
-          </td>
-          <td class="py-3.5 px-4">
-            <span class="text-[12px] text-on-surface-variant">
-              {{ routine.region | titlecase }}
-            </span>
-          </td>
-          <td class="py-3.5 px-4">
-            <div class="flex items-center">
-              <span
-                class="inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-tight transition-all duration-200"
-                [ngClass]="{
-                    'bg-success-container text-on-success-container border-success-container': routine.is_done,
-                    'bg-warn-container text-on-warn-container border-warn-container': !routine.is_done
+              class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
+              [ngClass]="{
+                    'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20': routine.is_done,
+                    'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20': !routine.is_done
                   }"
-              >
-                <span
-                  class="mr-2 h-1.5 w-1.5 rounded-full shadow-[0_0_8px_currentColor]"
-                  [ngClass]="{
-                      'bg-success': routine.is_done,
-                      'bg-warn': !routine.is_done
-                    }"
-                ></span>
-                {{ (routine.is_done ? 'COMMON.DONE' : 'COMMON.PENDING') |
-                translate }}
-              </span>
-            </div>
+            >
+              {{ routine.is_done ? 'Concluído' : 'Pendente' }}
+            </span>
           </td>
-          <td class="py-3.5 pl-4 pr-6">
+          <td class="px-6 py-4 text-right">
             <button
               (click)="onEditRoutine(routine)"
-              class="cursor-pointer inline-flex h-8 items-center justify-center rounded-full text-primary transition-all opacity-80 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-30 disabled:grayscale"
+              class="p-2 text-blue-600 hover:opacity-70 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <span class="material-symbols-outlined text-[20px]"
-                >{{ routine.is_done ? 'visibility' : 'edit' }}</span
-              >
+              @if (!routine.is_done) {
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
+              }
+              @if (routine.is_done) {
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              }
             </button>
           </td>
         </tr>
         } @empty {
         <tr>
-          <td colspan="5" class="py-12">
-            <p class="text-[13px] text-center font-medium text-on-surface-variant">
-              {{ 'PAGES.SYNCS.NO_ROUTINES' | translate }}
-            </p>
+          <td
+            colspan="5"
+            class="px-6 py-12 text-center text-sm font-medium text-slate-500 dark:text-slate-600 transition-colors"
+          >
+            Nenhuma rotina encontrada.
           </td>
         </tr>
         } }
@@ -144,3 +173,65 @@
     </table>
   </div>
 </div>
+
+<!-- Modal de Detalhes da Rotina -->
+@if (isModalOpen()) {
+<div
+  class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
+>
+  <div
+    class="bg-slate-50 dark:bg-slate-900 w-full max-w-7xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-white/20 dark:border-slate-800 transition-all animate-in zoom-in-95 duration-300"
+  >
+    <!-- Modal Header -->
+    <div
+      class="py-4 px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors"
+    >
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center gap-3">
+          <h2
+            class="text-lg font-bold text-slate-800 dark:text-white transition-colors"
+          >
+            Rotina #{{ selectedId() }}
+          </h2>
+          @if (selectedRegion()) {
+          <div
+            class="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-100 dark:border-emerald-500/20 uppercase tracking-wider transition-colors"
+          >
+            Região: {{ selectedRegion() }}
+          </div>
+          }
+        </div>
+        <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+          Detalhamento e aprovação de ocorrências
+        </p>
+      </div>
+      <button
+        (click)="closeModal()"
+        class="group flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 transition-transform group-hover:rotate-90"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div
+      class="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 transition-colors"
+    >
+      <app-routine-detail [id]="selectedId()"></app-routine-detail>
+    </div>
+  </div>
+</div>
+}

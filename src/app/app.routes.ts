@@ -1,20 +1,58 @@
 import { Routes } from '@angular/router';
 import { isLoggedGuard } from './core/guards/is-logged/is-logged.guard';
-import { PageNotFound } from './shared/components';
-import { AppLayout } from './ui/views/layout/layout';
 
 export const ROUTES: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'login',
-    loadComponent: () => import('./ui/views/authentication/login/login').then(c => c.Login),
+    loadComponent: () => import('./ui/views/authentication/login/login').then(m => m.Login)
   },
   {
     path: '',
-    component: AppLayout,
+    loadComponent: () => import('./ui/views/layout/main-layout').then(m => m.MainLayout),
     canActivate: [isLoggedGuard],
-    children: [{ path: 'pomar-na-mao', loadChildren: () => import('./core/routes/features.routes') }],
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
+      },
+      {
+        path: 'sincronizacoes',
+        loadComponent: () => import('./ui/views/syncs/syncs').then(m => m.Syncs)
+      },
+      {
+        path: 'inclusoes-em-massa',
+        loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
+      },
+      {
+        path: 'fluxo-pulverizacao',
+        loadComponent: () => import('./ui/views/spraying-flow/spraying-flow').then(m => m.SprayingFlow)
+      },
+      {
+        path: 'administracao',
+        loadComponent: () => import('./ui/views/admin/admin').then(m => m.Admin)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./ui/views/reports/reports').then(m => m.Reports)
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./ui/views/users/users').then(m => m.Users)
+      },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+      },
+
+    ]
   },
-  { path: 'notfound', component: PageNotFound },
-  { path: '**', redirectTo: '/notfound' },
+  {
+    path: '**',
+    redirectTo: 'login'
+  }
 ];

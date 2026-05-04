@@ -1,198 +1,185 @@
 <div
-  class="relative flex h-full flex-col overflow-hidden rounded-[20px] border border-outline-variant bg-surface-container p-6 shadow-sm"
+  class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-6 transition-colors"
 >
+  <!-- Header -->
   <div
-    class="pointer-events-none absolute -right-[20%] -top-1/2 z-0 h-[300px] w-[300px] opacity-10"
-    style="
-      background: radial-gradient(
-        circle,
-        var(--color-primary) 0%,
-        transparent 70%
-      );
-    "
-  ></div>
-
-  <div class="z-10 mb-6 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div>
-        <h2 class="text-[16px] font-bold leading-tight text-on-surface">
-          {{ 'PAGES.SYNCS.NEW_PLANTS' | translate }}
-        </h2>
-        <p class="mt-0.5 text-[12px] font-medium text-on-surface-variant">
-          {{ 'PAGES.SYNCS.NEW_PLANTS_HISTORY_DESCRIPTION' | translate }}
-        </p>
-      </div>
+    class="p-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors"
+  >
+    <div>
+      <h2
+        class="text-xl font-bold text-slate-900 dark:text-white transition-colors"
+      >
+        Novas Plantas
+      </h2>
+      <p
+        class="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors"
+      >
+        Histórico de novas plantas
+      </p>
     </div>
   </div>
 
-  <div class="z-10 flex-1 overflow-auto">
-    <table class="w-full border-separate border-spacing-0 text-left">
+  <!-- Table Layer -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
       <thead>
-        <tr>
+        <tr
+          class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 transition-colors"
+        >
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-6 pr-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="
-              background: color-mix(
-                in srgb,
-                var(--color-surface-container) 90%,
-                transparent
-              );
-            "
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
             ID
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="
-              background: color-mix(
-                in srgb,
-                var(--color-surface-container) 90%,
-                transparent
-              );
-            "
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
-            {{ 'COMMON.DATE' | translate }}
+            Data
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="
-              background: color-mix(
-                in srgb,
-                var(--color-surface-container) 90%,
-                transparent
-              );
-            "
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
-            {{ 'COMMON.REGION' | translate }}
+            Região
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="
-              background: color-mix(
-                in srgb,
-                var(--color-surface-container) 90%,
-                transparent
-              );
-            "
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
-            {{ 'COMMON.COORDINATES' | translate }}
+            Coordenadas
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 px-4 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="
-              background: color-mix(
-                in srgb,
-                var(--color-surface-container) 90%,
-                transparent
-              );
-            "
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors"
           >
-            {{ 'COMMON.STATUS' | translate }}
+            Status
           </th>
           <th
-            class="sticky top-0 z-10 border-b-2 border-outline-variant p-4 pl-4 pr-6 text-[11px] font-extrabold uppercase tracking-wider text-on-surface-variant backdrop-blur-md"
-            style="
-              background: color-mix(
-                in srgb,
-                var(--color-surface-container) 90%,
-                transparent
-              );
-            "
-          ></th>
+            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right transition-colors"
+          >
+            Ações
+          </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-outline-variant">
+      <tbody
+        class="divide-y divide-slate-100 dark:divide-slate-800 transition-colors"
+      >
         @if (newPlantsViewModel.isLoading()) { @for (item of [1,2,3,4,5]; track
         item) {
         <tr class="animate-pulse">
-          <td class="py-4 pl-6 pr-4">
-            <div class="h-6 w-16 rounded-md bg-surface-container-high"></div>
+          <td class="px-6 py-4">
+            <div
+              class="h-6 w-16 bg-slate-200 dark:bg-slate-800 rounded-md"
+            ></div>
           </td>
-          <td class="px-4 py-4">
-            <div class="h-6 w-24 rounded-md bg-surface-container-high"></div>
+          <td class="px-6 py-4">
+            <div
+              class="h-6 w-24 bg-slate-200 dark:bg-slate-800 rounded-md"
+            ></div>
           </td>
-          <td class="px-4 py-4">
-            <div class="h-4 w-24 rounded bg-surface-container-high"></div>
+          <td class="px-6 py-4">
+            <div class="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
           </td>
-          <td class="px-4 py-4">
-            <div class="h-4 w-40 rounded bg-surface-container-high"></div>
+          <td class="px-6 py-4">
+            <div class="h-4 w-40 bg-slate-200 dark:bg-slate-800 rounded"></div>
           </td>
-          <td class="px-4 py-4">
-            <div class="h-6 w-20 rounded-full bg-surface-container-high"></div>
+          <td class="px-6 py-4">
+            <div
+              class="h-6 w-20 bg-slate-200 dark:bg-slate-800 rounded-full"
+            ></div>
           </td>
-          <td class="pl-4 pr-6 py-4">
-            <div class="h-8 w-8 rounded-full bg-surface-container-high"></div>
+          <td class="px-6 py-4 text-right">
+            <div
+              class="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-full ml-auto"
+            ></div>
           </td>
         </tr>
         } } @else { @for (newPlant of newPlantsViewModel.sortedNewPlants();
         track newPlant.id; let odd = $odd) {
         <tr
-          class="group border-b border-outline-variant last:border-b-0 transition-colors duration-150 hover:brightness-95 dark:hover:brightness-110"
-          [class.bg-surface-container]="odd"
-          [class.bg-surface-container-high]="!odd"
+          class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
         >
-          <td class="py-3.5 pl-6 pr-4">
+          <td
+            class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 transition-colors"
+          >
+            #{{ newPlant.id.substring(0, 8) }}
+          </td>
+          <td
+            class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors"
+          >
+            {{ newPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
+          </td>
+          <td
+            class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors"
+          >
+            {{ newPlant.region || 'Desconhecido' }}
+          </td>
+          <td
+            class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 transition-colors"
+          >
+            {{ newPlant.latitude }}, {{ newPlant.longitude }}
+          </td>
+          <td class="px-6 py-4">
             <span
-              class="rounded-lg border border-outline-variant bg-surface-container-highest px-2.5 py-1 font-mono text-[11px] font-bold text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-            >
-              #{{ newPlant.id.substring(0, 8) }}
-            </span>
-          </td>
-          <td class="px-4 py-3.5">
-            <span class="text-[13px] font-semibold text-on-surface">
-              {{ newPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
-            </span>
-          </td>
-          <td class="px-4 py-3.5">
-            <span class="text-[12px] text-on-surface-variant">
-              {{ newPlant.region || ('COMMON.UNKNOWN' | translate) }}
-            </span>
-          </td>
-          <td class="px-4 py-3.5">
-            <span class="text-[12px] text-on-surface-variant">
-              {{ newPlant.latitude }}, {{ newPlant.longitude }}
-            </span>
-          </td>
-          <td class="py-3.5 px-4">
-            <div class="flex items-center">
-              <span
-                class="inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-tight transition-all duration-200"
-                [ngClass]="{
-                    'bg-success-container text-on-success-container border-success-container': newPlant.is_approved,
-                    'bg-warn-container text-on-warn-container border-warn-container': !newPlant.is_approved
+              class="px-3 py-1 text-xs font-bold rounded-full border transition-all duration-200"
+              [ngClass]="{
+                    'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20': newPlant.is_approved,
+                    'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20': !newPlant.is_approved
                   }"
-              >
-                <span
-                  class="mr-2 h-1.5 w-1.5 rounded-full shadow-[0_0_8px_currentColor]"
-                  [ngClass]="{
-                      'bg-success': newPlant.is_approved,
-                      'bg-warn': !newPlant.is_approved
-                    }"
-                ></span>
-                {{ (newPlant.is_approved ? 'COMMON.DONE' : 'COMMON.PENDING') |
-                translate }}
-              </span>
-            </div>
+            >
+              {{ newPlant.is_approved ? 'Concluído' : 'Pendente' }}
+            </span>
           </td>
-          <td class="py-3.5 pl-4 pr-6">
+          <td class="px-6 py-4 text-right">
             <button
               (click)="openApprovalModal(newPlant.id)"
-              class="inline-flex h-8 cursor-pointer items-center justify-center rounded-full text-primary opacity-80 transition-all hover:opacity-100 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-30"
+              class="p-2 text-blue-600 hover:opacity-70 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <span class="material-symbols-outlined text-[20px]"
-                >{{ newPlant.is_approved ? 'visibility' : 'edit' }}</span
-              >
+              @if (!newPlant.is_approved) {
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
+              }
+              @if (newPlant.is_approved) {
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              }
             </button>
           </td>
         </tr>
         } @empty {
         <tr>
-          <td colspan="6" class="py-12">
-            <p
-              class="text-[13px] text-center font-medium text-on-surface-variant"
-            >
-              {{ 'PAGES.SYNCS.NO_NEW_PLANTS' | translate }}
-            </p>
+          <td
+            colspan="6"
+            class="px-6 py-12 text-center text-sm font-medium text-slate-500 dark:text-slate-600 transition-colors"
+          >
+            Nenhuma nova planta encontrada.
           </td>
         </tr>
         } }
@@ -207,78 +194,253 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
   class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm"
 >
   <div
-    class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-surface shadow-2xl"
+    class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[28px] bg-white dark:bg-slate-900 shadow-2xl transition-colors"
   >
+    <!-- Modal Header -->
     <div
-      class="grid max-h-[90vh] grid-cols-1 overflow-y-auto lg:grid-cols-[1.15fr_0.85fr]"
+      class="py-4 px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between transition-colors"
     >
-      <div class="min-h-[22rem] bg-surface-container p-4 lg:p-6">
+      <div class="flex flex-col gap-0.5">
+        <div class="flex items-center gap-3">
+          <h2
+            class="text-xl font-black tracking-tight text-slate-900 dark:text-white transition-colors"
+          >
+            Nova Planta #{{ selectedNewPlant.id.slice(0, 8) }}
+          </h2>
+          <div
+            class="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-100 dark:border-emerald-500/20 uppercase tracking-wider transition-colors"
+          >
+            Região: {{ selectedNewPlant.region || 'Desconhecido' }}
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <p
+            class="text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors"
+          >
+            Revisão e aprovação de nova planta
+          </p>
+          <span
+            class="px-2 py-0.5 text-[10px] font-black rounded-full border transition-all duration-200 uppercase tracking-widest"
+            [ngClass]="{
+            'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20': selectedNewPlant.is_approved,
+            'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20': !selectedNewPlant.is_approved
+          }"
+          >
+            {{ selectedNewPlant.is_approved ? 'Concluído' : 'Pendente' }}
+          </span>
+        </div>
+      </div>
+      <button
+        (click)="closeApprovalModal()"
+        class="group flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 transition-transform group-hover:rotate-90"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div
+      class="grid max-h-[calc(90vh-73px)] grid-cols-1 overflow-y-auto lg:grid-cols-[1.15fr_0.85fr]"
+    >
+      <div
+        class="min-h-[22rem] bg-slate-50 dark:bg-slate-800 p-4 lg:p-6 border-r border-slate-200 dark:border-slate-700 transition-colors"
+      >
         <app-new-plant-approval-map [newPlant]="selectedNewPlant" />
       </div>
 
       <section class="flex flex-col gap-6 p-6 lg:p-8">
-        <div>
-          <h3
-            class="text-2xl font-headline font-extrabold tracking-tight text-on-surface"
-          >
-            {{ 'PAGES.SYNCS.NEW_PLANT_ID' | translate: { id:
-            selectedNewPlant.id.slice(0, 8) } }}
-          </h3>
-          <p class="mt-1 text-sm text-on-surface-variant">
-            {{ 'PAGES.SYNCS.NEW_PLANT_MODAL_SUBTITLE' | translate }}
-          </p>
-        </div>
+        <!-- Status removed from here -->
 
-        <div
-          class="grid grid-cols-1 gap-4 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-5"
-        >
-          <div>
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Data -->
+          <div
+            class="group rounded-2xl border border-amber-100 dark:border-amber-500/20 bg-amber-50/40 dark:bg-amber-500/5 p-4 transition-all hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:shadow-sm"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 shadow-sm transition-transform group-hover:scale-105"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <span
+                class="text-[10px] font-black uppercase tracking-widest text-amber-700/70 dark:text-amber-400/70 transition-colors"
+                >Data</span
+              >
+            </div>
             <p
-              class="text-xs font-semibold uppercase tracking-wide text-on-surface-variant"
+              class="text-sm font-bold text-slate-900 dark:text-white transition-colors ml-1"
             >
-              {{ 'COMMON.DATE' | translate }}
-            </p>
-            <p class="mt-1 text-sm font-medium text-on-surface">
               {{ selectedNewPlant.created_at | date: 'dd/MM/yyyy HH:mm' }}
             </p>
           </div>
-          <div>
+
+          <!-- Região -->
+          <div
+            class="group rounded-2xl border border-emerald-100 dark:border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-500/5 p-4 transition-all hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:shadow-sm"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 shadow-sm transition-transform group-hover:scale-105"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              </div>
+              <span
+                class="text-[10px] font-black uppercase tracking-widest text-emerald-700/70 dark:text-emerald-400/70 transition-colors"
+                >Região</span
+              >
+            </div>
             <p
-              class="text-xs font-semibold uppercase tracking-wide text-on-surface-variant"
+              class="text-sm font-bold text-slate-900 dark:text-white transition-colors ml-1"
             >
-              {{ 'COMMON.REGION' | translate }}
-            </p>
-            <p class="mt-1 text-sm font-medium text-on-surface">
-              {{ selectedNewPlant.region || ('COMMON.UNKNOWN' | translate) }}
+              {{ selectedNewPlant.region || 'Desconhecido' }}
             </p>
           </div>
-          <div>
+
+          <!-- Latitude -->
+          <div
+            class="group rounded-2xl border border-blue-100 dark:border-blue-500/20 bg-blue-50/40 dark:bg-blue-500/5 p-4 transition-all hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:shadow-sm"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 shadow-sm transition-transform group-hover:scale-105"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 11V9"
+                  />
+                </svg>
+              </div>
+              <span
+                class="text-[10px] font-black uppercase tracking-widest text-blue-700/70 dark:text-blue-400/70 transition-colors"
+                >Latitude</span
+              >
+            </div>
             <p
-              class="text-xs font-semibold uppercase tracking-wide text-on-surface-variant"
+              class="text-sm font-mono font-bold text-slate-900 dark:text-white transition-colors ml-1"
             >
-              {{ 'COMMON.LATITUDE' | translate }}
-            </p>
-            <p class="mt-1 text-sm font-medium text-on-surface">
               {{ selectedNewPlant.latitude }}
             </p>
           </div>
-          <div>
+
+          <!-- Longitude -->
+          <div
+            class="group rounded-2xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50/40 dark:bg-indigo-500/5 p-4 transition-all hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:shadow-sm"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 shadow-sm transition-transform group-hover:scale-105"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 11V9"
+                  />
+                </svg>
+              </div>
+              <span
+                class="text-[10px] font-black uppercase tracking-widest text-indigo-700/70 dark:text-indigo-400/70 transition-colors"
+                >Longitude</span
+              >
+            </div>
             <p
-              class="text-xs font-semibold uppercase tracking-wide text-on-surface-variant"
+              class="text-sm font-mono font-bold text-slate-900 dark:text-white transition-colors ml-1"
             >
-              {{ 'COMMON.LONGITUDE' | translate }}
-            </p>
-            <p class="mt-1 text-sm font-medium text-on-surface">
               {{ selectedNewPlant.longitude }}
             </p>
           </div>
-          <div>
+
+          <!-- GPS Timestamp -->
+          <div
+            class="group rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40 p-4 transition-all hover:bg-slate-50 dark:hover:bg-slate-800 hover:shadow-sm col-span-2"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 shadow-sm transition-transform group-hover:scale-105"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <span
+                class="text-[10px] font-black uppercase tracking-widest text-slate-700/70 dark:text-slate-400/70 transition-colors"
+                >GPS Timestamp</span
+              >
+            </div>
             <p
-              class="text-xs font-semibold uppercase tracking-wide text-on-surface-variant"
+              class="text-xs font-medium text-slate-900 dark:text-white transition-colors ml-1"
             >
-              GPS Timestamp
-            </p>
-            <p class="mt-1 text-sm font-medium text-on-surface">
               {{ selectedNewPlant.gps_timestamp ?? '-' }}
             </p>
           </div>
@@ -289,22 +451,35 @@ newPlantsViewModel.selectedNewPlant(); as selectedNewPlant) {
         >
           <button
             (click)="closeApprovalModal()"
-            class="rounded-2xl border border-outline-variant/20 px-5 py-3 text-sm font-bold text-on-surface-variant transition-all hover:bg-surface-container-low"
+            class="rounded-xl border border-slate-200 dark:border-slate-700 px-5 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 transition-all hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95"
           >
-            {{ 'COMMON.CANCEL' | translate }}
+            Cancelar
           </button>
           <button
             (click)="approveSelectedNewPlant()"
             [disabled]="newPlantsViewModel.isApproving() || selectedNewPlant.is_approved"
-            class="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-primary to-primary-container px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.02] active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:from-surface-container-highest disabled:to-surface-container-highest disabled:text-on-surface-variant/50 disabled:shadow-none disabled:scale-100"
+            class="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-emerald-700 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500"
           >
             @if (newPlantsViewModel.isApproving()) {
             <div
-              class="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"
+              class="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"
             ></div>
-            {{ 'COMMON.APPROVING' | translate }} } @else {
-            <span class="material-symbols-outlined">check_circle</span>
-            {{ 'COMMON.APPROVE' | translate }} }
+            Aprovando... } @else {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            Aprovar }
           </button>
         </div>
       </section>

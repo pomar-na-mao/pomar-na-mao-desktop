@@ -377,7 +377,7 @@ describe('RoutineSyncViewModel', () => {
     viewModel.cleanup();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith([
-      '/pomar-na-mao/sincronizacoes',
+      '/sincronizacoes',
     ]);
     expect(mockPlantsRepository.clearPlants).toHaveBeenCalled();
   });

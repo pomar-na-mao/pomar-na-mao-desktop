@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
 import { NewPlantsViewModel } from '../../../view-models/new-plant/new-plants.view-model';
 import { NewPlantApprovalMapComponent } from '../new-plant-approval-map/new-plant-approval-map';
 
 @Component({
   selector: 'app-new-plants-table',
-  imports: [CommonModule, TranslateModule, DatePipe, NewPlantApprovalMapComponent],
+  imports: [CommonModule, DatePipe, NewPlantApprovalMapComponent],
   templateUrl: './new-plants-table.html',
   styleUrl: './new-plants-table.scss',
 })

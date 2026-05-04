@@ -1,32 +1,47 @@
-﻿<div class="map-selector-wrapper">
+<div class="flex flex-col w-full h-full bg-white dark:bg-slate-900 relative overflow-hidden transition-colors">
   <!-- Toolbar -->
-  <div class="map-toolbar">
-    <div class="toolbar-left">
-      <span class="toolbar-title">
-        {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.TITLE' | translate }}
-      </span>
+  <div
+    class="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 shrink-0 transition-colors"
+  >
+    <div class="flex items-center gap-3">
       <span
-        class="status-badge"
-        [class.drawing]="drawingMode"
-        [class.has-polygon]="hasPolygon && !drawingMode"
+        class="text-[10px] font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase transition-colors"
       >
-        <span class="status-dot"></span>
-        {{
-          drawingMode
-            ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.STATUS_DRAWING' | translate: { count: pointsCount })
-            : hasPolygon
-              ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.STATUS_SELECTED' | translate)
-              : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.STATUS_WAITING' | translate)
-        }}
+        Área de Seleção
       </span>
+      <div
+        class="flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-300"
+        [class.bg-emerald-50]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.dark:bg-emerald-500/10]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.text-emerald-700]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.dark:text-emerald-400]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.border]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.border-emerald-100]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.dark:border-emerald-500/20]="drawingMode || (hasPolygon && !drawingMode)"
+        [class.bg-slate-100]="!drawingMode && !hasPolygon"
+        [class.dark:bg-slate-800]="!drawingMode && !hasPolygon"
+        [class.text-slate-500]="!drawingMode && !hasPolygon"
+        [class.dark:text-slate-400]="!drawingMode && !hasPolygon"
+      >
+        <span
+          class="w-2 h-2 rounded-full transition-colors"
+          [class.bg-emerald-500]="drawingMode || (hasPolygon && !drawingMode)"
+          [class.animate-pulse-slow]="drawingMode"
+          [class.bg-slate-300]="!drawingMode && !hasPolygon"
+          [class.dark:bg-slate-600]="!drawingMode && !hasPolygon"
+        ></span>
+        {{ drawingMode ? 'Desenhando (' + pointsCount + ' pontos)' : hasPolygon
+        ? 'Área Selecionada' : 'Aguardando' }}
+      </div>
     </div>
 
-    <div class="toolbar-actions">
+    <div class="flex items-center gap-2">
+      <!-- Undo -->
       <button
-        class="btn btn-undo"
+        class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
         [disabled]="!drawingMode || pointsCount === 0"
         (click)="undoLastPoint()"
-        [attr.title]="'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.UNDO_LAST_POINT' | translate"
+        title="Desfazer último ponto"
       >
         <svg
           width="16"
@@ -41,11 +56,12 @@
         </svg>
       </button>
 
+      <!-- Finish -->
       <button
-        class="btn btn-finish"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-semibold"
         [disabled]="!drawingMode || pointsCount < 3"
         (click)="completePolygon()"
-        [attr.title]="'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.FINISH_POLYGON' | translate"
+        title="Finalizar área"
       >
         <svg
           width="16"
@@ -57,17 +73,22 @@
         >
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.FINISH' | translate }}
+        Finalizar
       </button>
 
+      <!-- Toggle Draw -->
       <button
-        class="btn"
-        [class.btn-draw-active]="drawingMode"
-        [class.btn-draw]="!drawingMode"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold"
+        [class.border-emerald-500]="!drawingMode"
+        [class.bg-emerald-600]="!drawingMode"
+        [class.text-white]="!drawingMode"
+        [class.hover:bg-emerald-700]="!drawingMode"
+        [class.border-red-200]="drawingMode"
+        [class.bg-red-50]="drawingMode"
+        [class.text-red-700]="drawingMode"
+        [class.hover:bg-red-100]="drawingMode"
         (click)="toggleDrawingMode()"
-        [attr.title]="(drawingMode
-          ? 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.CANCEL_DRAWING'
-          : 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.DRAW_POLYGON') | translate"
+        [title]="drawingMode ? 'Cancelar desenho' : 'Desenhar nova área'"
       >
         <svg
           width="16"
@@ -79,18 +100,15 @@
         >
           <polygon points="3 11 22 2 13 21 11 13 3 11" />
         </svg>
-        {{
-          drawingMode
-            ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.CANCEL' | translate)
-            : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.DRAW' | translate)
-        }}
+        {{ drawingMode ? 'Cancelar' : 'Desenhar' }}
       </button>
 
+      <!-- Clear -->
       <button
-        class="btn btn-clear"
+        class="p-1.5 rounded-lg border border-red-200 dark:border-red-500/20 bg-white dark:bg-slate-800 text-red-400 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
         [disabled]="!hasPolygon && !drawingMode"
         (click)="clearAll()"
-        [attr.title]="'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.CLEAR_ALL' | translate"
+        title="Limpar tudo"
       >
         <svg
           width="16"
@@ -110,32 +128,39 @@
   </div>
 
   <!-- Map -->
-  <div class="map-container" #mapContainer></div>
+  <div class="flex-1 map-container dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)]" #mapContainer></div>
 
   <!-- Drawing hint -->
   @if (drawingMode) {
-    <div class="drawing-hint">
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="8" x2="12" y2="12" />
-        <line x1="12" y1="16" x2="12.01" y2="16" />
-      </svg>
-      {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.DRAWING_HINT' | translate }}
-    </div>
+  <div
+    class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-[11px] font-medium shadow-lg z-[1000] border border-white/20 animate-bounce"
+  >
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+    Clique no mapa para adicionar pontos. Clique duplo para finalizar.
+  </div>
   }
 
-  <!-- Coordinates Panel -->
+  <!-- Info Panel -->
   @if (hasPolygon) {
-    <div class="coords-panel">
-      <div class="coords-header">
-        <span class="coords-title">
+  <div
+    class="absolute bottom-4 right-4 flex flex-col gap-2 max-w-[300px] z-[1000]"
+  >
+    <div
+      class="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-xl transition-colors"
+    >
+      <div class="flex items-center justify-between mb-2">
+        <span class="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors">
           <svg
             width="14"
             height="14"
@@ -147,68 +172,69 @@
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
             <circle cx="12" cy="10" r="3" />
           </svg>
-          {{
-            'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COORDINATES_COUNT'
-              | translate: { count: selectedPolygonCoords.length }
-          }}
+          {{ selectedPolygonCoords.length }} Pontos
         </span>
-
-        <div class="coords-actions">
-          <button class="btn-copy" (click)="showCoords = !showCoords">
-            {{
-              (showCoords
-                ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.HIDE' | translate)
-                : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.VIEW' | translate)) +
-                ' ' +
-                ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COORDS' | translate)
-            }}
+        <div class="flex gap-1">
+          <button
+            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
+            (click)="showCoords = !showCoords"
+            title="Ver coordenadas"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
           </button>
           <button
-            class="btn-copy"
+            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
+            [class.text-emerald-600]="copiedFeedback"
+            [class.dark:text-emerald-400]="copiedFeedback"
             (click)="copyCoordinates()"
-            [class.copied]="copiedFeedback"
+            title="Copiar JSON"
           >
-            {{
-              copiedFeedback
-                ? ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COPIED' | translate)
-                : ('PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COPY_JSON' | translate)
-            }}
-          </button>
-          <button class="btn-copy" (click)="copyGeoJson()">
-            {{ 'PAGES.MASS_INCLUSION.MAP_POLYGON_SELECTOR.COPY_GEOJSON' | translate }}
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path
+                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+              />
+            </svg>
           </button>
         </div>
       </div>
 
       @if (showCoords) {
-        <div class="coords-list">
-          @for (coord of selectedPolygonCoords; track coord; let i = $index) {
-            <div class="coord-item">
-              <span class="coord-index">{{ i + 1 }}</span>
-              <span class="coord-value">
-                {{ coord.lat.toFixed(6) }}, {{ coord.lng.toFixed(6) }}
-              </span>
-            </div>
-          }
+      <div
+        class="max-h-[150px] overflow-y-auto pr-2 space-y-1 custom-scrollbar"
+      >
+        @for (coord of selectedPolygonCoords; track coord; let i = $index) {
+        <div
+          class="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/50 last:border-0 transition-colors"
+        >
+          <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 w-4 transition-colors"
+            >{{ i + 1 }}</span
+          >
+          <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 transition-colors"
+            >{{ coord.lat.toFixed(6) }}, {{ coord.lng.toFixed(6) }}</span
+          >
         </div>
-      }
-
-      @if (!showCoords) {
-        <div class="coords-preview">
-          <pre>{{ selectedPolygonCoords | json }}</pre>
-        </div>
-      }
-    </div>
-    
-    @if (drawingMode && pointsCount > 0){
-      <div class="points-list">
-        @for (point of activePoints; track point; let i = $index) {
-          <div class="point-item">
-            <span class="point-index">{{ i + 1 }}</span>
-            <span class="point-coords">{{ point.lat.toFixed(6) }}, {{ point.lng.toFixed(6) }}</span>
-          </div>
         }
       </div>
-    }
+      }
+    </div>
+  </div>
   }
 </div>

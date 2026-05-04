@@ -1,14 +1,13 @@
 import { Component, computed, inject, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { AnnotationRepository } from '../../../../data/repositories/annotation/annotation-repository';
 import { MessageService } from '../../../../data/services/message/message.service';
 import { occurencesLabels } from '../../../../shared/utils/occurrences';
 
 @Component({
   selector: 'app-annotation-occurrences',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule],
   templateUrl: './annotation-occurrences.html',
   host: {
     style: 'display: contents',
@@ -61,6 +60,6 @@ export class AnnotationOccurrences implements OnChanges {
   }
 
   public goBack(): void {
-    this.router.navigate(['/pomar-na-mao/sincronizacoes']);
+    this.router.navigate(['/sincronizacoes']);
   }
 }

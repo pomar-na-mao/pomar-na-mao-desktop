@@ -1,0 +1,133 @@
+<div
+  class="flex flex-col h-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm overflow-hidden transition-colors"
+>
+  <div class="mb-5 flex items-start justify-between">
+    <div>
+      <h2 class="text-lg font-bold text-slate-800 dark:text-white transition-colors">Sessões de Pulverização</h2>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors">
+        Visualize o histórico e detalhes das operações de pulverização.
+      </p>
+    </div>
+
+    <span
+      class="w-[100px] inline-flex items-center rounded-full bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20 px-3 py-1 text-xs font-bold text-purple-700 dark:text-purple-400 shadow-sm transition-all"
+    >
+      {{ viewModel.totalSessions() }} {{ viewModel.totalSessions() === 1 ?
+      'sessão' : 'sessões' }}
+    </span>
+  </div>
+
+  @if (viewModel.error() && !viewModel.isLoadingSessions()) {
+  <div
+    class="mb-4 rounded-xl border border-rose-100 dark:border-rose-500/20 bg-rose-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-400 transition-colors"
+  >
+    <div class="flex items-center gap-2">
+      <svg
+        class="h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+        />
+      </svg>
+      {{ viewModel.error() }}
+    </div>
+  </div>
+  }
+
+  <div class="flex-1 overflow-auto -mx-4">
+    <table class="w-full border-separate border-spacing-0 text-left">
+      <thead>
+        <tr class="bg-slate-50/50 dark:bg-slate-800/50">
+          <th
+            class="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 py-3 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 backdrop-blur-sm transition-colors"
+          >
+            Tempo
+          </th>
+          <th
+            class="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 py-3 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 backdrop-blur-sm transition-colors"
+          >
+            Região
+          </th>
+          <th
+            class="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700 py-3 px-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 backdrop-blur-sm transition-colors"
+          >
+            Operador
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+        @if (viewModel.isLoadingSessions()) { @for (i of [1,2,3,4,5,6]; track i)
+        {
+        <tr class="animate-pulse">
+          <td class="py-4 px-4">
+            <div class="h-4 w-32 rounded bg-slate-100 dark:bg-slate-800"></div>
+          </td>
+          <td class="py-4 px-4">
+            <div class="h-4 w-24 rounded bg-slate-100 dark:bg-slate-800"></div>
+          </td>
+          <td class="py-4 px-4">
+            <div class="h-4 w-24 rounded bg-slate-100 dark:bg-slate-800"></div>
+          </td>
+        </tr>
+        } } @else { @for (session of viewModel.sessions(); track session.id) {
+        <tr
+          (click)="onSelectSession(session)"
+          class="group cursor-pointer transition-all duration-150"
+          [ngClass]="{
+              'bg-emerald-50/30 dark:bg-emerald-500/10': viewModel.selectedSessionId() === session.id,
+              'hover:bg-slate-50 dark:hover:bg-slate-800/50': viewModel.selectedSessionId() !== session.id
+            }"
+        >
+          <td class="py-3.5 px-4 text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-1 self-stretch rounded-full transition-colors"
+                [ngClass]="{
+                    'bg-emerald-500': viewModel.selectedSessionId() === session.id,
+                    'bg-transparent group-hover:bg-slate-200 dark:group-hover:bg-slate-700': viewModel.selectedSessionId() !== session.id
+                  }"
+              ></div>
+              {{ getSessionDuration(session) }}
+            </div>
+          </td>
+          <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-400 transition-colors">
+            {{ (session.region || 'Desconhecida') | titlecase }}
+          </td>
+          <td class="py-3.5 px-4 text-xs text-slate-600 dark:text-slate-400 transition-colors">
+            {{ session.operator_name || 'Não Informado' }}
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="3" class="py-12 text-center">
+            <div
+              class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 transition-colors"
+            >
+              <svg
+                class="mb-3 h-10 w-10 opacity-20"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                />
+              </svg>
+              <p class="text-sm font-medium">Nenhuma sessão encontrada</p>
+            </div>
+          </td>
+        </tr>
+        } }
+      </tbody>
+    </table>
+  </div>
+</div>

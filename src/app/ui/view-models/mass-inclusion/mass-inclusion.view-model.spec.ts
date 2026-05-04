@@ -2,7 +2,6 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TranslateModule } from '@ngx-translate/core';
 import { MassInclusionViewModel } from './mass-inclusion.view-model';
 import { MassInclusionRepository } from '../../../data/repositories/mass-inclusion/mass-inclusion.repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
@@ -67,7 +66,7 @@ describe('MassInclusionViewModel', () => {
     polygonCoordsSignal.set([]);
 
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, TranslateModule.forRoot()],
+      imports: [ReactiveFormsModule],
       providers: [
         MassInclusionViewModel,
         { provide: MassInclusionRepository, useValue: mockMassInclusionRepository },
@@ -92,8 +91,9 @@ describe('MassInclusionViewModel', () => {
     expect(ids).toEqual(['r1', 'r3']);
   });
 
-  it('regionOptions should map uniqueRegions to AppSelectOption', () => {
+  it('regionOptions should map uniqueRegions to SelectOption', () => {
     expect(viewModel.regionOptions()).toEqual([
+      { value: '', label: 'Nenhum' },
       { value: 'r1', label: 'Norte' },
       { value: 'r3', label: 'Sul' },
     ]);
@@ -141,12 +141,12 @@ describe('MassInclusionViewModel', () => {
       { lat: 3, lng: 4 },
       { lat: 5, lng: 6 },
     ];
-    viewModel.onPolygonSelected({ coordinates: coords, geoJson: {} });
+    viewModel.onPolygonSelected(coords);
     expect(mockMassInclusionRepository.savePolygonCoordinates).toHaveBeenCalledWith(coords);
   });
 
   it('onPolygonSelected should not save with fewer than 3 points', () => {
-    viewModel.onPolygonSelected({ coordinates: [{ lat: 1, lng: 2 }], geoJson: {} });
+    viewModel.onPolygonSelected([{ lat: 1, lng: 2 }]);
     expect(mockMassInclusionRepository.savePolygonCoordinates).not.toHaveBeenCalled();
   });
 
@@ -156,7 +156,7 @@ describe('MassInclusionViewModel', () => {
       { lat: 3, lng: 4 },
       { lat: 5, lng: 6 },
     ];
-    viewModel.onPolygonSelected({ coordinates: coords, geoJson: {} });
+    viewModel.onPolygonSelected(coords);
     expect(mockMassInclusionRepository.savePolygonCoordinates).not.toHaveBeenCalled();
   });
 

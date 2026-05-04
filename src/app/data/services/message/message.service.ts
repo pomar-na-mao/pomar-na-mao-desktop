@@ -1,5 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { Injectable, signal } from '@angular/core';
 
 export type ToastType = 'info' | 'warn' | 'error' | 'success';
 
@@ -12,13 +11,11 @@ export interface ToastMessage {
   providedIn: 'root'
 })
 export class MessageService {
-  private translate = inject(TranslateService);
-
   public showMessage = signal<boolean>(false);
   public currentMessage = signal<ToastMessage | null>(null);
 
   public show(text: string, type: ToastType = 'info'): void {
-    const translatedText = this.translate.instant(text);
+    const translatedText = text;
     this.currentMessage.set({ text: translatedText, type });
     this.showMessage.set(true);
 

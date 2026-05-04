@@ -1,12 +1,18 @@
 <div
-  class="mass-card lg:h-full rounded-2xl border border-outline/10 bg-surface-container-lowest p-4 shadow-sm"
+  class="mass-card lg:h-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm transition-colors"
 >
-  <div class="mb-4 border-b border-outline/10 pb-3">
-    <h2 class="text-lg font-bold text-on-surface">
-      {{ 'PAGES.MASS_INCLUSION.FORM.TITLE' | translate }}
+  <div
+    class="mb-4 border-b border-slate-100 dark:border-slate-800 pb-3 transition-colors"
+  >
+    <h2
+      class="text-lg font-bold text-slate-800 dark:text-white transition-colors"
+    >
+      Dados para Inclusão em Massa
     </h2>
-    <p class="mt-1 text-sm text-on-surface-variant">
-      {{ 'PAGES.MASS_INCLUSION.FORM.SUBTITLE' | translate }}
+    <p
+      class="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors"
+    >
+      Selecione uma área no mapa para habilitar o formulário.
     </p>
   </div>
 
@@ -18,79 +24,123 @@
     <div class="flex-1 space-y-4 lg:overflow-y-auto px-1.5">
       @if (!massInclusionViewModel.canEditForm()) {
       <div
-        class="rounded-xl border border-outline/20 bg-surface-container px-3 py-2 text-sm font-medium text-on-surface-variant"
+        class="rounded-xl border border-amber-100 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-700 dark:text-amber-400 transition-colors"
       >
-        {{ 'PAGES.MASS_INCLUSION.FORM.DISABLED_HINT' | translate }}
+        Selecione pelo menos 4 pontos no mapa para formar uma poligono e liberar
+        o formulário. Dê duplo clique no último ponto fechar.
       </div>
       }
 
+      <!-- Ocorrências -->
       <app-select
         id="mass-occurrences"
-        label="PAGES.MASS_INCLUSION.FORM.OCCURRENCES"
-        [value]="massInclusionViewModel.massInclusionDataForm.controls.occurrences.value"
+        label="Ocorrências"
         [options]="massInclusionViewModel.occurrenceOptions()"
         [multiple]="true"
         [disabled]="!massInclusionViewModel.canEditForm()"
+        [value]="massInclusionViewModel.massInclusionDataForm.controls.occurrences.value"
         (valueChange)="massInclusionViewModel.onOccurrencesChange($event)"
       />
 
+      <!-- Variedade -->
       <app-select
         id="mass-variety"
-        label="PAGES.MASS_INCLUSION.FORM.VARIETY"
-        placeholder="PAGES.MASS_INCLUSION.FORM.VARIETY_PLACEHOLDER"
-        [value]="massInclusionViewModel.massInclusionDataForm.controls.variety.value"
+        label="Variedade"
+        placeholder="Selecione a variedade"
         [options]="massInclusionViewModel.varietyOptions()"
         [disabled]="!massInclusionViewModel.canEditForm()"
+        [value]="massInclusionViewModel.massInclusionDataForm.controls.variety.value"
         (valueChange)="massInclusionViewModel.onVarietyChange($event)"
       />
-
-      <app-input
-        id="mass-life-of-tree"
-        type="text"
-        label="PAGES.MASS_INCLUSION.FORM.LIFE_OF_TREE"
-        placeholder="PAGES.MASS_INCLUSION.FORM.LIFE_OF_TREE_PLACEHOLDER"
-        [control]="massInclusionViewModel.massInclusionDataForm.controls.lifeOfTree"
-      />
-
-      <app-input
-        id="mass-planting-date"
-        type="date"
-        label="PAGES.MASS_INCLUSION.FORM.PLANTING_DATE"
-        [control]="massInclusionViewModel.massInclusionDataForm.controls.plantingDate"
-      />
-
-      <div>
+      <!-- Idade -->
+      <div class="space-y-1 w-full">
+        <label
+          for="mass-life-of-tree"
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors"
+        >
+          Vida da árvore
+        </label>
+        <input
+          id="mass-life-of-tree"
+          type="text"
+          formControlName="lifeOfTree"
+          placeholder="Ex: Primeira (1)"
+          class="block w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed placeholder-slate-400 dark:placeholder-slate-500"
+        />
+      </div>
+      <!-- Data de Plantio -->
+      <div class="space-y-1 w-full">
+        <label
+          for="mass-planting-date"
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors"
+        >
+          Data de Plantio
+        </label>
+        <input
+          id="mass-planting-date"
+          type="date"
+          formControlName="plantingDate"
+          class="block w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed dark:color-scheme-dark"
+        />
+      </div>
+      <!-- Observações -->
+      <div class="space-y-1">
         <label
           for="mass-description"
-          class="mb-1.5 block px-1 text-sm font-semibold text-on-surface-variant"
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors"
         >
-          {{ 'PAGES.MASS_INCLUSION.FORM.DESCRIPTION' | translate }}
+          Observações
         </label>
         <textarea
           id="mass-description"
           formControlName="description"
           rows="4"
-          [placeholder]="'PAGES.MASS_INCLUSION.FORM.DESCRIPTION_PLACEHOLDER' | translate"
-          class="block w-full resize-y rounded-xl border-none bg-surface-container-low px-4 py-3 text-on-surface outline-none transition-all placeholder-outline/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20"
+          placeholder="Adicione observações relevantes sobre esta área..."
+          class="block w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-3 text-slate-700 dark:text-slate-200 outline-none transition-all placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
         ></textarea>
       </div>
     </div>
 
-    <div class="mt-4 grid grid-cols-2 gap-3 border-t border-outline/10 pt-4">
-      <app-button
+    <!-- Actions -->
+    <div
+      class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 dark:border-slate-800 pt-4 transition-colors"
+    >
+      <button
         type="button"
-        variant="ghost"
-        [label]="'PAGES.MASS_INCLUSION.FORM.CLEAR' | translate"
         [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
         (click)="onClearMassInclusionFormData()"
-      />
-      <app-button
+        class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+      >
+        Limpar
+      </button>
+
+      <button
         type="submit"
-        variant="primary"
-        [label]="'PAGES.MASS_INCLUSION.FORM.SAVE' | translate"
-        [loading]="massInclusionViewModel.isSaving()"
         [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
-      />
+        class="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-all active:scale-95 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+      >
+        @if (massInclusionViewModel.isSaving()) {
+        <svg
+          class="animate-spin h-4 w-4 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          ></path>
+        </svg>
+        Salvando... } @else { Salvar Alterações }
+      </button>
     </div>
   </form>
 </div>

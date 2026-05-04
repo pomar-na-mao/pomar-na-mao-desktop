@@ -1,7 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnnotationRepository } from '../../../../data/repositories/annotation/annotation-repository';
 import { MessageService } from '../../../../data/services/message/message.service';
@@ -58,7 +57,7 @@ describe('AnnotationOccurrences', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [AnnotationOccurrences, TranslateModule.forRoot()],
+      imports: [AnnotationOccurrences],
       providers: [
         { provide: Router, useValue: mockRouter },
         { provide: AnnotationRepository, useValue: mockAnnotationRepository },
@@ -112,6 +111,6 @@ describe('AnnotationOccurrences', () => {
   it('should navigate back to the sync list', () => {
     component.goBack();
 
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/pomar-na-mao/sincronizacoes']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/sincronizacoes']);
   });
 });

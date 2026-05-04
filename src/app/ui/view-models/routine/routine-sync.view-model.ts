@@ -228,7 +228,7 @@ export class RoutineSyncViewModel {
   }
 
   public goBack(): void {
-    this.router.navigate(['/pomar-na-mao/sincronizacoes']);
+    this.router.navigate(['/sincronizacoes']);
   }
 
   public cleanup(): void {

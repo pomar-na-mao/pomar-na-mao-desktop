@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RoutinePlantDifference } from './routine-plant-difference';
 import { RoutineSyncViewModel } from '../../../view-models/routine/routine-sync.view-model';
@@ -37,7 +36,7 @@ describe('RoutinePlantDifference', () => {
     vi.clearAllMocks();
 
     await TestBed.configureTestingModule({
-      imports: [RoutinePlantDifference, TranslateModule.forRoot()]
+      imports: [RoutinePlantDifference]
     })
       .overrideComponent(RoutinePlantDifference, {
         set: {

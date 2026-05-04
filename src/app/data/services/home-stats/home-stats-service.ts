@@ -7,6 +7,8 @@ export interface HomeStats {
   alive_plants: number;
   updated_plants: number;
   latest_updated_at: string | null;
+  total_spraying_sessions: number;
+  total_new_plants: number;
 }
 
 export interface IHomeStatsService {

@@ -1,0 +1,23 @@
+<div class="flex flex-col h-full space-y-6 overflow-hidden">
+  <!-- Header Section -->
+  <div
+    class="flex-shrink-0 animate-in fade-in slide-in-from-bottom-4 duration-500"
+  >
+    <h1 class="text-3xl font-bold text-slate-900 dark:text-white transition-colors">Pulverização</h1>
+    <p class="text-slate-500 dark:text-slate-400 mt-1 transition-colors">
+      Monitore e analise as sessões de pulverização realizadas no campo.
+    </p>
+  </div>
+
+  <div
+    class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6 flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-4 duration-700"
+  >
+    <section class="h-full min-h-0 overflow-hidden">
+      <app-spraying-sessions-table />
+    </section>
+
+    <section class="h-full min-h-0 overflow-auto custom-scrollbar">
+      <app-spraying-flow-detail-panel />
+    </section>
+  </div>
+</div>

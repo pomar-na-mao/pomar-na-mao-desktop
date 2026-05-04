@@ -5,7 +5,6 @@ import { RoutinePlantsRepository } from '../../../../data/repositories/routine-p
 import { RoutineRepository } from '../../../../data/repositories/routine/routine-repository';
 import { RegionsRepository } from '../../../../data/repositories/regions/regions-repository';
 import { getConvexHull } from '../../../../shared/utils/geolocation-math';
-import { ThemeService } from '../../../../core/services/theme/theme.service';
 
 @Component({
   selector: 'app-routine-current-plant-map',
@@ -22,7 +21,6 @@ export class RoutineCurrentPlantMap implements OnInit, AfterViewInit, OnDestroy 
   private repository = inject(RoutinePlantsRepository);
   private routineRepository = inject(RoutineRepository);
   private regionsRepository = inject(RegionsRepository);
-  private themeService = inject(ThemeService);
   private elRef = inject(ElementRef);
 
   private map?: L.Map;
@@ -84,14 +82,6 @@ export class RoutineCurrentPlantMap implements OnInit, AfterViewInit, OnDestroy 
         }
       }
     });
-
-    effect(() => {
-      const isDark = this.themeService.currentTheme() === 'dark';
-      const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
-      if (container) {
-        container.classList.toggle('map-dark', isDark);
-      }
-    });
   }
 
   public async ngOnInit(): Promise<void> {
@@ -125,11 +115,6 @@ export class RoutineCurrentPlantMap implements OnInit, AfterViewInit, OnDestroy 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(this.map);
-
-    // Initial dark state
-    const isDark = this.themeService.currentTheme() === 'dark';
-    const container = this.elRef.nativeElement.querySelector('#map-detail') as HTMLElement | null;
-    if (container) container.classList.toggle('map-dark', isDark);
 
     const defaultIcon = L.icon({
       iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -168,11 +153,5 @@ export class RoutineCurrentPlantMap implements OnInit, AfterViewInit, OnDestroy 
     }, 100);
   }
 
-  public zoomIn(): void {
-    this.map?.zoomIn();
-  }
 
-  public zoomOut(): void {
-    this.map?.zoomOut();
-  }
 }

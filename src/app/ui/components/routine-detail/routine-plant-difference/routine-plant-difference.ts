@@ -1,11 +1,10 @@
 import { Component, inject, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
 import { RoutineSyncViewModel } from '../../../view-models/routine/routine-sync.view-model';
 
 @Component({
   selector: 'app-routine-plant-difference',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule],
   providers: [RoutineSyncViewModel],
   templateUrl: './routine-plant-difference.html',
   host: {

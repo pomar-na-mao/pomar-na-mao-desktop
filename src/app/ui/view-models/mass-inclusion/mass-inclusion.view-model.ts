@@ -1,22 +1,23 @@
 import { computed, effect, Injectable, inject, signal } from "@angular/core";
 import { LoadingService } from "../../../data/services/loading";
 import { MessageService } from "../../../data/services/message/message.service";
-import { TranslateService } from "@ngx-translate/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { PlantsRepository } from "../../../data/repositories/plants/plants-repository";
 import { RegionsRepository } from "../../../data/repositories/regions/regions-repository";
 import {
   MassInclusionRepository,
 } from "../../../data/repositories/mass-inclusion/mass-inclusion.repository";
-import type { MassInclusionData, MassInclusionFormValue, PolygonCoordinate, PolygonSelection } from "../../../domain/models/mass-inclusion";
+import type { MassInclusionData, MassInclusionFormValue, MassInclusionCoordinate } from "../../../domain/models/mass-inclusion";
 import type { BooleanKeys, Plant } from "../../../domain/models/plant-data.model";
 import type { Region } from "../../../domain/models/regions.model";
-import type { AppSelectOption } from "../../../shared/components";
+import type { SelectOption } from "../../../shared/components/select/select";
 import { getConvexHull } from "../../../shared/utils/geolocation-math";
 import { occurenceKeys, occurencesLabels } from "../../../shared/utils/occurrences";
 import { varieties } from "../../../shared/utils/varieties";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class MassInclusionViewModel {
   private formBuilder = inject(FormBuilder);
   private massInclusionRepository = inject(MassInclusionRepository);
@@ -24,7 +25,6 @@ export class MassInclusionViewModel {
   private regionsRepository = inject(RegionsRepository);
   public loadingService = inject(LoadingService);
   private messageService = inject(MessageService);
-  private translate = inject(TranslateService);
 
   public selectedRegionId = signal('');
   public isLoadingRegions = signal(true);
@@ -56,12 +56,13 @@ export class MassInclusionViewModel {
     return Array.from(uniqueByName.values());
   });
 
-  public regionOptions = computed<AppSelectOption[]>(() =>
-    this.uniqueRegions().map((region) => ({
+  public regionOptions = computed<SelectOption[]>(() => [
+    { value: '', label: 'Nenhum' },
+    ...this.uniqueRegions().map((region) => ({
       value: region.id,
       label: region.region,
     }))
-  );
+  ]);
 
   public backgroundPolygon = computed(() => {
     const regionId = this.selectedRegionId();
@@ -97,14 +98,14 @@ export class MassInclusionViewModel {
     return this.toMassInclusionData(this.massInclusionDataForm.getRawValue() as MassInclusionFormValue);
   }
 
-  public occurrenceOptions = computed<AppSelectOption[]>(() =>
+  public occurrenceOptions = computed<SelectOption[]>(() =>
     occurenceKeys.map((key) => ({
       value: key,
       label: occurencesLabels[key],
     }))
   );
 
-  public varietyOptions = computed<AppSelectOption[]>(() =>
+  public varietyOptions = computed<SelectOption[]>(() =>
     varieties.map((variety) => ({
       value: variety,
       label: variety,
@@ -125,12 +126,12 @@ export class MassInclusionViewModel {
     });
   }
 
-  public onPolygonSelected(selection: PolygonSelection): void {
-    if (!this.isValidPolygon(selection.coordinates)) {
+  public onPolygonSelected(coordinates: MassInclusionCoordinate[]): void {
+    if (!this.isValidPolygon(coordinates)) {
       return;
     }
 
-    this.massInclusionRepository.savePolygonCoordinates(selection.coordinates);
+    this.massInclusionRepository.savePolygonCoordinates(coordinates);
   }
 
   public onPolygonCleared(): void {
@@ -149,6 +150,15 @@ export class MassInclusionViewModel {
   public async onRegionChange(regionId: string | string[]): Promise<void> {
     const normalizedRegionId = this.toSingleValue(regionId);
     this.selectedRegionId.set(normalizedRegionId);
+
+    if (normalizedRegionId === '') {
+      this.onPolygonCleared();
+      this.clearMapSignal.update((v) => v + 1);
+      this.regionsRepository.currentRegion.set(null);
+      this.plants.set([]);
+      return;
+    }
+
     const selectedRegion = this.findRegionById(normalizedRegionId);
 
     if (selectedRegion) {
@@ -186,7 +196,7 @@ export class MassInclusionViewModel {
     );
   }
 
-  private isValidPolygon(coordinates: PolygonCoordinate[]): boolean {
+  private isValidPolygon(coordinates: MassInclusionCoordinate[]): boolean {
     if (coordinates.length < 3) {
       return false;
     }
@@ -255,11 +265,11 @@ export class MassInclusionViewModel {
       });
 
       if (error) {
-        this.messageService.error(this.translate.instant('PAGES.MASS_INCLUSION.FORM.SAVE_ERROR'));
+        this.messageService.error('Erro ao salvar as alterações em massa.');
         return;
       }
 
-      this.messageService.success(this.translate.instant('PAGES.MASS_INCLUSION.FORM.SAVE_SUCCESS'));
+      this.messageService.success('Alterações em massa salvas com sucesso!');
       this.onClearMassInclusionFormDataHandler();
       this.onPolygonCleared();
       this.clearMapSignal.update((v) => v + 1);

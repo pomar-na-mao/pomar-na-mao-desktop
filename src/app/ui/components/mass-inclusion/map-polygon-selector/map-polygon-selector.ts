@@ -11,31 +11,42 @@ import {
     OnChanges,
     SimpleChanges,
     HostListener,
-    effect,
-    inject,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
 import type { Plant } from '../../../../domain/models/plant-data.model';
-import type { PolygonSelection } from '../../../../domain/models/mass-inclusion';
-import type { PolygonCoordinate } from '../../../../domain/models/mass-inclusion';
-import { ThemeService } from '../../../../core/services/theme/theme.service';
+import type { PolygonSelection, PolygonCoordinate } from '../../../../domain/models/mass-inclusion';
 
 @Component({
     selector: 'app-map-polygon-selector',
-    imports: [CommonModule, TranslateModule],
+    standalone: true,
+    imports: [CommonModule],
     templateUrl: './map-polygon-selector.html',
-    styleUrls: ['./map-polygon-selector.scss'],
+    styles: [`
+        :host {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .map-container {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    `]
 })
-export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('mapContainer') mapContainer!: ElementRef;
 
-    private themeService = inject(ThemeService);
 
     @Input() center: [number, number] = [-23.398772, -49.148646];
-
-    @Input() zoom: number = 32;
-
+    @Input() zoom: number = 16;
     @Input() maxPolygons: number = 1;
 
     @Input() set plants(plants: Plant[]) {
@@ -51,7 +62,6 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
     }
 
     @Output() polygonSelected = new EventEmitter<PolygonSelection>();
-
     @Output() polygonCleared = new EventEmitter<void>();
 
     @HostListener('window:keydown', ['$event']) handleKeyboardEvent(event: KeyboardEvent) {
@@ -66,7 +76,6 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
     private tempPoints: L.LatLng[] = [];
     private tempMarkers: L.CircleMarker[] = [];
     private tempPolyline: L.Polyline | null = null;
-    private isDrawing = false;
     private previewLine: L.Polyline | null = null;
     private _backgroundPolygonCoords: [number, number][] | null = null;
     private _plants: Plant[] = [];
@@ -79,16 +88,6 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
     public showCoords = false;
     public copiedFeedback = false;
 
-    constructor() {
-        effect(() => {
-            const isDark = this.themeService.currentTheme() === 'dark';
-            const container = this.mapContainer?.nativeElement as HTMLElement | undefined;
-
-            if (container) {
-                container.classList.toggle('map-dark', isDark);
-            }
-        });
-    }
 
     public ngAfterViewInit(): void {
         this.initMap();
@@ -109,17 +108,13 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
             center: this.center,
             zoom: this.zoom,
             zoomControl: true,
-
+            attributionControl: true
         });
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 24,
         }).addTo(this.map);
-
-        // Apply dark filter if theme is dark
-        const isDark = this.themeService.currentTheme() === 'dark';
-        this.mapContainer.nativeElement.classList.toggle('map-dark', isDark);
 
         this.map.on('click', (e: L.LeafletMouseEvent) => this.onMapClick(e));
         this.map.on('mousemove', (e: L.LeafletMouseEvent) => this.onMouseMove(e));
@@ -142,9 +137,9 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
         if (this._backgroundPolygonCoords && this._backgroundPolygonCoords.length > 0) {
             this.backgroundLayer = L.polygon(this._backgroundPolygonCoords, {
-                color: '#dc2626', // red-500
-                fillColor: '#dc2626', // red-400
-                fillOpacity: 0.2,
+                color: '#ef4444', // red-500
+                fillColor: '#ef4444',
+                fillOpacity: 0.1,
                 weight: 2,
                 dashArray: '5, 5',
                 interactive: false,
@@ -162,11 +157,11 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
         this._plants.forEach((plant) => {
             const circle = L.circle([plant.latitude, plant.longitude], {
-                radius: 4,
-                color: '#166534',
-                fillColor: '#22c55e',
-                fillOpacity: 0.9,
-                weight: 2,
+                radius: 2,
+                color: '#059669', // emerald-600
+                fillColor: '#10b981', // emerald-500
+                fillOpacity: 0.8,
+                weight: 1,
                 interactive: false,
             }).addTo(this.map);
 
@@ -191,12 +186,12 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
         this.tempPoints.push(e.latlng);
 
         const marker = L.circleMarker(e.latlng, {
-            radius: 6,
-            fillColor: '#00d4ff',
+            radius: 5,
+            fillColor: '#10b981', // emerald-500
             color: '#fff',
             weight: 2,
             opacity: 1,
-            fillOpacity: 0.9,
+            fillOpacity: 1,
         }).addTo(this.map);
 
         this.tempMarkers.push(marker);
@@ -206,9 +201,9 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
                 this.tempPolyline.setLatLngs(this.tempPoints);
             } else {
                 this.tempPolyline = L.polyline(this.tempPoints, {
-                    color: '#00d4ff',
+                    color: '#10b981',
                     weight: 2,
-                    dashArray: '6, 4',
+                    dashArray: '5, 5',
                     opacity: 0.8,
                 }).addTo(this.map);
             }
@@ -224,9 +219,9 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
             this.previewLine.setLatLngs(points);
         } else {
             this.previewLine = L.polyline(points, {
-                color: '#00d4ff',
+                color: '#10b981',
                 weight: 1.5,
-                dashArray: '4, 6',
+                dashArray: '3, 5',
                 opacity: 0.5,
             }).addTo(this.map);
         }
@@ -251,9 +246,9 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
         }
 
         const polygon = L.polygon(this.tempPoints, {
-            color: '#00d4ff',
-            fillColor: '#00d4ff',
-            fillOpacity: 0.15,
+            color: '#10b981',
+            fillColor: '#10b981',
+            fillOpacity: 0.2,
             weight: 2,
         }).addTo(this.map);
 
@@ -289,7 +284,6 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
     public cancelDrawing(): void {
         this.clearTempLayers();
         this.tempPoints = [];
-        this.isDrawing = false;
     }
 
     private clearTempLayers(): void {
@@ -336,7 +330,6 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
     public copyCoordinates(): void {
         const text = JSON.stringify(this.selectedPolygonCoords, null, 2);
-
         navigator.clipboard.writeText(text).then(() => {
             this.copiedFeedback = true;
             setTimeout(() => (this.copiedFeedback = false), 2000);
@@ -345,9 +338,7 @@ export class MapPolygonSelectorComponent implements AfterViewInit, OnChanges, On
 
     public copyGeoJson(): void {
         if (this.polygons.length === 0) return;
-
         const text = JSON.stringify(this.polygons[this.polygons.length - 1].geoJson, null, 2);
-
         navigator.clipboard.writeText(text).then(() => {
             this.copiedFeedback = true;
             setTimeout(() => (this.copiedFeedback = false), 2000);

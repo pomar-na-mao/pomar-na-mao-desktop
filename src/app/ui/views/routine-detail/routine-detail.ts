@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { RoutinePlantDifference } from '../../components/routine-detail/routine-plant-difference/routine-plant-difference';
@@ -13,12 +13,14 @@ import { RoutineCurrentPlantMap } from '../../components/routine-detail/routine-
 export class RoutineDetail implements OnInit {
   private route = inject(ActivatedRoute);
 
-  public id: number | null = null;
+  @Input() public id: number | null = null;
 
   public ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.id = parseInt(idParam, 10);
+    if (!this.id) {
+      const idParam = this.route.snapshot.paramMap.get('id');
+      if (idParam) {
+        this.id = parseInt(idParam, 10);
+      }
     }
   }
 }

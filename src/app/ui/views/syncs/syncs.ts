@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
 import { AnnotationsViewModel } from '../../view-models/annotation/annotations.view-model';
 import { NewPlantsViewModel } from '../../view-models/new-plant/new-plants.view-model';
 import { RoutinesTableComponent } from '../../components/syncs/routines-table/routines-table';
@@ -10,7 +9,7 @@ import { RoutinesViewModel } from '../../view-models/routine/routines.view-model
 
 @Component({
   selector: 'app-syncs',
-  imports: [CommonModule, TranslateModule, RoutinesTableComponent, AnnotationsTableComponent, NewPlantsTableComponent],
+  imports: [CommonModule, RoutinesTableComponent, AnnotationsTableComponent, NewPlantsTableComponent],
   templateUrl: './syncs.html',
   styleUrls: ['./syncs.scss'],
 })
@@ -19,10 +18,22 @@ export class Syncs implements OnInit {
   public annotationsViewModel = inject(AnnotationsViewModel);
   public newPlantsViewModel = inject(NewPlantsViewModel);
 
+  activeTab = 'annotations';
+
+  tabs = [
+    { id: 'annotations', label: 'Anotações' },
+    { id: 'new-plants', label: 'Novas Plantas' },
+    { id: 'routines', label: 'Rotinas' },
+  ];
+
   public ngOnInit(): void {
     this.routinesViewModel.loadRoutines();
     this.annotationsViewModel.loadAnnotations();
     this.newPlantsViewModel.loadNewPlants();
+  }
+
+  setActiveTab(tabId: string) {
+    this.activeTab = tabId;
   }
 
 
