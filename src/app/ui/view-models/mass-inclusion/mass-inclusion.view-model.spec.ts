@@ -93,6 +93,7 @@ describe('MassInclusionViewModel', () => {
 
   it('regionOptions should map uniqueRegions to SelectOption', () => {
     expect(viewModel.regionOptions()).toEqual([
+      { value: '', label: 'Nenhum' },
       { value: 'r1', label: 'Norte' },
       { value: 'r3', label: 'Sul' },
     ]);

@@ -53,7 +53,7 @@ describe('DeleteProductModal', () => {
 
   it('should call close when backdrop is clicked', () => {
     const spy = vi.spyOn(component, 'close');
-    const event = { target: { id: 'delete-backdrop' } } as any;
+    const event = { target: { id: 'delete-backdrop' } } as unknown as MouseEvent;
     component.onBackdropClick(event);
     expect(spy).toHaveBeenCalled();
   });

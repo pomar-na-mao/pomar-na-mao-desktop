@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ProductsRepository } from '../../../data/repositories/products/products-repository';
 import { MessageService } from '../../../data/services/message/message.service';
-import { Product } from '../../../domain/models/product.model';
+import { Product, ProductInsert, ProductUpdate } from '../../../domain/models/product.model';
 
 export interface ProductsAdminStats {
   total: number;
@@ -70,19 +70,19 @@ export class AdminViewModel {
     this.deletingProduct.set(null);
   }
 
-  public async saveProduct(productData: Partial<Product>): Promise<void> {
+  public async saveProduct(productData: ProductInsert | ProductUpdate): Promise<void> {
     this.isSaving.set(true);
     try {
       const current = this.editingProduct();
       if (current?.id) {
-        const { error } = await this.productsRepository.update(current.id, productData);
+        const { error } = await this.productsRepository.update(current.id, productData as ProductUpdate);
         if (error) {
           this.messageService.error('Erro ao atualizar produto.');
           return;
         }
         this.messageService.success('Produto atualizado com sucesso!');
       } else {
-        const { error } = await this.productsRepository.insert(productData as any);
+        const { error } = await this.productsRepository.insert(productData as ProductInsert);
         if (error) {
           this.messageService.error('Erro ao cadastrar produto.');
           return;

@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { VarietiesRepository } from '../../../data/repositories/varieties/varieties-repository';
 import { MessageService } from '../../../data/services/message/message.service';
-import { Variety } from '../../../domain/models/variety.model';
+import { Variety, VarietyInsert, VarietyUpdate } from '../../../domain/models/variety.model';
 
 export interface VarietiesStats {
   total: number;
@@ -66,19 +66,19 @@ export class VarietiesViewModel {
     this.deletingVariety.set(null);
   }
 
-  public async saveVariety(varietyData: Partial<Variety>): Promise<void> {
+  public async saveVariety(varietyData: VarietyInsert | VarietyUpdate): Promise<void> {
     this.isSaving.set(true);
     try {
       const current = this.editingVariety();
       if (current?.id) {
-        const { error } = await this.varietiesRepository.update(current.id, varietyData as any);
+        const { error } = await this.varietiesRepository.update(current.id, varietyData as VarietyUpdate);
         if (error) {
           this.messageService.error('Erro ao atualizar variedade.');
           return;
         }
         this.messageService.success('Variedade atualizada com sucesso!');
       } else {
-        const { error } = await this.varietiesRepository.insert(varietyData as any);
+        const { error } = await this.varietiesRepository.insert(varietyData as VarietyInsert);
         if (error) {
           this.messageService.error('Erro ao cadastrar variedade.');
           return;

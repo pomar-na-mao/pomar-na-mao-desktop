@@ -6,6 +6,7 @@ import { RegionsRepository } from '../../../data/repositories/regions/regions-re
 import { occurenceKeys, occurencesLabels } from '../../../shared/utils/occurrences';
 import { varieties } from '../../../shared/utils/varieties';
 import { getConvexHull } from '../../../shared/utils/geolocation-math';
+import { Plant, PlantRecentUpdate } from '../../../domain/models/plant-data.model';
 
 export interface DashboardMetric {
   label: string;
@@ -261,17 +262,18 @@ export class DashboardViewModel {
     this.selectedActivity.set(null);
   }
 
-  mapPlantToActivity(plant: any): DashboardActivity {
+  mapPlantToActivity(plant: Plant | PlantRecentUpdate): DashboardActivity {
     const activeOccurrencesList: string[] = [];
     const occurrencesCount = occurenceKeys.reduce((acc, key) => {
-      const value = plant[key];
+      const value = plant[key as keyof (Plant | PlantRecentUpdate)];
       if (value) {
         activeOccurrencesList.push(occurencesLabels[key as keyof typeof occurencesLabels] || key);
       }
       return acc + (value ? 1 : 0);
     }, 0);
 
-    const dateStr = plant.updated_at || plant.created_at;
+    const plantWithDates = plant as Plant;
+    const dateStr = plantWithDates.updated_at || plantWithDates.created_at;
     const timeStr = dateStr ? new Date(dateStr).toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',

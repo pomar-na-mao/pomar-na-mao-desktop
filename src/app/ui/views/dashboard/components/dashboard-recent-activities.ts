@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardViewModel, DashboardActivity } from '../../../view-models/dashboard/dashboard.view-model';
+import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
 
 @Component({
   selector: 'app-dashboard-recent-activities',

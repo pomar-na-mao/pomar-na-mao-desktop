@@ -11,7 +11,6 @@ import {
     OnChanges,
     SimpleChanges,
     HostListener,
-    inject,
 } from '@angular/core';
 import * as L from 'leaflet';
 import type { Plant } from '../../../../domain/models/plant-data.model';

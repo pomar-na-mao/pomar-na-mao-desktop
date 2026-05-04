@@ -1,4 +1,4 @@
-import { Component, Input as NgInput, Optional, Self } from '@angular/core';
+import { Component, inject, Input as NgInput } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -54,6 +54,8 @@ export class Input implements ControlValueAccessor {
   @NgInput() errors: Record<string, string> = {};
   @NgInput() disabled = false;
 
+  public ngControl = inject(NgControl, { optional: true, self: true });
+
   @NgInput() set value(val: string | null) {
     this._value = val || '';
   }
@@ -61,7 +63,7 @@ export class Input implements ControlValueAccessor {
     return this._value;
   }
 
-  constructor(@Optional() @Self() public ngControl: NgControl) {
+  constructor() {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
