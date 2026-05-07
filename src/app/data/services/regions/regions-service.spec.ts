@@ -39,8 +39,8 @@ describe('RegionsService', () => {
     const result = await service.findAll();
 
     expect(mockFrom).toHaveBeenCalledWith('regions');
-    expect(select).toHaveBeenCalledWith('*');
-    expect(order).toHaveBeenCalledWith('region');
+    expect(select).toHaveBeenCalledWith('*', { count: 'exact' });
+    expect(order).toHaveBeenCalledWith('region', { ascending: true });
     expect(result).toBe(mockResponse);
   });
 
