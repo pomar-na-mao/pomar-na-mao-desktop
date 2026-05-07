@@ -155,22 +155,6 @@ export class RoutineSyncViewModel {
     }
   }
 
-  /* public async onApproveWorkAnnotation(annotationId: string): Promise<void> {
-        try {
-            this.isApproving.set(true);
-            const { error } = await this.routinePlantsRepository.approveWorkAnnotation(annotationId);
-            if (error) throw error;
-
-            await this.workAnnotationRepository.fetchWorkAnnotations();
-
-            this.messageService.show('COMMON.TOAST.SUCCESS', 'success');
-        } catch {
-            this.messageService.show('COMMON.TOAST.ERROR', 'error');
-        } finally {
-            this.isApproving.set(false);
-        }
-    } */
-
   public async onApproveRoutine(): Promise<void> {
     const plantWithUpdates = this.currentRoutinePlant();
     const routineId = this.id();

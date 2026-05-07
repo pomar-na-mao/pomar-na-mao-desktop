@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, signal, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, inject, signal, OnInit, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthenticationRepository } from '../../../../../data/repositories/authentication/authentication-repository';
 import { UsersRepository } from '../../../../../data/repositories/users/users-repository';
@@ -97,11 +97,22 @@ import { Router } from '@angular/router';
                 <p class="text-[10px] text-slate-500 dark:text-slate-400">Bem-vindo!</p>
               </div>
             }
-            <img
-              [src]="usersRepository.currentUser()?.avatar_url"
-              alt="User Avatar"
-              class="w-8 h-8 rounded-lg shadow-sm"
-            />
+            @if (avatarUrl() && !avatarLoadFailed()) {
+              <img
+                [src]="avatarUrl()!"
+                alt="User Avatar"
+                class="w-8 h-8 rounded-lg shadow-sm object-cover"
+                (error)="onAvatarError()"
+              />
+            } @else {
+              <div
+                class="w-8 h-8 rounded-lg shadow-sm flex items-center justify-center bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100 font-semibold text-xs select-none"
+                aria-label="User Avatar Placeholder"
+                [attr.title]="usersRepository.currentUser()?.full_name || 'Usuário'"
+              >
+                {{ userInitials() || 'U' }}
+              </div>
+            }
           </button>
 
           <!-- Dropdown Menu -->
@@ -169,6 +180,29 @@ export class Header implements OnInit {
 
   public isUserDropdownOpen = signal(false);
   public isDarkMode = signal(false);
+  public avatarLoadFailed = signal(false);
+
+  public avatarUrl = computed(() => {
+    const url = this.usersRepository.currentUser()?.avatar_url;
+    const trimmed = typeof url === 'string' ? url.trim() : '';
+    return trimmed.length > 0 ? trimmed : null;
+  });
+
+  public userInitials = computed(() => {
+    const fullName = this.usersRepository.currentUser()?.full_name;
+    const name = typeof fullName === 'string' ? fullName.trim() : '';
+    if (!name) return '';
+
+    const parts = name.split(/\s+/).filter(Boolean);
+    const first = parts[0]?.[0] ?? '';
+    const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? '') : '';
+    return (first + last).toUpperCase();
+  });
+
+  private resetAvatarLoadFailedOnAvatarUrlChange = effect(() => {
+    this.avatarUrl();
+    this.avatarLoadFailed.set(false);
+  });
 
   ngOnInit() {
     const savedTheme = localStorage.getItem('theme');
@@ -189,6 +223,10 @@ export class Header implements OnInit {
 
   public toggleUserDropdown() {
     this.isUserDropdownOpen.update(v => !v);
+  }
+
+  public onAvatarError() {
+    this.avatarLoadFailed.set(true);
   }
 
   async logout() {
