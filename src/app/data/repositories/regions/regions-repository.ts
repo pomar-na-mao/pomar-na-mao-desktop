@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from "@angular/core";
+import type { PostgrestError } from "@supabase/supabase-js";
 import type { Region } from "../../../domain/models/regions.model";
 import { RegionsService } from "../../services/regions/regions-service";
 
@@ -11,11 +12,13 @@ export class RegionsRepository {
   public regions = signal<Region[]>([]);
   public currentRegion = signal<Region | null>(null);
 
-  public async findAll(): Promise<void> {
+  public async findAll(): Promise<{ error: PostgrestError | null }> {
     const { data, error } = await this.regionsService.findAll();
     if (!error && data) {
-      this.regions.set(data);
+      this.regions.set(this.sortRegions(data));
     }
+
+    return { error };
   }
 
   public async findById(id: string): Promise<Region | null> {
@@ -28,5 +31,18 @@ export class RegionsRepository {
 
     this.currentRegion.set(null);
     return null;
+  }
+
+  private sortRegions(regions: Region[]): Region[] {
+    return [...regions].sort((left, right) => {
+      const regionComparison = left.region.localeCompare(right.region, 'pt-BR');
+      if (regionComparison !== 0) return regionComparison;
+
+      if (left.latitude !== right.latitude) {
+        return left.latitude - right.latitude;
+      }
+
+      return left.longitude - right.longitude;
+    });
   }
 }

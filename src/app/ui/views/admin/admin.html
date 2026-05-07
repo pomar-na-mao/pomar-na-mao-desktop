@@ -65,6 +65,16 @@
           />
         </div>
       }
+
+      @if (activeTab === 'regions') {
+        <div class="animate-in fade-in duration-500">
+          <app-regions-admin-card
+            [regions]="regionsViewModel.regions()"
+            [stats]="regionsViewModel.stats()"
+            [isLoading]="regionsViewModel.isLoading()"
+          />
+        </div>
+      }
     </div>
   </div>
 </div>

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Admin } from './admin';
 import { AdminViewModel } from '../../view-models/admin/admin.view-model';
 import { VarietiesViewModel } from '../../view-models/varieties/varieties.view-model';
+import { RegionsViewModel } from '../../view-models/regions/regions.view-model';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { signal } from '@angular/core';
 
@@ -33,12 +34,20 @@ describe('Admin', () => {
     stats: signal({ total: 0 }),
   };
 
+  const mockRegionsViewModel = {
+    loadRegions: vi.fn(),
+    regions: signal([]),
+    isLoading: signal(false),
+    stats: signal({ total: 0, unique: 0 }),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Admin],
       providers: [
         { provide: AdminViewModel, useValue: mockAdminViewModel },
-        { provide: VarietiesViewModel, useValue: mockVarietiesViewModel }
+        { provide: VarietiesViewModel, useValue: mockVarietiesViewModel },
+        { provide: RegionsViewModel, useValue: mockRegionsViewModel }
       ]
     }).compileComponents();
 
@@ -51,16 +60,18 @@ describe('Admin', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load products and varieties on init', () => {
+  it('should load products, varieties and regions on init', () => {
     fixture.detectChanges();
     expect(mockAdminViewModel.loadProducts).toHaveBeenCalled();
     expect(mockVarietiesViewModel.loadVarieties).toHaveBeenCalled();
+    expect(mockRegionsViewModel.loadRegions).toHaveBeenCalled();
   });
 
   it('should have admin tabs defined', () => {
     expect(component.tabs.length).toBeGreaterThan(0);
     expect(component.tabs.find(t => t.id === 'products')).toBeDefined();
     expect(component.tabs.find(t => t.id === 'varieties')).toBeDefined();
+    expect(component.tabs.find(t => t.id === 'regions')).toBeDefined();
   });
 
   it('should change active tab', () => {
