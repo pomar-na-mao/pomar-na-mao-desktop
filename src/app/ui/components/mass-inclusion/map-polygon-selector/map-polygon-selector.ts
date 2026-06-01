@@ -167,6 +167,16 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
             this.plantCircles.push(circle);
         });
+
+        if (this._plants.length > 0 && !this._backgroundPolygonCoords?.length) {
+            const bounds = L.latLngBounds(
+                this._plants.map((plant) => [plant.latitude, plant.longitude] as [number, number])
+            );
+
+            if (bounds.isValid()) {
+                this.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 18 });
+            }
+        }
     }
 
     public toggleDrawingMode(): void {
@@ -259,7 +269,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
             lng: parseFloat(p.lng.toFixed(6)),
         }));
 
-        const geoJson = {
+        const geoJson: PolygonSelection['geoJson'] = {
             type: 'Feature',
             geometry: {
                 type: 'Polygon',

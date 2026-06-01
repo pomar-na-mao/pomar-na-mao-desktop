@@ -26,33 +26,31 @@
       <div
         class="rounded-xl border border-amber-100 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-700 dark:text-amber-400 transition-colors"
       >
-        Selecione pelo menos 4 pontos no mapa para formar uma poligono e liberar
+        Selecione pelo menos 4 pontos no mapa para formar um polígono e liberar
         o formulário. Dê duplo clique no último ponto para fechar.
       </div>
       }
 
-      <!-- Ocorrências -->
       <app-select
         id="mass-occurrences"
         label="Ocorrências"
         [options]="massInclusionViewModel.occurrenceOptions()"
         [multiple]="true"
-        [disabled]="!massInclusionViewModel.canEditForm()"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isLoadingOptions()"
         [value]="massInclusionViewModel.massInclusionDataForm.controls.occurrences.value"
         (valueChange)="massInclusionViewModel.onOccurrencesChange($event)"
       />
 
-      <!-- Variedade -->
       <app-select
         id="mass-variety"
         label="Variedade"
         placeholder="Selecione a variedade"
         [options]="massInclusionViewModel.varietyOptions()"
-        [disabled]="!massInclusionViewModel.canEditForm()"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isLoadingOptions()"
         [value]="massInclusionViewModel.massInclusionDataForm.controls.variety.value"
         (valueChange)="massInclusionViewModel.onVarietyChange($event)"
       />
-      <!-- Idade -->
+
       <div class="space-y-1 w-full">
         <label
           for="mass-life-of-tree"
@@ -68,7 +66,7 @@
           class="block w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed placeholder-slate-400 dark:placeholder-slate-500"
         />
       </div>
-      <!-- Data de Plantio -->
+
       <div class="space-y-1 w-full">
         <label
           for="mass-planting-date"
@@ -83,7 +81,7 @@
           class="block w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed dark:color-scheme-dark"
         />
       </div>
-      <!-- Observações -->
+
       <div class="space-y-1">
         <label
           for="mass-description"
@@ -99,25 +97,80 @@
           class="block w-full resize-y rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-3 text-slate-700 dark:text-slate-200 outline-none transition-all placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
         ></textarea>
       </div>
+
+      @if (massInclusionViewModel.previewLoaded()) {
+      <div
+        class="space-y-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3 transition-colors"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">
+              Plantas da prévia
+            </h3>
+            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+              {{ massInclusionViewModel.selectedPlantsCount() }} de
+              {{ massInclusionViewModel.plantsFoundCount() }} selecionadas
+            </p>
+          </div>
+        </div>
+
+        @if (massInclusionViewModel.plantsFoundCount() === 0) {
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          Nenhuma planta encontrada no polígono.
+        </p>
+        } @else {
+        <div class="max-h-48 space-y-2 overflow-y-auto pr-1">
+          @for (plant of massInclusionViewModel.previewPlants(); track plant.plantId) {
+          <label
+            class="flex min-h-14 items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2"
+          >
+            <input
+              type="checkbox"
+              class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+              [checked]="plant.selected"
+              (change)="onPlantSelectionChange(plant.plantId, $event)"
+            />
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {{ plant.varietyName || 'Sem variedade' }}
+              </span>
+              <span class="block truncate text-xs text-slate-500 dark:text-slate-400">
+                {{ plant.zoneName || 'Sem zona' }} · {{ plant.latitude }}, {{ plant.longitude }}
+              </span>
+            </span>
+          </label>
+          }
+        </div>
+        }
+      </div>
+      }
     </div>
 
-    <!-- Actions -->
     <div
-      class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 dark:border-slate-800 pt-4 transition-colors"
+      class="mt-4 grid grid-cols-3 gap-3 border-t border-slate-100 dark:border-slate-800 pt-4 transition-colors"
     >
       <button
         type="button"
-        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving() || massInclusionViewModel.isPreviewing()"
         (click)="onClearMassInclusionFormData()"
-        class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+        class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
       >
         Limpar
       </button>
 
       <button
+        type="button"
+        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving() || massInclusionViewModel.isPreviewing()"
+        (click)="onPreviewPlantsInsidePolygon()"
+        class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold text-sm hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+      >
+        @if (massInclusionViewModel.isPreviewing()) { Buscando... } @else { Prévia }
+      </button>
+
+      <button
         type="submit"
-        [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isSaving()"
-        class="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-all active:scale-95 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+        [disabled]="!massInclusionViewModel.canConfirm()"
+        class="flex items-center justify-center gap-2 px-3 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-all active:scale-95 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
       >
         @if (massInclusionViewModel.isSaving()) {
         <svg
@@ -139,7 +192,7 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
           ></path>
         </svg>
-        Salvando... } @else { Salvar Alterações }
+        Salvando... } @else { Confirmar }
       </button>
     </div>
   </form>

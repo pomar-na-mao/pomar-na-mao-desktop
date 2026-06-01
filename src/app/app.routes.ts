@@ -16,28 +16,12 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
       },
       {
-        path: 'sincronizacoes',
-        loadComponent: () => import('./ui/views/syncs/syncs').then(m => m.Syncs)
-      },
-      {
         path: 'inclusoes-em-massa',
         loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
       },
       {
-        path: 'fluxo-pulverizacao',
-        loadComponent: () => import('./ui/views/spraying-flow/spraying-flow').then(m => m.SprayingFlow)
-      },
-      {
-        path: 'administracao',
-        loadComponent: () => import('./ui/views/admin/admin').then(m => m.Admin)
-      },
-      {
         path: 'settings',
         loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
-      },
-      {
-        path: 'reports',
-        loadComponent: () => import('./ui/views/reports/reports').then(m => m.Reports)
       },
       {
         path: 'users',
@@ -48,7 +32,6 @@ export const ROUTES: Routes = [
         redirectTo: 'home',
         pathMatch: 'full'
       },
-
     ]
   },
   {

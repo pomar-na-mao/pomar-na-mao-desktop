@@ -2,9 +2,17 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { MassInclusionRepository } from './mass-inclusion.repository';
 import { MassInclusionService } from '../../services/mass-inclusion/mass-inclusion.service';
-import { EMPTY_MASS_INCLUSION_DATA, type MassInclusionData, type MassUpdatePlantsParams } from '../../../domain/models/mass-inclusion';
+import {
+  EMPTY_MASS_INCLUSION_DATA,
+  type GeoJsonPolygon,
+  type MassInclusionData,
+  type PolygonBulkUpdatePayload,
+} from '../../../domain/models/mass-inclusion';
 
-const mockMassUpdatePlantsInPolygon = vi.fn();
+const mockFindPlantsInsidePolygon = vi.fn();
+const mockFindVarietyOptions = vi.fn();
+const mockFindOccurrenceTypeOptions = vi.fn();
+const mockSyncPolygonBulkUpdate = vi.fn();
 
 describe('MassInclusionRepository', () => {
   let repo: MassInclusionRepository;
@@ -18,7 +26,10 @@ describe('MassInclusionRepository', () => {
         {
           provide: MassInclusionService,
           useValue: {
-            massUpdatePlantsInPolygon: mockMassUpdatePlantsInPolygon,
+            findPlantsInsidePolygon: mockFindPlantsInsidePolygon,
+            findVarietyOptions: mockFindVarietyOptions,
+            findOccurrenceTypeOptions: mockFindOccurrenceTypeOptions,
+            syncPolygonBulkUpdate: mockSyncPolygonBulkUpdate,
           },
         },
       ],
@@ -27,71 +38,129 @@ describe('MassInclusionRepository', () => {
     repo = TestBed.inject(MassInclusionRepository);
   });
 
-  it('should be created', () => {
-    expect(repo).toBeTruthy();
-  });
-
-  it('should start with empty polygon coordinates', () => {
+  it('should start with empty state', () => {
     expect(repo.selectedPolygonCoordinates()).toEqual([]);
-  });
-
-  it('should start with empty mass inclusion data', () => {
     expect(repo.currentMassInclusionData()).toEqual(EMPTY_MASS_INCLUSION_DATA);
+    expect(repo.previewPlants()).toEqual([]);
   });
 
-  describe('savePolygonCoordinates', () => {
-    it('should save coordinates to signal', () => {
-      const coords = [
-        { lat: -21.23, lng: -47.79 },
-        { lat: -21.24, lng: -47.78 },
-      ];
-      repo.savePolygonCoordinates(coords);
-      expect(repo.selectedPolygonCoordinates()).toEqual(coords);
+  it('should save coordinates and clear stale preview', async () => {
+    mockFindPlantsInsidePolygon.mockResolvedValue({
+      data: [{
+        plantId: 'p1',
+        latitude: 1,
+        longitude: 2,
+        zoneId: null,
+        zoneName: null,
+        varietyId: null,
+        varietyName: null,
+        plantingDate: null,
+      }],
+      error: null,
     });
 
-    it('should map only lat and lng from coordinates', () => {
-      const coords = [{ lat: 10, lng: 20 }];
-      repo.savePolygonCoordinates(coords);
-      expect(repo.selectedPolygonCoordinates()[0]).toEqual({ lat: 10, lng: 20 });
+    await repo.previewPlantsInsidePolygon({ type: 'Polygon', coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]] });
+    repo.savePolygonCoordinates([{ lat: 10, lng: 20 }]);
+
+    expect(repo.selectedPolygonCoordinates()).toEqual([{ lat: 10, lng: 20 }]);
+    expect(repo.previewPlants()).toEqual([]);
+  });
+
+  it('should persist mass inclusion data', () => {
+    const data: MassInclusionData = {
+      occurrences: ['o1'],
+      varietyId: '3',
+      lifeOfTree: '3 anos',
+      plantingDate: '2022-01-01',
+      description: 'Desc',
+    };
+
+    repo.saveMassInclusionData(data);
+
+    expect(repo.currentMassInclusionData()).toEqual(data);
+  });
+
+  it('should load database-backed options into signals', async () => {
+    mockFindVarietyOptions.mockResolvedValue({ data: [{ id: 1, name: 'Gala' }], error: null });
+    mockFindOccurrenceTypeOptions.mockResolvedValue({ data: [{ id: 'o1', code: 'mites', name: 'Ácaros' }], error: null });
+
+    await repo.loadVarietyOptions();
+    await repo.loadOccurrenceTypeOptions();
+
+    expect(repo.varietyOptions()).toEqual([{ id: 1, name: 'Gala' }]);
+    expect(repo.occurrenceTypeOptions()).toEqual([{ id: 'o1', code: 'mites', name: 'Ácaros' }]);
+  });
+
+  it('should preview plants selected by default', async () => {
+    const polygon: GeoJsonPolygon = { type: 'Polygon', coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]] };
+    mockFindPlantsInsidePolygon.mockResolvedValue({
+      data: [{
+        plantId: 'p1',
+        latitude: 1,
+        longitude: 2,
+        zoneId: 'z1',
+        zoneName: 'Zona A',
+        varietyId: 1,
+        varietyName: 'Gala',
+        plantingDate: null,
+      }],
+      error: null,
+    });
+
+    const result = await repo.previewPlantsInsidePolygon(polygon);
+
+    expect(mockFindPlantsInsidePolygon).toHaveBeenCalledWith(polygon);
+    expect(result.data?.[0]).toMatchObject({
+      plantId: 'p1',
+      selected: true,
+      selectionSource: 'polygon_selected',
+    });
+    expect(repo.previewPlants()[0].selected).toBe(true);
+  });
+
+  it('should update selected plant review state', async () => {
+    mockFindPlantsInsidePolygon.mockResolvedValue({
+      data: [{
+        plantId: 'p1',
+        latitude: 1,
+        longitude: 2,
+        zoneId: null,
+        zoneName: null,
+        varietyId: null,
+        varietyName: null,
+        plantingDate: null,
+      }],
+      error: null,
+    });
+
+    await repo.previewPlantsInsidePolygon({ type: 'Polygon', coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]] });
+    repo.setPlantSelected('p1', false);
+
+    expect(repo.previewPlants()[0]).toMatchObject({
+      selected: false,
+      selectionSource: 'user_removed',
     });
   });
 
-  describe('clearPolygonCoordinates', () => {
-    it('should reset coordinates to empty array', () => {
-      repo.savePolygonCoordinates([{ lat: 1, lng: 2 }]);
-      repo.clearPolygonCoordinates();
-      expect(repo.selectedPolygonCoordinates()).toEqual([]);
-    });
-  });
+  it('should delegate confirmed save to service', async () => {
+    const payload: PolygonBulkUpdatePayload = {
+      polygonGeojson: { type: 'Polygon', coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]] },
+      plants: [{ plantId: 'p1', selectionSource: 'polygon_selected' }],
+      plantsFoundCount: 1,
+      occurrences: [],
+      varietyId: 1,
+      lifeOfTree: null,
+      plantingDate: null,
+      notes: null,
+      startedAt: '2026-05-31T12:00:00Z',
+      finishedAt: '2026-05-31T12:00:00Z',
+    };
+    const expected = { data: { fieldOperationId: 'op1' }, error: null };
+    mockSyncPolygonBulkUpdate.mockResolvedValue(expected);
 
-  describe('saveMassInclusionData', () => {
-    it('should persist data to signal', () => {
-      const data: MassInclusionData = {
-        occurrences: ['mites'],
-        variety: 'Coração',
-        lifeOfTree: '3 anos',
-        plantingDate: '2022-01-01',
-        description: 'Desc',
-      };
-      repo.saveMassInclusionData(data);
-      expect(repo.currentMassInclusionData()).toEqual(data);
-    });
-  });
+    const result = await repo.syncPolygonBulkUpdate(payload);
 
-  describe('massUpdatePlantsInPolygon', () => {
-    it('should delegate to service and return result', async () => {
-      const expected = { data: { message: 'ok', updated: 1, ids: ['x'] }, error: null };
-      mockMassUpdatePlantsInPolygon.mockResolvedValue(expected);
-
-      const params: MassUpdatePlantsParams = {
-        coordinates: [{ lat: 1, lng: 2 }, { lat: 3, lng: 4 }, { lat: 5, lng: 6 }],
-        occurrences: [],
-      };
-
-      const result = await repo.massUpdatePlantsInPolygon(params);
-
-      expect(mockMassUpdatePlantsInPolygon).toHaveBeenCalledWith(params);
-      expect(result).toEqual(expected);
-    });
+    expect(mockSyncPolygonBulkUpdate).toHaveBeenCalledWith(payload);
+    expect(result).toEqual(expected);
   });
 });
