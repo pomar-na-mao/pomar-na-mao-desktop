@@ -40,6 +40,8 @@ export class DashboardViewModel {
   private plantLayers: L.LayerGroup | null = null;
   private zonePolygonLayer: L.GeoJSON | null = null;
   private plantRenderer = L.canvas({ padding: 0.5 });
+  private heatmapRenderer: L.Canvas | null = null;
+  private heatmapPaneElement: HTMLElement | null = null;
 
   public isLoading = signal(true);
   public isMapFullscreen = signal(false);
@@ -173,6 +175,14 @@ export class DashboardViewModel {
         dashArray: '6 4',
       },
     }).addTo(this.map);
+
+    const heatmapPane = this.map.createPane('heatmapPane');
+    heatmapPane.style.zIndex = '550';
+    heatmapPane.style.pointerEvents = 'none';
+    heatmapPane.style.filter = 'blur(20px)';
+    this.heatmapPaneElement = heatmapPane;
+    this.heatmapRenderer = L.canvas({ padding: 0.5, pane: 'heatmapPane' });
+
     this.renderPlants();
     this.renderZonePolygon(this.filterZoneId());
   }
@@ -222,13 +232,70 @@ export class DashboardViewModel {
     }
 
     const occurrenceId = this.filterOccurrenceId();
+    const isHarvest = this.filterOperation() === 'colheita';
+
+    // Toggle the blur filter on heatmap pane depending on the mode
+    if (this.heatmapPaneElement) {
+      this.heatmapPaneElement.style.filter = isHarvest ? 'blur(16px) contrast(3.0) saturate(1.8)' : 'blur(20px)';
+    }
+
+    // Pre-calculate zone weights and calculate centers to create radial gradients
+    const zoneWeights = new Map<string, number>();
+    const zones = this.availableZones();
+    const zonePlants = new Map<string, HomeDashboardPlant[]>();
+    const zoneCenters = new Map<string, { lat: number; lng: number; maxDist: number }>();
+
+    if (isHarvest) {
+      zones.forEach((zone) => {
+        const hash = parseInt(zone.id.replace(/-/g, '').slice(0, 4), 16) || 0;
+        // Bias the base weights slightly higher (0.35 to 1.0) to include more vibrant orange/red tones
+        const zoneWeight = 0.35 + (hash % 65) / 100; // 0.35 to 1.0
+        zoneWeights.set(zone.id, zoneWeight);
+      });
+
+      // Group plants by zone to compute their spatial distribution
+      plants.forEach((plant) => {
+        const plantZone = zones.find((zone) =>
+          zone.polygon && isPointInPolygon(plant.latitude, plant.longitude, zone.polygon)
+        );
+        if (plantZone) {
+          if (!zonePlants.has(plantZone.id)) {
+            zonePlants.set(plantZone.id, []);
+          }
+          zonePlants.get(plantZone.id)!.push(plant);
+        }
+      });
+
+      // Calculate centers and max radius (distance) for each zone
+      zonePlants.forEach((pList, zoneId) => {
+        if (pList.length === 0) return;
+        let sumLat = 0;
+        let sumLng = 0;
+        pList.forEach((p) => {
+          sumLat += p.latitude;
+          sumLng += p.longitude;
+        });
+        const avgLat = sumLat / pList.length;
+        const avgLng = sumLng / pList.length;
+
+        let maxDist = 0;
+        pList.forEach((p) => {
+          const dist = Math.sqrt(Math.pow(p.latitude - avgLat, 2) + Math.pow(p.longitude - avgLng, 2));
+          if (dist > maxDist) {
+            maxDist = dist;
+          }
+        });
+
+        zoneCenters.set(zoneId, { lat: avgLat, lng: avgLng, maxDist: maxDist || 0.0001 });
+      });
+    }
 
     plants.forEach((plant) => {
       let plantColor = this.getVarietyColor(plant.varietyId, plant.varietyName);
       let radius = 2;
       let strokeColor = plantColor;
       let weight = 0.75;
-      let fillOpacity = 0.9;
+      let fillOpacity = isHarvest ? 0.45 : 0.9;
 
       if (occurrenceId) {
         // Plot with a striking neon magenta color with white border and larger size
@@ -239,24 +306,71 @@ export class DashboardViewModel {
         fillOpacity = 1.0;
       }
 
-      L.circleMarker([plant.latitude, plant.longitude], {
-        radius,
-        color: strokeColor,
-        fillColor: plantColor,
-        fillOpacity,
-        weight,
-        renderer: this.plantRenderer,
-      })
-        .bindPopup(
-          `
-            <div style="font-family: sans-serif; font-size: 12px; min-width: 160px">
-              <strong>${plant.varietyName ?? 'Sem variedade'}</strong><br/>
-              ID: ${plant.id}<br/>
-              ${plant.latitude.toFixed(6)}, ${plant.longitude.toFixed(6)}
-            </div>
-          `,
-        )
-        .addTo(plantLayers);
+      // If harvest mode is active, do not render individual plant markers underneath
+      if (!isHarvest) {
+        L.circleMarker([plant.latitude, plant.longitude], {
+          radius,
+          color: strokeColor,
+          fillColor: plantColor,
+          fillOpacity,
+          weight,
+          renderer: this.plantRenderer,
+        })
+          .bindPopup(
+            `
+              <div style="font-family: sans-serif; font-size: 12px; min-width: 160px">
+                <strong>${plant.varietyName ?? 'Sem variedade'}</strong><br/>
+                ID: ${plant.id}<br/>
+                ${plant.latitude.toFixed(6)}, ${plant.longitude.toFixed(6)}
+              </div>
+            `,
+          )
+          .addTo(plantLayers);
+      }
+
+      // If harvest mode is active, render large solid overlapping circle markers on the heatmap pane
+      if (isHarvest && this.heatmapRenderer) {
+        // Find which zone this plant belongs to for zone-based (lot-based) representation
+        const plantZone = zones.find((zone) =>
+          zone.polygon && isPointInPolygon(plant.latitude, plant.longitude, zone.polygon)
+        );
+        
+        let weightFactor = 0.5;
+        if (plantZone) {
+          const zoneBaseWeight = zoneWeights.get(plantZone.id) ?? 0.5;
+          const centerInfo = zoneCenters.get(plantZone.id);
+          
+          if (centerInfo) {
+            // Distance from center
+            const dist = Math.sqrt(
+              Math.pow(plant.latitude - centerInfo.lat, 2) +
+              Math.pow(plant.longitude - centerInfo.lng, 2)
+            );
+            
+            // Ratio: 0 at center, 1 at boundary
+            // Apply a non-linear (power of 1.8) falloff so the hot center (red/orange) is wider
+            const ratio = Math.pow(Math.min(1.0, dist / centerInfo.maxDist), 1.8);
+            
+            // Heat is highest at center, and fades to cold (0.1) at the boundary of the zone
+            weightFactor = zoneBaseWeight * (1.0 - ratio * 0.9);
+            weightFactor = Math.max(0.1, Math.min(1.0, weightFactor));
+          } else {
+            weightFactor = zoneBaseWeight;
+          }
+        }
+
+        const heatmapColor = getHeatmapColor(weightFactor);
+        const radiusHeat = 30 + weightFactor * 15; // 30 to 45 px - large enough to overlap and form continuous lot blobs
+
+        L.circleMarker([plant.latitude, plant.longitude], {
+          radius: radiusHeat,
+          stroke: false,
+          fillColor: heatmapColor,
+          fillOpacity: 0.85, // Smooth organic color
+          pane: 'heatmapPane',
+          renderer: this.heatmapRenderer,
+        }).addTo(plantLayers);
+      }
     });
 
     const bounds = L.latLngBounds(
@@ -370,4 +484,29 @@ function isPointInCoords(point: [number, number], coordinates: number[][][]): bo
     if (intersect) inside = !inside;
   }
   return inside;
+}
+
+function getHeatmapColor(weightFactor: number): string {
+  // weightFactor is between 0.1 and 1.0
+  // Maps to Hue: Royal Blue (235) -> Cyan (180) -> Green (120) -> Yellow (60) -> Orange (30) -> Red (0)
+  let hue = 235;
+  if (weightFactor <= 0.3) {
+    const t = (weightFactor - 0.1) / 0.2;
+    hue = 235 - t * 55; // 235 to 180
+  } else if (weightFactor <= 0.5) {
+    const t = (weightFactor - 0.3) / 0.2;
+    hue = 180 - t * 60; // 180 to 120
+  } else if (weightFactor <= 0.7) {
+    const t = (weightFactor - 0.5) / 0.2;
+    hue = 120 - t * 60; // 120 to 60
+  } else if (weightFactor <= 0.85) {
+    const t = (weightFactor - 0.7) / 0.15;
+    hue = 60 - t * 30; // 60 to 30
+  } else {
+    const t = (weightFactor - 0.85) / 0.15;
+    hue = 30 - t * 30; // 30 to 0 (pure red)
+  }
+
+  // Soft, clear and highly visible colors using HSL with 95% saturation and 60% lightness
+  return `hsl(${Math.round(hue)}, 95%, 60%)`;
 }
