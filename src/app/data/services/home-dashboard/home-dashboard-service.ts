@@ -53,13 +53,14 @@ export class HomeDashboardService {
 
   public async getFilterOptions(): Promise<HomeDashboardFilterOptions> {
     const [zonesResult, occurrencesResult] = await Promise.all([
-      this.supabase.from('zones').select('id,name').order('name'),
+      this.supabase.from('zones').select('id,name,polygon').order('name'),
       this.supabase.from('occurrence_types').select('id,name').order('name'),
     ]);
 
     const zones: HomeDashboardZone[] = (zonesResult.data ?? []).map((row) => ({
       id: row.id as string,
       name: row.name as string,
+      polygon: (row.polygon as GeoJSON.Geometry) ?? null,
     }));
 
     const occurrences: HomeDashboardOccurrence[] = (occurrencesResult.data ?? []).map((row) => ({
@@ -68,6 +69,19 @@ export class HomeDashboardService {
     }));
 
     return { zones, occurrences };
+  }
+
+  public async getOpenOccurrences(): Promise<Array<{ plant_id: string; occurrence_type_id: string }>> {
+    const { data, error } = await this.supabase
+      .from('plant_occurrences')
+      .select('plant_id, occurrence_type_id')
+      .eq('status', 'open');
+
+    if (error) {
+      throw error;
+    }
+
+    return (data ?? []) as Array<{ plant_id: string; occurrence_type_id: string }>;
   }
 
   private mapSnapshot(snapshot: HomeDashboardSnapshotRow | null): HomeDashboardSnapshot {

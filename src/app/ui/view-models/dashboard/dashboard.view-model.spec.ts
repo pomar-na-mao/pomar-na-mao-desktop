@@ -8,6 +8,7 @@ describe('DashboardViewModel', () => {
 
   const getSnapshot = vi.fn();
   const getFilterOptions = vi.fn();
+  const getOpenOccurrences = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -31,14 +32,18 @@ describe('DashboardViewModel', () => {
 
     getFilterOptions.mockResolvedValue({
       zones: [
-        { id: 'z1', name: 'Zona A' },
-        { id: 'z2', name: 'Zona B' },
+        { id: 'z1', name: 'Zona A', polygon: null },
+        { id: 'z2', name: 'Zona B', polygon: null },
       ],
       occurrences: [
         { id: 'o1', name: 'Broca' },
         { id: 'o2', name: 'Formigueiro' },
       ],
     });
+
+    getOpenOccurrences.mockResolvedValue([
+      { plant_id: 'p1', occurrence_type_id: 'o1' }
+    ]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -48,6 +53,7 @@ describe('DashboardViewModel', () => {
           useValue: {
             getSnapshot,
             getFilterOptions,
+            getOpenOccurrences,
           },
         },
       ],
@@ -56,14 +62,16 @@ describe('DashboardViewModel', () => {
     viewModel = TestBed.inject(DashboardViewModel);
   });
 
-  it('should load dashboard snapshot and filter options on initialization', async () => {
+  it('should load dashboard snapshot, filter options and open occurrences on initialization', async () => {
     await viewModel.loadDashboard();
 
     expect(getSnapshot).toHaveBeenCalled();
     expect(getFilterOptions).toHaveBeenCalled();
+    expect(getOpenOccurrences).toHaveBeenCalled();
     expect(viewModel.plottedPlantsCount()).toBe(2);
     expect(viewModel.availableZones().length).toBe(2);
     expect(viewModel.availableOccurrences().length).toBe(2);
+    expect(viewModel.openOccurrences().length).toBe(1);
   });
 
   it('should expose available varieties from summary', async () => {
@@ -81,6 +89,16 @@ describe('DashboardViewModel', () => {
     expect(viewModel.filteredPlants().length).toBe(2);
 
     viewModel.filterVarietyId.set('1');
+    expect(viewModel.filteredPlants().length).toBe(1);
+    expect(viewModel.filteredPlants()[0].id).toBe('p1');
+  });
+
+  it('should filter plants by occurrence when filterOccurrenceId is set', async () => {
+    await viewModel.loadDashboard();
+
+    expect(viewModel.filteredPlants().length).toBe(2);
+
+    viewModel.filterOccurrenceId.set('o1');
     expect(viewModel.filteredPlants().length).toBe(1);
     expect(viewModel.filteredPlants()[0].id).toBe('p1');
   });

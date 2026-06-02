@@ -6,6 +6,7 @@ export interface HomeDashboardVariety {
 export interface HomeDashboardZone {
   id: string;
   name: string;
+  polygon: GeoJSON.Geometry | null;
 }
 
 export interface HomeDashboardOccurrence {

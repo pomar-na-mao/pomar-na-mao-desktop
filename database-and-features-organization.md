@@ -104,6 +104,7 @@ create table public.zones (
   description text,
 
   boundary extensions.geography(polygon, 4326),
+  polygon jsonb,
 
   local_id text,
   device_id text,
@@ -5597,6 +5598,7 @@ create table if not exists public.zones (
   code text,
   description text,
   boundary extensions.geography(polygon, 4326),
+  polygon jsonb,
   local_id text,
   device_id text,
   sync_status text not null default 'synced',

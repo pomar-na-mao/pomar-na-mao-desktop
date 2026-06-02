@@ -18,4 +18,8 @@ export class HomeDashboardRepository {
   public async getFilterOptions(): Promise<HomeDashboardFilterOptions> {
     return await this.homeDashboardService.getFilterOptions();
   }
+
+  public async getOpenOccurrences(): Promise<Array<{ plant_id: string; occurrence_type_id: string }>> {
+    return await this.homeDashboardService.getOpenOccurrences();
+  }
 }

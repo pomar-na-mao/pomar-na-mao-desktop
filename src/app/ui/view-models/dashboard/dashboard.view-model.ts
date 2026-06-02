@@ -38,6 +38,7 @@ export class DashboardViewModel {
 
   private map: L.Map | null = null;
   private plantLayers: L.LayerGroup | null = null;
+  private zonePolygonLayer: L.GeoJSON | null = null;
   private plantRenderer = L.canvas({ padding: 0.5 });
 
   public isLoading = signal(true);
@@ -46,8 +47,9 @@ export class DashboardViewModel {
   public mapPlants = signal<HomeDashboardPlant[]>([]);
 
   // --- Filter state ---
-  public filterStartDate = signal('');
-  public filterEndDate = signal('');
+  private today = new Date().toISOString().slice(0, 10);
+  public filterStartDate = signal(this.today);
+  public filterEndDate = signal(this.today);
   public filterZoneId = signal('');
   public filterOccurrenceId = signal('');
   public filterVarietyId = signal('');
@@ -56,6 +58,7 @@ export class DashboardViewModel {
   // --- Filter options (loaded from DB) ---
   public availableZones = signal<HomeDashboardZone[]>([]);
   public availableOccurrences = signal<HomeDashboardOccurrence[]>([]);
+  public openOccurrences = signal<Array<{ plant_id: string; occurrence_type_id: string }>>([]);
 
   public availableVarieties = computed<HomeDashboardVariety[]>(() => {
     const summary = this.summary();
@@ -69,15 +72,36 @@ export class DashboardViewModel {
   });
 
   public filteredPlants = computed<HomeDashboardPlant[]>(() => {
-    const plants = this.mapPlants();
-    const varietyId = this.filterVarietyId();
+    let plants = this.mapPlants();
 
-    if (!varietyId) {
-      return plants;
+    // 1. Filter by Variety
+    const varietyId = this.filterVarietyId();
+    if (varietyId) {
+      const varietyIdNum = Number(varietyId);
+      plants = plants.filter((plant) => plant.varietyId === varietyIdNum);
     }
 
-    const varietyIdNum = Number(varietyId);
-    return plants.filter((plant) => plant.varietyId === varietyIdNum);
+    // 2. Filter by Zone
+    const zoneId = this.filterZoneId();
+    if (zoneId) {
+      const zone = this.availableZones().find((z) => z.id === zoneId);
+      if (zone?.polygon) {
+        plants = plants.filter((plant) => isPointInPolygon(plant.latitude, plant.longitude, zone.polygon!));
+      }
+    }
+
+    // 3. Filter by Occurrence
+    const occurrenceId = this.filterOccurrenceId();
+    if (occurrenceId) {
+      const matchingPlantIds = new Set(
+        this.openOccurrences()
+          .filter((oc) => oc.occurrence_type_id === occurrenceId)
+          .map((oc) => oc.plant_id)
+      );
+      plants = plants.filter((plant) => matchingPlantIds.has(plant.id));
+    }
+
+    return plants;
   });
 
   public plottedPlantsCount = computed(() => this.filteredPlants().length);
@@ -89,6 +113,11 @@ export class DashboardViewModel {
       this.renderPlants();
     });
 
+    effect(() => {
+      const zoneId = this.filterZoneId();
+      this.renderZonePolygon(zoneId);
+    });
+
     void this.loadDashboard();
   }
 
@@ -96,15 +125,17 @@ export class DashboardViewModel {
     this.isLoading.set(true);
 
     try {
-      const [snapshot, filterOptions] = await Promise.all([
+      const [snapshot, filterOptions, openOccs] = await Promise.all([
         this.homeDashboardRepository.getSnapshot(),
         this.homeDashboardRepository.getFilterOptions(),
+        this.homeDashboardRepository.getOpenOccurrences(),
       ]);
 
       this.summary.set(snapshot.summary);
       this.mapPlants.set(snapshot.plants);
       this.availableZones.set(filterOptions.zones);
       this.availableOccurrences.set(filterOptions.occurrences);
+      this.openOccurrences.set(openOccs);
     } catch (error) {
       console.error('Failed to load dashboard data', error);
       this.summary.set({
@@ -133,7 +164,17 @@ export class DashboardViewModel {
     }).addTo(this.map);
 
     this.plantLayers = L.layerGroup().addTo(this.map);
+    this.zonePolygonLayer = L.geoJSON(undefined, {
+      style: {
+        color: '#06b6d4',
+        weight: 3,
+        fillColor: '#06b6d4',
+        fillOpacity: 0.12,
+        dashArray: '6 4',
+      },
+    }).addTo(this.map);
     this.renderPlants();
+    this.renderZonePolygon(this.filterZoneId());
   }
 
   public invalidateMapSize(): void {
@@ -180,15 +221,30 @@ export class DashboardViewModel {
       return;
     }
 
+    const occurrenceId = this.filterOccurrenceId();
+
     plants.forEach((plant) => {
-      const plantColor = this.getVarietyColor(plant.varietyId, plant.varietyName);
+      let plantColor = this.getVarietyColor(plant.varietyId, plant.varietyName);
+      let radius = 2;
+      let strokeColor = plantColor;
+      let weight = 0.75;
+      let fillOpacity = 0.9;
+
+      if (occurrenceId) {
+        // Plot with a striking neon magenta color with white border and larger size
+        plantColor = '#ff0055';
+        strokeColor = '#ffffff';
+        radius = 4;
+        weight = 1.5;
+        fillOpacity = 1.0;
+      }
 
       L.circleMarker([plant.latitude, plant.longitude], {
-        radius: 2,
-        color: plantColor,
+        radius,
+        color: strokeColor,
         fillColor: plantColor,
-        fillOpacity: 0.9,
-        weight: 0.75,
+        fillOpacity,
+        weight,
         renderer: this.plantRenderer,
       })
         .bindPopup(
@@ -209,6 +265,30 @@ export class DashboardViewModel {
 
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
+    }
+  }
+
+  private renderZonePolygon(zoneId: string): void {
+    if (!this.zonePolygonLayer || !this.map) {
+      return;
+    }
+
+    this.zonePolygonLayer.clearLayers();
+
+    if (!zoneId) {
+      return;
+    }
+
+    const zone = this.availableZones().find((z) => z.id === zoneId);
+    if (!zone?.polygon) {
+      return;
+    }
+
+    this.zonePolygonLayer.addData(zone.polygon);
+
+    const polygonBounds = this.zonePolygonLayer.getBounds();
+    if (polygonBounds.isValid()) {
+      this.map.fitBounds(polygonBounds, { padding: [48, 48], maxZoom: 18 });
     }
   }
 
@@ -258,4 +338,36 @@ export class DashboardViewModel {
 
     return VARIETY_COLORS[index % VARIETY_COLORS.length];
   }
+}
+
+function isPointInPolygon(lat: number, lng: number, geom: GeoJSON.Geometry): boolean {
+  if (geom.type === 'Polygon') {
+    return isPointInCoords([lng, lat], (geom as GeoJSON.Polygon).coordinates);
+  } else if (geom.type === 'MultiPolygon') {
+    return (geom as GeoJSON.MultiPolygon).coordinates.some((polygonCoords) =>
+      isPointInCoords([lng, lat], polygonCoords)
+    );
+  }
+  return false;
+}
+
+function isPointInCoords(point: [number, number], coordinates: number[][][]): boolean {
+  const x = point[0];
+  const y = point[1];
+  let inside = false;
+
+  const ring = coordinates[0];
+  if (!ring || ring.length < 3) return false;
+
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0];
+    const yi = ring[i][1];
+    const xj = ring[j][0];
+    const yj = ring[j][1];
+
+    const intersect = ((yi > y) !== (yj > y))
+      && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
 }

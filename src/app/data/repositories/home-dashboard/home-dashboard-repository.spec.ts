@@ -8,6 +8,7 @@ describe('HomeDashboardRepository', () => {
 
   const getSnapshot = vi.fn();
   const getFilterOptions = vi.fn();
+  const getOpenOccurrences = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,6 +21,7 @@ describe('HomeDashboardRepository', () => {
           useValue: {
             getSnapshot,
             getFilterOptions,
+            getOpenOccurrences,
           },
         },
       ],
@@ -42,7 +44,7 @@ describe('HomeDashboardRepository', () => {
 
   it('should delegate filter options loading', async () => {
     getFilterOptions.mockResolvedValue({
-      zones: [{ id: 'z1', name: 'Zona A' }],
+      zones: [{ id: 'z1', name: 'Zona A', polygon: null }],
       occurrences: [{ id: 'o1', name: 'Broca' }],
     });
 
@@ -51,5 +53,17 @@ describe('HomeDashboardRepository', () => {
     expect(result.zones.length).toBe(1);
     expect(result.occurrences.length).toBe(1);
     expect(getFilterOptions).toHaveBeenCalled();
+  });
+
+  it('should delegate open occurrences loading', async () => {
+    getOpenOccurrences.mockResolvedValue([
+      { plant_id: 'p1', occurrence_type_id: 'o1' }
+    ]);
+
+    const result = await repository.getOpenOccurrences();
+
+    expect(result.length).toBe(1);
+    expect(result[0].plant_id).toBe('p1');
+    expect(getOpenOccurrences).toHaveBeenCalled();
   });
 });
