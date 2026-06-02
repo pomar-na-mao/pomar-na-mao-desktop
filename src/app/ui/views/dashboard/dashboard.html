@@ -1,17 +1,15 @@
 <div
-  class="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+  [class]="
+    dashboardViewModel.isMapFullscreen()
+      ? 'fixed inset-0 z-[100] flex h-screen overflow-hidden bg-white dark:bg-slate-950'
+      : 'flex h-[calc(100vh-64px)] overflow-hidden'
+  "
 >
-  <app-dashboard-header />
-  
-  <app-dashboard-map />
+  <!-- Left Filter Sidebar -->
+  <app-dashboard-filters-panel />
 
-  <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-    <div class="lg:col-span-3">
-      <app-dashboard-recent-activities />
-    </div>
-
-    <div class="lg:col-span-2 h-full">
-      <app-dashboard-metrics class="block h-full" />
-    </div>
+  <!-- Map Area -->
+  <div class="flex-1 overflow-hidden">
+    <app-dashboard-map />
   </div>
 </div>
