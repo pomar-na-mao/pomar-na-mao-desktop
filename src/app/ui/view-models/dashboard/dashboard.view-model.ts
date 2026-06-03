@@ -138,6 +138,12 @@ export class DashboardViewModel {
       this.availableZones.set(filterOptions.zones);
       this.availableOccurrences.set(filterOptions.occurrences);
       this.openOccurrences.set(openOccs);
+
+      // DEBUG: verify occurrence data loaded
+      const queimadoId = 'cffdb0e0-8d46-4976-bffc-94280b971609';
+      const queimadoCount = openOccs.filter((oc: { occurrence_type_id: string }) => oc.occurrence_type_id === queimadoId).length;
+      console.log(`[DEBUG] openOccurrences total: ${openOccs.length}, Queimado matches: ${queimadoCount}`);
+      console.log(`[DEBUG] mapPlants total: ${snapshot.plants.length}`);
     } catch (error) {
       console.error('Failed to load dashboard data', error);
       this.summary.set({

@@ -1984,6 +1984,58 @@ $$;
 
 > Observação: essa RPC usa `assignment_method = 'polygon_bulk'`. Por isso a constraint de `plant_occurrences.assignment_method` precisa aceitar esse novo valor.
 
+---
+
+## 18.8. Listar ocorrências abertas para filtro do mapa
+
+Esta RPC retorna todos os pares `(plant_id, occurrence_type_id)` de ocorrências com status `open`.
+
+É usada no dashboard web para filtrar plantas no mapa por tipo de ocorrência. A consulta é feita via RPC com retorno `jsonb` em vez de `TABLE` ou query direta na tabela `plant_occurrences` porque o PostgREST limita o retorno de resultados tabulares (tanto `.select()` quanto RPCs `returns table`) a 1.000 linhas por padrão. Com mais de 25.000 ocorrências abertas, qualquer retorno tabular era truncado silenciosamente — ocorrências como "Queimado" simplesmente não apareciam no mapa. O retorno `jsonb` encapsula tudo em uma única linha, contornando esse limite.
+
+> Versão implantada em 2026-06-03: migration `20260603010000_create_get_open_occurrences_rpc.sql`. A RPC é `security invoker`, usa `set search_path = public`, aceita apenas `EXECUTE` para `authenticated` e revoga `public`/`anon`.
+
+```sql
+create or replace function public.get_open_occurrences()
+returns jsonb
+language sql
+stable
+security invoker
+set search_path = public
+as $$
+  select coalesce(
+    jsonb_agg(
+      jsonb_build_object(
+        'plant_id', po.plant_id,
+        'occurrence_type_id', po.occurrence_type_id
+      )
+    ),
+    '[]'::jsonb
+  )
+  from public.plant_occurrences po
+  where po.status = 'open';
+$$;
+
+revoke all on function public.get_open_occurrences() from public, anon;
+grant execute on function public.get_open_occurrences() to authenticated;
+```
+
+Retorno esperado:
+
+```json
+[
+  { "plant_id": "uuid-da-planta", "occurrence_type_id": "uuid-do-tipo" },
+  { "plant_id": "uuid-da-planta-2", "occurrence_type_id": "uuid-do-tipo" }
+]
+```
+
+Chamada no frontend:
+
+```typescript
+const { data, error } = await supabase.rpc('get_open_occurrences');
+```
+
+---
+
 # 19. RLS no Supabase
 
 Como neste momento não haverá vínculo direto com usuário, há duas opções práticas.

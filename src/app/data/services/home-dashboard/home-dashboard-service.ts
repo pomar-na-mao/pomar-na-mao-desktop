@@ -72,10 +72,7 @@ export class HomeDashboardService {
   }
 
   public async getOpenOccurrences(): Promise<Array<{ plant_id: string; occurrence_type_id: string }>> {
-    const { data, error } = await this.supabase
-      .from('plant_occurrences')
-      .select('plant_id, occurrence_type_id')
-      .eq('status', 'open');
+    const { data, error } = await this.supabase.rpc('get_open_occurrences');
 
     if (error) {
       throw error;
