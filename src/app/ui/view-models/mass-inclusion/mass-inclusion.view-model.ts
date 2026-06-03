@@ -60,18 +60,19 @@ export class MassInclusionViewModel {
     }))
   );
 
-  public varietyOptions = computed<SelectOption[]>(() =>
-    this.massInclusionRepository.varietyOptions().map((variety) => ({
+  public varietyOptions = computed<SelectOption[]>(() => [
+    { value: 'none', label: 'Nenhuma' },
+    ...this.massInclusionRepository.varietyOptions().map((variety) => ({
       value: String(variety.id),
       label: variety.name,
     }))
-  );
+  ]);
 
   public backgroundPolygon = computed<[number, number][] | null>(() => null);
 
   public massInclusionDataForm = this.formBuilder.group({
     occurrences: this.formBuilder.nonNullable.control<string[]>([]),
-    variety: this.formBuilder.nonNullable.control<string>(''),
+    variety: this.formBuilder.nonNullable.control<string>('none'),
     lifeOfTree: this.formBuilder.nonNullable.control<string>('', [Validators.maxLength(80)]),
     plantingDate: this.formBuilder.nonNullable.control<string>(''),
     description: this.formBuilder.nonNullable.control<string>('', [Validators.maxLength(500)]),
@@ -83,7 +84,7 @@ export class MassInclusionViewModel {
     this.formVersion();
     const formValue = this.massInclusionDataForm.getRawValue() as MassInclusionFormValue;
     return formValue.occurrences.length > 0
-      || formValue.variety !== ''
+      || (formValue.variety !== '' && formValue.variety !== 'none')
       || formValue.lifeOfTree.trim() !== ''
       || formValue.plantingDate !== '';
   });
@@ -105,7 +106,7 @@ export class MassInclusionViewModel {
     this.massInclusionDataForm.patchValue(
       {
         occurrences: data.occurrences,
-        variety: data.varietyId,
+        variety: data.varietyId || 'none',
         lifeOfTree: data.lifeOfTree,
         plantingDate: data.plantingDate,
         description: data.description,
@@ -203,7 +204,7 @@ export class MassInclusionViewModel {
     this.massInclusionDataForm.reset(
       {
         occurrences: [],
-        variety: '',
+        variety: 'none',
         lifeOfTree: '',
         plantingDate: '',
         description: '',
@@ -343,7 +344,7 @@ export class MassInclusionViewModel {
           notes: data.description || null,
           severity: null,
         })),
-      varietyId: data.varietyId ? Number(data.varietyId) : null,
+      varietyId: (data.varietyId && data.varietyId !== 'none' && data.varietyId !== '') ? Number(data.varietyId) : null,
       lifeOfTree: data.lifeOfTree || null,
       plantingDate: data.plantingDate || null,
       notes: data.description || null,

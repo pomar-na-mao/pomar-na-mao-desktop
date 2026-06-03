@@ -149,7 +149,10 @@ describe('MassInclusionViewModel', () => {
       { value: 'z1', label: 'Zona A' },
       { value: 'z2', label: 'Zona B' },
     ]);
-    expect(viewModel.varietyOptions()).toEqual([{ value: '10', label: 'Gala' }]);
+    expect(viewModel.varietyOptions()).toEqual([
+      { value: 'none', label: 'Nenhuma' },
+      { value: '10', label: 'Gala' },
+    ]);
     expect(viewModel.occurrenceOptions()).toEqual([{ value: 'o1', label: 'Acaros' }]);
   });
 
@@ -271,6 +274,39 @@ describe('MassInclusionViewModel', () => {
     expect(mockMessageService.success).toHaveBeenCalled();
     expect(mockMassInclusionRepository.clearPolygonCoordinates).toHaveBeenCalled();
     expect(viewModel.clearMapSignal()).toBe(1);
+  });
+
+  it('should treat variety none as null in payload and not count as change', async () => {
+    polygonCoordsSignal.set([{ lat: 1, lng: 2 }, { lat: 3, lng: 4 }, { lat: 5, lng: 6 }]);
+    previewPlantsSignal.set([createPreviewPlant()]);
+    viewModel.previewLoaded.set(true);
+
+    // Initial state variety is 'none'
+    expect(viewModel.hasSelectedChanges()).toBe(false);
+
+    viewModel.onVarietyChange('none');
+    expect(viewModel.hasSelectedChanges()).toBe(false);
+
+    // If there is another change
+    viewModel.onOccurrencesChange('o1');
+    expect(viewModel.hasSelectedChanges()).toBe(true);
+
+    mockMassInclusionRepository.syncPolygonBulkUpdate.mockResolvedValue({
+      data: {
+        fieldOperationId: 'op1',
+        plantsChangedCount: 1,
+        occurrencesCreatedCount: 1,
+        occurrencesUpdatedCount: 0,
+        attributesUpdatedCount: 1,
+      },
+      error: null,
+    });
+
+    await viewModel.onSaveMassInclusionDataHandler();
+
+    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      varietyId: null,
+    }));
   });
 
   it('should keep review state available after save errors', async () => {
