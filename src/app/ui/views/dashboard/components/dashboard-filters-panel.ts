@@ -19,33 +19,19 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
           </label>
           <div class="grid grid-cols-2 gap-2">
             <div class="relative">
-              <svg
-                class="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
               <input
                 type="date"
                 [ngModel]="dashboardViewModel.filterStartDate()"
                 (ngModelChange)="dashboardViewModel.filterStartDate.set($event)"
-                class="w-full rounded-md border border-slate-200 bg-white py-1.5 pl-6.5 pr-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
+                class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
               />
             </div>
             <div class="relative">
-              <svg
-                class="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
               <input
                 type="date"
                 [ngModel]="dashboardViewModel.filterEndDate()"
                 (ngModelChange)="dashboardViewModel.filterEndDate.set($event)"
-                class="w-full rounded-md border border-slate-200 bg-white py-1.5 pl-6.5 pr-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
+                class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
               />
             </div>
           </div>
