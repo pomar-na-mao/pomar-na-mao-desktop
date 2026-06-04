@@ -22,7 +22,7 @@ export class MassInclusion implements OnInit {
   public massInclusionViewModel = inject(MassInclusionViewModel);
 
   public async ngOnInit(): Promise<void> {
-    await this.massInclusionViewModel.loadRegions();
+    await this.massInclusionViewModel.loadZones();
   }
 
   public onPolygonSelected(event: PolygonSelection): void {

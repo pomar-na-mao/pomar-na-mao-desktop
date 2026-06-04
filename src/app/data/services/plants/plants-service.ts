@@ -5,8 +5,9 @@ import type { Plant, PlantInsert } from "../../../domain/models/plant-data.model
 import { injectSupabase } from "../supabase";
 
 export type PlantsFilter = {
-  region: string;
-  occurrence: string;
+  region?: string;
+  zoneId?: string;
+  occurrence?: string;
   variety?: string;
 }
 
@@ -32,10 +33,14 @@ export class PlantsService implements IPlantsService {
     let query = this.supabase.from('plants').select('*').order('created_at', { ascending: false });
 
     if (filters) {
-      const { region, occurrence, variety } = filters;
+      const { region, zoneId, occurrence, variety } = filters;
 
       if (region) {
         query = query.eq('region', region);
+      }
+
+      if (zoneId) {
+        query = query.eq('zone_id', zoneId);
       }
 
       if (occurrence) {

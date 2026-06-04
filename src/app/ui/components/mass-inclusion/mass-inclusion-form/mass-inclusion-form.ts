@@ -17,7 +17,16 @@ export class MassInclusionForm {
     this.massInclusionViewModel.onSaveMassInclusionDataHandler();
   }
 
+  public onPreviewPlantsInsidePolygon(): void {
+    this.massInclusionViewModel.onPreviewPlantsInsidePolygonHandler();
+  }
+
   public onClearMassInclusionFormData(): void {
     this.massInclusionViewModel.onClearMassInclusionFormDataHandler();
+  }
+
+  public onPlantSelectionChange(plantId: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.massInclusionViewModel.setPreviewPlantSelected(plantId, input.checked);
   }
 }
