@@ -26,6 +26,7 @@ export interface MassInclusionCoordinate {
 }
 
 export interface MassInclusionData {
+    occurrenceAction: MassInclusionOccurrenceAction;
     occurrences: string[];
     varietyId: string;
     lifeOfTree: string;
@@ -34,6 +35,7 @@ export interface MassInclusionData {
 }
 
 export interface MassInclusionFormValue {
+    occurrenceAction: MassInclusionOccurrenceAction;
     occurrences: string[];
     variety: string;
     lifeOfTree: string;
@@ -41,7 +43,10 @@ export interface MassInclusionFormValue {
     description: string;
 }
 
+export type MassInclusionOccurrenceAction = 'add' | 'remove';
+
 export const EMPTY_MASS_INCLUSION_DATA: MassInclusionData = {
+    occurrenceAction: 'add',
     occurrences: [],
     varietyId: '',
     lifeOfTree: '',
@@ -94,6 +99,7 @@ export interface PolygonBulkUpdatePayload {
     polygonGeojson: GeoJsonPolygon;
     plants: PolygonBulkSelectedPlantPayload[];
     plantsFoundCount: number;
+    occurrenceAction: MassInclusionOccurrenceAction;
     occurrences: PolygonBulkOccurrencePayload[];
     varietyId: number | null;
     lifeOfTree: string | null;

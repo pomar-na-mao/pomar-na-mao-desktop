@@ -41,6 +41,36 @@
         (valueChange)="massInclusionViewModel.onOccurrencesChange($event)"
       />
 
+      <div class="space-y-2">
+        <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
+          Acao da ocorrencia
+        </span>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isLoadingOptions()"
+            (click)="massInclusionViewModel.onOccurrenceActionChange('add')"
+            class="rounded-lg border px-3 py-2 text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            [ngClass]="massInclusionViewModel.massInclusionDataForm.controls.occurrenceAction.value === 'add'
+              ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'
+              : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'"
+          >
+            Adicionar ocorrencia
+          </button>
+          <button
+            type="button"
+            [disabled]="!massInclusionViewModel.canEditForm() || massInclusionViewModel.isLoadingOptions()"
+            (click)="massInclusionViewModel.onOccurrenceActionChange('remove')"
+            class="rounded-lg border px-3 py-2 text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            [ngClass]="massInclusionViewModel.massInclusionDataForm.controls.occurrenceAction.value === 'remove'
+              ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'
+              : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'"
+          >
+            Remover ocorrencia
+          </button>
+        </div>
+      </div>
+
       <app-select
         id="mass-variety"
         label="Variedade"
