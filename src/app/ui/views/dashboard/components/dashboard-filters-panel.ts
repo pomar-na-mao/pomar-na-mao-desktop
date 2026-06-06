@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
 
@@ -11,26 +11,33 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
       class="flex h-full w-[280px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
     >
       <div class="sidebar-scroll flex-1 space-y-5 overflow-y-auto px-4 py-4">
-
-        <!-- Período -->
+        <!-- Data de plantio -->
         <section>
-          <label class="mb-2 block text-[10px] font-semibold uppercase tracking-[0.06em] text-emerald-600 dark:text-emerald-400">
-            Período
+          <label
+            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+          >
+            Data de plantio
           </label>
           <div class="grid grid-cols-2 gap-2">
             <div class="relative">
               <input
                 type="date"
-                [ngModel]="dashboardViewModel.filterStartDate()"
-                (ngModelChange)="dashboardViewModel.filterStartDate.set($event)"
+                [ngModel]="dashboardViewModel.filterPlantingStartDate()"
+                (ngModelChange)="
+                  dashboardViewModel.filterPlantingStartDate.set($event)
+                "
+                aria-label="Data inicial de plantio"
                 class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
               />
             </div>
             <div class="relative">
               <input
                 type="date"
-                [ngModel]="dashboardViewModel.filterEndDate()"
-                (ngModelChange)="dashboardViewModel.filterEndDate.set($event)"
+                [ngModel]="dashboardViewModel.filterPlantingEndDate()"
+                (ngModelChange)="
+                  dashboardViewModel.filterPlantingEndDate.set($event)
+                "
+                aria-label="Data final de plantio"
                 class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
               />
             </div>
@@ -39,7 +46,9 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
 
         <!-- Zona -->
         <section>
-          <label class="mb-2 block text-[10px] font-semibold uppercase tracking-[0.06em] text-emerald-600 dark:text-emerald-400">
+          <label
+            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+          >
             Zona
           </label>
           <select
@@ -56,7 +65,9 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
 
         <!-- Ocorrência -->
         <section>
-          <label class="mb-2 block text-[10px] font-semibold uppercase tracking-[0.06em] text-emerald-600 dark:text-emerald-400">
+          <label
+            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+          >
             Ocorrência
           </label>
           <select
@@ -65,7 +76,10 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
             class="w-full appearance-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
           >
             <option value="">Remover todas</option>
-            @for (occurrence of dashboardViewModel.availableOccurrences(); track occurrence.id) {
+            @for (
+              occurrence of dashboardViewModel.availableOccurrences();
+              track occurrence.id
+            ) {
               <option [value]="occurrence.id">{{ occurrence.name }}</option>
             }
           </select>
@@ -73,7 +87,9 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
 
         <!-- Variedade -->
         <section>
-          <label class="mb-2 block text-[10px] font-semibold uppercase tracking-[0.06em] text-emerald-600 dark:text-emerald-400">
+          <label
+            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+          >
             Variedade
           </label>
           <select
@@ -82,7 +98,10 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
             class="w-full appearance-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
           >
             <option value="">Todas as Variedades</option>
-            @for (variety of dashboardViewModel.availableVarieties(); track variety.id) {
+            @for (
+              variety of dashboardViewModel.availableVarieties();
+              track variety.id
+            ) {
               <option [value]="variety.id">{{ variety.name }}</option>
             }
           </select>
@@ -90,7 +109,9 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
 
         <!-- Operação -->
         <section>
-          <label class="mb-2 block text-[10px] font-semibold uppercase tracking-[0.06em] text-emerald-600 dark:text-emerald-400">
+          <label
+            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+          >
             Operação
           </label>
           <select
@@ -105,24 +126,30 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
             <option value="colheita">Colheita</option>
           </select>
         </section>
-
       </div>
 
       <!-- Divider and Legend Footer -->
       <hr class="border-slate-200 dark:border-slate-800" />
-      
+
       <div class="px-4 py-4 shrink-0">
-        <label class="mb-2 block text-[10px] font-semibold uppercase tracking-[0.06em] text-emerald-600 dark:text-emerald-400">
+        <label
+          class="mb-2 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+        >
           Legenda de Variedades
         </label>
         <div class="flex flex-wrap gap-x-3 gap-y-1.5">
-          @for (legend of dashboardViewModel.varietyLegend(); track legend.label) {
+          @for (
+            legend of dashboardViewModel.varietyLegend();
+            track legend.label
+          ) {
             <div class="flex items-center gap-1.5">
               <span
                 class="h-2.5 w-2.5 shrink-0 rounded-sm border border-white/60 shadow-sm dark:border-white/10"
                 [style.backgroundColor]="legend.color"
               ></span>
-              <span class="text-[11px] text-slate-600 dark:text-slate-400">{{ legend.label }}</span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-400">{{
+                legend.label
+              }}</span>
             </div>
           }
         </div>

@@ -115,6 +115,7 @@ describe('MassInclusionService', () => {
       },
       plants: [{ plantId: 'p1', selectionSource: 'polygon_selected' }],
       plantsFoundCount: 1,
+      occurrenceAction: 'add',
       occurrences: [],
       varietyId: 2,
       lifeOfTree: null,

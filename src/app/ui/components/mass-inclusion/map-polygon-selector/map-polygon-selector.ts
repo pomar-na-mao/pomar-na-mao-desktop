@@ -11,6 +11,8 @@ import {
     OnChanges,
     SimpleChanges,
     HostListener,
+    NgZone,
+    inject,
 } from '@angular/core';
 import * as L from 'leaflet';
 import type { Plant } from '../../../../domain/models/plant-data.model';
@@ -44,6 +46,7 @@ import type { PolygonSelection, PolygonCoordinate } from '../../../../domain/mod
 export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild('mapContainer') mapContainer!: ElementRef;
 
+    private ngZone = inject(NgZone);
 
     @Input() center: [number, number] = [-23.398772, -49.148646];
     @Input() zoom: number = 16;
@@ -116,9 +119,9 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
             maxZoom: 24,
         }).addTo(this.map);
 
-        this.map.on('click', (e: L.LeafletMouseEvent) => this.onMapClick(e));
+        this.map.on('click', (e: L.LeafletMouseEvent) => this.ngZone.run(() => this.onMapClick(e)));
         this.map.on('mousemove', (e: L.LeafletMouseEvent) => this.onMouseMove(e));
-        this.map.on('dblclick', (e: L.LeafletMouseEvent) => this.finishPolygon(e));
+        this.map.on('dblclick', (e: L.LeafletMouseEvent) => this.ngZone.run(() => this.finishPolygon(e)));
 
         if (this._backgroundPolygonCoords) {
             this.renderBackgroundPolygon();
@@ -197,7 +200,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
         const marker = L.circleMarker(e.latlng, {
             radius: 5,
-            fillColor: '#10b981', // emerald-500
+            fillColor: '#3b82f6', // blue-500
             color: '#fff',
             weight: 2,
             opacity: 1,
@@ -211,7 +214,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
                 this.tempPolyline.setLatLngs(this.tempPoints);
             } else {
                 this.tempPolyline = L.polyline(this.tempPoints, {
-                    color: '#10b981',
+                    color: '#2563eb', // blue-600
                     weight: 2,
                     dashArray: '5, 5',
                     opacity: 0.8,
@@ -229,7 +232,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
             this.previewLine.setLatLngs(points);
         } else {
             this.previewLine = L.polyline(points, {
-                color: '#10b981',
+                color: '#2563eb', // blue-600
                 weight: 1.5,
                 dashArray: '3, 5',
                 opacity: 0.5,
@@ -256,8 +259,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
         }
 
         const polygon = L.polygon(this.tempPoints, {
-            color: '#10b981',
-            fillColor: '#10b981',
+            color: '#2563eb', // blue-600
+            fillColor: '#3b82f6', // blue-500
             fillOpacity: 0.2,
             weight: 2,
         }).addTo(this.map);

@@ -68,6 +68,7 @@ describe('MassInclusionRepository', () => {
 
   it('should persist mass inclusion data', () => {
     const data: MassInclusionData = {
+      occurrenceAction: 'remove',
       occurrences: ['o1'],
       varietyId: '3',
       lifeOfTree: '3 anos',
@@ -147,6 +148,7 @@ describe('MassInclusionRepository', () => {
       polygonGeojson: { type: 'Polygon', coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]] },
       plants: [{ plantId: 'p1', selectionSource: 'polygon_selected' }],
       plantsFoundCount: 1,
+      occurrenceAction: 'add',
       occurrences: [],
       varietyId: 1,
       lifeOfTree: null,

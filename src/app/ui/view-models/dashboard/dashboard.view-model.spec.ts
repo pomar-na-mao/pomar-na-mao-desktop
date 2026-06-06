@@ -65,7 +65,10 @@ describe('DashboardViewModel', () => {
   it('should load dashboard snapshot, filter options and open occurrences on initialization', async () => {
     await viewModel.loadDashboard();
 
-    expect(getSnapshot).toHaveBeenCalled();
+    expect(getSnapshot).toHaveBeenLastCalledWith({
+      plantingStartDate: null,
+      plantingEndDate: null,
+    });
     expect(getFilterOptions).toHaveBeenCalled();
     expect(getOpenOccurrences).toHaveBeenCalled();
     expect(viewModel.plottedPlantsCount()).toBe(2);
@@ -141,5 +144,25 @@ describe('DashboardViewModel', () => {
       { label: 'Classica', color: '#ec4899', varietyId: 9 },
     ]);
     expect(viewModel.getVarietyColor(9, 'Classica')).toBe('#ec4899');
+  });
+
+  it('should start with empty planting date filters', () => {
+    expect(viewModel.filterPlantingStartDate()).toBe('');
+    expect(viewModel.filterPlantingEndDate()).toBe('');
+
+    expect(viewModel.snapshotFilters()).toEqual({
+      plantingStartDate: null,
+      plantingEndDate: null,
+    });
+  });
+
+  it('should expose planting date filters for the snapshot request', () => {
+    viewModel.filterPlantingStartDate.set('2026-01-01');
+    viewModel.filterPlantingEndDate.set('2026-02-01');
+
+    expect(viewModel.snapshotFilters()).toEqual({
+      plantingStartDate: '2026-01-01',
+      plantingEndDate: '2026-02-01',
+    });
   });
 });

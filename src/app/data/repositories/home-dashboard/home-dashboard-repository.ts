@@ -3,6 +3,7 @@ import { HomeDashboardService } from "../../services/home-dashboard/home-dashboa
 import type {
   HomeDashboardFilterOptions,
   HomeDashboardSnapshot,
+  HomeDashboardSnapshotFilters,
 } from "../../../domain/models/home-dashboard.model";
 
 @Injectable({
@@ -11,8 +12,8 @@ import type {
 export class HomeDashboardRepository {
   private homeDashboardService = inject(HomeDashboardService);
 
-  public async getSnapshot(): Promise<HomeDashboardSnapshot> {
-    return await this.homeDashboardService.getSnapshot();
+  public async getSnapshot(filters: HomeDashboardSnapshotFilters): Promise<HomeDashboardSnapshot> {
+    return await this.homeDashboardService.getSnapshot(filters);
   }
 
   public async getFilterOptions(): Promise<HomeDashboardFilterOptions> {

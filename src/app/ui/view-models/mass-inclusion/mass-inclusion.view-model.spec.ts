@@ -8,7 +8,11 @@ import { PlantsRepository } from '../../../data/repositories/plants/plants-repos
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { LoadingService } from '../../../data/services/loading';
 import { MessageService } from '../../../data/services/message/message.service';
-import { EMPTY_MASS_INCLUSION_DATA, type PolygonBulkSelectedPlant } from '../../../domain/models/mass-inclusion';
+import {
+  EMPTY_MASS_INCLUSION_DATA,
+  type MassInclusionData,
+  type PolygonBulkSelectedPlant,
+} from '../../../domain/models/mass-inclusion';
 import type { Zone } from '../../../domain/models/zone.model';
 
 function createZone(overrides: Partial<Zone> = {}): Zone {
@@ -52,7 +56,7 @@ describe('MassInclusionViewModel', () => {
 
   let mockMassInclusionRepository: {
     selectedPolygonCoordinates: typeof polygonCoordsSignal;
-    currentMassInclusionData: ReturnType<typeof signal<typeof EMPTY_MASS_INCLUSION_DATA>>;
+    currentMassInclusionData: ReturnType<typeof signal<MassInclusionData>>;
     previewPlants: typeof previewPlantsSignal;
     varietyOptions: typeof varietyOptionsSignal;
     occurrenceTypeOptions: typeof occurrenceTypeOptionsSignal;
@@ -154,6 +158,7 @@ describe('MassInclusionViewModel', () => {
       { value: '10', label: 'Gala' },
     ]);
     expect(viewModel.occurrenceOptions()).toEqual([{ value: 'o1', label: 'Acaros' }]);
+    expect(viewModel.massInclusionDataForm.controls.occurrenceAction.value).toBe('add');
   });
 
   it('loadZones should load zones and database-backed form options', async () => {
@@ -266,6 +271,7 @@ describe('MassInclusionViewModel', () => {
       plants: [{ plantId: 'p1', selectionSource: 'polygon_selected' }],
       plantsFoundCount: 1,
       occurrences: [{ occurrenceTypeId: 'o1', code: 'mites', name: 'Acaros', notes: 'Teste', severity: null }],
+      occurrenceAction: 'add',
       varietyId: 10,
       lifeOfTree: 'Primeira (1)',
       plantingDate: '2026-05-31',
@@ -274,6 +280,41 @@ describe('MassInclusionViewModel', () => {
     expect(mockMessageService.success).toHaveBeenCalled();
     expect(mockMassInclusionRepository.clearPolygonCoordinates).toHaveBeenCalled();
     expect(viewModel.clearMapSignal()).toBe(1);
+  });
+
+  it('should send remove occurrence action and show resolved count on success', async () => {
+    polygonCoordsSignal.set([{ lat: 1, lng: 2 }, { lat: 3, lng: 4 }, { lat: 5, lng: 6 }]);
+    previewPlantsSignal.set([createPreviewPlant()]);
+    viewModel.previewLoaded.set(true);
+    viewModel.onOccurrenceActionChange('remove');
+    viewModel.onOccurrencesChange('o1');
+    mockMassInclusionRepository.syncPolygonBulkUpdate.mockResolvedValue({
+      data: {
+        fieldOperationId: 'op1',
+        plantsChangedCount: 1,
+        occurrencesCreatedCount: 0,
+        occurrencesUpdatedCount: 1,
+        attributesUpdatedCount: 0,
+      },
+      error: null,
+    });
+
+    await viewModel.onSaveMassInclusionDataHandler();
+
+    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      occurrenceAction: 'remove',
+      occurrences: [{ occurrenceTypeId: 'o1', code: 'mites', name: 'Acaros', notes: null, severity: null }],
+    }));
+    expect(mockMessageService.success).toHaveBeenCalledWith(expect.stringContaining('1 ocorrências resolvidas'));
+  });
+
+  it('should reset occurrence action to add when clearing form data', () => {
+    viewModel.onOccurrenceActionChange('remove');
+
+    viewModel.onClearMassInclusionFormDataHandler();
+
+    expect(viewModel.massInclusionDataForm.controls.occurrenceAction.value).toBe('add');
+    expect(mockMassInclusionRepository.clearPreviewPlants).toHaveBeenCalled();
   });
 
   it('should treat variety none as null in payload and not count as change', async () => {

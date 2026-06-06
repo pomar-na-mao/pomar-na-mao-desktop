@@ -24,7 +24,7 @@ export class MassInclusionViewModel {
   private plantsRepository = inject(PlantsRepository);
   private zonesRepository = inject(ZonesRepository);
   public loadingService = inject(LoadingService);
-  private messageService = inject(MessageService);
+  public messageService = inject(MessageService);
 
   public selectedZoneId = signal('');
   public isLoadingZones = signal(true);
@@ -71,6 +71,7 @@ export class MassInclusionViewModel {
   public backgroundPolygon = computed<[number, number][] | null>(() => null);
 
   public massInclusionDataForm = this.formBuilder.group({
+    occurrenceAction: this.formBuilder.nonNullable.control<'add' | 'remove'>('add'),
     occurrences: this.formBuilder.nonNullable.control<string[]>([]),
     variety: this.formBuilder.nonNullable.control<string>('none'),
     lifeOfTree: this.formBuilder.nonNullable.control<string>('', [Validators.maxLength(80)]),
@@ -105,6 +106,7 @@ export class MassInclusionViewModel {
     const data = this.massInclusionRepository.currentMassInclusionData();
     this.massInclusionDataForm.patchValue(
       {
+        occurrenceAction: data.occurrenceAction,
         occurrences: data.occurrences,
         variety: data.varietyId || 'none',
         lifeOfTree: data.lifeOfTree,
@@ -192,6 +194,10 @@ export class MassInclusionViewModel {
     this.massInclusionDataForm.controls.occurrences.setValue(nextOccurrences);
   }
 
+  public onOccurrenceActionChange(value: 'add' | 'remove'): void {
+    this.massInclusionDataForm.controls.occurrenceAction.setValue(value);
+  }
+
   public onVarietyChange(value: string | string[]): void {
     this.massInclusionDataForm.controls.variety.setValue(Array.isArray(value) ? (value[0] ?? '') : value);
   }
@@ -203,6 +209,7 @@ export class MassInclusionViewModel {
   public onClearMassInclusionFormDataHandler(): void {
     this.massInclusionDataForm.reset(
       {
+        occurrenceAction: 'add',
         occurrences: [],
         variety: 'none',
         lifeOfTree: '',
@@ -281,7 +288,10 @@ export class MassInclusionViewModel {
         return;
       }
 
-      const summary = `${data.plantsChangedCount} plantas alteradas, ${data.occurrencesCreatedCount} ocorrências criadas, ${data.occurrencesUpdatedCount} ocorrências atualizadas e ${data.attributesUpdatedCount} atributos alterados.`;
+      const occurrenceSummary = payload.occurrenceAction === 'remove'
+        ? `${data.occurrencesUpdatedCount} ocorrências resolvidas`
+        : `${data.occurrencesCreatedCount} ocorrências criadas, ${data.occurrencesUpdatedCount} ocorrências atualizadas`;
+      const summary = `${data.plantsChangedCount} plantas alteradas, ${occurrenceSummary} e ${data.attributesUpdatedCount} atributos alterados.`;
       this.messageService.success(`Alterações em massa salvas com sucesso: ${summary}`);
       this.onClearMassInclusionFormDataHandler();
       this.onPolygonCleared();
@@ -313,6 +323,7 @@ export class MassInclusionViewModel {
 
   private toMassInclusionData(value: MassInclusionFormValue): MassInclusionData {
     return {
+      occurrenceAction: value.occurrenceAction,
       occurrences: value.occurrences.filter((occurrence) =>
         this.massInclusionRepository.occurrenceTypeOptions().some((option) => option.id === occurrence)
       ),
@@ -334,6 +345,7 @@ export class MassInclusionViewModel {
         selectionSource: plant.selectionSource,
       })),
       plantsFoundCount: this.plantsFoundCount(),
+      occurrenceAction: data.occurrenceAction,
       occurrences: data.occurrences
         .map((occurrenceId) => occurrenceOptions.find((option) => option.id === occurrenceId))
         .filter((option): option is NonNullable<typeof option> => Boolean(option))

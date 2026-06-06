@@ -5,6 +5,7 @@ import type {
   HomeDashboardOccurrence,
   HomeDashboardPlant,
   HomeDashboardSnapshot,
+  HomeDashboardSnapshotFilters,
   HomeDashboardVariety,
   HomeDashboardZone,
 } from '../../../domain/models/home-dashboard.model';
@@ -35,14 +36,32 @@ type HomeDashboardSnapshotRow = {
   plants?: PlantMapRow[] | null;
 };
 
+type HomeDashboardSnapshotRpcParams = {
+  p_period_start_date: string | null;
+  p_period_end_date: string | null;
+  p_planting_start_date: string | null;
+  p_planting_end_date: string | null;
+  p_operation_code: string | null;
+};
+
+const EMPTY_SNAPSHOT_FILTERS: HomeDashboardSnapshotFilters = {
+  plantingStartDate: null,
+  plantingEndDate: null,
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class HomeDashboardService {
   private supabase = injectSupabase();
 
-  public async getSnapshot(): Promise<HomeDashboardSnapshot> {
-    const { data, error } = await this.supabase.rpc('get_home_dashboard_snapshot');
+  public async getSnapshot(
+    filters: HomeDashboardSnapshotFilters = EMPTY_SNAPSHOT_FILTERS,
+  ): Promise<HomeDashboardSnapshot> {
+    const { data, error } = await this.supabase.rpc(
+      'get_home_dashboard_snapshot',
+      this.buildSnapshotRpcParams(filters),
+    );
 
     if (error) {
       throw error;
@@ -123,5 +142,17 @@ export class HomeDashboardService {
         varietyId: row.varietyId,
         varietyName: row.varietyName,
       }));
+  }
+
+  private buildSnapshotRpcParams(
+    filters: HomeDashboardSnapshotFilters,
+  ): HomeDashboardSnapshotRpcParams {
+    return {
+      p_period_start_date: null,
+      p_period_end_date: null,
+      p_planting_start_date: filters.plantingStartDate,
+      p_planting_end_date: filters.plantingEndDate,
+      p_operation_code: null,
+    };
   }
 }
