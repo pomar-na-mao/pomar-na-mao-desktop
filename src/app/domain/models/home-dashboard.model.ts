@@ -14,6 +14,11 @@ export interface HomeDashboardOccurrence {
   name: string;
 }
 
+export interface HomeDashboardSnapshotFilters {
+  plantingStartDate: string | null;
+  plantingEndDate: string | null;
+}
+
 export interface HomeDashboardSummary {
   totalPlants: number;
   totalZones: number;

@@ -36,10 +36,14 @@ describe('HomeDashboardRepository', () => {
       plants: [],
     });
 
-    const result = await repository.getSnapshot();
+    const filters = {
+      plantingStartDate: null,
+      plantingEndDate: null,
+    } as const;
+    const result = await repository.getSnapshot(filters);
 
     expect(result.summary.totalPlants).toBe(1);
-    expect(getSnapshot).toHaveBeenCalled();
+    expect(getSnapshot).toHaveBeenCalledWith(filters);
   });
 
   it('should delegate filter options loading', async () => {

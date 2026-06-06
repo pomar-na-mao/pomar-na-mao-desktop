@@ -61,7 +61,13 @@ describe('HomeDashboardService', () => {
 
     const result = await service.getSnapshot();
 
-    expect(mockRpc).toHaveBeenCalledWith('get_home_dashboard_snapshot');
+    expect(mockRpc).toHaveBeenCalledWith('get_home_dashboard_snapshot', {
+      p_period_start_date: null,
+      p_period_end_date: null,
+      p_planting_start_date: null,
+      p_planting_end_date: null,
+      p_operation_code: null,
+    });
     expect(result).toEqual({
       summary: {
         totalPlants: 12,
@@ -141,6 +147,26 @@ describe('HomeDashboardService', () => {
           varietyName: null,
         },
       ],
+    });
+  });
+
+  it('should forward snapshot filter params to the rpc', async () => {
+    mockRpc.mockResolvedValue({
+      data: { summary: null, plants: [] },
+      error: null,
+    });
+
+    await service.getSnapshot({
+      plantingStartDate: '2026-01-01',
+      plantingEndDate: '2026-02-01',
+    });
+
+    expect(mockRpc).toHaveBeenLastCalledWith('get_home_dashboard_snapshot', {
+      p_period_start_date: null,
+      p_period_end_date: null,
+      p_planting_start_date: '2026-01-01',
+      p_planting_end_date: '2026-02-01',
+      p_operation_code: null,
     });
   });
 });

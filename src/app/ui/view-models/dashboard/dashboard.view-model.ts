@@ -5,6 +5,7 @@ import type {
   HomeDashboardLegendItem,
   HomeDashboardOccurrence,
   HomeDashboardPlant,
+  HomeDashboardSnapshotFilters,
   HomeDashboardSummary,
   HomeDashboardVariety,
   HomeDashboardZone,
@@ -35,6 +36,8 @@ const FALLBACK_VARIETY_COLOR = '#16a34a';
 @Injectable()
 export class DashboardViewModel {
   private homeDashboardRepository = inject(HomeDashboardRepository);
+  private supportDataLoaded = signal(false);
+  private snapshotRequestId = 0;
 
   private map: L.Map | null = null;
   private plantLayers: L.LayerGroup | null = null;
@@ -49,9 +52,8 @@ export class DashboardViewModel {
   public mapPlants = signal<HomeDashboardPlant[]>([]);
 
   // --- Filter state ---
-  private today = new Date().toISOString().slice(0, 10);
-  public filterStartDate = signal(this.today);
-  public filterEndDate = signal(this.today);
+  public filterPlantingStartDate = signal('');
+  public filterPlantingEndDate = signal('');
   public filterZoneId = signal('');
   public filterOccurrenceId = signal('');
   public filterVarietyId = signal('');
@@ -107,6 +109,15 @@ export class DashboardViewModel {
   });
 
   public plottedPlantsCount = computed(() => this.filteredPlants().length);
+  public snapshotFilters = computed<HomeDashboardSnapshotFilters>(() => {
+    const plantingStartDate = this.normalizeDateFilter(this.filterPlantingStartDate());
+    const plantingEndDate = this.normalizeDateFilter(this.filterPlantingEndDate());
+
+    return {
+      plantingStartDate,
+      plantingEndDate,
+    };
+  });
 
   constructor() {
     effect(() => {
@@ -120,43 +131,21 @@ export class DashboardViewModel {
       this.renderZonePolygon(zoneId);
     });
 
-    void this.loadDashboard();
+    effect(() => {
+      if (!this.supportDataLoaded()) {
+        return;
+      }
+
+      const filters = this.snapshotFilters();
+      void this.loadSnapshot(filters);
+    });
+
+    void this.loadSupportData();
   }
 
   public async loadDashboard(): Promise<void> {
-    this.isLoading.set(true);
-
-    try {
-      const [snapshot, filterOptions, openOccs] = await Promise.all([
-        this.homeDashboardRepository.getSnapshot(),
-        this.homeDashboardRepository.getFilterOptions(),
-        this.homeDashboardRepository.getOpenOccurrences(),
-      ]);
-
-      this.summary.set(snapshot.summary);
-      this.mapPlants.set(snapshot.plants);
-      this.availableZones.set(filterOptions.zones);
-      this.availableOccurrences.set(filterOptions.occurrences);
-      this.openOccurrences.set(openOccs);
-
-      // DEBUG: verify occurrence data loaded
-      const queimadoId = 'cffdb0e0-8d46-4976-bffc-94280b971609';
-      const queimadoCount = openOccs.filter((oc: { occurrence_type_id: string }) => oc.occurrence_type_id === queimadoId).length;
-      console.log(`[DEBUG] openOccurrences total: ${openOccs.length}, Queimado matches: ${queimadoCount}`);
-      console.log(`[DEBUG] mapPlants total: ${snapshot.plants.length}`);
-    } catch (error) {
-      console.error('Failed to load dashboard data', error);
-      this.summary.set({
-        totalPlants: 0,
-        totalZones: 0,
-        totalOccurrenceTypes: 0,
-        totalVarieties: 0,
-        varieties: [],
-      });
-      this.mapPlants.set([]);
-    } finally {
-      this.isLoading.set(false);
-    }
+    await this.loadSupportData();
+    await this.loadSnapshot(this.snapshotFilters());
   }
 
   public initMap(elementId: string): void {
@@ -435,6 +424,64 @@ export class DashboardViewModel {
     return varietyEntries;
   }
 
+  private async loadSupportData(): Promise<void> {
+    if (this.supportDataLoaded()) {
+      return;
+    }
+
+    try {
+      const [filterOptions, openOccs] = await Promise.all([
+        this.homeDashboardRepository.getFilterOptions(),
+        this.homeDashboardRepository.getOpenOccurrences(),
+      ]);
+
+      this.availableZones.set(filterOptions.zones);
+      this.availableOccurrences.set(filterOptions.occurrences);
+      this.openOccurrences.set(openOccs);
+    } catch (error) {
+      console.error('Failed to load dashboard support data', error);
+      this.availableZones.set([]);
+      this.availableOccurrences.set([]);
+      this.openOccurrences.set([]);
+    } finally {
+      this.supportDataLoaded.set(true);
+    }
+  }
+
+  private async loadSnapshot(filters: HomeDashboardSnapshotFilters): Promise<void> {
+    const requestId = ++this.snapshotRequestId;
+    this.isLoading.set(true);
+
+    try {
+      const snapshot = await this.homeDashboardRepository.getSnapshot(filters);
+
+      if (requestId !== this.snapshotRequestId) {
+        return;
+      }
+
+      this.summary.set(snapshot.summary);
+      this.mapPlants.set(snapshot.plants);
+    } catch (error) {
+      if (requestId !== this.snapshotRequestId) {
+        return;
+      }
+
+      console.error('Failed to load dashboard snapshot', error);
+      this.summary.set({
+        totalPlants: 0,
+        totalZones: 0,
+        totalOccurrenceTypes: 0,
+        totalVarieties: 0,
+        varieties: [],
+      });
+      this.mapPlants.set([]);
+    } finally {
+      if (requestId === this.snapshotRequestId) {
+        this.isLoading.set(false);
+      }
+    }
+  }
+
   private formatCount(value: number): string {
     return new Intl.NumberFormat('pt-BR').format(value);
   }
@@ -457,6 +504,11 @@ export class DashboardViewModel {
     }
 
     return VARIETY_COLORS[index % VARIETY_COLORS.length];
+  }
+
+  private normalizeDateFilter(value: string): string | null {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
   }
 }
 
