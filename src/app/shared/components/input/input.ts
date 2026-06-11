@@ -42,9 +42,9 @@ import { CommonModule } from '@angular/common';
           (input)="onInput($event)"
           (blur)="onBlur()"
           [disabled]="disabled"
-          class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           [ngClass]="{
-            'pl-5': icon,
+            'pl-10 pr-3': icon,
             'px-3': !icon,
             'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500':
               errorMessage,
