@@ -1,5 +1,16 @@
-import { Component, Input as NgInput, Output, EventEmitter, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  Input as NgInput,
+  Output,
+  EventEmitter,
+  forwardRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 export interface SelectOption {
@@ -14,7 +25,11 @@ export interface SelectOption {
   template: `
     <div class="space-y-1 w-full">
       @if (label) {
-        <label [for]="id" class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">{{ label }}</label>
+        <label
+          [for]="id"
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors"
+          >{{ label }}</label
+        >
       }
       <select
         [id]="id"
@@ -22,23 +37,32 @@ export interface SelectOption {
         [multiple]="multiple"
         (change)="onInput($event)"
         (blur)="onBlur()"
-        [class]="multiple ? 'block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed h-32' : 'block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed'"
+        [class]="
+          multiple
+            ? 'block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed h-32'
+            : 'block w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+        "
       >
         @if (placeholder && !multiple) {
           <option value="" disabled>{{ placeholder }}</option>
         }
         @for (option of options; track option.value) {
-          <option [value]="option.value" [selected]="isSelected(option.value)">{{ option.label }}</option>
+          <option [value]="option.value" [selected]="isSelected(option.value)">
+            {{ option.label }}
+          </option>
         }
       </select>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-      width: 100%;
-    }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -65,13 +89,13 @@ export class Select implements ControlValueAccessor {
   }
 
   private _value: string | number | string[] = '';
-  private onChange: (value: string | number | string[]) => void = () => { };
-  private onTouched: () => void = () => { };
+  private onChange: (value: string | number | string[]) => void = () => {};
+  private onTouched: () => void = () => {};
 
   onInput(event: Event): void {
     const target = event.target as HTMLSelectElement;
     if (this.multiple) {
-      const selected = Array.from(target.selectedOptions).map(o => o.value);
+      const selected = Array.from(target.selectedOptions).map((o) => o.value);
       this._value = selected;
       this.onChange(selected);
       this.valueChange.emit(selected);

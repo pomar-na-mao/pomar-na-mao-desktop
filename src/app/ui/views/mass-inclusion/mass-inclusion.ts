@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MassInclusionViewModel } from '../../view-models/mass-inclusion/mass-inclusion.view-model';
 import { MassInclusionForm } from '../../components/mass-inclusion/mass-inclusion-form/mass-inclusion-form';
@@ -16,7 +21,8 @@ import { MassInclusionMapFilters } from '../../components/mass-inclusion/mass-in
     MapPolygonSelector,
   ],
   templateUrl: './mass-inclusion.html',
-  providers: [MassInclusionViewModel]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  providers: [MassInclusionViewModel],
 })
 export class MassInclusion implements OnInit {
   public massInclusionViewModel = inject(MassInclusionViewModel);

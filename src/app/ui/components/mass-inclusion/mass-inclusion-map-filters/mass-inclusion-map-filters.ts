@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Select } from '../../../../shared/components/select/select';
 import { MassInclusionViewModel } from '../../../view-models/mass-inclusion/mass-inclusion.view-model';
@@ -7,6 +7,7 @@ import { MassInclusionViewModel } from '../../../view-models/mass-inclusion/mass
   selector: 'app-mass-inclusion-map-filters',
   standalone: true,
   imports: [CommonModule, Select],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './mass-inclusion-map-filters.html',
 })
 export class MassInclusionMapFilters {

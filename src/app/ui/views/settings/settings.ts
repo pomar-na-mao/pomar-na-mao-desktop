@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Input } from '../../../shared/components/input/input';
 import { UsersRepository } from '../../../data/repositories/users/users-repository';
@@ -6,6 +6,7 @@ import { UsersRepository } from '../../../data/repositories/users/users-reposito
 @Component({
   selector: 'app-settings',
   imports: [CommonModule, Input],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './settings.html',
 })
 export class Settings {

@@ -1,14 +1,20 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LoginViewModel } from '../../../view-models/authentication/login.view-model';
 import { Input } from '../../../../shared/components/input/input';
-import { createLoginForm, emailErrors, passwordErrors, type LoginFormValue } from '../../../view-models/authentication/login-form';
+import {
+  createLoginForm,
+  emailErrors,
+  passwordErrors,
+  type LoginFormValue,
+} from '../../../view-models/authentication/login-form';
 
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterModule, Input],
   templateUrl: './login.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [LoginViewModel],
 })
 export class Login {
