@@ -33,7 +33,6 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular-eslint/builder": "21.3.1",
     "@angular-eslint/eslint-plugin": "21.3.1",
     "@angular-eslint/eslint-plugin-template": "21.3.1",
     "@angular-eslint/schematics": "21.3.1",
