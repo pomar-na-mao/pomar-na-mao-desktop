@@ -1,15 +1,29 @@
-import { Component, inject, Input as NgInput } from '@angular/core';
-import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  inject,
+  Input as NgInput,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  ControlValueAccessor,
+  NgControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-input',
   imports: [CommonModule, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-1 w-full">
       @if (label) {
         <div class="flex items-center justify-between">
-          <label [for]="id" class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ label }}</label>
+          <label
+            [for]="id"
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            >{{ label }}</label
+          >
           <ng-content select="[label-extra]"></ng-content>
         </div>
       }
@@ -32,7 +46,8 @@ import { CommonModule } from '@angular/common';
           [ngClass]="{
             'pl-5': icon,
             'px-3': !icon,
-            'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500': errorMessage,
+            'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500':
+              errorMessage,
             'border-slate-200 dark:border-slate-700': !errorMessage,
           }"
         />
@@ -79,8 +94,8 @@ export class Input implements ControlValueAccessor {
   }
 
   private _value = '';
-  private onChange: (value: string) => void = () => { };
-  private onTouched: () => void = () => { };
+  private onChange: (value: string) => void = () => {};
+  private onTouched: () => void = () => {};
 
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
