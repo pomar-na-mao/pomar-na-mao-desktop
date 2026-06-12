@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <header
-      class="fixed top-0 left-0 right-0 h-[60px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm z-30 flex items-center justify-between px-4 transition-colors"
+      class="fixed top-0 left-0 right-0 h-[60px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm z-[1200] flex items-center justify-between px-4 transition-colors"
     >
       <div class="flex items-center gap-4">
         <button

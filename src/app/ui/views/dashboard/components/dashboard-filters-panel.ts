@@ -14,6 +14,10 @@ import { Select } from '../../../../shared/components/select/select';
       class="flex h-full w-[320px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
     >
       <div class="sidebar-scroll flex-1 space-y-5 overflow-y-auto px-4 py-4">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          Filtros de busca
+        </h2>
+
         <!-- Data de plantio -->
         <section>
           <label
@@ -64,26 +68,6 @@ import { Select } from '../../../../shared/components/select/select';
             [options]="varietyOptions"
           ></app-select>
         </section>
-
-        <!-- Operação -->
-        <section>
-          <label
-            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
-          >
-            Operação
-          </label>
-          <select
-            [ngModel]="dashboardViewModel.filterOperation()"
-            (ngModelChange)="dashboardViewModel.filterOperation.set($event)"
-            class="w-full appearance-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
-          >
-            <option value="">Remover todas</option>
-            <option value="pulverizacao">Pulverização</option>
-            <option value="inspecao">Inspeção</option>
-            <option value="anotacao">Anotação</option>
-            <option value="colheita">Colheita</option>
-          </select>
-        </section>
       </div>
 
       <!-- Divider and Legend Footer -->
@@ -91,7 +75,7 @@ import { Select } from '../../../../shared/components/select/select';
 
       <div class="px-4 py-4 shrink-0">
         <label
-          class="mb-2 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+          class="mb-2 block text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100"
         >
           Legenda de Variedades
         </label>
