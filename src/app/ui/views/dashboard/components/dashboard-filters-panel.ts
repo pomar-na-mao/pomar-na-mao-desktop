@@ -2,130 +2,71 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
+import { Input } from '../../../../shared/components/input/input';
+import { Select } from '../../../../shared/components/select/select';
 
 @Component({
   selector: 'app-dashboard-filters-panel',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Input, Select],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <aside
-      class="flex h-full w-[280px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
+      class="flex h-full w-[320px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
     >
       <div class="sidebar-scroll flex-1 space-y-5 overflow-y-auto px-4 py-4">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          Filtros de busca
+        </h2>
+
         <!-- Data de plantio -->
         <section>
           <label
-            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
           >
             Data de plantio
           </label>
           <div class="grid grid-cols-2 gap-2">
-            <div class="relative">
-              <input
-                type="date"
-                [ngModel]="dashboardViewModel.filterPlantingStartDate()"
-                (ngModelChange)="
-                  dashboardViewModel.filterPlantingStartDate.set($event)
-                "
-                aria-label="Data inicial de plantio"
-                class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
-              />
-            </div>
-            <div class="relative">
-              <input
-                type="date"
-                [ngModel]="dashboardViewModel.filterPlantingEndDate()"
-                (ngModelChange)="
-                  dashboardViewModel.filterPlantingEndDate.set($event)
-                "
-                aria-label="Data final de plantio"
-                class="w-full rounded-md border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[10.5px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
-              />
-            </div>
+            <app-input
+              type="date"
+              [ngModel]="dashboardViewModel.filterPlantingStartDate()"
+              (ngModelChange)="dashboardViewModel.filterPlantingStartDate.set($event)"
+            ></app-input>
+            <app-input
+              type="date"
+              [ngModel]="dashboardViewModel.filterPlantingEndDate()"
+              (ngModelChange)="dashboardViewModel.filterPlantingEndDate.set($event)"
+            ></app-input>
           </div>
         </section>
 
         <!-- Zona -->
         <section>
-          <label
-            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
-          >
-            Zona
-          </label>
-          <select
+          <app-select
+            label="Zona"
             [ngModel]="dashboardViewModel.filterZoneId()"
             (ngModelChange)="dashboardViewModel.filterZoneId.set($event)"
-            class="w-full appearance-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
-          >
-            <option value="">Todas as Zonas</option>
-            @for (zone of dashboardViewModel.availableZones(); track zone.id) {
-              <option [value]="zone.id">{{ zone.name }}</option>
-            }
-          </select>
+            [options]="zoneOptions"
+          ></app-select>
         </section>
 
         <!-- Ocorrência -->
         <section>
-          <label
-            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
-          >
-            Ocorrência
-          </label>
-          <select
+          <app-select
+            label="Ocorrência"
             [ngModel]="dashboardViewModel.filterOccurrenceId()"
             (ngModelChange)="dashboardViewModel.filterOccurrenceId.set($event)"
-            class="w-full appearance-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
-          >
-            <option value="">Remover todas</option>
-            @for (
-              occurrence of dashboardViewModel.availableOccurrences();
-              track occurrence.id
-            ) {
-              <option [value]="occurrence.id">{{ occurrence.name }}</option>
-            }
-          </select>
+            [options]="occurrenceOptions"
+          ></app-select>
         </section>
 
         <!-- Variedade -->
         <section>
-          <label
-            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
-          >
-            Variedade
-          </label>
-          <select
+          <app-select
+            label="Variedade"
             [ngModel]="dashboardViewModel.filterVarietyId()"
             (ngModelChange)="dashboardViewModel.filterVarietyId.set($event)"
-            class="w-full appearance-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
-          >
-            <option value="">Todas as Variedades</option>
-            @for (
-              variety of dashboardViewModel.availableVarieties();
-              track variety.id
-            ) {
-              <option [value]="variety.id">{{ variety.name }}</option>
-            }
-          </select>
-        </section>
-
-        <!-- Operação -->
-        <section>
-          <label
-            class="mb-1 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
-          >
-            Operação
-          </label>
-          <select
-            [ngModel]="dashboardViewModel.filterOperation()"
-            (ngModelChange)="dashboardViewModel.filterOperation.set($event)"
-            class="w-full appearance-none rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] text-slate-700 outline-none transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-emerald-500"
-          >
-            <option value="">Remover todas</option>
-            <option value="pulverizacao">Pulverização</option>
-            <option value="inspecao">Inspeção</option>
-            <option value="anotacao">Anotação</option>
-            <option value="colheita">Colheita</option>
-          </select>
+            [options]="varietyOptions"
+          ></app-select>
         </section>
       </div>
 
@@ -134,7 +75,7 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
 
       <div class="px-4 py-4 shrink-0">
         <label
-          class="mb-2 block text-[12px] font-semibold tracking-[0.06em] text-emerald-600 dark:text-emerald-400"
+          class="mb-2 block text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100"
         >
           Legenda de Variedades
         </label>
@@ -160,4 +101,34 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
 })
 export class DashboardFiltersPanel {
   public dashboardViewModel = inject(DashboardViewModel);
+
+  public get zoneOptions() {
+    return [
+      { label: 'Todas as Zonas', value: '' },
+      ...this.dashboardViewModel.availableZones().map((z) => ({
+        label: z.name,
+        value: z.id,
+      })),
+    ];
+  }
+
+  public get occurrenceOptions() {
+    return [
+      { label: 'Remover todas', value: '' },
+      ...this.dashboardViewModel.availableOccurrences().map((o) => ({
+        label: o.name,
+        value: o.id,
+      })),
+    ];
+  }
+
+  public get varietyOptions() {
+    return [
+      { label: 'Todas as Variedades', value: '' },
+      ...this.dashboardViewModel.availableVarieties().map((v) => ({
+        label: v.name,
+        value: v.id,
+      })),
+    ];
+  }
 }

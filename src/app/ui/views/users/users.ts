@@ -69,26 +69,26 @@ export class Users {
   getRoleClass(role: string) {
     switch (role) {
       case 'Administrador':
-        return 'text-emerald-600 bg-emerald-50';
+        return 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-500/10';
       case 'Editor':
-        return 'text-blue-600 bg-blue-50';
+        return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-500/10';
       case 'Visualizador':
-        return 'text-slate-600 bg-slate-50';
+        return 'text-slate-600 bg-slate-50 dark:text-slate-300 dark:bg-slate-500/10';
       default:
-        return 'text-slate-600 bg-slate-50';
+        return 'text-slate-600 bg-slate-50 dark:text-slate-300 dark:bg-slate-500/10';
     }
   }
 
   getStatusClass(status: string) {
     switch (status) {
       case 'Ativo':
-        return 'bg-emerald-100 text-emerald-700';
+        return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400';
       case 'Inativo':
-        return 'bg-slate-100 text-slate-700';
+        return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
       case 'Pendente':
-        return 'bg-amber-100 text-amber-700';
+        return 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400';
       default:
-        return 'bg-slate-100 text-slate-700';
+        return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
     }
   }
 }
