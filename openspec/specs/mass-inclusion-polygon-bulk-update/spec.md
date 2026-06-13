@@ -4,12 +4,14 @@
 TBD - created by archiving change adapt-mass-inclusion-database-architecture. Update Purpose after archive.
 ## Requirements
 ### Requirement: Existing polygon and form workflow is preserved
-The mass inclusion feature SHALL keep the existing map, polygon generation, and form controls as the entry point for bulk changes.
+The mass inclusion feature SHALL structure the screen with a left form sidebar and a full-height map on the right, and the Zone selector SHALL be integrated at the top of the left form sidebar.
 
 #### Scenario: User prepares a bulk change
 - **WHEN** the user opens the mass inclusion screen
-- **THEN** the user MUST be able to select or generate a polygon using the existing map workflow.
-- **THEN** the user MUST be able to fill the existing mass association form before previewing or saving.
+- **THEN** the layout MUST display the form sidebar on the left and the map on the right.
+- **THEN** the Zone selector MUST be displayed at the top of the left form sidebar.
+- **THEN** the user MUST be able to select or generate a polygon using the map workflow.
+- **THEN** the user MUST be able to fill the mass association form before previewing or saving.
 
 ### Requirement: Plant preview is required before saving
 The mass inclusion feature SHALL call `find_plants_inside_polygon` with a GeoJSON Polygon and present the returned plants for review before any mutation RPC is called.
