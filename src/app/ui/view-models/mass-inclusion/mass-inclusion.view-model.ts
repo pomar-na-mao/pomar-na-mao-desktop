@@ -35,6 +35,7 @@ export class MassInclusionViewModel {
   public previewError = signal<string | null>(null);
   public clearMapSignal = signal(0);
   public plants = signal<Plant[]>([]);
+  public isMapFullscreen = signal(false);
   private formVersion = signal(0);
 
   public selectedPolygonCoordinates = this.massInclusionRepository.selectedPolygonCoordinates;

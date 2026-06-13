@@ -221,7 +221,7 @@ export class DashboardViewModel {
 
     plants.forEach((plant) => {
       let plantColor = this.getVarietyColor(plant.varietyId, plant.varietyName);
-      let radius = 2;
+      let radius = 9;
       let strokeColor = plantColor;
       let weight = 0.75;
       let fillOpacity = 0.9;
@@ -230,7 +230,7 @@ export class DashboardViewModel {
         // Plot with a striking neon magenta color with white border and larger size
         plantColor = '#ff0055';
         strokeColor = '#ffffff';
-        radius = 4;
+        radius = 18;
         weight = 1.5;
         fillOpacity = 1.0;
       }

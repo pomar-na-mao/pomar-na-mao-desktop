@@ -1,5 +1,5 @@
 <div
-  class="mass-card lg:h-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm transition-colors"
+  class="mass-card lg:h-full p-4 transition-colors"
 >
   <div
     class="mb-4 border-b border-slate-100 dark:border-slate-800 pb-3 transition-colors"
@@ -30,6 +30,16 @@
         o formulário. Dê duplo clique no último ponto para fechar.
       </div>
       }
+
+      <app-select
+        id="mass-inclusion-zone-select"
+        label="Zona"
+        [placeholder]="massInclusionViewModel.zoneOptions().length === 0 ? 'Nenhuma zona disponivel' : 'Selecione uma zona'"
+        [value]="massInclusionViewModel.selectedZoneId()"
+        [options]="massInclusionViewModel.zoneOptions()"
+        [disabled]="massInclusionViewModel.isLoadingZones() || massInclusionViewModel.zoneOptions().length === 0"
+        (valueChange)="massInclusionViewModel.onZoneChange($event)"
+      />
 
       <app-select
         id="mass-occurrences"

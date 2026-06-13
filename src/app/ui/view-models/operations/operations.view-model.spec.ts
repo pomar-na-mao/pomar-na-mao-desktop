@@ -1,21 +1,28 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { OperationsViewModel } from './operations.view-model';
 import { OperationsRepository } from '../../../data/repositories/operations/operations-repository';
 import { signal } from '@angular/core';
 
 describe('OperationsViewModel', () => {
   let viewModel: OperationsViewModel;
-  let mockOperationsRepository: jasmine.SpyObj<OperationsRepository>;
+  const mockSprayingOperationsSignal = signal([]);
+  const mockGetSprayingOperations = vi.fn();
 
   beforeEach(() => {
-    mockOperationsRepository = jasmine.createSpyObj('OperationsRepository', ['getSprayingOperations'], {
-      sprayingOperations: signal([])
-    });
+    vi.clearAllMocks();
+    mockSprayingOperationsSignal.set([]);
 
     TestBed.configureTestingModule({
       providers: [
         OperationsViewModel,
-        { provide: OperationsRepository, useValue: mockOperationsRepository }
+        {
+          provide: OperationsRepository,
+          useValue: {
+            getSprayingOperations: mockGetSprayingOperations,
+            sprayingOperations: mockSprayingOperationsSignal
+          }
+        }
       ]
     });
 
@@ -26,25 +33,25 @@ describe('OperationsViewModel', () => {
     expect(viewModel).toBeTruthy();
   });
 
-  it('should fetch spraying operations when type is pulverizacao', fakeAsync(() => {
+  it('should fetch spraying operations when type is pulverizacao', async () => {
     viewModel.startDate.set('2023-01-01');
     viewModel.endDate.set('2023-12-31');
     viewModel.selectedZoneId.set('zone-1');
     viewModel.selectedOperation.set('pulverizacao');
 
     TestBed.flushEffects();
-    tick();
+    await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(mockOperationsRepository.getSprayingOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-1');
-  }));
+    expect(mockGetSprayingOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-1');
+  });
 
-  it('should clear spraying operations when type is not pulverizacao', fakeAsync(() => {
+  it('should clear spraying operations when type is not pulverizacao', async () => {
     viewModel.selectedOperation.set('inspecao');
 
     TestBed.flushEffects();
-    tick();
+    await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(mockOperationsRepository.getSprayingOperations).not.toHaveBeenCalled();
-    expect(mockOperationsRepository.sprayingOperations()).toEqual([]);
-  }));
+    expect(mockGetSprayingOperations).not.toHaveBeenCalled();
+    expect(mockSprayingOperationsSignal()).toEqual([]);
+  });
 });

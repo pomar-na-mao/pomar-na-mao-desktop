@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OperationsMap } from './operations-map';
 import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
@@ -11,9 +12,10 @@ describe('OperationsMap', () => {
   beforeEach(async () => {
     mockViewModel = {
       isMapFullscreen: signal(false),
-      initMap: jasmine.createSpy('initMap'),
-      setMapFullscreen: jasmine.createSpy('setMapFullscreen'),
-      invalidateMapSize: jasmine.createSpy('invalidateMapSize')
+      selectedOperationDetails: signal(null),
+      initMap: vi.fn(),
+      setMapFullscreen: vi.fn(),
+      invalidateMapSize: vi.fn()
     };
 
     await TestBed.configureTestingModule({

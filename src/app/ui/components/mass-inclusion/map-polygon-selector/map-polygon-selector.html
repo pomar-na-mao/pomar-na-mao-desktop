@@ -78,7 +78,7 @@
 
       <!-- Toggle Draw -->
       <button
-        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
         [class.border-blue-500]="!drawingMode"
         [class.bg-blue-600]="!drawingMode"
         [class.text-white]="!drawingMode"
@@ -87,8 +87,9 @@
         [class.bg-red-50]="drawingMode"
         [class.text-red-700]="drawingMode"
         [class.hover:bg-red-100]="drawingMode"
+        [disabled]="!hasPlants"
         (click)="toggleDrawingMode()"
-        [title]="drawingMode ? 'Cancelar desenho' : 'Desenhar nova área'"
+        [title]="!hasPlants ? 'Selecione uma zona com plantas primeiro' : (drawingMode ? 'Cancelar desenho' : 'Desenhar nova área')"
       >
         <svg
           width="16"
