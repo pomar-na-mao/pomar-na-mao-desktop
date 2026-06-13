@@ -1,8 +1,8 @@
-<div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+<div class="p-6 lg:p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
-      <h1 class="text-3xl font-bold text-slate-900">Usuários</h1>
-      <p class="text-slate-500 mt-1">Gerencie os membros da sua equipe e suas permissões.</p>
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Usuários</h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-1">Gerencie os membros da sua equipe e suas permissões.</p>
     </div>
     <button
       class="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all active:scale-95 shadow-sm"
@@ -25,10 +25,10 @@
     </button>
   </div>
 
-  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
     <!-- Header/Search -->
     <div
-      class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between gap-4"
+      class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col sm:flex-row justify-between gap-4"
     >
       <div class="flex-1 min-w-[300px]">
         <app-input
@@ -38,12 +38,12 @@
       </div>
       <div class="flex gap-2">
         <button
-          class="px-3 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+          class="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           Exportar CSV
         </button>
         <button
-          class="px-3 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+          class="px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           Filtros Avançados
         </button>
@@ -54,36 +54,36 @@
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="bg-white">
-            <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <tr class="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
+            <th class="px-6 py-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Usuário
             </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <th class="px-6 py-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Cargo
             </th>
-            <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <th class="px-6 py-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Status
             </th>
             <th
-              class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right"
+              class="px-6 py-4 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-right"
             >
               Gerenciar
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
           @for (user of users; track user) {
-            <tr class="hover:bg-slate-50/80 transition-colors">
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   <img
                     [src]="user.avatar"
-                    class="w-10 h-10 rounded-full border border-slate-100"
+                    class="w-10 h-10 rounded-full border border-slate-100 dark:border-slate-800"
                     [alt]="user.name"
                   />
                   <div>
-                    <p class="text-sm font-bold text-slate-900">{{ user.name }}</p>
-                    <p class="text-xs text-slate-500">{{ user.email }}</p>
+                    <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ user.name }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">{{ user.email }}</p>
                   </div>
                 </div>
               </td>
@@ -107,14 +107,14 @@
                           : 'bg-amber-500'
                     "
                   ></span>
-                  <span class="text-sm font-medium text-slate-600">{{ user.status }}</span>
+                  <span class="text-sm font-medium text-slate-600 dark:text-slate-300">{{ user.status }}</span>
                 </div>
               </td>
               <td class="px-6 py-4 text-right">
                 <div class="flex justify-end gap-2">
                   <button
                     title="Editar"
-                    class="p-2 text-blue-600 hover:opacity-70 transition-all"
+                    class="p-2 text-blue-600 dark:text-blue-400 hover:opacity-70 transition-all"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +133,7 @@
                   </button>
                   <button
                     title="Excluir"
-                    class="p-2 text-rose-600 hover:opacity-70 transition-all"
+                    class="p-2 text-rose-600 dark:text-rose-400 hover:opacity-70 transition-all"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

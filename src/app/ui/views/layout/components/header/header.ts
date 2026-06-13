@@ -1,4 +1,14 @@
-import { Component, Output, EventEmitter, inject, signal, OnInit, computed, effect } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  inject,
+  signal,
+  OnInit,
+  computed,
+  effect,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthenticationRepository } from '../../../../../data/repositories/authentication/authentication-repository';
 import { UsersRepository } from '../../../../../data/repositories/users/users-repository';
@@ -7,9 +17,10 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <header
-      class="fixed top-0 left-0 right-0 h-[60px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm z-30 flex items-center justify-between px-4 transition-colors"
+      class="fixed top-0 left-0 right-0 h-[60px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm z-[1200] flex items-center justify-between px-4 transition-colors"
     >
       <div class="flex items-center gap-4">
         <button
@@ -38,7 +49,10 @@ import { Router } from '@angular/router';
             alt="Logo"
             class="w-10 h-10 object-contain drop-shadow-sm"
           />
-          <span class="font-bold text-xl tracking-tight hidden sm:block dark:text-white">Pomar na mão</span>
+          <span
+            class="font-bold text-xl tracking-tight hidden sm:block dark:text-white"
+            >Pomar na mão</span
+          >
         </div>
       </div>
 
@@ -51,13 +65,35 @@ import { Router } from '@angular/router';
         >
           @if (isDarkMode()) {
             <!-- Sun Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-slate-600 dark:text-slate-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              />
             </svg>
           } @else {
             <!-- Moon Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-slate-600 dark:text-slate-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              />
             </svg>
           }
         </button>
@@ -91,10 +127,17 @@ import { Router } from '@angular/router';
           >
             @if (usersRepository.currentUser()) {
               <div class="hidden text-right lg:block">
-                <p class="text-xs font-semibold text-slate-900 dark:text-white leading-tight">
-                  Olá {{''}}{{ usersRepository.currentUser()?.full_name!.split(' ')[0] }}
+                <p
+                  class="text-xs font-semibold text-slate-900 dark:text-white leading-tight"
+                >
+                  Olá {{ ''
+                  }}{{
+                    usersRepository.currentUser()?.full_name!.split(' ')[0]
+                  }}
                 </p>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400">Bem-vindo!</p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400">
+                  Bem-vindo!
+                </p>
               </div>
             }
             @if (avatarUrl() && !avatarLoadFailed()) {
@@ -108,7 +151,9 @@ import { Router } from '@angular/router';
               <div
                 class="w-8 h-8 rounded-lg shadow-sm flex items-center justify-center bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100 font-semibold text-xs select-none"
                 aria-label="User Avatar Placeholder"
-                [attr.title]="usersRepository.currentUser()?.full_name || 'Usuário'"
+                [attr.title]="
+                  usersRepository.currentUser()?.full_name || 'Usuário'
+                "
               >
                 {{ userInitials() || 'U' }}
               </div>
@@ -206,7 +251,10 @@ export class Header implements OnInit {
 
   ngOnInit() {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (
+      savedTheme === 'dark' ||
+      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
       document.documentElement.classList.add('dark');
       this.isDarkMode.set(true);
     } else {
@@ -222,7 +270,7 @@ export class Header implements OnInit {
   }
 
   public toggleUserDropdown() {
-    this.isUserDropdownOpen.update(v => !v);
+    this.isUserDropdownOpen.update((v) => !v);
   }
 
   public onAvatarError() {

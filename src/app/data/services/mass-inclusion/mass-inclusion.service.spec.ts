@@ -3,17 +3,19 @@ import { TestBed } from '@angular/core/testing';
 import { MassInclusionService } from './mass-inclusion.service';
 import { SupabaseService } from '../supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { MassUpdatePlantsParams } from '../../../domain/models/mass-inclusion';
+import type { GeoJsonPolygon, PolygonBulkUpdatePayload } from '../../../domain/models/mass-inclusion';
 
 describe('MassInclusionService', () => {
   let service: MassInclusionService;
   const mockRpc = vi.fn();
+  const mockFrom = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     const mockSupabaseClient = {
       rpc: mockRpc,
+      from: mockFrom,
     } as Partial<SupabaseClient>;
 
     TestBed.configureTestingModule({
@@ -35,63 +37,116 @@ describe('MassInclusionService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('massUpdatePlantsInPolygon', () => {
-    const coords = [
-      { lat: -21.23, lng: -47.79 },
-      { lat: -21.24, lng: -47.78 },
-      { lat: -21.25, lng: -47.80 },
-    ];
+  it('should call find_plants_inside_polygon and map snake_case rows', async () => {
+    const polygon: GeoJsonPolygon = {
+      type: 'Polygon',
+      coordinates: [[[-47.79, -21.23], [-47.78, -21.24], [-47.80, -21.25], [-47.79, -21.23]]],
+    };
 
-    it('should call the rpc with correct mapped params', async () => {
-      const mockResult = { message: 'ok', updated: 2, ids: ['a', 'b'] };
-      mockRpc.mockResolvedValue({ data: mockResult, error: null });
-
-      const params: MassUpdatePlantsParams = {
-        coordinates: coords,
-        occurrences: ['mites'],
-        variety: 'Coração',
-        lifeOfTree: '5 anos',
-        plantingDate: '2020-01-01',
-        description: 'Teste',
-      };
-
-      const result = await service.massUpdatePlantsInPolygon(params);
-
-      expect(mockRpc).toHaveBeenCalledWith('mass_update_plants_in_polygon', {
-        coordinates: coords,
-        occurrences: ['mites'],
-        variety: 'Coração',
-        life_of_tree_param: '5 anos',
-        planting_date_param: '2020-01-01',
-        description_param: 'Teste',
-      });
-      expect(result.data).toEqual(mockResult);
-      expect(result.error).toBeNull();
+    mockRpc.mockResolvedValue({
+      data: [{
+        plant_id: 'p1',
+        latitude: -21.23,
+        longitude: -47.79,
+        zone_id: 'z1',
+        zone_name: 'Zona A',
+        variety_id: 10,
+        variety_name: 'Fuji',
+        planting_date: '2025-01-01T00:00:00Z',
+      }],
+      error: null,
     });
 
-    it('should default null optional params when not provided', async () => {
-      mockRpc.mockResolvedValue({ data: null, error: null });
+    const result = await service.findPlantsInsidePolygon(polygon);
 
-      await service.massUpdatePlantsInPolygon({ coordinates: coords });
+    expect(mockRpc).toHaveBeenCalledWith('find_plants_inside_polygon', {
+      p_polygon_geojson: polygon,
+    });
+    expect(result.data).toEqual([{
+      plantId: 'p1',
+      latitude: -21.23,
+      longitude: -47.79,
+      zoneId: 'z1',
+      zoneName: 'Zona A',
+      varietyId: 10,
+      varietyName: 'Fuji',
+      plantingDate: '2025-01-01T00:00:00Z',
+    }]);
+    expect(result.error).toBeNull();
+  });
 
-      expect(mockRpc).toHaveBeenCalledWith('mass_update_plants_in_polygon', {
-        coordinates: coords,
-        occurrences: [],
-        variety: null,
-        life_of_tree_param: null,
-        planting_date_param: null,
-        description_param: null,
-      });
+  it('should load variety options from Supabase', async () => {
+    const order = vi.fn().mockResolvedValue({
+      data: [{ id: 1, name: 'Gala', description: null }],
+      error: null,
+    });
+    const select = vi.fn().mockReturnValue({ order });
+    mockFrom.mockReturnValue({ select });
+
+    const result = await service.findVarietyOptions();
+
+    expect(mockFrom).toHaveBeenCalledWith('varieties');
+    expect(select).toHaveBeenCalledWith('id,name,description');
+    expect(order).toHaveBeenCalledWith('name');
+    expect(result.data).toEqual([{ id: 1, name: 'Gala', description: null }]);
+  });
+
+  it('should load occurrence type options from Supabase', async () => {
+    const order = vi.fn().mockResolvedValue({
+      data: [{ id: 'o1', code: 'mites', name: 'Ácaros' }],
+      error: null,
+    });
+    const select = vi.fn().mockReturnValue({ order });
+    mockFrom.mockReturnValue({ select });
+
+    const result = await service.findOccurrenceTypeOptions();
+
+    expect(mockFrom).toHaveBeenCalledWith('occurrence_types');
+    expect(select).toHaveBeenCalledWith('id,code,name');
+    expect(order).toHaveBeenCalledWith('name');
+    expect(result.data).toEqual([{ id: 'o1', code: 'mites', name: 'Ácaros' }]);
+  });
+
+  it('should call sync_polygon_bulk_update for confirmed saves and map result counts', async () => {
+    const payload: PolygonBulkUpdatePayload = {
+      polygonGeojson: {
+        type: 'Polygon',
+        coordinates: [[[-47.79, -21.23], [-47.78, -21.24], [-47.80, -21.25], [-47.79, -21.23]]],
+      },
+      plants: [{ plantId: 'p1', selectionSource: 'polygon_selected' }],
+      plantsFoundCount: 1,
+      occurrenceAction: 'add',
+      occurrences: [],
+      varietyId: 2,
+      lifeOfTree: null,
+      plantingDate: null,
+      notes: null,
+      startedAt: '2026-05-31T12:00:00Z',
+      finishedAt: '2026-05-31T12:00:00Z',
+    };
+
+    mockRpc.mockResolvedValue({
+      data: [{
+        field_operation_id: 'op1',
+        plants_changed_count: 1,
+        occurrences_created_count: 0,
+        occurrences_updated_count: 0,
+        attributes_updated_count: 1,
+      }],
+      error: null,
     });
 
-    it('should return error when rpc fails', async () => {
-      const mockError = { message: 'syntax error' };
-      mockRpc.mockResolvedValue({ data: null, error: mockError });
+    const result = await service.syncPolygonBulkUpdate(payload);
 
-      const result = await service.massUpdatePlantsInPolygon({ coordinates: coords });
-
-      expect(result.error).toEqual(mockError);
-      expect(result.data).toBeNull();
+    expect(mockRpc).toHaveBeenCalledWith('sync_polygon_bulk_update', {
+      p_payload: payload,
+    });
+    expect(result.data).toEqual({
+      fieldOperationId: 'op1',
+      plantsChangedCount: 1,
+      occurrencesCreatedCount: 0,
+      occurrencesUpdatedCount: 0,
+      attributesUpdatedCount: 1,
     });
   });
 });

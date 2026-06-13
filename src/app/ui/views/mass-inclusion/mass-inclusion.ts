@@ -1,10 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MassInclusionViewModel } from '../../view-models/mass-inclusion/mass-inclusion.view-model';
 import { MassInclusionForm } from '../../components/mass-inclusion/mass-inclusion-form/mass-inclusion-form';
 import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
 import { MapPolygonSelector } from '../../components/mass-inclusion/map-polygon-selector/map-polygon-selector';
-import { MassInclusionMapFilters } from '../../components/mass-inclusion/mass-inclusion-map-filters/mass-inclusion-map-filters';
 
 @Component({
   selector: 'app-mass-inclusion',
@@ -12,17 +18,23 @@ import { MassInclusionMapFilters } from '../../components/mass-inclusion/mass-in
   imports: [
     CommonModule,
     MassInclusionForm,
-    MassInclusionMapFilters,
     MapPolygonSelector,
   ],
   templateUrl: './mass-inclusion.html',
-  providers: [MassInclusionViewModel]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  providers: [MassInclusionViewModel],
 })
-export class MassInclusion implements OnInit {
+export class MassInclusion implements OnInit, OnDestroy {
   public massInclusionViewModel = inject(MassInclusionViewModel);
 
+  @ViewChild(MapPolygonSelector) public mapSelector!: MapPolygonSelector;
+
   public async ngOnInit(): Promise<void> {
-    await this.massInclusionViewModel.loadRegions();
+    await this.massInclusionViewModel.loadZones();
+  }
+
+  public ngOnDestroy(): void {
+    document.body.style.overflow = '';
   }
 
   public onPolygonSelected(event: PolygonSelection): void {
@@ -31,5 +43,14 @@ export class MassInclusion implements OnInit {
 
   public onPolygonCleared(): void {
     this.massInclusionViewModel.onPolygonCleared();
+  }
+
+  public toggleFullscreen(): void {
+    const nextValue = !this.massInclusionViewModel.isMapFullscreen();
+    this.massInclusionViewModel.isMapFullscreen.set(nextValue);
+    document.body.style.overflow = nextValue ? 'hidden' : '';
+    setTimeout(() => {
+      this.mapSelector.invalidateSize();
+    }, 0);
   }
 }

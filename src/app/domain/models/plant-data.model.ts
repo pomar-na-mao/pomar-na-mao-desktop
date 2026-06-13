@@ -8,6 +8,7 @@ export interface Plant {
   harvest: string;
   planting_date: string;
   life_of_the_tree: string;
+  zone_id: string | null;
   stick: boolean;
   broken_branch: boolean;
   vine_growing: boolean;

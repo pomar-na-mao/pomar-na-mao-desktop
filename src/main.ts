@@ -1,7 +1,19 @@
-import { enableProdMode, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import {
+  enableProdMode,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+  withXhr,
+} from '@angular/common/http';
+import {
+  provideRouter,
+  withEnabledBlockingInitialNavigation,
+  withInMemoryScrolling,
+} from '@angular/router';
 import { APP_CONFIG } from './environments/environment';
 import { App } from './app/app';
 import { ROUTES } from './app/app.routes';
@@ -14,11 +26,14 @@ bootstrapApplication(App, {
   providers: [
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideRouter(
       ROUTES,
-      withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
-      withEnabledBlockingInitialNavigation()
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      }),
+      withEnabledBlockingInitialNavigation(),
     ),
-  ]
-}).catch(err => console.error(err));
+  ],
+}).catch((err) => console.error(err));
