@@ -1,5 +1,11 @@
 schema: spec-driven
 
+context: |
+  - Sempre que importar componentes nos arquivos HTML, use a abreviação (self-closing tags). Exemplo: <app-meu-componente /> ao invés de <app-meu-componente></app-meu-componente>.
+  - Sempre que criar RPC, alterar RPC, criar tabela ou editar tabela do Supabase, edite no arquivo database.md (Arquivo de arquitetura do banco de dados).
+  - Sempre crie testes unitários para o que for implementado.
+  - Use o MCP do Supabase para fazer as alterações necessárias no banco de dados.
+
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
@@ -26,3 +32,4 @@ rules:
     - When a design affects any Supabase table, RPC, function, trigger, policy, or permission, document the database contract, migration impact, implementation details, and database.md updates.
   tasks:
     - Add an explicit documentation task for every Supabase table, RPC, function, trigger, policy, or permission change; update database.md and the relevant implementation details.
+    - Sempre criar tarefas explícitas para os testes unitários do que for implementado.

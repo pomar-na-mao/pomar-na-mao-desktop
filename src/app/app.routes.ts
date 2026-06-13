@@ -16,6 +16,10 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
       },
       {
+        path: 'operations',
+        loadComponent: () => import('./ui/views/operations/operations').then(m => m.Operations)
+      },
+      {
         path: 'inclusoes-em-massa',
         loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
       },

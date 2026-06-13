@@ -1,15 +1,15 @@
 <div
   [class]="
-    dashboardViewModel.isMapFullscreen()
+    operationsViewModel.isMapFullscreen()
       ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex overflow-hidden bg-white dark:bg-slate-950'
       : 'flex h-[calc(100vh-64px)] overflow-hidden'
   "
 >
   <!-- Left Filter Sidebar -->
-  <app-dashboard-filters-panel />
+  <app-operations-filters-panel />
 
   <!-- Map Area -->
   <div class="flex-1 overflow-hidden">
-    <app-dashboard-map />
+    <app-operations-map />
   </div>
 </div>

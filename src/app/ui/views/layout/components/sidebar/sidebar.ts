@@ -75,6 +75,11 @@ export class Sidebar {
       path: '/home',
     },
     {
+      label: 'Operações',
+      icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+      path: '/operations',
+    },
+    {
       label: 'Inclusões em Massa',
       icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
       path: '/inclusoes-em-massa',

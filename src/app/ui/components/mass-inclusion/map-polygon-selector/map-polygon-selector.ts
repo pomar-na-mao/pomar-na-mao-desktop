@@ -99,7 +99,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private _backgroundPolygonCoords: [number, number][] | null = null;
   private _plants: Plant[] = [];
   private backgroundLayer: L.Polygon | null = null;
-  private plantCircles: L.Circle[] = [];
+  private plantCircles: L.CircleMarker[] = [];
 
   public drawingMode = false;
   public polygons: PolygonSelection[] = [];
@@ -183,12 +183,12 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.plantCircles = [];
 
     this._plants.forEach((plant) => {
-      const circle = L.circle([plant.latitude, plant.longitude], {
-        radius: 2,
-        color: '#059669', // emerald-600
-        fillColor: '#10b981', // emerald-500
-        fillOpacity: 0.8,
-        weight: 1,
+      const circle = L.circleMarker([plant.latitude, plant.longitude], {
+        radius: 9,
+        color: '#34d399', // green border
+        fillColor: '#10b981', // green fill
+        fillOpacity: 0.9,
+        weight: 0.75,
         interactive: false,
       }).addTo(this.map);
 
@@ -209,6 +209,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   public toggleDrawingMode(): void {
+    if (!this.hasPlants) return;
     this.drawingMode = !this.drawingMode;
     if (!this.map) return;
     this.map.getContainer().style.cursor = this.drawingMode ? 'crosshair' : '';
@@ -225,7 +226,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.tempPoints.push(e.latlng);
 
     const marker = L.circleMarker(e.latlng, {
-      radius: 5,
+      radius: 10,
       fillColor: '#3b82f6', // blue-500
       color: '#fff',
       weight: 2,
@@ -399,7 +400,17 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     return this.selectedPolygonCoords.length > 0;
   }
 
+  get hasPlants(): boolean {
+    return this._plants.length > 0;
+  }
+
   get activePoints(): L.LatLng[] {
     return [...this.tempPoints];
+  }
+
+  public invalidateSize(): void {
+    if (this.map) {
+      this.map.invalidateSize();
+    }
   }
 }
