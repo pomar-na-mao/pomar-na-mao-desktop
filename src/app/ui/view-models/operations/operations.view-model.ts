@@ -4,6 +4,7 @@ import { OperationsRepository } from '../../../data/repositories/operations/oper
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { SprayingOperationResponse } from '../../../domain/models/operations.model';
+import { Plant } from '../../../domain/models/plant-data.model';
 
 @Injectable()
 export class OperationsViewModel {
@@ -25,7 +26,7 @@ export class OperationsViewModel {
   public selectedOperationDetails = signal<SprayingOperationResponse | null>(null);
 
   public showPlants = signal<boolean>(false);
-  public zonePlants = signal<any[]>([]);
+  public zonePlants = signal<Plant[]>([]);
 
   constructor() {
     const today = new Date();
@@ -151,7 +152,7 @@ export class OperationsViewModel {
           type: 'Feature',
           geometry: op.route_geojson,
           properties: op
-        } as any);
+        } as unknown as Parameters<L.GeoJSON['addData']>[0]);
       }
     });
 
@@ -161,7 +162,9 @@ export class OperationsViewModel {
       if (operations.length > 0) {
         this.map.fitBounds(this.geoJsonLayer.getBounds());
       }
-    } catch (e) {}
+    } catch {
+      // fitBounds can fail if coordinates are invalid; ignore safely
+    }
   }
 
   private renderZonePolygon(zoneId: string): void {
@@ -180,7 +183,7 @@ export class OperationsViewModel {
       return;
     }
 
-    this.zonePolygonLayer.addData(zone.polygon as any);
+    this.zonePolygonLayer.addData(zone.polygon as unknown as Parameters<L.GeoJSON['addData']>[0]);
 
     const polygonBounds = this.zonePolygonLayer.getBounds();
     if (polygonBounds.isValid()) {
@@ -207,7 +210,7 @@ export class OperationsViewModel {
     this.zonePlants.set(plants);
   }
 
-  private renderPlants(plants: any[]): void {
+  private renderPlants(plants: Plant[]): void {
     if (!this.map || !this.plantLayers) {
       return;
     }

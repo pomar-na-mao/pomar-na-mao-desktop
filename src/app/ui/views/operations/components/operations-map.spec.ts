@@ -7,7 +7,13 @@ import { signal } from '@angular/core';
 describe('OperationsMap', () => {
   let component: OperationsMap;
   let fixture: ComponentFixture<OperationsMap>;
-  let mockViewModel: any;
+  let mockViewModel: {
+    isMapFullscreen: ReturnType<typeof signal<boolean>>;
+    selectedOperationDetails: ReturnType<typeof signal<Record<string, unknown> | null>>;
+    initMap: ReturnType<typeof vi.fn>;
+    setMapFullscreen: ReturnType<typeof vi.fn>;
+    invalidateMapSize: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     mockViewModel = {

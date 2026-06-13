@@ -11,7 +11,7 @@ export interface SprayingOperationResponse {
   operator_name: string | null;
   machine_name: string | null;
   notes: string | null;
-  route_geojson: any;
+  route_geojson: Record<string, unknown> | null;
   inputs: OperationInput[];
   track_points_count: number;
 }

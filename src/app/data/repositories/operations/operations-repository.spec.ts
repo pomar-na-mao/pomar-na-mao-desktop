@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { PostgrestError } from '@supabase/supabase-js';
 import { OperationsRepository } from './operations-repository';
 import { OperationsService } from '../../services/operations/operations-service';
+import { SprayingOperationResponse } from '../../../domain/models/operations.model';
 
 describe('OperationsRepository', () => {
   let repository: OperationsRepository;
@@ -30,23 +32,42 @@ describe('OperationsRepository', () => {
   });
 
   it('should fetch spraying operations and update signal', async () => {
-    const mockData = [{ operation_id: '1' }];
-    mockGetSprayingOperations.mockResolvedValue({ data: mockData, error: null } as any);
+    const mockData = [{ operation_id: '1' }] as unknown as SprayingOperationResponse[];
+    mockGetSprayingOperations.mockResolvedValue({
+      data: mockData,
+      error: null,
+      count: null,
+      status: 200,
+      statusText: 'OK'
+    });
 
     const result = await repository.getSprayingOperations('2023-01-01', '2023-12-31', 'zone-1');
 
     expect(result.error).toBeNull();
-    expect(repository.sprayingOperations()).toEqual(mockData as any);
+    expect(repository.sprayingOperations()).toEqual(mockData);
     expect(mockGetSprayingOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-1');
   });
 
   it('should clear signal and return error on failure', async () => {
-    const mockError = { message: 'Error' };
-    mockGetSprayingOperations.mockResolvedValue({ data: null, error: mockError } as any);
+    const mockError: PostgrestError = {
+      name: 'PostgrestError',
+      message: 'Error',
+      details: '',
+      hint: '',
+      code: '500'
+    };
+    mockGetSprayingOperations.mockResolvedValue({
+      data: null,
+      error: mockError,
+      count: null,
+      status: 500,
+      statusText: 'Internal Server Error'
+    });
 
     const result = await repository.getSprayingOperations();
 
-    expect(result.error).toEqual(mockError as any);
+    expect(result.error).toEqual(mockError);
     expect(repository.sprayingOperations()).toEqual([]);
   });
 });
+
