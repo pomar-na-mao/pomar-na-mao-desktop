@@ -1,0 +1,35 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { OperationsMap } from './operations-map';
+import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
+import { signal } from '@angular/core';
+
+describe('OperationsMap', () => {
+  let component: OperationsMap;
+  let fixture: ComponentFixture<OperationsMap>;
+  let mockViewModel: any;
+
+  beforeEach(async () => {
+    mockViewModel = {
+      isMapFullscreen: signal(false),
+      initMap: jasmine.createSpy('initMap'),
+      setMapFullscreen: jasmine.createSpy('setMapFullscreen'),
+      invalidateMapSize: jasmine.createSpy('invalidateMapSize')
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [OperationsMap],
+      providers: [
+        { provide: OperationsViewModel, useValue: mockViewModel }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(OperationsMap);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create and initialize map', () => {
+    expect(component).toBeTruthy();
+    expect(mockViewModel.initMap).toHaveBeenCalledWith('operations-map');
+  });
+});
