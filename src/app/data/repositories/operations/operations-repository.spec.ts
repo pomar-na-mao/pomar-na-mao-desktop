@@ -3,11 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { PostgrestError } from '@supabase/supabase-js';
 import { OperationsRepository } from './operations-repository';
 import { OperationsService } from '../../services/operations/operations-service';
-import { SprayingOperationResponse } from '../../../domain/models/operations.model';
+import { SprayingOperationResponse, InspectionOperationResponse } from '../../../domain/models/operations.model';
 
 describe('OperationsRepository', () => {
   let repository: OperationsRepository;
   const mockGetSprayingOperations = vi.fn();
+  const mockGetInspectionOperations = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -18,7 +19,8 @@ describe('OperationsRepository', () => {
         {
           provide: OperationsService,
           useValue: {
-            getSprayingOperations: mockGetSprayingOperations
+            getSprayingOperations: mockGetSprayingOperations,
+            getInspectionOperations: mockGetInspectionOperations
           }
         }
       ]
@@ -68,6 +70,45 @@ describe('OperationsRepository', () => {
 
     expect(result.error).toEqual(mockError);
     expect(repository.sprayingOperations()).toEqual([]);
+  });
+
+  it('should fetch inspection operations and update signal', async () => {
+    const mockData = [{ operation_id: '2', plants: [] }] as unknown as InspectionOperationResponse[];
+    mockGetInspectionOperations.mockResolvedValue({
+      data: mockData,
+      error: null,
+      count: null,
+      status: 200,
+      statusText: 'OK'
+    });
+
+    const result = await repository.getInspectionOperations('2023-01-01', '2023-12-31', 'zone-1');
+
+    expect(result.error).toBeNull();
+    expect(repository.inspectionOperations()).toEqual(mockData);
+    expect(mockGetInspectionOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-1');
+  });
+
+  it('should clear inspection signal and return error on failure', async () => {
+    const mockError: PostgrestError = {
+      name: 'PostgrestError',
+      message: 'Error',
+      details: '',
+      hint: '',
+      code: '500'
+    };
+    mockGetInspectionOperations.mockResolvedValue({
+      data: null,
+      error: mockError,
+      count: null,
+      status: 500,
+      statusText: 'Internal Server Error'
+    });
+
+    const result = await repository.getInspectionOperations();
+
+    expect(result.error).toEqual(mockError);
+    expect(repository.inspectionOperations()).toEqual([]);
   });
 });
 
