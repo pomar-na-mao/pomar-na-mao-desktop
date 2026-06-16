@@ -3,7 +3,7 @@ import * as L from 'leaflet';
 import { OperationsRepository } from '../../../data/repositories/operations/operations-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
-import { SprayingOperationResponse } from '../../../domain/models/operations.model';
+import { SprayingOperationResponse, InspectionOperationResponse, InspectionPlant, InspectionEntry } from '../../../domain/models/operations.model';
 import { Plant } from '../../../domain/models/plant-data.model';
 
 @Injectable()
@@ -17,6 +17,7 @@ export class OperationsViewModel {
   private geoJsonLayer: L.GeoJSON | null = null;
   private zonePolygonLayer: L.GeoJSON | null = null;
   private plantLayers: L.LayerGroup | null = null;
+  private inspectionPlantLayers: L.LayerGroup | null = null;
   private plantRenderer = L.canvas({ padding: 0.5 });
 
   public startDate = signal<string>('');
@@ -24,6 +25,10 @@ export class OperationsViewModel {
   public selectedZoneId = signal<string>('');
   public selectedOperation = signal<string>('');
   public selectedOperationDetails = signal<SprayingOperationResponse | null>(null);
+  public selectedInspectionDetails = signal<InspectionOperationResponse | null>(null);
+  public selectedInspectionPlant = signal<InspectionPlant | null>(null);
+  public inspectionEntriesForPlant = signal<InspectionEntry[]>([]);
+  public currentInspectionIndex = signal<number>(0);
 
   public showPlants = signal<boolean>(false);
   public zonePlants = signal<Plant[]>([]);
@@ -46,13 +51,26 @@ export class OperationsViewModel {
 
       if (type === 'pulverizacao') {
         this.fetchSprayingOperations(start, end, zone);
+        this.operationsRepository.inspectionOperations.set([]);
+        this.clearInspectionSelection();
+      } else if (type === 'inspecao') {
+        this.fetchInspectionOperations(start, end, zone);
+        this.operationsRepository.sprayingOperations.set([]);
+        this.selectedOperationDetails.set(null);
       } else {
         this.operationsRepository.sprayingOperations.set([]);
+        this.operationsRepository.inspectionOperations.set([]);
+        this.selectedOperationDetails.set(null);
+        this.clearInspectionSelection();
       }
     }, { allowSignalWrites: true });
 
     effect(() => {
       this.drawOperations(this.operations());
+    });
+
+    effect(() => {
+      this.drawInspectionPlants(this.inspectionOperations());
     });
 
     effect(() => {
@@ -91,8 +109,20 @@ export class OperationsViewModel {
     );
   }
 
+  private async fetchInspectionOperations(start: string, end: string, zone: string) {
+    await this.operationsRepository.getInspectionOperations(
+      start || null, 
+      end || null, 
+      zone || null
+    );
+  }
+
   public get operations() {
     return this.operationsRepository.sprayingOperations;
+  }
+
+  public get inspectionOperations() {
+    return this.operationsRepository.inspectionOperations;
   }
 
   initMap(elementId: string): void {
@@ -109,6 +139,7 @@ export class OperationsViewModel {
     }).addTo(this.map);
 
     this.zonePolygonLayer = L.geoJSON(undefined, {
+      interactive: false,
       style: {
         color: '#3b82f6', // blue
         weight: 3,
@@ -118,9 +149,72 @@ export class OperationsViewModel {
     }).addTo(this.map);
 
     this.plantLayers = L.layerGroup().addTo(this.map);
+    this.inspectionPlantLayers = L.layerGroup().addTo(this.map);
     
     this.drawOperations(this.operations());
+    this.drawInspectionPlants(this.inspectionOperations());
     this.renderZonePolygon(this.selectedZoneId());
+  }
+
+  private drawInspectionPlants(operations: InspectionOperationResponse[]): void {
+    if (!this.map || !this.inspectionPlantLayers) return;
+
+    this.inspectionPlantLayers.clearLayers();
+
+    if (!operations || operations.length === 0) return;
+
+    // Group by plant_id across all operations
+    const plantMap = new Map<string, InspectionEntry[]>();
+
+    operations.forEach(op => {
+      if (op.plants && op.plants.length > 0) {
+        op.plants.forEach(plant => {
+          if (!plantMap.has(plant.plant_id)) {
+            plantMap.set(plant.plant_id, []);
+          }
+          plantMap.get(plant.plant_id)!.push({ operation: op, plant });
+        });
+      }
+    });
+
+    // Sort each plant's entries by date descending (newest first)
+    plantMap.forEach(entries => {
+      entries.sort((a, b) => new Date(b.operation.started_at).getTime() - new Date(a.operation.started_at).getTime());
+    });
+
+    const bounds = L.latLngBounds([]);
+
+    // Create one marker per unique plant
+    plantMap.forEach((entries) => {
+      const { plant } = entries[0];
+      const marker = L.circleMarker([plant.latitude, plant.longitude], {
+        radius: 9,
+        color: entries.length > 1 ? '#ea580c' : '#f59e0b',
+        fillColor: entries.length > 1 ? '#c2410c' : '#d97706',
+        fillOpacity: 0.9,
+        weight: entries.length > 1 ? 2.5 : 1.5,
+        renderer: this.plantRenderer,
+      });
+
+      marker.on('click', () => {
+        this.inspectionEntriesForPlant.set(entries);
+        this.currentInspectionIndex.set(0);
+        this.selectedInspectionDetails.set(entries[0].operation);
+        this.selectedInspectionPlant.set(entries[0].plant);
+        this.selectedOperationDetails.set(null);
+      });
+
+      marker.addTo(this.inspectionPlantLayers!);
+      bounds.extend([plant.latitude, plant.longitude]);
+    });
+
+    try {
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
+      }
+    } catch {
+      // ignore fitBounds failures
+    }
   }
 
   private drawOperations(operations: SprayingOperationResponse[]) {
@@ -203,6 +297,25 @@ export class OperationsViewModel {
 
   toggleFullscreen() {
     this.setMapFullscreen(!this.isMapFullscreen());
+  }
+
+  public navigateInspection(direction: 'prev' | 'next'): void {
+    const entries = this.inspectionEntriesForPlant();
+    const current = this.currentInspectionIndex();
+    const newIndex = direction === 'next' ? current + 1 : current - 1;
+
+    if (newIndex >= 0 && newIndex < entries.length) {
+      this.currentInspectionIndex.set(newIndex);
+      this.selectedInspectionDetails.set(entries[newIndex].operation);
+      this.selectedInspectionPlant.set(entries[newIndex].plant);
+    }
+  }
+
+  public clearInspectionSelection(): void {
+    this.selectedInspectionDetails.set(null);
+    this.selectedInspectionPlant.set(null);
+    this.inspectionEntriesForPlant.set([]);
+    this.currentInspectionIndex.set(0);
   }
 
   private async fetchZonePlants(zoneId: string) {

@@ -48,8 +48,8 @@ as $$
                 on ot.id = fo.operation_type_id
               where po.plant_id = p.id
                 and coalesce(ot.code, 'annotation') in ('annotation', 'occurrence_annotation')
-                and (p_period_start_date is null or po.observed_at::date >= p_period_start_date)
-                and (p_period_end_date is null or po.observed_at::date <= p_period_end_date)
+                and (p_period_start_date is null or (po.observed_at at time zone 'America/Sao_Paulo')::date >= p_period_start_date)
+                and (p_period_end_date is null or (po.observed_at at time zone 'America/Sao_Paulo')::date <= p_period_end_date)
             )
             else exists (
               select 1
@@ -62,11 +62,11 @@ as $$
                 and ot.code = p_operation_code
                 and (
                   p_period_start_date is null
-                  or coalesce(poh.matched_at, fo.finished_at, fo.started_at)::date >= p_period_start_date
+                  or (coalesce(poh.matched_at, fo.finished_at, fo.started_at) at time zone 'America/Sao_Paulo')::date >= p_period_start_date
                 )
                 and (
                   p_period_end_date is null
-                  or coalesce(poh.matched_at, fo.finished_at, fo.started_at)::date <= p_period_end_date
+                  or (coalesce(poh.matched_at, fo.finished_at, fo.started_at) at time zone 'America/Sao_Paulo')::date <= p_period_end_date
                 )
             )
           end
