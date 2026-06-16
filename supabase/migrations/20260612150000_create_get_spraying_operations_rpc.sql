@@ -46,8 +46,8 @@ language sql security definer set search_path = '' as $$
   from public.field_operations fo
   join public.field_operation_routes foroutes on foroutes.field_operation_id = fo.id
   where fo.source = 'gps_track'
-    and (p_start_date is null or fo.created_at::date >= p_start_date)
-    and (p_end_date is null or fo.created_at::date <= p_end_date)
+    and (p_start_date is null or (fo.created_at at time zone 'America/Sao_Paulo')::date >= p_start_date)
+    and (p_end_date is null or (fo.created_at at time zone 'America/Sao_Paulo')::date <= p_end_date)
     and (p_zone_id is null or fo.zone_id = p_zone_id);
 $$;
 

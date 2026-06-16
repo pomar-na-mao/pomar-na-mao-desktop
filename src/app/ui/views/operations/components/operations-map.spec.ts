@@ -10,6 +10,8 @@ describe('OperationsMap', () => {
   let mockViewModel: {
     isMapFullscreen: ReturnType<typeof signal<boolean>>;
     selectedOperationDetails: ReturnType<typeof signal<Record<string, unknown> | null>>;
+    selectedInspectionDetails: ReturnType<typeof signal<Record<string, unknown> | null>>;
+    selectedInspectionPlant: ReturnType<typeof signal<Record<string, unknown> | null>>;
     initMap: ReturnType<typeof vi.fn>;
     setMapFullscreen: ReturnType<typeof vi.fn>;
     invalidateMapSize: ReturnType<typeof vi.fn>;
@@ -19,6 +21,8 @@ describe('OperationsMap', () => {
     mockViewModel = {
       isMapFullscreen: signal(false),
       selectedOperationDetails: signal(null),
+      selectedInspectionDetails: signal(null),
+      selectedInspectionPlant: signal(null),
       initMap: vi.fn(),
       setMapFullscreen: vi.fn(),
       invalidateMapSize: vi.fn()

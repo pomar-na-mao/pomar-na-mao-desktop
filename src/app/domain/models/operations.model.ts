@@ -15,3 +15,33 @@ export interface SprayingOperationResponse {
   inputs: OperationInput[];
   track_points_count: number;
 }
+
+export interface InspectionPlantChange {
+  occurrence_id: string;
+  occurrence_type_name: string;
+  status: string;
+  severity: string | null;
+  notes: string | null;
+  resolved_at: string | null;
+}
+
+export interface InspectionPlant {
+  plant_id: string;
+  latitude: number;
+  longitude: number;
+  occurrences: InspectionPlantChange[];
+}
+
+export interface InspectionOperationResponse {
+  operation_id: string;
+  started_at: string;
+  finished_at: string | null;
+  notes: string | null;
+  zone_name: string | null;
+  plants: InspectionPlant[];
+}
+
+export interface InspectionEntry {
+  operation: InspectionOperationResponse;
+  plant: InspectionPlant;
+}
