@@ -8,6 +8,7 @@ describe('OperationsMapDetailsCard', () => {
   let component: OperationsMapDetailsCard;
   let fixture: ComponentFixture<OperationsMapDetailsCard>;
   let mockViewModel: {
+    selectedOperation: WritableSignal<string>;
     selectedOperationDetails: WritableSignal<SprayingOperationResponse | null>;
     selectedInspectionDetails: WritableSignal<InspectionOperationResponse | null>;
     selectedInspectionPlant: WritableSignal<InspectionPlant | null>;
@@ -19,6 +20,7 @@ describe('OperationsMapDetailsCard', () => {
 
   beforeEach(async () => {
     mockViewModel = {
+      selectedOperation: signal<string>('inspecao'),
       selectedOperationDetails: signal<SprayingOperationResponse | null>(null),
       selectedInspectionDetails: signal<InspectionOperationResponse | null>(null),
       selectedInspectionPlant: signal<InspectionPlant | null>(null),
@@ -172,6 +174,36 @@ describe('OperationsMapDetailsCard', () => {
 
     nextButton.click();
     expect(navigateSpy).toHaveBeenCalledWith('next');
+  });
+
+  it('should render annotation details when operation type is anotacao', () => {
+    mockViewModel.selectedOperation.set('anotacao');
+    mockViewModel.selectedInspectionDetails.set({
+      operation_id: '2',
+      started_at: '2023-01-01T00:00:00Z',
+      finished_at: '2023-01-01T01:00:00Z',
+      notes: 'Test annotation notes',
+      zone_name: 'Zone A',
+      plants: []
+    });
+    mockViewModel.selectedInspectionPlant.set({
+      plant_id: 'plant-uuid-12345678',
+      latitude: 10,
+      longitude: 20,
+      occurrences: [
+        { occurrence_id: 'o1', occurrence_type_name: 'Praga A', status: 'open', severity: 'Média', notes: 'Na folha', resolved_at: null }
+      ]
+    });
+    mockViewModel.inspectionEntriesForPlant.set([
+      { operation: { operation_id: '2', started_at: '2023-01-01T00:00:00Z', finished_at: '2023-01-01T01:00:00Z', notes: 'Notes', zone_name: 'Zone A', plants: [] }, plant: { plant_id: 'plant-uuid-12345678', latitude: 10, longitude: 20, occurrences: [] } },
+      { operation: { operation_id: '3', started_at: '2023-01-02T00:00:00Z', finished_at: '2023-01-02T01:00:00Z', notes: null, zone_name: 'Zone A', plants: [] }, plant: { plant_id: 'plant-uuid-12345678', latitude: 10, longitude: 20, occurrences: [] } }
+    ]);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Anotação Manual');
+    expect(compiled.textContent).toContain('Anotações da Planta');
+    expect(compiled.textContent).toContain('Observações da Anotação');
   });
 });
 

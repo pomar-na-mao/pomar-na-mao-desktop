@@ -110,7 +110,9 @@ import { OperationsViewModel } from '../../../view-models/operations/operations.
               </div>
               <div>
                 <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Detalhes da Planta</h3>
-                <span class="text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">Inspeção Manual</span>
+                <span class="text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">
+                  {{ operationsViewModel.selectedOperation() === 'anotacao' ? 'Anotação Manual' : 'Inspeção Manual' }}
+                </span>
               </div>
             </div>
             <button
@@ -136,7 +138,9 @@ import { OperationsViewModel } from '../../../view-models/operations/operations.
                 </svg>
               </button>
               <div class="text-center">
-                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Inspeções da Planta</span>
+                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                  {{ operationsViewModel.selectedOperation() === 'anotacao' ? 'Anotações da Planta' : 'Inspeções da Planta' }}
+                </span>
                 <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">
                   {{ operationsViewModel.currentInspectionIndex() + 1 }} de {{ operationsViewModel.inspectionEntriesForPlant().length }}
                   <span class="text-[10px] text-slate-400 dark:text-slate-500 font-normal ml-0.5">
@@ -288,7 +292,9 @@ import { OperationsViewModel } from '../../../view-models/operations/operations.
             <!-- Notes -->
             @if (inspectionDetails()!.notes) {
               <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800/60">
-                <span class="mb-1.5 block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Observações da Inspeção</span>
+                <span class="mb-1.5 block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                  {{ operationsViewModel.selectedOperation() === 'anotacao' ? 'Observações da Anotação' : 'Observações da Inspeção' }}
+                </span>
                 <div class="bg-amber-50/30 dark:bg-amber-950/10 border border-amber-200/20 dark:border-amber-900/20 rounded-xl p-3">
                   <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-serif italic">
                     "{{ inspectionDetails()!.notes }}"

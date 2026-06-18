@@ -100,7 +100,7 @@ export class OperationsFiltersPanel implements OnInit {
     { label: 'Todas as Operações', value: '' },
     { label: 'Pulverização', value: 'pulverizacao' },
     { label: 'Inspeção', value: 'inspecao' },
-    { label: 'Colheita', value: 'colheita' }
+    { label: 'Anotação', value: 'anotacao' }
   ];
 
   public get zoneOptions() {

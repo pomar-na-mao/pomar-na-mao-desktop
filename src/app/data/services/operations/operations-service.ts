@@ -34,4 +34,17 @@ export class OperationsService {
 
     return this.supabaseService.supabase.rpc('get_inspection_operations', args);
   }
+
+  public async getAnnotationOperations(
+    startDate?: string | null,
+    endDate?: string | null,
+    zoneId?: string | null
+  ): Promise<PostgrestResponse<InspectionOperationResponse>> {
+    const args: { p_start_date?: string; p_end_date?: string; p_zone_id?: string } = {};
+    if (startDate) args.p_start_date = startDate;
+    if (endDate) args.p_end_date = endDate;
+    if (zoneId) args.p_zone_id = zoneId;
+
+    return this.supabaseService.supabase.rpc('get_annotation_operations', args);
+  }
 }

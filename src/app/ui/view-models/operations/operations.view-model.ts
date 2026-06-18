@@ -52,14 +52,24 @@ export class OperationsViewModel {
       if (type === 'pulverizacao') {
         this.fetchSprayingOperations(start, end, zone);
         this.operationsRepository.inspectionOperations.set([]);
+        this.operationsRepository.annotationOperations.set([]);
         this.clearInspectionSelection();
       } else if (type === 'inspecao') {
         this.fetchInspectionOperations(start, end, zone);
         this.operationsRepository.sprayingOperations.set([]);
+        this.operationsRepository.annotationOperations.set([]);
         this.selectedOperationDetails.set(null);
+        this.clearInspectionSelection();
+      } else if (type === 'anotacao') {
+        this.fetchAnnotationOperations(start, end, zone);
+        this.operationsRepository.sprayingOperations.set([]);
+        this.operationsRepository.inspectionOperations.set([]);
+        this.selectedOperationDetails.set(null);
+        this.clearInspectionSelection();
       } else {
         this.operationsRepository.sprayingOperations.set([]);
         this.operationsRepository.inspectionOperations.set([]);
+        this.operationsRepository.annotationOperations.set([]);
         this.selectedOperationDetails.set(null);
         this.clearInspectionSelection();
       }
@@ -70,7 +80,14 @@ export class OperationsViewModel {
     });
 
     effect(() => {
-      this.drawInspectionPlants(this.inspectionOperations());
+      const type = this.selectedOperation();
+      if (type === 'inspecao') {
+        this.drawInspectionPlants(this.inspectionOperations());
+      } else if (type === 'anotacao') {
+        this.drawInspectionPlants(this.annotationOperations());
+      } else {
+        this.drawInspectionPlants([]);
+      }
     });
 
     effect(() => {
@@ -117,12 +134,24 @@ export class OperationsViewModel {
     );
   }
 
+  private async fetchAnnotationOperations(start: string, end: string, zone: string) {
+    await this.operationsRepository.getAnnotationOperations(
+      start || null, 
+      end || null, 
+      zone || null
+    );
+  }
+
   public get operations() {
     return this.operationsRepository.sprayingOperations;
   }
 
   public get inspectionOperations() {
     return this.operationsRepository.inspectionOperations;
+  }
+
+  public get annotationOperations() {
+    return this.operationsRepository.annotationOperations;
   }
 
   initMap(elementId: string): void {
