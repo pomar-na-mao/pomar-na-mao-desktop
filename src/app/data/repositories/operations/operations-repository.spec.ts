@@ -9,6 +9,7 @@ describe('OperationsRepository', () => {
   let repository: OperationsRepository;
   const mockGetSprayingOperations = vi.fn();
   const mockGetInspectionOperations = vi.fn();
+  const mockGetAnnotationOperations = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,7 +21,8 @@ describe('OperationsRepository', () => {
           provide: OperationsService,
           useValue: {
             getSprayingOperations: mockGetSprayingOperations,
-            getInspectionOperations: mockGetInspectionOperations
+            getInspectionOperations: mockGetInspectionOperations,
+            getAnnotationOperations: mockGetAnnotationOperations
           }
         }
       ]
@@ -109,6 +111,45 @@ describe('OperationsRepository', () => {
 
     expect(result.error).toEqual(mockError);
     expect(repository.inspectionOperations()).toEqual([]);
+  });
+
+  it('should fetch annotation operations and update signal', async () => {
+    const mockData = [{ operation_id: '3', plants: [] }] as unknown as InspectionOperationResponse[];
+    mockGetAnnotationOperations.mockResolvedValue({
+      data: mockData,
+      error: null,
+      count: null,
+      status: 200,
+      statusText: 'OK'
+    });
+
+    const result = await repository.getAnnotationOperations('2023-01-01', '2023-12-31', 'zone-1');
+
+    expect(result.error).toBeNull();
+    expect(repository.annotationOperations()).toEqual(mockData);
+    expect(mockGetAnnotationOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-1');
+  });
+
+  it('should clear annotation signal and return error on failure', async () => {
+    const mockError: PostgrestError = {
+      name: 'PostgrestError',
+      message: 'Error',
+      details: '',
+      hint: '',
+      code: '500'
+    };
+    mockGetAnnotationOperations.mockResolvedValue({
+      data: null,
+      error: mockError,
+      count: null,
+      status: 500,
+      statusText: 'Internal Server Error'
+    });
+
+    const result = await repository.getAnnotationOperations();
+
+    expect(result.error).toEqual(mockError);
+    expect(repository.annotationOperations()).toEqual([]);
   });
 });
 

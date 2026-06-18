@@ -11,6 +11,7 @@ export class OperationsRepository {
 
   public sprayingOperations = signal<SprayingOperationResponse[]>([]);
   public inspectionOperations = signal<InspectionOperationResponse[]>([]);
+  public annotationOperations = signal<InspectionOperationResponse[]>([]);
 
   public async getSprayingOperations(
     startDate?: string | null,
@@ -39,6 +40,22 @@ export class OperationsRepository {
       this.inspectionOperations.set(data as InspectionOperationResponse[]);
     } else {
       this.inspectionOperations.set([]);
+    }
+
+    return { error };
+  }
+
+  public async getAnnotationOperations(
+    startDate?: string | null,
+    endDate?: string | null,
+    zoneId?: string | null
+  ): Promise<{ error: PostgrestError | null }> {
+    const { data, error } = await this.operationsService.getAnnotationOperations(startDate, endDate, zoneId);
+    
+    if (!error && data) {
+      this.annotationOperations.set(data as InspectionOperationResponse[]);
+    } else {
+      this.annotationOperations.set([]);
     }
 
     return { error };
