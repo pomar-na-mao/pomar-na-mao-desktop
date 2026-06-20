@@ -363,6 +363,7 @@ export class MassInclusionViewModel {
       notes: data.description || null,
       startedAt: now,
       finishedAt: now,
+      zoneId: this.selectedZoneId() || null,
     };
   }
 
