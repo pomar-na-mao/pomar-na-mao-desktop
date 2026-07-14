@@ -109,6 +109,7 @@ export interface PolygonBulkUpdatePayload {
     finishedAt: string;
     localOperationId?: string;
     deviceId?: string;
+    zoneId?: string | null;
 }
 
 export interface PolygonBulkUpdateResult {

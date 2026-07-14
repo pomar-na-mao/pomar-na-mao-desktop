@@ -1,31 +1,47 @@
 @let isLoading = loginViewModel.loadingService.isLoading(); @let currentMessage
 = loginViewModel.messageService.currentMessage();
 
-<div class="min-h-screen flex bg-slate-50 dark:bg-slate-950 transition-colors duration-700 overflow-hidden">
-  
+<div
+  class="min-h-screen flex bg-slate-50 dark:bg-slate-950 transition-colors duration-700 overflow-hidden"
+>
   <!-- Left Side: Image/Decorative -->
-  <div 
+  <div
     class="hidden lg:block lg:w-[60%] bg-cover bg-center bg-no-repeat"
-    style="background-image: url('assets/images/background.png');"
+    style="background-image: url(&quot;assets/images/background.png&quot;)"
   ></div>
 
   <!-- Right Side: Login Form Container -->
-  <div class="w-full lg:w-[40%] flex items-center justify-center p-6 sm:p-12 relative z-10 bg-white dark:bg-slate-900 shadow-[-20px_0_40px_rgba(0,0,0,0.05)] dark:shadow-[-20px_0_40px_rgba(0,0,0,0.3)]">
-    <div class="w-full max-w-md animate-in fade-in slide-in-from-right-8 duration-700">
-      
+  <div
+    class="w-full lg:w-[40%] flex items-center justify-center p-6 sm:p-12 relative z-10 bg-white dark:bg-slate-900 shadow-[-20px_0_40px_rgba(0,0,0,0.05)] dark:shadow-[-20px_0_40px_rgba(0,0,0,0.3)]"
+  >
+    <div
+      class="w-full max-w-md animate-in fade-in slide-in-from-right-8 duration-700"
+    >
       <!-- Mobile-only Logo/Header -->
       <div class="flex flex-col items-center mb-10 lg:hidden">
-        <img src="assets/images/logo.png" alt="Pomar na Mão" class="w-24 h-auto mb-4 drop-shadow-md" />
-        <h1 class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors text-center">
+        <img
+          src="assets/images/logo.png"
+          alt="Pomar na Mão"
+          class="w-24 h-auto mb-4 drop-shadow-md"
+        />
+        <h1
+          class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors text-center"
+        >
           Pomar na mão
         </h1>
-        <div class="h-1.5 w-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full my-4"></div>
+        <div
+          class="h-1.5 w-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full my-4"
+        ></div>
       </div>
 
       <!-- Desktop Header -->
       <div class="hidden lg:block mb-10">
-        <h2 class="text-3xl font-black text-slate-900 dark:text-white">Bem-vindo(a)</h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">Faça login para acessar o sistema.</p>
+        <h2 class="text-3xl font-black text-slate-900 dark:text-white">
+          Bem-vindo(a)
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">
+          Faça login para acessar o sistema.
+        </p>
         <div class="h-1 w-12 bg-emerald-500 rounded-full mt-4"></div>
       </div>
 
@@ -50,13 +66,14 @@
           placeholder="••••••••"
           [errors]="passwordErrors"
         >
-          <a
-            label-extra
-            href="#"
-            class="text-xs text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 font-medium transition-colors"
-            >Esqueceu a senha?</a
-          >
         </app-input>
+
+        <a
+          label-extra
+          href="#"
+          class="self-end mt-[-15px] hover:underline text-xs text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 font-medium transition-colors"
+          >Esqueceu a senha?</a
+        >
 
         <!-- Error Alert -->
         @if (loginViewModel.messageService.showMessage() && currentMessage?.type

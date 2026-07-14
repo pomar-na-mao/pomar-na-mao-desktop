@@ -60,7 +60,9 @@ export class DashboardViewModel {
   // --- Filter options (loaded from DB) ---
   public availableZones = signal<HomeDashboardZone[]>([]);
   public availableOccurrences = signal<HomeDashboardOccurrence[]>([]);
-  public openOccurrences = signal<Array<{ plant_id: string; occurrence_type_id: string }>>([]);
+  public openOccurrences = signal<
+    Array<{ plant_id: string; occurrence_type_id: string }>
+  >([]);
 
   public availableVarieties = computed<HomeDashboardVariety[]>(() => {
     const summary = this.summary();
@@ -88,7 +90,9 @@ export class DashboardViewModel {
     if (zoneId) {
       const zone = this.availableZones().find((z) => z.id === zoneId);
       if (zone?.polygon) {
-        plants = plants.filter((plant) => isPointInPolygon(plant.latitude, plant.longitude, zone.polygon!));
+        plants = plants.filter((plant) =>
+          isPointInPolygon(plant.latitude, plant.longitude, zone.polygon!),
+        );
       }
     }
 
@@ -98,7 +102,7 @@ export class DashboardViewModel {
       const matchingPlantIds = new Set(
         this.openOccurrences()
           .filter((oc) => oc.occurrence_type_id === occurrenceId)
-          .map((oc) => oc.plant_id)
+          .map((oc) => oc.plant_id),
       );
       plants = plants.filter((plant) => matchingPlantIds.has(plant.id));
     }
@@ -108,8 +112,12 @@ export class DashboardViewModel {
 
   public plottedPlantsCount = computed(() => this.filteredPlants().length);
   public snapshotFilters = computed<HomeDashboardSnapshotFilters>(() => {
-    const plantingStartDate = this.normalizeDateFilter(this.filterPlantingStartDate());
-    const plantingEndDate = this.normalizeDateFilter(this.filterPlantingEndDate());
+    const plantingStartDate = this.normalizeDateFilter(
+      this.filterPlantingStartDate(),
+    );
+    const plantingEndDate = this.normalizeDateFilter(
+      this.filterPlantingEndDate(),
+    );
 
     return {
       plantingStartDate,
@@ -151,7 +159,10 @@ export class DashboardViewModel {
       this.map.remove();
     }
 
-    this.map = L.map(elementId, { maxZoom: 22, preferCanvas: true }).setView(DEFAULT_CENTER, 16);
+    this.map = L.map(elementId, { maxZoom: 22, preferCanvas: true }).setView(
+      DEFAULT_CENTER,
+      16,
+    );
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 22,
@@ -183,7 +194,10 @@ export class DashboardViewModel {
     this.isMapFullscreen.set(value);
   }
 
-  public getVarietyColor(varietyId: number | null, varietyName: string | null): string {
+  public getVarietyColor(
+    varietyId: number | null,
+    varietyName: string | null,
+  ): string {
     const legend = this.varietyLegend();
 
     if (varietyId !== null) {
@@ -195,7 +209,8 @@ export class DashboardViewModel {
 
     const normalizedVarietyName = this.normalizeVarietyLabel(varietyName);
     const entryByLabel = legend.find(
-      (item) => this.normalizeVarietyLabel(item.label) === normalizedVarietyName,
+      (item) =>
+        this.normalizeVarietyLabel(item.label) === normalizedVarietyName,
     );
 
     return entryByLabel?.color ?? FALLBACK_VARIETY_COLOR;
@@ -221,7 +236,7 @@ export class DashboardViewModel {
 
     plants.forEach((plant) => {
       let plantColor = this.getVarietyColor(plant.varietyId, plant.varietyName);
-      let radius = 9;
+      let radius = 4.5;
       let strokeColor = plantColor;
       let weight = 0.75;
       let fillOpacity = 0.9;
@@ -230,7 +245,7 @@ export class DashboardViewModel {
         // Plot with a striking neon magenta color with white border and larger size
         plantColor = '#ff0055';
         strokeColor = '#ffffff';
-        radius = 18;
+        radius = 9;
         weight = 1.5;
         fillOpacity = 1.0;
       }
@@ -256,7 +271,9 @@ export class DashboardViewModel {
     });
 
     const bounds = L.latLngBounds(
-      plants.map((plant) => [plant.latitude, plant.longitude] as [number, number]),
+      plants.map(
+        (plant) => [plant.latitude, plant.longitude] as [number, number],
+      ),
     );
 
     if (bounds.isValid()) {
@@ -292,11 +309,13 @@ export class DashboardViewModel {
     varieties: HomeDashboardVariety[],
     plants: HomeDashboardPlant[],
   ): HomeDashboardLegendItem[] {
-    const varietyEntries: HomeDashboardLegendItem[] = varieties.map((variety, index) => ({
-      label: variety.name,
-      color: this.getLegendColor(variety.name, index),
-      varietyId: variety.id,
-    }));
+    const varietyEntries: HomeDashboardLegendItem[] = varieties.map(
+      (variety, index) => ({
+        label: variety.name,
+        color: this.getLegendColor(variety.name, index),
+        varietyId: variety.id,
+      }),
+    );
 
     const hasPlantsWithoutVariety = plants.some((plant) => !plant.varietyName);
 
@@ -335,9 +354,11 @@ export class DashboardViewModel {
     }
   }
 
-  private async loadSnapshot(filters: HomeDashboardSnapshotFilters): Promise<void> {
+  private async loadSnapshot(
+    filters: HomeDashboardSnapshotFilters,
+  ): Promise<void> {
     const requestId = ++this.snapshotRequestId;
-    this.loadingService.show('Preparando o mapa...');
+    this.loadingService.show('Carregando dados...');
 
     try {
       const snapshot = await this.homeDashboardRepository.getSnapshot(filters);
@@ -403,18 +424,25 @@ export class DashboardViewModel {
   }
 }
 
-function isPointInPolygon(lat: number, lng: number, geom: GeoJSON.Geometry): boolean {
+function isPointInPolygon(
+  lat: number,
+  lng: number,
+  geom: GeoJSON.Geometry,
+): boolean {
   if (geom.type === 'Polygon') {
     return isPointInCoords([lng, lat], (geom as GeoJSON.Polygon).coordinates);
   } else if (geom.type === 'MultiPolygon') {
     return (geom as GeoJSON.MultiPolygon).coordinates.some((polygonCoords) =>
-      isPointInCoords([lng, lat], polygonCoords)
+      isPointInCoords([lng, lat], polygonCoords),
     );
   }
   return false;
 }
 
-function isPointInCoords(point: [number, number], coordinates: number[][][]): boolean {
+function isPointInCoords(
+  point: [number, number],
+  coordinates: number[][][],
+): boolean {
   const x = point[0];
   const y = point[1];
   let inside = false;
@@ -428,10 +456,9 @@ function isPointInCoords(point: [number, number], coordinates: number[][][]): bo
     const xj = ring[j][0];
     const yj = ring[j][1];
 
-    const intersect = ((yi > y) !== (yj > y))
-      && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+    const intersect =
+      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
     if (intersect) inside = !inside;
   }
   return inside;
 }
-

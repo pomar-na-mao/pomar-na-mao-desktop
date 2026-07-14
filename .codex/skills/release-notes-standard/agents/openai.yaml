@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Notes"
+  short_description: "Padroniza notas de release do projeto"
+  default_prompt: "Use $release-notes-standard para gerar release notes a partir da comparacao entre duas branches."

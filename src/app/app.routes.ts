@@ -12,11 +12,11 @@ export const ROUTES: Routes = [
     canActivate: [isLoggedGuard],
     children: [
       {
-        path: 'home',
+        path: 'inicio',
         loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
       },
       {
-        path: 'operations',
+        path: 'operacoes',
         loadComponent: () => import('./ui/views/operations/operations').then(m => m.Operations)
       },
       {
@@ -24,16 +24,16 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
       },
       {
-        path: 'settings',
+        path: 'configuracoes',
         loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
       },
       {
-        path: 'users',
+        path: 'usuarios',
         loadComponent: () => import('./ui/views/users/users').then(m => m.Users)
       },
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'inicio',
         pathMatch: 'full'
       },
     ]
