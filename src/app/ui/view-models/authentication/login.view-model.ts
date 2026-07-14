@@ -27,7 +27,7 @@ export class LoginViewModel {
       return;
     }
 
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl('/inicio');
 
     await this.authenticationRepository.getUser();
 

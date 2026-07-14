@@ -184,7 +184,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
     this._plants.forEach((plant) => {
       const circle = L.circleMarker([plant.latitude, plant.longitude], {
-        radius: 9,
+        radius: 4.5,
         color: '#34d399', // green border
         fillColor: '#10b981', // green fill
         fillOpacity: 0.9,
