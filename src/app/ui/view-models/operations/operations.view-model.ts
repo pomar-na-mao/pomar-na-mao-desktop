@@ -217,7 +217,7 @@ export class OperationsViewModel {
     plantMap.forEach((entries) => {
       const { plant } = entries[0];
       const marker = L.circleMarker([plant.latitude, plant.longitude], {
-        radius: 9,
+        radius: 4.5,
         color: entries.length > 1 ? '#ea580c' : '#f59e0b',
         fillColor: entries.length > 1 ? '#c2410c' : '#d97706',
         fillOpacity: 0.9,
@@ -365,7 +365,7 @@ export class OperationsViewModel {
 
     plants.forEach((plant) => {
       L.circleMarker([plant.latitude, plant.longitude], {
-        radius: 9,
+        radius: 4.5,
         color: '#34d399', // green border
         fillColor: '#10b981', // green fill
         fillOpacity: 0.9,

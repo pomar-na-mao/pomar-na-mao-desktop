@@ -249,6 +249,7 @@ describe('MassInclusionViewModel', () => {
     polygonCoordsSignal.set([{ lat: 1, lng: 2 }, { lat: 3, lng: 4 }, { lat: 5, lng: 6 }]);
     previewPlantsSignal.set([createPreviewPlant()]);
     viewModel.previewLoaded.set(true);
+    viewModel.selectedZoneId.set('z1');
     viewModel.onOccurrencesChange('o1');
     viewModel.onVarietyChange('10');
     viewModel.massInclusionDataForm.controls.lifeOfTree.setValue('Primeira (1)');
@@ -276,6 +277,7 @@ describe('MassInclusionViewModel', () => {
       lifeOfTree: 'Primeira (1)',
       plantingDate: '2026-05-31',
       notes: 'Teste',
+      zoneId: 'z1',
     }));
     expect(mockMessageService.success).toHaveBeenCalled();
     expect(mockMassInclusionRepository.clearPolygonCoordinates).toHaveBeenCalled();
