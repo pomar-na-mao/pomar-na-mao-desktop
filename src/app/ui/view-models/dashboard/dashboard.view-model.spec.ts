@@ -8,14 +8,14 @@ describe('DashboardViewModel', () => {
   let viewModel: DashboardViewModel;
   let loadingService: LoadingService;
 
-  const getSnapshot = vi.fn();
+  const getHomeDashboardData = vi.fn();
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    getSnapshot.mockResolvedValue({
+    getHomeDashboardData.mockResolvedValue({
       summary: {
         totalPlants: 12,
         totalZones: 3,
@@ -53,7 +53,7 @@ describe('DashboardViewModel', () => {
         {
           provide: HomeDashboardRepository,
           useValue: {
-            getSnapshot,
+            getHomeDashboardData,
             getFilterOptions,
             getOpenOccurrences,
           },
@@ -68,7 +68,7 @@ describe('DashboardViewModel', () => {
   it('should load dashboard snapshot, filter options and open occurrences on initialization', async () => {
     await viewModel.loadDashboard();
 
-    expect(getSnapshot).toHaveBeenLastCalledWith(
+    expect(getHomeDashboardData).toHaveBeenLastCalledWith(
       {
         plantingStartDate: null,
         plantingEndDate: null,
@@ -91,8 +91,8 @@ describe('DashboardViewModel', () => {
   });
 
   it('should show loading only while an HTTP-backed snapshot is pending', async () => {
-    const snapshot = await getSnapshot();
-    getSnapshot.mockImplementationOnce(
+    const snapshot = await getHomeDashboardData();
+    getHomeDashboardData.mockImplementationOnce(
       async (
         _filters: unknown,
         onCacheMiss?: () => void,
@@ -158,7 +158,7 @@ describe('DashboardViewModel', () => {
   });
 
   it('should use pink for classica varieties', async () => {
-    getSnapshot.mockResolvedValueOnce({
+    getHomeDashboardData.mockResolvedValueOnce({
       summary: {
         totalPlants: 12,
         totalZones: 3,
