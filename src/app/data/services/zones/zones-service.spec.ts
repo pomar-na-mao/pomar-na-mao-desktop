@@ -37,11 +37,14 @@ describe('ZonesService', () => {
     mockFrom.mockReturnValue({ select });
 
     const result = await service.findAll();
+    const cachedResult = await service.findAll();
 
     expect(mockFrom).toHaveBeenCalledWith('zones');
+    expect(mockFrom).toHaveBeenCalledTimes(1);
     expect(select).toHaveBeenCalledWith('*', { count: 'exact' });
     expect(order).toHaveBeenCalledWith('name', { ascending: true });
     expect(result).toBe(mockResponse);
+    expect(cachedResult).toBe(mockResponse);
   });
 
   it('findById should query a single zone by id', async () => {

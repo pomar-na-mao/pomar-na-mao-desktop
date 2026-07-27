@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { injectSupabase } from '../supabase';
+import { inject, Injectable } from '@angular/core';
+import type { PostgrestResponse } from '@supabase/supabase-js';
 import type {
   HomeDashboardFilterOptions,
   HomeDashboardOccurrence,
@@ -9,9 +9,25 @@ import type {
   HomeDashboardVariety,
   HomeDashboardZone,
 } from '../../../domain/models/home-dashboard.model';
+import { injectSupabase } from '../supabase';
+import {
+  SUPABASE_CACHE_NAMESPACES,
+  SupabaseRequestCacheService,
+} from '../supabase-request-cache/supabase-request-cache.service';
 
 type VarietyRow = {
   id: number;
+  name: string;
+};
+
+type ZoneOptionRow = {
+  id: string;
+  name: string;
+  polygon: GeoJSON.Geometry | null;
+};
+
+type OccurrenceOptionRow = {
+  id: string;
   name: string;
 };
 
@@ -54,26 +70,65 @@ const EMPTY_SNAPSHOT_FILTERS: HomeDashboardSnapshotFilters = {
 })
 export class HomeDashboardService {
   private supabase = injectSupabase();
+  private requestCache = inject(SupabaseRequestCacheService);
 
-  public async getSnapshot(
+  public async getHomeDashboardData(
     filters: HomeDashboardSnapshotFilters = EMPTY_SNAPSHOT_FILTERS,
+    onCacheMiss?: () => void,
   ): Promise<HomeDashboardSnapshot> {
-    const { data, error } = await this.supabase.rpc(
-      'get_home_dashboard_snapshot',
-      this.buildSnapshotRpcParams(filters),
+    return this.requestCache.read(
+      {
+        namespace: [
+          SUPABASE_CACHE_NAMESPACES.dashboard,
+          SUPABASE_CACHE_NAMESPACES.plants,
+        ],
+        operation: 'homeDashboard.getHomeDashboardData',
+        params: filters,
+        policy: { mode: 'ttl', ttlMs: 15_000 },
+        onCacheMiss,
+      },
+      async () => {
+        const { data, error } = await this.supabase.rpc(
+          'get_home_dashboard_snapshot',
+          this.buildSnapshotRpcParams(filters),
+        );
+
+        if (error) {
+          throw error;
+        }
+
+        return this.mapSnapshot(
+          (data ?? null) as HomeDashboardSnapshotRow | null,
+        );
+      },
     );
-
-    if (error) {
-      throw error;
-    }
-
-    return this.mapSnapshot((data ?? null) as HomeDashboardSnapshotRow | null);
   }
 
   public async getFilterOptions(): Promise<HomeDashboardFilterOptions> {
     const [zonesResult, occurrencesResult] = await Promise.all([
-      this.supabase.from('zones').select('id,name,polygon').order('name'),
-      this.supabase.from('occurrence_types').select('id,name').order('name'),
+      this.requestCache.read<PostgrestResponse<ZoneOptionRow>>(
+        {
+          namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
+          operation: 'homeDashboard.zoneOptions',
+          policy: { mode: 'until-invalidated' },
+          cacheWhen: (response) => !response.error,
+        },
+        () =>
+          this.supabase.from('zones').select('id,name,polygon').order('name'),
+      ),
+      this.requestCache.read<PostgrestResponse<OccurrenceOptionRow>>(
+        {
+          namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
+          operation: 'homeDashboard.occurrenceOptions',
+          policy: { mode: 'until-invalidated' },
+          cacheWhen: (response) => !response.error,
+        },
+        () =>
+          this.supabase
+            .from('occurrence_types')
+            .select('id,name')
+            .order('name'),
+      ),
     ]);
 
     const zones: HomeDashboardZone[] = (zonesResult.data ?? []).map((row) => ({
@@ -82,7 +137,9 @@ export class HomeDashboardService {
       polygon: (row.polygon as GeoJSON.Geometry) ?? null,
     }));
 
-    const occurrences: HomeDashboardOccurrence[] = (occurrencesResult.data ?? []).map((row) => ({
+    const occurrences: HomeDashboardOccurrence[] = (
+      occurrencesResult.data ?? []
+    ).map((row) => ({
       id: row.id as string,
       name: row.name as string,
     }));
@@ -90,17 +147,36 @@ export class HomeDashboardService {
     return { zones, occurrences };
   }
 
-  public async getOpenOccurrences(): Promise<Array<{ plant_id: string; occurrence_type_id: string }>> {
-    const { data, error } = await this.supabase.rpc('get_open_occurrences');
+  public async getOpenOccurrences(): Promise<
+    Array<{ plant_id: string; occurrence_type_id: string }>
+  > {
+    return this.requestCache.read(
+      {
+        namespace: [
+          SUPABASE_CACHE_NAMESPACES.occurrences,
+          SUPABASE_CACHE_NAMESPACES.dashboard,
+        ],
+        operation: 'homeDashboard.getOpenOccurrences',
+        policy: { mode: 'ttl', ttlMs: 15_000 },
+      },
+      async () => {
+        const { data, error } = await this.supabase.rpc('get_open_occurrences');
 
-    if (error) {
-      throw error;
-    }
+        if (error) {
+          throw error;
+        }
 
-    return (data ?? []) as Array<{ plant_id: string; occurrence_type_id: string }>;
+        return (data ?? []) as Array<{
+          plant_id: string;
+          occurrence_type_id: string;
+        }>;
+      },
+    );
   }
 
-  private mapSnapshot(snapshot: HomeDashboardSnapshotRow | null): HomeDashboardSnapshot {
+  private mapSnapshot(
+    snapshot: HomeDashboardSnapshotRow | null,
+  ): HomeDashboardSnapshot {
     const summary = snapshot?.summary;
     const varieties = this.mapVarieties(summary?.varieties ?? []);
     const plants = this.mapPlants(snapshot?.plants ?? []);
@@ -117,7 +193,9 @@ export class HomeDashboardService {
     };
   }
 
-  private mapVarieties(rows: VarietyRow[] | null | undefined): HomeDashboardVariety[] {
+  private mapVarieties(
+    rows: VarietyRow[] | null | undefined,
+  ): HomeDashboardVariety[] {
     if (!Array.isArray(rows)) {
       return [];
     }
@@ -128,13 +206,18 @@ export class HomeDashboardService {
     }));
   }
 
-  private mapPlants(rows: PlantMapRow[] | null | undefined): HomeDashboardPlant[] {
+  private mapPlants(
+    rows: PlantMapRow[] | null | undefined,
+  ): HomeDashboardPlant[] {
     if (!Array.isArray(rows)) {
       return [];
     }
 
     return rows
-      .filter((row) => Number.isFinite(row.latitude) && Number.isFinite(row.longitude))
+      .filter(
+        (row) =>
+          Number.isFinite(row.latitude) && Number.isFinite(row.longitude),
+      )
       .map((row) => ({
         id: row.id,
         latitude: Number(row.latitude),

@@ -1,5 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { injectSupabase } from '../supabase';
+import {
+  SUPABASE_CACHE_NAMESPACES,
+  SupabaseRequestCacheService,
+} from '../supabase-request-cache/supabase-request-cache.service';
 import type {
   GeoJsonPolygon,
   MassInclusionOccurrenceOption,
@@ -33,55 +37,89 @@ interface PolygonBulkUpdateResultRow {
 })
 export class MassInclusionService {
   private supabase = injectSupabase();
+  private requestCache = inject(SupabaseRequestCacheService);
 
   public async findPlantsInsidePolygon(
     polygonGeojson: GeoJsonPolygon
   ): Promise<{ data: PlantInsidePolygon[] | null; error: unknown }> {
-    const { data, error } = await this.supabase.rpc('find_plants_inside_polygon', {
-      p_polygon_geojson: polygonGeojson as unknown as never,
-    });
+    return this.requestCache.read(
+      {
+        namespace: SUPABASE_CACHE_NAMESPACES.plants,
+        operation: 'massInclusion.findPlantsInsidePolygon',
+        params: polygonGeojson,
+        policy: { mode: 'dedupe-only' },
+      },
+      async () => {
+        const { data, error } = await this.supabase.rpc(
+          'find_plants_inside_polygon',
+          {
+            p_polygon_geojson: polygonGeojson as unknown as never,
+          },
+        );
 
-    if (error) {
-      return { data: null, error };
-    }
+        if (error) {
+          return { data: null, error };
+        }
 
-    return {
-      data: ((data ?? []) as PlantInsidePolygonRow[]).map((row) => ({
-        plantId: row.plant_id,
-        latitude: row.latitude,
-        longitude: row.longitude,
-        zoneId: row.zone_id,
-        zoneName: row.zone_name,
-        varietyId: row.variety_id,
-        varietyName: row.variety_name,
-        plantingDate: row.planting_date,
-      })),
-      error: null,
-    };
+        return {
+          data: ((data ?? []) as PlantInsidePolygonRow[]).map((row) => ({
+            plantId: row.plant_id,
+            latitude: row.latitude,
+            longitude: row.longitude,
+            zoneId: row.zone_id,
+            zoneName: row.zone_name,
+            varietyId: row.variety_id,
+            varietyName: row.variety_name,
+            plantingDate: row.planting_date,
+          })),
+          error: null,
+        };
+      },
+    );
   }
 
   public async findVarietyOptions(): Promise<{ data: MassInclusionVarietyOption[] | null; error: unknown }> {
-    const { data, error } = await this.supabase
-      .from('varieties')
-      .select('id,name,description')
-      .order('name');
+    return this.requestCache.read(
+      {
+        namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
+        operation: 'massInclusion.varietyOptions',
+        policy: { mode: 'until-invalidated' },
+        cacheWhen: (response) => !response.error,
+      },
+      async () => {
+        const { data, error } = await this.supabase
+          .from('varieties')
+          .select('id,name,description')
+          .order('name');
 
-    return {
-      data: error ? null : (data as MassInclusionVarietyOption[]),
-      error,
-    };
+        return {
+          data: error ? null : (data as MassInclusionVarietyOption[]),
+          error,
+        };
+      },
+    );
   }
 
   public async findOccurrenceTypeOptions(): Promise<{ data: MassInclusionOccurrenceOption[] | null; error: unknown }> {
-    const { data, error } = await this.supabase
-      .from('occurrence_types')
-      .select('id,code,name')
-      .order('name');
+    return this.requestCache.read(
+      {
+        namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
+        operation: 'massInclusion.occurrenceTypeOptions',
+        policy: { mode: 'until-invalidated' },
+        cacheWhen: (response) => !response.error,
+      },
+      async () => {
+        const { data, error } = await this.supabase
+          .from('occurrence_types')
+          .select('id,code,name')
+          .order('name');
 
-    return {
-      data: error ? null : (data as MassInclusionOccurrenceOption[]),
-      error,
-    };
+        return {
+          data: error ? null : (data as MassInclusionOccurrenceOption[]),
+          error,
+        };
+      },
+    );
   }
 
   public async syncPolygonBulkUpdate(
@@ -94,6 +132,14 @@ export class MassInclusionService {
     if (error) {
       return { data: null, error };
     }
+
+    this.requestCache.invalidate([
+      SUPABASE_CACHE_NAMESPACES.plants,
+      SUPABASE_CACHE_NAMESPACES.plantCounters,
+      SUPABASE_CACHE_NAMESPACES.dashboard,
+      SUPABASE_CACHE_NAMESPACES.operations,
+      SUPABASE_CACHE_NAMESPACES.occurrences,
+    ]);
 
     const row = (Array.isArray(data) ? data[0] : data) as PolygonBulkUpdateResultRow | null | undefined;
 

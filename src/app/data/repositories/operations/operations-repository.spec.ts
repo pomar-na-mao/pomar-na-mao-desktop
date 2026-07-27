@@ -151,5 +151,36 @@ describe('OperationsRepository', () => {
     expect(result.error).toEqual(mockError);
     expect(repository.annotationOperations()).toEqual([]);
   });
+
+  it('should keep the latest spraying response when requests finish out of order', async () => {
+    let resolveFirst!: (value: unknown) => void;
+    const firstResponse = new Promise((resolve) => {
+      resolveFirst = resolve;
+    });
+    const latestData = [{ operation_id: 'latest' }] as unknown as SprayingOperationResponse[];
+
+    mockGetSprayingOperations
+      .mockReturnValueOnce(firstResponse)
+      .mockResolvedValueOnce({
+        data: latestData,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: 'OK',
+      });
+
+    const first = repository.getSprayingOperations(null, null, 'zone-1');
+    await repository.getSprayingOperations(null, null, 'zone-2');
+    resolveFirst({
+      data: [{ operation_id: 'stale' }],
+      error: null,
+      count: null,
+      status: 200,
+      statusText: 'OK',
+    });
+    await first;
+
+    expect(repository.sprayingOperations()).toEqual(latestData);
+  });
 });
 

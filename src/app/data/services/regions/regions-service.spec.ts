@@ -37,11 +37,14 @@ describe('RegionsService', () => {
     mockFrom.mockReturnValue({ select });
 
     const result = await service.findAll();
+    const cachedResult = await service.findAll();
 
     expect(mockFrom).toHaveBeenCalledWith('regions');
+    expect(mockFrom).toHaveBeenCalledTimes(1);
     expect(select).toHaveBeenCalledWith('*', { count: 'exact' });
     expect(order).toHaveBeenCalledWith('region', { ascending: true });
     expect(result).toBe(mockResponse);
+    expect(cachedResult).toBe(mockResponse);
   });
 
   it('findById should query a single region by id', async () => {

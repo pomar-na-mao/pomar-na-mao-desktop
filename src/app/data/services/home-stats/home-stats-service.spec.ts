@@ -45,9 +45,12 @@ describe('HomeStatsService', () => {
       mockInvoke.mockResolvedValue({ data: { status: 'ok', data: stats }, error: null });
 
       const result = await service.getHomeStats();
+      const cachedResult = await service.getHomeStats();
 
       expect(mockInvoke).toHaveBeenCalledWith('get-home-stats');
+      expect(mockInvoke).toHaveBeenCalledTimes(1);
       expect(result).toEqual(stats);
+      expect(cachedResult).toEqual(stats);
     });
 
     it('should throw error on network failure', async () => {

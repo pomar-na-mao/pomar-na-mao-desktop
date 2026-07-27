@@ -4,9 +4,11 @@ import { MassInclusionService } from './mass-inclusion.service';
 import { SupabaseService } from '../supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { GeoJsonPolygon, PolygonBulkUpdatePayload } from '../../../domain/models/mass-inclusion';
+import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';
 
 describe('MassInclusionService', () => {
   let service: MassInclusionService;
+  let requestCache: SupabaseRequestCacheService;
   const mockRpc = vi.fn();
   const mockFrom = vi.fn();
 
@@ -31,6 +33,7 @@ describe('MassInclusionService', () => {
     });
 
     service = TestBed.inject(MassInclusionService);
+    requestCache = TestBed.inject(SupabaseRequestCacheService);
   });
 
   it('should be created', () => {
@@ -84,11 +87,14 @@ describe('MassInclusionService', () => {
     mockFrom.mockReturnValue({ select });
 
     const result = await service.findVarietyOptions();
+    const cachedResult = await service.findVarietyOptions();
 
     expect(mockFrom).toHaveBeenCalledWith('varieties');
     expect(select).toHaveBeenCalledWith('id,name,description');
     expect(order).toHaveBeenCalledWith('name');
     expect(result.data).toEqual([{ id: 1, name: 'Gala', description: null }]);
+    expect(cachedResult).toEqual(result);
+    expect(mockFrom).toHaveBeenCalledTimes(1);
   });
 
   it('should load occurrence type options from Supabase', async () => {
@@ -100,14 +106,18 @@ describe('MassInclusionService', () => {
     mockFrom.mockReturnValue({ select });
 
     const result = await service.findOccurrenceTypeOptions();
+    const cachedResult = await service.findOccurrenceTypeOptions();
 
     expect(mockFrom).toHaveBeenCalledWith('occurrence_types');
     expect(select).toHaveBeenCalledWith('id,code,name');
     expect(order).toHaveBeenCalledWith('name');
+    expect(cachedResult).toEqual(result);
+    expect(mockFrom).toHaveBeenCalledTimes(1);
     expect(result.data).toEqual([{ id: 'o1', code: 'mites', name: 'Ácaros' }]);
   });
 
   it('should call sync_polygon_bulk_update for confirmed saves and map result counts', async () => {
+    const invalidateSpy = vi.spyOn(requestCache, 'invalidate');
     const payload: PolygonBulkUpdatePayload = {
       polygonGeojson: {
         type: 'Polygon',
@@ -148,5 +158,25 @@ describe('MassInclusionService', () => {
       occurrencesUpdatedCount: 0,
       attributesUpdatedCount: 1,
     });
+    expect(invalidateSpy).toHaveBeenCalledWith([
+      'plants',
+      'plant-counters',
+      'dashboard',
+      'operations',
+      'occurrences',
+    ]);
+  });
+
+  it('should keep cached reads when sync_polygon_bulk_update fails', async () => {
+    const invalidateSpy = vi.spyOn(requestCache, 'invalidate');
+    mockRpc.mockResolvedValue({
+      data: null,
+      error: { message: 'failed' },
+    });
+
+    const result = await service.syncPolygonBulkUpdate({} as PolygonBulkUpdatePayload);
+
+    expect(result.error).toEqual({ message: 'failed' });
+    expect(invalidateSpy).not.toHaveBeenCalled();
   });
 });
