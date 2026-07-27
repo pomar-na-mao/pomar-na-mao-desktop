@@ -1,6 +1,10 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  signal,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { LoginViewModel } from '../../../view-models/authentication/login.view-model';
 import { Input } from '../../../../shared/components/input/input';
 import {
@@ -12,7 +16,7 @@ import {
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterModule, Input],
+  imports: [ReactiveFormsModule, Input],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [LoginViewModel],
@@ -25,6 +29,12 @@ export class Login {
   public emailErrors = emailErrors();
 
   public passwordErrors = passwordErrors();
+
+  public passwordVisible = signal(false);
+
+  public togglePasswordVisibility(): void {
+    this.passwordVisible.update((visible) => !visible);
+  }
 
   public async loginHandler(): Promise<void> {
     this.loginForm.markAllAsTouched();

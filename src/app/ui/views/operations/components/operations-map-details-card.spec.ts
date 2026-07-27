@@ -105,7 +105,7 @@ describe('OperationsMapDetailsCard', () => {
       latitude: 10,
       longitude: 20,
       occurrences: [
-        { occurrence_id: 'o1', occurrence_type_name: 'Praga A', status: 'open', severity: 'Média', notes: 'Na folha', resolved_at: null },
+        { occurrence_id: 'o1', occurrence_type_name: 'Praga A', status: 'open', severity: 'medium', notes: 'Na folha', resolved_at: null },
         { occurrence_id: 'o2', occurrence_type_name: 'Praga B', status: 'removed', severity: null, notes: 'Resolvido', resolved_at: '2023-01-01T01:00:00Z' }
       ]
     });
@@ -116,6 +116,8 @@ describe('OperationsMapDetailsCard', () => {
     expect(compiled.textContent).toContain('Zone A');
     expect(compiled.textContent).toContain('Praga A');
     expect(compiled.textContent).toContain('Praga B');
+    expect(compiled.textContent).toContain('Média');
+    expect(compiled.textContent).not.toContain('medium');
     expect(compiled.textContent).toContain('Test inspection notes');
   });
 

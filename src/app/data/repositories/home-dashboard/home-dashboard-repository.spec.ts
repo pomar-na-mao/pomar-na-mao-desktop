@@ -6,7 +6,7 @@ import { HomeDashboardRepository } from './home-dashboard-repository';
 describe('HomeDashboardRepository', () => {
   let repository: HomeDashboardRepository;
 
-  const getSnapshot = vi.fn();
+  const getHomeDashboardData = vi.fn();
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
 
@@ -19,7 +19,7 @@ describe('HomeDashboardRepository', () => {
         {
           provide: HomeDashboardService,
           useValue: {
-            getSnapshot,
+            getHomeDashboardData,
             getFilterOptions,
             getOpenOccurrences,
           },
@@ -31,8 +31,14 @@ describe('HomeDashboardRepository', () => {
   });
 
   it('should delegate snapshot loading', async () => {
-    getSnapshot.mockResolvedValue({
-      summary: { totalPlants: 1, totalZones: 2, totalOccurrenceTypes: 3, totalVarieties: 4, varieties: [] },
+    getHomeDashboardData.mockResolvedValue({
+      summary: {
+        totalPlants: 1,
+        totalZones: 2,
+        totalOccurrenceTypes: 3,
+        totalVarieties: 4,
+        varieties: [],
+      },
       plants: [],
     });
 
@@ -40,10 +46,36 @@ describe('HomeDashboardRepository', () => {
       plantingStartDate: null,
       plantingEndDate: null,
     } as const;
-    const result = await repository.getSnapshot(filters);
+    const result = await repository.getHomeDashboardData(filters);
 
     expect(result.summary.totalPlants).toBe(1);
-    expect(getSnapshot).toHaveBeenCalledWith(filters);
+    expect(getHomeDashboardData).toHaveBeenCalledWith(filters, undefined);
+  });
+
+  it('should forward the cache-miss callback', async () => {
+    const onCacheMiss = vi.fn();
+    getHomeDashboardData.mockImplementation(
+      async (_filters, callback?: () => void) => {
+        callback?.();
+        return {
+          summary: {
+            totalPlants: 1,
+            totalZones: 2,
+            totalOccurrenceTypes: 3,
+            totalVarieties: 4,
+            varieties: [],
+          },
+          plants: [],
+        };
+      },
+    );
+
+    await repository.getHomeDashboardData(
+      { plantingStartDate: null, plantingEndDate: null },
+      onCacheMiss,
+    );
+
+    expect(onCacheMiss).toHaveBeenCalledTimes(1);
   });
 
   it('should delegate filter options loading', async () => {
@@ -61,7 +93,7 @@ describe('HomeDashboardRepository', () => {
 
   it('should delegate open occurrences loading', async () => {
     getOpenOccurrences.mockResolvedValue([
-      { plant_id: 'p1', occurrence_type_id: 'o1' }
+      { plant_id: 'p1', occurrence_type_id: 'o1' },
     ]);
 
     const result = await repository.getOpenOccurrences();

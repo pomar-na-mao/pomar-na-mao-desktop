@@ -4,9 +4,11 @@ import { PlantsService } from './plants-service';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase';
 import type { PlantInsert } from '../../../domain/models/plant-data.model';
+import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';
 
 describe('PlantsService', () => {
   let service: PlantsService;
+  let requestCache: SupabaseRequestCacheService;
   const mockFrom = vi.fn();
 
   beforeEach(() => {
@@ -29,6 +31,7 @@ describe('PlantsService', () => {
     });
 
     service = TestBed.inject(PlantsService);
+    requestCache = TestBed.inject(SupabaseRequestCacheService);
   });
 
   it('should be created', () => {
@@ -43,11 +46,14 @@ describe('PlantsService', () => {
       mockFrom.mockReturnValue({ select });
 
       const result = await service.findAll(null);
+      const cachedResult = await service.findAll(null);
 
       expect(mockFrom).toHaveBeenCalledWith('plants');
+      expect(mockFrom).toHaveBeenCalledTimes(1);
       expect(select).toHaveBeenCalledWith('*');
       expect(order).toHaveBeenCalledWith('created_at', { ascending: false });
       expect(result).toBe(mockResponse);
+      expect(cachedResult).toBe(mockResponse);
     });
 
     it('should apply region and occurrence filters', async () => {
@@ -114,6 +120,7 @@ describe('PlantsService', () => {
 
   describe('delete', () => {
     it('should call delete and eq', async () => {
+      const invalidateSpy = vi.spyOn(requestCache, 'invalidate');
       const mockResponse = { data: null, error: null };
       const eq = vi.fn().mockResolvedValue(mockResponse);
       const deleteMock = vi.fn().mockReturnValue({ eq });
@@ -124,11 +131,13 @@ describe('PlantsService', () => {
       expect(deleteMock).toHaveBeenCalled();
       expect(eq).toHaveBeenCalledWith('id', '1');
       expect(result).toBe(mockResponse);
+      expect(invalidateSpy).toHaveBeenCalled();
     });
   });
 
   describe('insert', () => {
     it('should call insert, select, and single', async () => {
+      const invalidateSpy = vi.spyOn(requestCache, 'invalidate');
       const plant = { id: '1', variety: 'Apple' } as PlantInsert;
       const mockResponse = { data: plant, error: null };
       const single = vi.fn().mockResolvedValue(mockResponse);
@@ -142,6 +151,35 @@ describe('PlantsService', () => {
       expect(select).toHaveBeenCalled();
       expect(single).toHaveBeenCalled();
       expect(result).toBe(mockResponse);
+      expect(invalidateSpy).toHaveBeenCalled();
     });
+  });
+
+  it('should cache plant counters during the TTL window', async () => {
+    const response = { count: 12, error: null };
+    const select = vi.fn().mockResolvedValue(response);
+    mockFrom.mockReturnValue({ select });
+
+    const first = await service.getTotalCount();
+    const second = await service.getTotalCount();
+
+    expect(first).toBe(12);
+    expect(second).toBe(12);
+    expect(mockFrom).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not invalidate cached reads after a failed mutation', async () => {
+    const invalidateSpy = vi.spyOn(requestCache, 'invalidate');
+    const eq = vi.fn().mockResolvedValue({
+      data: null,
+      error: { message: 'failed' },
+    });
+    mockFrom.mockReturnValue({
+      delete: vi.fn().mockReturnValue({ eq }),
+    });
+
+    await service.delete('1');
+
+    expect(invalidateSpy).not.toHaveBeenCalled();
   });
 });

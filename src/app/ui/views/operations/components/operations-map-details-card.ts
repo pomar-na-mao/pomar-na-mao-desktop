@@ -1,10 +1,11 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
+import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe';
 
 @Component({
   selector: 'app-operations-map-details-card',
-  imports: [CommonModule],
+  imports: [CommonModule, SeverityLabelPipe],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <!-- Case 1: Spraying Operation Details -->
@@ -251,7 +252,7 @@ import { OperationsViewModel } from '../../../view-models/operations/operations.
                         </div>
                         @if (occ.severity) {
                           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300">
-                            {{ occ.severity }}
+                            {{ occ.severity | severityLabel }}
                           </span>
                         }
                       </div>
