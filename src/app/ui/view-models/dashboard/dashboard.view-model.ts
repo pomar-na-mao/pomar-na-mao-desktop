@@ -40,6 +40,7 @@ export class DashboardViewModel {
   private loadingService = inject(LoadingService);
   private supportDataLoaded = signal(false);
   private snapshotRequestId = 0;
+  private snapshotLoadingVisible = false;
 
   private map: L.Map | null = null;
   private plantLayers: L.LayerGroup | null = null;
@@ -358,10 +359,17 @@ export class DashboardViewModel {
     filters: HomeDashboardSnapshotFilters,
   ): Promise<void> {
     const requestId = ++this.snapshotRequestId;
-    this.loadingService.show('Carregando dados...');
 
     try {
-      const snapshot = await this.homeDashboardRepository.getSnapshot(filters);
+      const snapshot = await this.homeDashboardRepository.getHomeDashboardData(
+        filters,
+        () => {
+          if (!this.snapshotLoadingVisible) {
+            this.loadingService.show('Carregando dados...');
+            this.snapshotLoadingVisible = true;
+          }
+        },
+      );
 
       if (requestId !== this.snapshotRequestId) {
         return;
@@ -384,12 +392,9 @@ export class DashboardViewModel {
       });
       this.mapPlants.set([]);
     } finally {
-      if (requestId === this.snapshotRequestId) {
-        if (requestId === 1) {
-          setTimeout(() => this.loadingService.hide(), 3000);
-        } else {
-          this.loadingService.hide();
-        }
+      if (requestId === this.snapshotRequestId && this.snapshotLoadingVisible) {
+        this.loadingService.hide();
+        this.snapshotLoadingVisible = false;
       }
     }
   }

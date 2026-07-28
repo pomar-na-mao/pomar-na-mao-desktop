@@ -1,19 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { HomeDashboardRepository } from '../../../data/repositories/home-dashboard/home-dashboard-repository';
+import { LoadingService } from '../../../shared/services/loading.service';
 import { DashboardViewModel } from './dashboard.view-model';
 
 describe('DashboardViewModel', () => {
   let viewModel: DashboardViewModel;
+  let loadingService: LoadingService;
 
-  const getSnapshot = vi.fn();
+  const getHomeDashboardData = vi.fn();
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    getSnapshot.mockResolvedValue({
+    getHomeDashboardData.mockResolvedValue({
       summary: {
         totalPlants: 12,
         totalZones: 3,
@@ -51,7 +53,7 @@ describe('DashboardViewModel', () => {
         {
           provide: HomeDashboardRepository,
           useValue: {
-            getSnapshot,
+            getHomeDashboardData,
             getFilterOptions,
             getOpenOccurrences,
           },
@@ -60,21 +62,52 @@ describe('DashboardViewModel', () => {
     });
 
     viewModel = TestBed.inject(DashboardViewModel);
+    loadingService = TestBed.inject(LoadingService);
   });
 
   it('should load dashboard snapshot, filter options and open occurrences on initialization', async () => {
     await viewModel.loadDashboard();
 
-    expect(getSnapshot).toHaveBeenLastCalledWith({
-      plantingStartDate: null,
-      plantingEndDate: null,
-    });
+    expect(getHomeDashboardData).toHaveBeenLastCalledWith(
+      {
+        plantingStartDate: null,
+        plantingEndDate: null,
+      },
+      expect.any(Function),
+    );
     expect(getFilterOptions).toHaveBeenCalled();
     expect(getOpenOccurrences).toHaveBeenCalled();
     expect(viewModel.plottedPlantsCount()).toBe(2);
     expect(viewModel.availableZones().length).toBe(2);
     expect(viewModel.availableOccurrences().length).toBe(2);
     expect(viewModel.openOccurrences().length).toBe(1);
+  });
+
+  it('should not show loading when the snapshot comes from cache', async () => {
+    await viewModel.loadDashboard();
+
+    expect(loadingService.isLoading()).toBe(false);
+    expect(loadingService.message()).toBeUndefined();
+  });
+
+  it('should show loading only while an HTTP-backed snapshot is pending', async () => {
+    const snapshot = await getHomeDashboardData();
+    getHomeDashboardData.mockImplementationOnce(
+      async (
+        _filters: unknown,
+        onCacheMiss?: () => void,
+      ) => {
+        onCacheMiss?.();
+        expect(loadingService.isLoading()).toBe(true);
+        expect(loadingService.message()).toBe('Carregando dados...');
+        return snapshot;
+      },
+    );
+
+    await viewModel.loadDashboard();
+
+    expect(loadingService.isLoading()).toBe(false);
+    expect(loadingService.message()).toBeUndefined();
   });
 
   it('should expose available varieties from summary', async () => {
@@ -125,7 +158,7 @@ describe('DashboardViewModel', () => {
   });
 
   it('should use pink for classica varieties', async () => {
-    getSnapshot.mockResolvedValueOnce({
+    getHomeDashboardData.mockResolvedValueOnce({
       summary: {
         totalPlants: 12,
         totalZones: 3,

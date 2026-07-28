@@ -1,7 +1,8 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import type { AuthChangeEvent, AuthTokenResponsePassword, Session, UserResponse } from "@supabase/supabase-js";
 import type { AuthChangesResponse, ILogoutResponse, IResetPasswordResponse, IUserSessionResponse } from "../../../domain/models/auth.model";
 import { injectSupabase } from "../supabase";
+import { SupabaseRequestCacheService } from "../supabase-request-cache/supabase-request-cache.service";
 
 export interface IAuthenticationService {
   loginUserHandler(email: string, password: string): Promise<AuthTokenResponsePassword>;
@@ -18,9 +19,14 @@ export interface IAuthenticationService {
 export class AuthenticationService implements IAuthenticationService {
 
   public supabase = injectSupabase();
+  private requestCache = inject(SupabaseRequestCacheService);
 
   public async loginUserHandler(email: string, password: string): Promise<AuthTokenResponsePassword> {
-    return await this.supabase.auth.signInWithPassword({ email, password });
+    const response = await this.supabase.auth.signInWithPassword({ email, password });
+    if (!response.error) {
+      this.requestCache.clear();
+    }
+    return response;
   }
 
   public async forgotPasswordHandler(email: string): Promise<IResetPasswordResponse> {
@@ -40,11 +46,20 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public async signOut(): Promise<ILogoutResponse> {
-    return await this.supabase.auth.signOut();
+    const response = await this.supabase.auth.signOut();
+    if (!response.error) {
+      this.requestCache.clear();
+    }
+    return response;
   }
 
 
   public authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void): AuthChangesResponse {
-    return this.supabase.auth.onAuthStateChange(callback)
+    return this.supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        this.requestCache.clear();
+      }
+      callback(event, session);
+    })
   }
 }

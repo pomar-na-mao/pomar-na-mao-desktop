@@ -44,13 +44,20 @@ import { CommonModule } from '@angular/common';
           [disabled]="disabled"
           class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           [ngClass]="{
-            'pl-10 pr-3': icon,
-            'px-3': !icon,
+            'pl-10': icon,
+            'pl-3': !icon,
+            'pr-10': trailingAction,
+            'pr-3': !trailingAction,
             'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500':
               errorMessage,
             'border-slate-200 dark:border-slate-700': !errorMessage,
           }"
         />
+        @if (trailingAction) {
+          <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+            <ng-content select="[input-extra]"></ng-content>
+          </div>
+        }
       </div>
       @if (errorMessage) {
         <p class="mt-1 text-xs text-red-500 animate-in slide-in-from-top-1">
@@ -66,6 +73,7 @@ export class Input implements ControlValueAccessor {
   @NgInput() type = 'text';
   @NgInput() id = 'input-' + Math.random().toString(36).substring(2, 9);
   @NgInput() icon = '';
+  @NgInput() trailingAction = false;
   @NgInput() errors: Record<string, string> = {};
   @NgInput() disabled = false;
 

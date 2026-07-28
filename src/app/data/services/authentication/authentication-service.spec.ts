@@ -4,9 +4,11 @@ import { TestBed } from '@angular/core/testing';
 import { AuthenticationService } from './authentication-service';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase';
+import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';
 
 describe('AuthenticationService (vitest)', () => {
   let service: AuthenticationService;
+  let requestCache: SupabaseRequestCacheService;
 
   const signInWithPassword = vi.fn();
   const resetPasswordForEmail = vi.fn();
@@ -45,6 +47,7 @@ describe('AuthenticationService (vitest)', () => {
     });
 
     service = TestBed.inject(AuthenticationService);
+    requestCache = TestBed.inject(SupabaseRequestCacheService);
   });
 
   it('should be created', () => {
@@ -52,6 +55,7 @@ describe('AuthenticationService (vitest)', () => {
   });
 
   it('loginUserHandler should call signInWithPassword with email/password', async () => {
+    const clearSpy = vi.spyOn(requestCache, 'clear');
     const email = 'test@example.com';
     const password = 'secret';
     const mockResponse = { data: { user: null, session: null }, error: null };
@@ -61,6 +65,19 @@ describe('AuthenticationService (vitest)', () => {
 
     expect(signInWithPassword).toHaveBeenCalledWith({ email, password });
     expect(result).toBe(mockResponse);
+    expect(clearSpy).toHaveBeenCalled();
+  });
+
+  it('loginUserHandler should keep cached reads when authentication fails', async () => {
+    const clearSpy = vi.spyOn(requestCache, 'clear');
+    signInWithPassword.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'invalid credentials' },
+    });
+
+    await service.loginUserHandler('test@example.com', 'invalid');
+
+    expect(clearSpy).not.toHaveBeenCalled();
   });
 
   it('forgotPasswordHandler should call resetPasswordForEmail', async () => {
@@ -106,6 +123,7 @@ describe('AuthenticationService (vitest)', () => {
   });
 
   it('signOut should call auth.signOut', async () => {
+    const clearSpy = vi.spyOn(requestCache, 'clear');
     const mockResponse = { error: null };
     signOut.mockResolvedValue(mockResponse);
 
@@ -113,16 +131,23 @@ describe('AuthenticationService (vitest)', () => {
 
     expect(signOut).toHaveBeenCalled();
     expect(result).toBe(mockResponse);
+    expect(clearSpy).toHaveBeenCalled();
   });
 
   it('authChanges should call onAuthStateChange with callback', () => {
+    const clearSpy = vi.spyOn(requestCache, 'clear');
     const mockResponse = { data: { subscription: {} } };
     onAuthStateChange.mockReturnValue(mockResponse);
 
     const cb = vi.fn();
     const result = service.authChanges(cb);
 
-    expect(onAuthStateChange).toHaveBeenCalledWith(cb);
+    const wrappedCallback = onAuthStateChange.mock.calls[0][0];
+    wrappedCallback('SIGNED_OUT', null);
+
+    expect(onAuthStateChange).toHaveBeenCalledWith(expect.any(Function));
+    expect(clearSpy).toHaveBeenCalled();
+    expect(cb).toHaveBeenCalledWith('SIGNED_OUT', null);
     expect(result).toBe(mockResponse);
   });
 

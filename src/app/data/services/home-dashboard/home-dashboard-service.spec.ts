@@ -7,6 +7,7 @@ import { HomeDashboardService } from './home-dashboard-service';
 describe('HomeDashboardService', () => {
   let service: HomeDashboardService;
   const mockRpc = vi.fn();
+  const mockFrom = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -17,7 +18,11 @@ describe('HomeDashboardService', () => {
         {
           provide: SupabaseService,
           useValue: {
-            getClient: () => ({ rpc: mockRpc }) as Partial<SupabaseClient> as SupabaseClient,
+            getClient: () =>
+              ({
+                rpc: mockRpc,
+                from: mockFrom,
+              }) as Partial<SupabaseClient> as SupabaseClient,
           },
         },
       ],
@@ -59,7 +64,8 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    const result = await service.getSnapshot();
+    const result = await service.getHomeDashboardData();
+    const cachedResult = await service.getHomeDashboardData();
 
     expect(mockRpc).toHaveBeenCalledWith('get_home_dashboard_snapshot', {
       p_period_start_date: null,
@@ -68,6 +74,8 @@ describe('HomeDashboardService', () => {
       p_planting_end_date: null,
       p_operation_code: null,
     });
+    expect(mockRpc).toHaveBeenCalledTimes(1);
+    expect(cachedResult).toEqual(result);
     expect(result).toEqual({
       summary: {
         totalPlants: 12,
@@ -128,7 +136,7 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    const result = await service.getSnapshot();
+    const result = await service.getHomeDashboardData();
 
     expect(result).toEqual({
       summary: {
@@ -156,7 +164,7 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    await service.getSnapshot({
+    await service.getHomeDashboardData({
       plantingStartDate: '2026-01-01',
       plantingEndDate: '2026-02-01',
     });
@@ -168,5 +176,42 @@ describe('HomeDashboardService', () => {
       p_planting_end_date: '2026-02-01',
       p_operation_code: null,
     });
+  });
+
+  it('should cache dashboard reference options across loads', async () => {
+    const zoneOrder = vi.fn().mockResolvedValue({
+      data: [{ id: 'z1', name: 'Zona A', polygon: null }],
+      error: null,
+    });
+    const occurrenceOrder = vi.fn().mockResolvedValue({
+      data: [{ id: 'o1', name: 'Broca' }],
+      error: null,
+    });
+    mockFrom.mockImplementation((table: string) => ({
+      select: vi.fn().mockReturnValue({
+        order: table === 'zones' ? zoneOrder : occurrenceOrder,
+      }),
+    }));
+
+    const first = await service.getFilterOptions();
+    const second = await service.getFilterOptions();
+
+    expect(first).toEqual(second);
+    expect(mockFrom).toHaveBeenCalledTimes(2);
+    expect(zoneOrder).toHaveBeenCalledTimes(1);
+    expect(occurrenceOrder).toHaveBeenCalledTimes(1);
+  });
+
+  it('should reuse open occurrences during the TTL window', async () => {
+    mockRpc.mockResolvedValue({
+      data: [{ plant_id: 'p1', occurrence_type_id: 'o1' }],
+      error: null,
+    });
+
+    await service.getOpenOccurrences();
+    await service.getOpenOccurrences();
+
+    expect(mockRpc).toHaveBeenCalledTimes(1);
+    expect(mockRpc).toHaveBeenCalledWith('get_open_occurrences');
   });
 });
