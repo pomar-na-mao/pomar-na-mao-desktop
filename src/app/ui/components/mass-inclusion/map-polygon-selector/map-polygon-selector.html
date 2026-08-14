@@ -5,7 +5,7 @@
   >
     <div class="flex items-center gap-3">
       <span
-        class="text-[10px] font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase transition-colors"
+        class="hidden text-[10px] font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase transition-colors sm:inline"
       >
         Área de Seleção
       </span>
@@ -73,7 +73,7 @@
         >
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        Finalizar
+        <span class="hidden sm:inline">Finalizar</span>
       </button>
 
       <!-- Toggle Draw -->
@@ -87,9 +87,9 @@
         [class.bg-red-50]="drawingMode"
         [class.text-red-700]="drawingMode"
         [class.hover:bg-red-100]="drawingMode"
-        [disabled]="!hasPlants"
+        [disabled]="!canDraw"
         (click)="toggleDrawingMode()"
-        [title]="!hasPlants ? 'Selecione uma zona com plantas primeiro' : (drawingMode ? 'Cancelar desenho' : 'Desenhar nova área')"
+        [title]="!canDraw ? 'Selecione uma zona com plantas primeiro' : (drawingMode ? 'Cancelar desenho' : 'Desenhar nova área')"
       >
         <svg
           width="16"
@@ -101,7 +101,7 @@
         >
           <polygon points="3 11 22 2 13 21 11 13 3 11" />
         </svg>
-        {{ drawingMode ? 'Cancelar' : 'Desenhar' }}
+        <span class="hidden sm:inline">{{ drawingMode ? 'Cancelar' : 'Desenhar' }}</span>
       </button>
 
       <!-- Clear -->

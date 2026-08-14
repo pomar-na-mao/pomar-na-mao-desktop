@@ -1,0 +1,160 @@
+begin;
+
+create or replace function public.create_zone_with_regions(
+  p_name text,
+  p_code text default null,
+  p_description text default null,
+  p_polygon_geojson jsonb default null,
+  p_points jsonb default null
+)
+returns table (
+  zone_id uuid,
+  zone_name text,
+  region_points_count integer,
+  polygon jsonb
+)
+language plpgsql
+security invoker
+set search_path = public, extensions
+as $$
+declare
+  v_name text := trim(coalesce(p_name, ''));
+  v_code text := nullif(trim(coalesce(p_code, '')), '');
+  v_description text := nullif(trim(coalesce(p_description, '')), '');
+  v_points_count integer;
+  v_zone_id uuid;
+  v_code_matches integer;
+begin
+  if auth.uid() is null then
+    raise exception 'Usuario autenticado e obrigatorio para criar zona.'
+      using errcode = '42501';
+  end if;
+
+  if v_name = '' then
+    raise exception 'Nome da zona e obrigatorio.'
+      using errcode = '22023';
+  end if;
+
+  if v_code is null then
+    raise exception 'Codigo da zona e obrigatorio.'
+      using errcode = '22023';
+  end if;
+
+  if p_polygon_geojson is null
+    or p_polygon_geojson->>'type' <> 'Polygon'
+    or jsonb_typeof(p_polygon_geojson->'coordinates') <> 'array'
+  then
+    raise exception 'Poligono GeoJSON invalido.'
+      using errcode = '22023';
+  end if;
+
+  if p_points is null or jsonb_typeof(p_points) <> 'array' then
+    raise exception 'Pontos do poligono invalidos.'
+      using errcode = '22023';
+  end if;
+
+  select count(*) into v_points_count
+  from jsonb_array_elements(p_points) as point
+  where jsonb_typeof(point) = 'object'
+    and jsonb_typeof(point->'latitude') = 'number'
+    and jsonb_typeof(point->'longitude') = 'number'
+    and (point->>'latitude')::double precision between -90 and 90
+    and (point->>'longitude')::double precision between -180 and 180;
+
+  if v_points_count < 3 or v_points_count <> jsonb_array_length(p_points) then
+    raise exception 'Poligono deve conter ao menos tres vertices validos.'
+      using errcode = '22023';
+  end if;
+
+  select count(*)
+    into v_code_matches
+  from public.zones z
+  where lower(trim(z.code)) = lower(v_code);
+
+  if v_code_matches > 1 then
+    raise exception 'Mais de uma zona usa este codigo.'
+      using errcode = '23505';
+  end if;
+
+  if v_code_matches = 1 then
+    select z.id
+      into v_zone_id
+    from public.zones z
+    where lower(trim(z.code)) = lower(v_code)
+    for update;
+  end if;
+
+  if exists (
+    select 1
+    from public.zones z
+    where lower(trim(z.name)) = lower(v_name)
+      and (v_zone_id is null or z.id <> v_zone_id)
+  ) then
+    raise exception 'Ja existe uma zona com este nome.'
+      using errcode = '23505';
+  end if;
+
+  if v_zone_id is null then
+    insert into public.zones (
+      name,
+      code,
+      description,
+      polygon,
+      boundary,
+      sync_status,
+      synced_at
+    )
+    values (
+      v_name,
+      v_code,
+      v_description,
+      p_polygon_geojson,
+      extensions.st_setsrid(
+        extensions.st_geomfromgeojson(p_polygon_geojson::text),
+        4326
+      )::extensions.geography,
+      'synced',
+      now()
+    )
+    returning id into v_zone_id;
+  else
+    update public.zones
+      set name = v_name,
+          code = v_code,
+          description = v_description,
+          polygon = p_polygon_geojson,
+          boundary = extensions.st_setsrid(
+            extensions.st_geomfromgeojson(p_polygon_geojson::text),
+            4326
+          )::extensions.geography,
+          sync_status = 'synced',
+          synced_at = now(),
+          updated_at = now()
+    where id = v_zone_id;
+  end if;
+
+  delete from public.regions r
+  where r.zone_id = v_zone_id;
+
+  insert into public.regions (
+    longitude,
+    latitude,
+    region,
+    zone_id
+  )
+  select
+    (point->>'longitude')::double precision,
+    (point->>'latitude')::double precision,
+    v_code,
+    v_zone_id
+  from jsonb_array_elements(p_points) as point;
+
+  return query
+  select v_zone_id, v_name, v_points_count, p_polygon_geojson;
+end;
+$$;
+
+revoke all on function public.create_zone_with_regions(text, text, text, jsonb, jsonb) from public;
+grant execute on function public.create_zone_with_regions(text, text, text, jsonb, jsonb) to authenticated;
+
+commit;

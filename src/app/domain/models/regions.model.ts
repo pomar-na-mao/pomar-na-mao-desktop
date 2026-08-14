@@ -4,4 +4,5 @@ export interface Region {
   longitude: number;
   latitude: number;
   region: string;
+  zone_id: string;
 }
