@@ -24,6 +24,10 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
       },
       {
+        path: 'zonas',
+        loadComponent: () => import('./ui/views/zone-map-management/zone-map-management').then(m => m.ZoneMapManagement)
+      },
+      {
         path: 'configuracoes',
         loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
       },

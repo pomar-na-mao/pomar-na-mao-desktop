@@ -22,6 +22,19 @@ import type {
   PolygonCoordinate,
 } from '../../../../domain/models/mass-inclusion';
 
+const BACKGROUND_POLYGON_COLORS = [
+  '#059669',
+  '#2563eb',
+  '#dc2626',
+  '#9333ea',
+  '#ca8a04',
+  '#0891b2',
+  '#db2777',
+  '#16a34a',
+  '#4f46e5',
+  '#ea580c',
+];
+
 @Component({
   selector: 'app-map-polygon-selector',
   standalone: true,
@@ -64,7 +77,10 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() center: [number, number] = [-23.398772, -49.148646];
   @Input() zoom: number = 16;
+  @Input() locateUserOnInit = false;
+  @Input() userLocationZoom = 18;
   @Input() maxPolygons: number = 1;
+  @Input() allowDrawingWithoutPlants = false;
 
   @Input() set plants(plants: Plant[]) {
     this._plants = plants;
@@ -74,12 +90,23 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   @Input() clearSignal: number = 0;
 
   @Input() set backgroundPolygon(coords: [number, number][] | null) {
-    this._backgroundPolygonCoords = coords;
+    this._backgroundPolygonCoords = coords ? [coords] : [];
     this.renderBackgroundPolygon();
+  }
+
+  @Input() set backgroundPolygons(coords: [number, number][][] | null) {
+    this._backgroundPolygonCoords = coords ?? [];
+    this.renderBackgroundPolygon();
+  }
+
+  @Input() set focusedPolygon(coords: [number, number][] | null) {
+    this._focusedPolygonCoords = coords;
+    this.focusPolygon();
   }
 
   @Output() polygonSelected = new EventEmitter<PolygonSelection>();
   @Output() polygonCleared = new EventEmitter<void>();
+  @Output() drawingStarted = new EventEmitter<void>();
 
   @HostListener('window:keydown', ['$event']) handleKeyboardEvent(
     event: KeyboardEvent,
@@ -96,10 +123,12 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private tempMarkers: L.CircleMarker[] = [];
   private tempPolyline: L.Polyline | null = null;
   private previewLine: L.Polyline | null = null;
-  private _backgroundPolygonCoords: [number, number][] | null = null;
+  private _backgroundPolygonCoords: [number, number][][] = [];
+  private _focusedPolygonCoords: [number, number][] | null = null;
   private _plants: Plant[] = [];
-  private backgroundLayer: L.Polygon | null = null;
+  private backgroundLayers: L.Polygon[] = [];
   private plantCircles: L.CircleMarker[] = [];
+  private hasAppliedDataBounds = false;
 
   public drawingMode = false;
   public polygons: PolygonSelection[] = [];
@@ -113,7 +142,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['clearSignal'] && !changes['clearSignal'].firstChange) {
-      this.clearAll();
+      this.clearAll(false);
     }
   }
 
@@ -142,38 +171,70 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       this.ngZone.run(() => this.finishPolygon(e)),
     );
 
-    if (this._backgroundPolygonCoords) {
+    if (this._backgroundPolygonCoords.length > 0) {
       this.renderBackgroundPolygon();
     }
 
     this.renderPlantCircles();
+    this.centerOnUserLocationIfNeeded();
   }
 
   private renderBackgroundPolygon(): void {
     if (!this.map) return;
 
-    if (this.backgroundLayer) {
-      this.map.removeLayer(this.backgroundLayer);
-      this.backgroundLayer = null;
-    }
+    this.backgroundLayers.forEach((layer) => this.map.removeLayer(layer));
+    this.backgroundLayers = [];
 
-    if (
-      this._backgroundPolygonCoords &&
-      this._backgroundPolygonCoords.length > 0
-    ) {
-      this.backgroundLayer = L.polygon(this._backgroundPolygonCoords, {
-        color: '#ef4444', // red-500
-        fillColor: '#ef4444',
-        fillOpacity: 0.1,
-        weight: 2,
-        dashArray: '5, 5',
-        interactive: false,
-      }).addTo(this.map);
+    const validPolygons = this._backgroundPolygonCoords.filter(
+      (polygon) => polygon.length > 0,
+    );
 
-      this.map.fitBounds(this.backgroundLayer.getBounds(), {
-        padding: [40, 40],
+    if (validPolygons.length > 0) {
+      this.backgroundLayers = validPolygons.map((polygon, index) => {
+        const color =
+          BACKGROUND_POLYGON_COLORS[index % BACKGROUND_POLYGON_COLORS.length];
+
+        return L.polygon(polygon, {
+          color,
+          fillColor: color,
+          fillOpacity: 0.08,
+          weight: 2.5,
+          interactive: false,
+        }).addTo(this.map);
       });
+
+      const bounds = L.latLngBounds([]);
+      this.backgroundLayers.forEach((layer) => {
+        bounds.extend(layer.getBounds());
+      });
+
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, {
+          padding: [40, 40],
+          maxZoom: 18,
+        });
+      }
+      this.hasAppliedDataBounds = true;
+      this.focusPolygon();
     }
+  }
+
+  private focusPolygon(): void {
+    if (
+      !this.map ||
+      !this._focusedPolygonCoords ||
+      this._focusedPolygonCoords.length < 3
+    ) {
+      return;
+    }
+
+    const bounds = L.latLngBounds(this._focusedPolygonCoords);
+    if (!bounds.isValid()) return;
+
+    this.map.fitBounds(bounds, {
+      padding: [48, 48],
+      maxZoom: 19,
+    });
   }
 
   private renderPlantCircles(): void {
@@ -195,7 +256,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       this.plantCircles.push(circle);
     });
 
-    if (this._plants.length > 0 && !this._backgroundPolygonCoords?.length) {
+    if (this._plants.length > 0 && this._backgroundPolygonCoords.length === 0) {
       const bounds = L.latLngBounds(
         this._plants.map(
           (plant) => [plant.latitude, plant.longitude] as [number, number],
@@ -204,15 +265,52 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
       if (bounds.isValid()) {
         this.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 18 });
+        this.hasAppliedDataBounds = true;
       }
     }
   }
 
+  private centerOnUserLocationIfNeeded(): void {
+    if (!this.locateUserOnInit || this.hasAppliedDataBounds) {
+      return;
+    }
+
+    this.centerOnCurrentDeviceLocation();
+  }
+
+  public centerOnCurrentDeviceLocation(): void {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        if (!this.map) return;
+
+        this.map.setView(
+          [position.coords.latitude, position.coords.longitude],
+          this.userLocationZoom,
+        );
+      },
+      () => undefined,
+      {
+        enableHighAccuracy: true,
+        maximumAge: 60000,
+        timeout: 5000,
+      },
+    );
+  }
+
   public toggleDrawingMode(): void {
-    if (!this.hasPlants) return;
+    if (!this.canDraw) return;
     this.drawingMode = !this.drawingMode;
     if (!this.map) return;
     this.map.getContainer().style.cursor = this.drawingMode ? 'crosshair' : '';
+
+    if (this.drawingMode) {
+      this.drawingStarted.emit();
+      this.centerOnCurrentDeviceLocation();
+    }
 
     if (!this.drawingMode) {
       this.cancelDrawing();
@@ -344,7 +442,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  public clearAll(): void {
+  public clearAll(emitCleared = true): void {
     this.cancelDrawing();
     if (!this.map) return;
     this.drawnLayers.forEach((l) => this.map.removeLayer(l));
@@ -353,7 +451,9 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.selectedPolygonCoords = [];
     this.drawingMode = false;
     this.map.getContainer().style.cursor = '';
-    this.polygonCleared.emit();
+    if (emitCleared) {
+      this.polygonCleared.emit();
+    }
   }
 
   public undoLastPoint(): void {
@@ -402,6 +502,10 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
   get hasPlants(): boolean {
     return this._plants.length > 0;
+  }
+
+  get canDraw(): boolean {
+    return this.allowDrawingWithoutPlants || this.hasPlants;
   }
 
   get activePoints(): L.LatLng[] {

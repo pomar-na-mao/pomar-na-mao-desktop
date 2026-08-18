@@ -9,6 +9,7 @@ describe('ZonesRepository', () => {
 
   const findAll = vi.fn();
   const findById = vi.fn();
+  const createWithRegions = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,10 +21,11 @@ describe('ZonesRepository', () => {
           provide: ZonesService,
           useValue: {
             findAll,
-            findById
-          }
-        }
-      ]
+            findById,
+            createWithRegions,
+          },
+        },
+      ],
     });
 
     repo = TestBed.inject(ZonesRepository);
@@ -58,7 +60,7 @@ describe('ZonesRepository', () => {
         device_id: null,
         sync_status: 'synced',
         synced_at: null,
-      }
+      },
     ];
     findAll.mockResolvedValue({ data: zones, error: null });
 
@@ -108,5 +110,101 @@ describe('ZonesRepository', () => {
 
     expect(repo.currentZone()).toBeNull();
     expect(result).toBeNull();
+  });
+
+  it('createWithRegions should return the RPC result on success', async () => {
+    createWithRegions.mockResolvedValue({
+      data: {
+        zone_id: 'zone-1',
+        zone_name: 'Zona A',
+        region_points_count: 3,
+        polygon: { type: 'Polygon', coordinates: [] },
+      },
+      error: null,
+    });
+
+    const result = await repo.createWithRegions({
+      name: 'Zona A',
+      code: 'ZA',
+      polygonGeojson: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [2, 1],
+            [4, 3],
+            [6, 5],
+            [2, 1],
+          ],
+        ],
+      },
+      points: [
+        { latitude: 1, longitude: 2 },
+        { latitude: 3, longitude: 4 },
+        { latitude: 5, longitude: 6 },
+      ],
+    });
+
+    expect(result.data?.zone_id).toBe('zone-1');
+    expect(result.error).toBeNull();
+    expect(result.message).toBeNull();
+  });
+
+  it('createWithRegions should map duplicate and invalid polygon errors', async () => {
+    createWithRegions.mockResolvedValueOnce({
+      data: null,
+      error: { code: '23505', message: 'duplicate', details: '', hint: '' },
+    });
+
+    const duplicate = await repo.createWithRegions({
+      name: 'Zona A',
+      code: 'ZA',
+      polygonGeojson: { type: 'Polygon', coordinates: [] },
+      points: [],
+    });
+
+    createWithRegions.mockResolvedValueOnce({
+      data: null,
+      error: {
+        code: '22023',
+        message: 'invalid polygon',
+        details: '',
+        hint: '',
+      },
+    });
+
+    const invalidPolygon = await repo.createWithRegions({
+      name: 'Zona B',
+      code: 'ZB',
+      polygonGeojson: { type: 'Polygon', coordinates: [] },
+      points: [],
+    });
+
+    expect(duplicate.message).toBe('Ja existe uma zona com este nome.');
+    expect(invalidPolygon.message).toBe(
+      'Poligono invalido. Revise o desenho e tente novamente.',
+    );
+  });
+
+  it('createWithRegions should map duplicated code inconsistency errors', async () => {
+    createWithRegions.mockResolvedValueOnce({
+      data: null,
+      error: {
+        code: '23505',
+        message: 'Mais de uma zona usa este codigo.',
+        details: '',
+        hint: '',
+      },
+    });
+
+    const result = await repo.createWithRegions({
+      name: 'Zona A',
+      code: 'ZA',
+      polygonGeojson: { type: 'Polygon', coordinates: [] },
+      points: [],
+    });
+
+    expect(result.message).toBe(
+      'Mais de uma zona usa este codigo. Corrija as zonas existentes antes de salvar.',
+    );
   });
 });
