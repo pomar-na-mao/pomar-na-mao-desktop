@@ -39,7 +39,8 @@ describe('RegionsRepository', () => {
       created_at: '2026-03-31T10:00:00Z',
       longitude: -46.6,
       latitude: -23.5,
-      region: 'North'
+      region: 'North',
+      zone_id: 'zone-1',
     }];
     findAll.mockResolvedValue({ data: regions, error: null });
 
@@ -54,7 +55,8 @@ describe('RegionsRepository', () => {
       created_at: '2026-03-31T10:00:00Z',
       longitude: -46.6,
       latitude: -23.5,
-      region: 'North'
+      region: 'North',
+      zone_id: 'zone-1',
     };
     findById.mockResolvedValue({ data: region, error: null });
 
@@ -71,7 +73,8 @@ describe('RegionsRepository', () => {
       created_at: '2026-03-31T10:00:00Z',
       longitude: -46.6,
       latitude: -23.5,
-      region: 'North'
+      region: 'North',
+      zone_id: 'zone-1',
     });
     findById.mockResolvedValue({ data: null, error: new Error('failed') });
 

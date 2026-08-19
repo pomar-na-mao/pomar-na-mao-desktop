@@ -1,0 +1,215 @@
+@let currentMessage = viewModel.messageService.currentMessage();
+
+<div
+  [class]="
+    viewModel.isMapFullscreen()
+      ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex flex-col overflow-hidden bg-white dark:bg-slate-950 md:flex-row'
+      : 'flex h-[calc(100vh-64px)] flex-col overflow-hidden md:flex-row'
+  "
+>
+  @if (viewModel.messageService.showMessage() && currentMessage) {
+  <div
+    class="fixed right-6 top-20 z-[1200] max-w-md rounded-lg border px-4 py-3 text-sm font-semibold shadow-xl backdrop-blur-md transition-colors"
+    [ngClass]="{
+      'border-emerald-200 bg-emerald-50/95 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300': currentMessage.type === 'success',
+      'border-red-200 bg-red-50/95 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300': currentMessage.type === 'error',
+      'border-amber-200 bg-amber-50/95 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300': currentMessage.type === 'warn',
+      'border-blue-200 bg-blue-50/95 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-300': currentMessage.type === 'info'
+    }"
+  >
+    {{ currentMessage.text }}
+  </div>
+  }
+
+  <aside
+    class="flex max-h-[55%] w-full shrink-0 flex-col border-b border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60 md:h-full md:max-h-none md:w-[380px] md:border-b-0 md:border-r"
+  >
+    <div class="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-5">
+      <header class="shrink-0">
+        <h1
+          class="mt-1 text-xl font-semibold text-slate-950 dark:text-slate-50"
+        >
+          Cadastrar nova Zona
+        </h1>
+      </header>
+
+      <div
+        class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
+      >
+        {{ viewModel.existingZonePolygons().length }} zonas plotadas no mapa.
+      </div>
+
+      @if (viewModel.zonesLoadFailed()) {
+      <div
+        class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
+      >
+        Erro ao carregar zonas existentes.
+      </div>
+      } @if (viewModel.saveError()) {
+      <div
+        class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
+      >
+        {{ viewModel.saveError() }}
+      </div>
+      }
+
+      <form
+        class="space-y-4"
+        [formGroup]="viewModel.zoneForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <div class="space-y-1.5">
+          <label
+            for="zone-name"
+            class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+          >
+            Nome da Zona
+          </label>
+          <input
+            id="zone-name"
+            type="text"
+            formControlName="name"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 dark:focus:border-emerald-400"
+            autocomplete="off"
+          />
+          @if (viewModel.nameError()) {
+          <p class="text-sm font-medium text-red-600 dark:text-red-300">
+            {{ viewModel.nameError() }}
+          </p>
+          }
+        </div>
+
+        <div class="space-y-1.5">
+          <label
+            for="zone-code"
+            class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+          >
+            Código
+          </label>
+          <input
+            id="zone-code"
+            type="text"
+            formControlName="code"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 dark:focus:border-emerald-400"
+            autocomplete="off"
+          />
+          @if (viewModel.codeError()) {
+          <p class="text-sm font-medium text-red-600 dark:text-red-300">
+            {{ viewModel.codeError() }}
+          </p>
+          }
+        </div>
+
+        <div class="space-y-1.5">
+          <label
+            for="zone-description"
+            class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+          >
+            Descrição
+          </label>
+          <textarea
+            id="zone-description"
+            formControlName="description"
+            rows="3"
+            class="w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-base text-slate-950 outline-none transition-colors placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 dark:focus:border-emerald-400"
+          ></textarea>
+        </div>
+
+        <div
+          class="rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900"
+        >
+          <div class="flex items-center justify-between gap-3">
+            <span
+              class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+            >
+              Polígono
+            </span>
+            <span
+              class="text-sm font-bold text-emerald-700 dark:text-emerald-400"
+            >
+              {{ viewModel.selectedPolygonCoordinates().length }} pontos
+            </span>
+          </div>
+          @if (viewModel.polygonError()) {
+          <p class="mt-2 text-sm font-medium text-red-600 dark:text-red-300">
+            {{ viewModel.polygonError() }}
+          </p>
+          }
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            class="min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            [disabled]="viewModel.isSaving()"
+            (click)="viewModel.clear()"
+          >
+            Limpar
+          </button>
+          <button
+            type="submit"
+            class="min-h-11 rounded-lg bg-emerald-600 px-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400"
+            [disabled]="!viewModel.canSave()"
+          >
+            {{ viewModel.isSaving() ? 'Salvando...' : 'Salvar zona' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </aside>
+
+  <div class="relative min-h-0 flex-1 overflow-hidden">
+    <app-map-polygon-selector
+      class="absolute inset-0 h-full w-full"
+      [center]="[-23.398772, -49.148646]"
+      [zoom]="16"
+      [locateUserOnInit]="true"
+      [userLocationZoom]="18"
+      [backgroundPolygons]="viewModel.existingZonePolygons()"
+      [focusedPolygon]="viewModel.savedZoneFocusPolygon()"
+      [plants]="[]"
+      [allowDrawingWithoutPlants]="true"
+      [clearSignal]="viewModel.clearMapSignal()"
+      (polygonSelected)="onPolygonSelected($event)"
+      (polygonCleared)="onPolygonCleared()"
+    />
+
+    <button
+      type="button"
+      (click)="toggleFullscreen()"
+      class="absolute right-3 top-14 z-[400] min-h-11 min-w-11 rounded-lg bg-white/90 p-2 text-slate-600 shadow-md backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 dark:bg-slate-800/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+      [title]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+      [attr.aria-label]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+    >
+      @if (viewModel.isMapFullscreen()) {
+      <svg
+        class="h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 11v-5h5M15 13v5h-5M4 20l5-5M20 4l-5 5"
+        />
+      </svg>
+      } @else {
+      <svg
+        class="h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+        />
+      </svg>
+      }
+    </button>
+  </div>
+</div>

@@ -4,6 +4,10 @@ import type {
   PostgrestSingleResponse,
 } from "@supabase/supabase-js";
 import type { Zone } from "../../../domain/models/zone.model";
+import type {
+  CreateZoneWithRegionsPayload,
+  CreateZoneWithRegionsResult,
+} from "../../../domain/models/zone.model";
 import { injectSupabase } from "../supabase";
 import {
   SUPABASE_CACHE_NAMESPACES,
@@ -13,6 +17,9 @@ import {
 export interface IZonesService {
   findAll(): Promise<PostgrestResponse<Zone>>;
   findById(id: string): Promise<PostgrestSingleResponse<Zone>>;
+  createWithRegions(
+    payload: CreateZoneWithRegionsPayload,
+  ): Promise<PostgrestSingleResponse<CreateZoneWithRegionsResult>>;
 }
 
 @Injectable({
@@ -49,5 +56,28 @@ export class ZonesService implements IZonesService {
       },
       () => this.supabase.from('zones').select('*').eq('id', id).single(),
     );
+  }
+
+  public async createWithRegions(
+    payload: CreateZoneWithRegionsPayload,
+  ): Promise<PostgrestSingleResponse<CreateZoneWithRegionsResult>> {
+    const response = await this.supabase
+      .rpc('create_zone_with_regions', {
+        p_name: payload.name,
+        p_code: payload.code ?? null,
+        p_description: payload.description ?? null,
+        p_polygon_geojson: payload.polygonGeojson,
+        p_points: payload.points,
+      })
+      .single<CreateZoneWithRegionsResult>();
+
+    if (!response.error) {
+      this.requestCache.invalidate([
+        SUPABASE_CACHE_NAMESPACES.referenceData,
+        SUPABASE_CACHE_NAMESPACES.dashboard,
+      ]);
+    }
+
+    return response;
   }
 }
