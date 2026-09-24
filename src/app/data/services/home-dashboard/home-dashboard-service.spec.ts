@@ -60,6 +60,26 @@ describe('HomeDashboardService', () => {
             varietyName: null,
           },
         ],
+        farmBoundary: [
+          {
+            id: 'f3',
+            latitude: -21.3,
+            longitude: -47.3,
+            order: 3,
+          },
+          {
+            id: 'f1',
+            latitude: -21.1,
+            longitude: -47.1,
+            order: 1,
+          },
+          {
+            id: 'f2',
+            latitude: -21.2,
+            longitude: -47.2,
+            order: 2,
+          },
+        ],
       },
       error: null,
     });
@@ -103,10 +123,30 @@ describe('HomeDashboardService', () => {
           varietyName: null,
         },
       ],
+      farmBoundary: [
+        {
+          id: 'f1',
+          latitude: -21.1,
+          longitude: -47.1,
+          order: 1,
+        },
+        {
+          id: 'f2',
+          latitude: -21.2,
+          longitude: -47.2,
+          order: 2,
+        },
+        {
+          id: 'f3',
+          latitude: -21.3,
+          longitude: -47.3,
+          order: 3,
+        },
+      ],
     });
   });
 
-  it('should ignore invalid map points and default empty values', async () => {
+  it('should ignore invalid map and boundary points and default empty values', async () => {
     mockRpc.mockResolvedValue({
       data: {
         summary: {
@@ -132,6 +172,26 @@ describe('HomeDashboardService', () => {
             varietyName: null,
           },
         ],
+        farmBoundary: [
+          {
+            id: 'f1',
+            latitude: -21.1,
+            longitude: -47.1,
+            order: 1,
+          },
+          {
+            id: 'bad-lat',
+            latitude: null,
+            longitude: -47.2,
+            order: 2,
+          },
+          {
+            id: 'bad-order',
+            latitude: -21.3,
+            longitude: -47.3,
+            order: null,
+          },
+        ],
       },
       error: null,
     });
@@ -155,6 +215,14 @@ describe('HomeDashboardService', () => {
           varietyName: null,
         },
       ],
+      farmBoundary: [
+        {
+          id: 'f1',
+          latitude: -21.1,
+          longitude: -47.1,
+          order: 1,
+        },
+      ],
     });
   });
 
@@ -176,6 +244,20 @@ describe('HomeDashboardService', () => {
       p_planting_end_date: '2026-02-01',
       p_operation_code: null,
     });
+  });
+
+  it('should default farm boundary to an empty array when the field is missing', async () => {
+    mockRpc.mockResolvedValue({
+      data: {
+        summary: null,
+        plants: [],
+      },
+      error: null,
+    });
+
+    const result = await service.getHomeDashboardData();
+
+    expect(result.farmBoundary).toEqual([]);
   });
 
   it('should cache dashboard reference options across loads', async () => {

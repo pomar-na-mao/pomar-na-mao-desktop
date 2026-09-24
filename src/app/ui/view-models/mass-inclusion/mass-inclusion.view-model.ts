@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { PlantsRepository } from "../../../data/repositories/plants/plants-repository";
 import { MassInclusionRepository } from "../../../data/repositories/mass-inclusion/mass-inclusion.repository";
 import { ZonesRepository } from "../../../data/repositories/zones/zones-repository";
+import { RegionsRepository } from "../../../data/repositories/regions/regions-repository";
 import type {
   MassInclusionData,
   MassInclusionFormValue,
@@ -23,6 +24,7 @@ export class MassInclusionViewModel {
   private massInclusionRepository = inject(MassInclusionRepository);
   private plantsRepository = inject(PlantsRepository);
   private zonesRepository = inject(ZonesRepository);
+  private regionsRepository = inject(RegionsRepository);
   public loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
 
@@ -69,7 +71,8 @@ export class MassInclusionViewModel {
     }))
   ]);
 
-  public backgroundPolygon = computed<[number, number][] | null>(() => null);
+  public zonePolygonCoords = signal<[number, number][] | null>(null);
+  public backgroundPolygon = computed<[number, number][] | null>(() => this.zonePolygonCoords());
 
   public massInclusionDataForm = this.formBuilder.group({
     occurrenceAction: this.formBuilder.nonNullable.control<'add' | 'remove'>('add'),
@@ -172,6 +175,7 @@ export class MassInclusionViewModel {
       this.clearMapSignal.update((v) => v + 1);
       this.zonesRepository.currentZone.set(null);
       this.plants.set([]);
+      this.zonePolygonCoords.set(null);
       return;
     }
 
@@ -179,10 +183,23 @@ export class MassInclusionViewModel {
 
     if (selectedZone) {
       this.zonesRepository.currentZone.set(selectedZone);
-      await this.loadPlantsForMap();
+      await Promise.all([
+        this.loadPlantsForMap(),
+        this.loadZonePolygon(normalizedZoneId),
+      ]);
     } else {
       this.zonesRepository.currentZone.set(null);
       this.plants.set([]);
+      this.zonePolygonCoords.set(null);
+    }
+  }
+
+  private async loadZonePolygon(zoneId: string): Promise<void> {
+    const { data } = await this.regionsRepository.findByZoneId(zoneId);
+    if (data && data.length >= 3) {
+      this.zonePolygonCoords.set(data.map((r) => [r.latitude, r.longitude]));
+    } else {
+      this.zonePolygonCoords.set(null);
     }
   }
 

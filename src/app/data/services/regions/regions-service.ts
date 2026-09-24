@@ -13,6 +13,7 @@ import {
 export interface IRegionsService {
   findAll(): Promise<PostgrestResponse<Region>>;
   findById(id: string): Promise<PostgrestSingleResponse<Region>>;
+  findByZoneId(zoneId: string): Promise<PostgrestResponse<Region>>;
 }
 
 @Injectable({
@@ -38,6 +39,24 @@ export class RegionsService implements IRegionsService {
     );
   }
 
+  public async findByZoneId(zoneId: string): Promise<PostgrestResponse<Region>> {
+    return this.requestCache.read(
+      {
+        namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
+        operation: 'regions.findByZoneId',
+        params: { zoneId },
+        policy: { mode: 'until-invalidated' },
+        cacheWhen: (response) => !response.error,
+      },
+      async () => {
+        const response = await this.supabase.rpc('get_zone_regions', {
+          p_zone_id: zoneId,
+        });
+        return response as PostgrestResponse<Region>;
+      },
+    );
+  }
+
   public async findById(id: string): Promise<PostgrestSingleResponse<Region>> {
     return this.requestCache.read(
       {
@@ -51,3 +70,4 @@ export class RegionsService implements IRegionsService {
     );
   }
 }
+

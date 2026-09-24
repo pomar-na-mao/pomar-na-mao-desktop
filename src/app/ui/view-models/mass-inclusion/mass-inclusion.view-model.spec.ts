@@ -6,6 +6,7 @@ import { MassInclusionViewModel } from './mass-inclusion.view-model';
 import { MassInclusionRepository } from '../../../data/repositories/mass-inclusion/mass-inclusion.repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { LoadingService } from '../../../data/services/loading';
 import { MessageService } from '../../../data/services/message/message.service';
 import {
@@ -95,6 +96,10 @@ describe('MassInclusionViewModel', () => {
     error: vi.fn(),
   };
 
+  const mockRegionsRepository = {
+    findByZoneId: vi.fn().mockResolvedValue({ data: [], error: null }),
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     TestBed.resetTestingModule();
@@ -138,6 +143,7 @@ describe('MassInclusionViewModel', () => {
         { provide: MassInclusionRepository, useValue: mockMassInclusionRepository },
         { provide: PlantsRepository, useValue: mockPlantsRepository },
         { provide: ZonesRepository, useValue: mockZonesRepository },
+        { provide: RegionsRepository, useValue: mockRegionsRepository },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: MessageService, useValue: mockMessageService },
       ],

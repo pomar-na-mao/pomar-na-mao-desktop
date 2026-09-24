@@ -23,16 +23,14 @@ import type {
 } from '../../../../domain/models/mass-inclusion';
 
 const BACKGROUND_POLYGON_COLORS = [
-  '#059669',
-  '#2563eb',
-  '#dc2626',
-  '#9333ea',
-  '#ca8a04',
-  '#0891b2',
-  '#db2777',
-  '#16a34a',
-  '#4f46e5',
-  '#ea580c',
+  '#f97316', // Laranja vibrante
+  '#2563eb', // Azul royal
+  '#9333ea', // Roxo
+  '#dc2626', // Vermelho
+  '#0891b2', // Ciano
+  '#ca8a04', // Âmbar
+  '#db2777', // Rosa
+  '#4f46e5', // Índigo
 ];
 
 @Component({
@@ -82,8 +80,15 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   @Input() maxPolygons: number = 1;
   @Input() allowDrawingWithoutPlants = false;
 
-  @Input() set plants(plants: Plant[]) {
-    this._plants = plants;
+  @Input() set plants(
+    plants: Array<{
+      latitude: number;
+      longitude: number;
+      zone_id?: string | null;
+      zoneId?: string | null;
+    }>,
+  ) {
+    this._plants = plants as Plant[];
     this.renderPlantCircles();
   }
 
@@ -104,6 +109,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.focusPolygon();
   }
 
+  @Input() backgroundPolygonColor?: string;
+
   @Output() polygonSelected = new EventEmitter<PolygonSelection>();
   @Output() polygonCleared = new EventEmitter<void>();
   @Output() drawingStarted = new EventEmitter<void>();
@@ -118,6 +125,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private map!: L.Map;
+  private canvasRenderer = L.canvas({ padding: 0.5 });
   private drawnLayers: L.Polygon[] = [];
   private tempPoints: L.LatLng[] = [];
   private tempMarkers: L.CircleMarker[] = [];
@@ -125,7 +133,12 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private previewLine: L.Polyline | null = null;
   private _backgroundPolygonCoords: [number, number][][] = [];
   private _focusedPolygonCoords: [number, number][] | null = null;
-  private _plants: Plant[] = [];
+  private _plants: Array<{
+    latitude: number;
+    longitude: number;
+    zone_id?: string | null;
+    zoneId?: string | null;
+  }> = [];
   private backgroundLayers: L.Polygon[] = [];
   private plantCircles: L.CircleMarker[] = [];
   private hasAppliedDataBounds = false;
@@ -192,15 +205,20 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     if (validPolygons.length > 0) {
       this.backgroundLayers = validPolygons.map((polygon, index) => {
         const color =
+          this.backgroundPolygonColor ??
           BACKGROUND_POLYGON_COLORS[index % BACKGROUND_POLYGON_COLORS.length];
 
-        return L.polygon(polygon, {
+        const layer = L.polygon(polygon, {
           color,
           fillColor: color,
-          fillOpacity: 0.08,
-          weight: 2.5,
+          fillOpacity: 0.18,
+          weight: 3,
+          dashArray: '6, 6',
           interactive: false,
         }).addTo(this.map);
+
+        layer.bringToBack();
+        return layer;
       });
 
       const bounds = L.latLngBounds([]);
@@ -244,11 +262,13 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.plantCircles = [];
 
     this._plants.forEach((plant) => {
+      const hasZone = !!(plant.zone_id || plant.zoneId);
       const circle = L.circleMarker([plant.latitude, plant.longitude], {
-        radius: 4.5,
-        color: '#34d399', // green border
-        fillColor: '#10b981', // green fill
-        fillOpacity: 0.9,
+        renderer: this.canvasRenderer,
+        radius: 4,
+        color: hasZone ? '#2563eb' : '#34d399',
+        fillColor: hasZone ? '#3b82f6' : '#10b981',
+        fillOpacity: 0.85,
         weight: 0.75,
         interactive: false,
       }).addTo(this.map);
@@ -512,9 +532,50 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     return [...this.tempPoints];
   }
 
+  public setExternalPolygon(coordinates: [number, number][]): void {
+    if (!this.map || coordinates.length < 3) return;
+
+    this.clearAll(false);
+
+    const latLngs = coordinates.map(([lat, lng]) => L.latLng(lat, lng));
+    const polygon = L.polygon(latLngs, {
+      color: '#2563eb',
+      fillColor: '#3b82f6',
+      fillOpacity: 0.25,
+      weight: 2,
+    }).addTo(this.map);
+
+    this.drawnLayers.push(polygon);
+
+    const polygonCoords: PolygonCoordinate[] = coordinates.map(([lat, lng]) => ({
+      lat: parseFloat(lat.toFixed(6)),
+      lng: parseFloat(lng.toFixed(6)),
+    }));
+
+    const geoJson: PolygonSelection['geoJson'] = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            ...polygonCoords.map((c) => [c.lng, c.lat]),
+            [polygonCoords[0].lng, polygonCoords[0].lat],
+          ],
+        ],
+      },
+      properties: {},
+    };
+
+    const selection: PolygonSelection = { coordinates: polygonCoords, geoJson };
+    this.polygons = [selection];
+    this.selectedPolygonCoords = polygonCoords;
+    this.polygonSelected.emit(selection);
+  }
+
   public invalidateSize(): void {
     if (this.map) {
       this.map.invalidateSize();
     }
   }
 }
+

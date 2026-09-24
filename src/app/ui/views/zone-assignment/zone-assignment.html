@@ -1,31 +1,31 @@
-@let currentMessage = massInclusionViewModel.messageService.currentMessage();
+@let currentMessage = viewModel.messageService.currentMessage();
 
 <div
   [class]="
-    massInclusionViewModel.isMapFullscreen()
+    viewModel.isMapFullscreen()
       ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex overflow-hidden bg-white dark:bg-slate-950'
       : 'flex h-[calc(100vh-64px)] overflow-hidden'
   "
 >
-  @if (massInclusionViewModel.messageService.showMessage() && currentMessage) {
-  <div
-    class="fixed right-6 top-20 z-[1200] max-w-md rounded-lg border px-4 py-3 text-sm font-semibold shadow-xl backdrop-blur-md transition-colors"
-    [ngClass]="{
-      'border-emerald-200 bg-emerald-50/95 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300': currentMessage.type === 'success',
-      'border-red-200 bg-red-50/95 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300': currentMessage.type === 'error',
-      'border-amber-200 bg-amber-50/95 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300': currentMessage.type === 'warn',
-      'border-blue-200 bg-blue-50/95 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-300': currentMessage.type === 'info'
-    }"
-  >
-    {{ currentMessage.text }}
-  </div>
+  @if (viewModel.messageService.showMessage() && currentMessage) {
+    <div
+      class="fixed right-6 top-20 z-[1200] max-w-md rounded-lg border px-4 py-3 text-sm font-semibold shadow-xl backdrop-blur-md transition-colors"
+      [ngClass]="{
+        'border-emerald-200 bg-emerald-50/95 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300': currentMessage.type === 'success',
+        'border-red-200 bg-red-50/95 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300': currentMessage.type === 'error',
+        'border-amber-200 bg-amber-50/95 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300': currentMessage.type === 'warn',
+        'border-blue-200 bg-blue-50/95 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-300': currentMessage.type === 'info'
+      }"
+    >
+      {{ currentMessage.text }}
+    </div>
   }
 
   <!-- Left Sidebar (Form) -->
   <aside
     class="flex h-full w-[380px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
   >
-    <app-mass-inclusion-form class="block h-full" />
+    <app-zone-assignment-form class="block h-full" />
   </aside>
 
   <!-- Map Area -->
@@ -34,26 +34,27 @@
       class="absolute inset-0 w-full h-full"
       [center]="[-23.398772, -49.148646]"
       [zoom]="16"
-      [backgroundPolygon]="massInclusionViewModel.backgroundPolygon()"
-      [focusedPolygon]="massInclusionViewModel.backgroundPolygon()"
+      [plants]="viewModel.allPlants()"
+      [backgroundPolygon]="viewModel.selectedZonePolygon()"
+      [focusedPolygon]="viewModel.selectedZonePolygon()"
       [backgroundPolygonColor]="'#f97316'"
-      [plants]="massInclusionViewModel.plants()"
-      [clearSignal]="massInclusionViewModel.clearMapSignal()"
+      [clearSignal]="viewModel.clearMapSignal()"
+      [allowDrawingWithoutPlants]="true"
       (polygonSelected)="onPolygonSelected($event)"
       (polygonCleared)="onPolygonCleared()"
     />
 
-    <!-- Fullscreen button floating over map (below toolbar) -->
+    <!-- Fullscreen button floating over map -->
     <button
       (click)="toggleFullscreen()"
       class="absolute right-3 top-14 z-[400] rounded-lg bg-white/90 p-2 text-slate-600 shadow-md backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 focus:outline-none dark:bg-slate-800/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
       [title]="
-        massInclusionViewModel.isMapFullscreen()
+        viewModel.isMapFullscreen()
           ? 'Sair da tela cheia'
           : 'Tela cheia'
       "
     >
-      @if (massInclusionViewModel.isMapFullscreen()) {
+      @if (viewModel.isMapFullscreen()) {
         <svg
           class="h-4 w-4"
           fill="none"

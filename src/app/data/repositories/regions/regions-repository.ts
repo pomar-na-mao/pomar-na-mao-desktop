@@ -21,6 +21,12 @@ export class RegionsRepository {
     return { error };
   }
 
+  public async findByZoneId(zoneId: string): Promise<{ data: Region[]; error: PostgrestError | null }> {
+    const { data, error } = await this.regionsService.findByZoneId(zoneId);
+    const sorted = data ? this.sortZoneRegions(data) : [];
+    return { data: sorted, error };
+  }
+
   public async findById(id: string): Promise<Region | null> {
     const { data, error } = await this.regionsService.findById(id);
 
@@ -33,8 +39,19 @@ export class RegionsRepository {
     return null;
   }
 
+  public sortZoneRegions(regions: Region[]): Region[] {
+    return [...regions].sort((a, b) => {
+      return this.compareRegionsByOrder(a, b);
+    });
+  }
+
   private sortRegions(regions: Region[]): Region[] {
     return [...regions].sort((left, right) => {
+      if (left.zone_id === right.zone_id) {
+        const orderComparison = this.compareRegionsByOrder(left, right);
+        if (orderComparison !== 0) return orderComparison;
+      }
+
       const regionComparison = left.region.localeCompare(right.region, 'pt-BR');
       if (regionComparison !== 0) return regionComparison;
 
@@ -44,5 +61,28 @@ export class RegionsRepository {
 
       return left.longitude - right.longitude;
     });
+  }
+
+  private compareRegionsByOrder(left: Region, right: Region): number {
+    const leftOrder = this.toFiniteOrder(left.order);
+    const rightOrder = this.toFiniteOrder(right.order);
+    const leftHasOrder = Number.isFinite(leftOrder);
+    const rightHasOrder = Number.isFinite(rightOrder);
+
+    if (leftHasOrder && rightHasOrder) {
+      return leftOrder - rightOrder;
+    }
+
+    if (leftHasOrder) return -1;
+    if (rightHasOrder) return 1;
+    return 0;
+  }
+
+  private toFiniteOrder(value: number | null | undefined): number {
+    if (value == null) {
+      return Number.NaN;
+    }
+
+    return Number(value);
   }
 }
