@@ -1,8 +1,10 @@
+import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { ZoneAssignmentService } from './zone-assignment.service';
 import type { GeoJsonPolygon } from '../../../domain/models/mass-inclusion';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';
+import { SupabaseService } from '../supabase';
+import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';
 
 describe('ZoneAssignmentService', () => {
   let service: ZoneAssignmentService;
@@ -19,16 +21,26 @@ describe('ZoneAssignmentService', () => {
       rpc: mockRpc,
     } as unknown as SupabaseClient;
 
-    const mockCache = {
-      read: mockCacheRead,
-      invalidate: mockCacheInvalidate,
-    } as unknown as SupabaseRequestCacheService;
-
-    service = new ZoneAssignmentService();
-    Object.assign(service, {
-      supabase: mockSupabase,
-      requestCache: mockCache,
+    TestBed.configureTestingModule({
+      providers: [
+        ZoneAssignmentService,
+        {
+          provide: SupabaseService,
+          useValue: {
+            getClient: () => mockSupabase,
+          },
+        },
+        {
+          provide: SupabaseRequestCacheService,
+          useValue: {
+            read: mockCacheRead,
+            invalidate: mockCacheInvalidate,
+          },
+        },
+      ],
     });
+
+    service = TestBed.inject(ZoneAssignmentService);
   });
 
   it('calls get_all_plants_for_map rpc and returns plants', async () => {
