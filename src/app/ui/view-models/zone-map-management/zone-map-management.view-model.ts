@@ -1,6 +1,7 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import type { PolygonCoordinate } from '../../../domain/models/mass-inclusion';
@@ -10,6 +11,34 @@ import type {
 } from '../../../domain/models/zone.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { toClosedGeoJsonPolygon } from '../../../shared/utils/polygon-geojson';
+import { buildOrderedMapBoundary } from '../../../shared/utils/ordered-map-boundary';
+
+const ZONE_POLYGON_COLORS = [
+  '#0ea5e9',
+  '#22c55e',
+  '#f59e0b',
+  '#ef4444',
+  '#8b5cf6',
+  '#ec4899',
+  '#14b8a6',
+  '#84cc16',
+  '#3b82f6',
+  '#f97316',
+  '#06b6d4',
+  '#a855f7',
+  '#e11d48',
+  '#65a30d',
+  '#4f46e5',
+  '#dc2626',
+  '#0891b2',
+  '#16a34a',
+  '#ca8a04',
+  '#c026d3',
+  '#0284c7',
+  '#db2777',
+  '#059669',
+  '#d97706',
+];
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +47,7 @@ export class ZoneMapManagementViewModel {
   private formBuilder = inject(FormBuilder);
   private zonesRepository = inject(ZonesRepository);
   private regionsRepository = inject(RegionsRepository);
+  private farmBoundaryService = inject(FarmBoundaryService);
   private loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
 
@@ -32,15 +62,58 @@ export class ZoneMapManagementViewModel {
   public savedZoneFocusPolygon = signal<[number, number][] | null>(null);
   public formVersion = signal(0);
   public saveError = signal<string | null>(null);
+  public farmPolygonCoords = signal<[number, number][] | null>(null);
 
   public zones = this.zonesRepository.zones;
-  public existingZonePolygons = computed(() => {
+  private existingZonePolygonEntries = computed(() => {
     if (!this.showExistingZonePolygons()) return [];
 
+    const regionPolygons = this.buildRegionPolygonsByZone();
+
     return this.zones()
-      .map((zone) => this.toPolygonCoordinates(zone.polygon))
-      .filter((polygon): polygon is [number, number][] => polygon !== null);
+      .map((zone) => ({
+        zone,
+        polygon: regionPolygons.get(zone.id) ?? this.toPolygonCoordinates(zone.polygon),
+      }))
+      .filter((entry): entry is { zone: Zone; polygon: [number, number][] } => entry.polygon !== null);
   });
+  public existingZonePolygons = computed(() =>
+    this.existingZonePolygonEntries().map((entry) => entry.polygon),
+  );
+  public existingZonePolygonLabels = computed(() =>
+    this.existingZonePolygonEntries().map((entry) => entry.zone.name),
+  );
+  public existingZonePolygonColors = computed(() =>
+    this.existingZonePolygonEntries().map((_, index) =>
+      ZONE_POLYGON_COLORS[index % ZONE_POLYGON_COLORS.length],
+    ),
+  );
+  public existingZonePolygonDashArrays = computed(() =>
+    this.existingZonePolygonEntries().map(() => null as string | null),
+  );
+  public mapBackgroundPolygons = computed<[number, number][][]>(() => {
+    const farm = this.farmPolygonCoords();
+    return [
+      ...(farm ? [farm] : []),
+      ...this.existingZonePolygons(),
+    ];
+  });
+  public mapBackgroundPolygonLabels = computed(() => [
+    ...(this.farmPolygonCoords() ? [''] : []),
+    ...this.existingZonePolygonLabels(),
+  ]);
+  public mapBackgroundPolygonColors = computed(() => [
+    ...(this.farmPolygonCoords() ? ['#0f3b8f'] : []),
+    ...this.existingZonePolygonColors(),
+  ]);
+  public mapBackgroundPolygonDashArrays = computed<Array<string | null>>(() => [
+    ...(this.farmPolygonCoords() ? [null] : []),
+    ...this.existingZonePolygonDashArrays(),
+  ]);
+  public mapBackgroundPolygonFillOpacities = computed(() => [
+    ...(this.farmPolygonCoords() ? [0] : []),
+    ...this.existingZonePolygons().map(() => 0.24),
+  ]);
 
   public zoneForm = this.formBuilder.group({
     name: this.formBuilder.nonNullable.control('', [
@@ -103,6 +176,8 @@ export class ZoneMapManagementViewModel {
   });
 
   constructor() {
+    void this.loadFarmBoundary();
+
     this.zoneForm.valueChanges.subscribe(() => {
       this.formVersion.update((value) => value + 1);
       this.saveError.set(null);
@@ -174,6 +249,62 @@ export class ZoneMapManagementViewModel {
     return this.toPolygonCoordinates(zone.polygon)?.length ?? 0;
   }
 
+  private async loadFarmBoundary(): Promise<void> {
+    try {
+      const points = await this.farmBoundaryService.getBoundary();
+      this.farmPolygonCoords.set(buildOrderedMapBoundary(points)?.latLngs ?? null);
+    } catch (error) {
+      console.error('Failed to load farm boundary for zone map', error);
+      this.farmPolygonCoords.set(null);
+    }
+  }
+
+  private buildRegionPolygonsByZone(): Map<string, [number, number][]> {
+    const polygons = new Map<string, [number, number][]>();
+    const grouped = new Map<
+      string,
+      Array<{ latitude: number; longitude: number; order: number | null }>
+    >();
+
+    this.regionsRepository.regions().forEach((region) => {
+      if (!region.zone_id) return;
+      if (!Number.isFinite(region.latitude) || !Number.isFinite(region.longitude)) return;
+
+      const points = grouped.get(region.zone_id) ?? [];
+      points.push({
+        latitude: region.latitude,
+        longitude: region.longitude,
+        order: this.toFiniteOrder(region.order),
+      });
+      grouped.set(region.zone_id, points);
+    });
+
+    grouped.forEach((points, zoneId) => {
+      const orderedPoints = points.filter(
+        (point): point is { latitude: number; longitude: number; order: number } =>
+          point.order !== null,
+      );
+
+      if (orderedPoints.length < 3) return;
+
+      polygons.set(
+        zoneId,
+        [...orderedPoints]
+          .sort((left, right) => left.order - right.order)
+          .map((point) => [point.latitude, point.longitude]),
+      );
+    });
+
+    return polygons;
+  }
+
+  private toFiniteOrder(value: number | null | undefined): number | null {
+    if (value == null) return null;
+
+    const order = Number(value);
+    return Number.isFinite(order) ? order : null;
+  }
+
   private resetFormAndPolygon(): void {
     this.zoneForm.reset(
       {
@@ -234,9 +365,10 @@ export class ZoneMapManagementViewModel {
       code,
       description: value.description.trim() || null,
       polygonGeojson: toClosedGeoJsonPolygon(coordinates),
-      points: coordinates.map((coordinate) => ({
+      points: coordinates.map((coordinate, index) => ({
         latitude: coordinate.lat,
         longitude: coordinate.lng,
+        order: index + 1,
       })),
     };
   }

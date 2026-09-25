@@ -9,6 +9,7 @@ describe('RegionsRepository', () => {
 
   const findAll = vi.fn();
   const findById = vi.fn();
+  const findByZoneId = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,7 +21,8 @@ describe('RegionsRepository', () => {
           provide: RegionsService,
           useValue: {
             findAll,
-            findById
+            findById,
+            findByZoneId
           }
         }
       ]
@@ -82,5 +84,57 @@ describe('RegionsRepository', () => {
 
     expect(repo.currentRegion()).toBeNull();
     expect(result).toBeNull();
+  });
+
+  it('findByZoneId should return regions sorted by order', async () => {
+    const regions: Region[] = [
+      {
+        id: 'region-3',
+        created_at: '2026-03-31T10:00:00Z',
+        longitude: -46.8,
+        latitude: -23.7,
+        region: 'North',
+        zone_id: 'zone-1',
+        order: 3,
+      },
+      {
+        id: 'region-1',
+        created_at: '2026-03-31T10:00:00Z',
+        longitude: -46.6,
+        latitude: -23.5,
+        region: 'North',
+        zone_id: 'zone-1',
+        order: 1,
+      },
+      {
+        id: 'region-no-order',
+        created_at: '2026-03-31T10:00:00Z',
+        longitude: -46.9,
+        latitude: -23.8,
+        region: 'North',
+        zone_id: 'zone-1',
+        order: null,
+      },
+      {
+        id: 'region-2',
+        created_at: '2026-03-31T10:00:00Z',
+        longitude: -46.7,
+        latitude: -23.6,
+        region: 'North',
+        zone_id: 'zone-1',
+        order: 2,
+      },
+    ];
+    findByZoneId.mockResolvedValue({ data: regions, error: null });
+
+    const result = await repo.findByZoneId('zone-1');
+
+    expect(findByZoneId).toHaveBeenCalledWith('zone-1');
+    expect(result.data.map((region) => region.id)).toEqual([
+      'region-1',
+      'region-2',
+      'region-3',
+      'region-no-order',
+    ]);
   });
 });

@@ -5,4 +5,6 @@ export interface Region {
   latitude: number;
   region: string;
   zone_id: string;
+  order?: number | null;
 }
+

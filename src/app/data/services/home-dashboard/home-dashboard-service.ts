@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import type { PostgrestResponse } from '@supabase/supabase-js';
 import type {
+  HomeDashboardBoundaryPoint,
   HomeDashboardFilterOptions,
   HomeDashboardOccurrence,
   HomeDashboardPlant,
@@ -9,6 +10,7 @@ import type {
   HomeDashboardVariety,
   HomeDashboardZone,
 } from '../../../domain/models/home-dashboard.model';
+import { normalizeOrderedBoundaryPoints } from '../../../shared/utils/ordered-map-boundary';
 import { injectSupabase } from '../supabase';
 import {
   SUPABASE_CACHE_NAMESPACES,
@@ -39,6 +41,13 @@ type PlantMapRow = {
   varietyName: string | null;
 };
 
+type BoundaryPointRow = {
+  id?: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  order: number | null;
+};
+
 type SnapshotSummaryRow = {
   totalPlants?: number | null;
   totalZones?: number | null;
@@ -50,6 +59,7 @@ type SnapshotSummaryRow = {
 type HomeDashboardSnapshotRow = {
   summary?: SnapshotSummaryRow | null;
   plants?: PlantMapRow[] | null;
+  farmBoundary?: BoundaryPointRow[] | null;
 };
 
 type HomeDashboardSnapshotRpcParams = {
@@ -190,6 +200,7 @@ export class HomeDashboardService {
         varieties,
       },
       plants,
+      farmBoundary: this.mapBoundaryPoints(snapshot?.farmBoundary ?? []),
     };
   }
 
@@ -225,6 +236,17 @@ export class HomeDashboardService {
         varietyId: row.varietyId,
         varietyName: row.varietyName,
       }));
+  }
+
+  private mapBoundaryPoints(
+    rows: BoundaryPointRow[] | null | undefined,
+  ): HomeDashboardBoundaryPoint[] {
+    return normalizeOrderedBoundaryPoints(rows).map((point) => ({
+      id: point.id,
+      latitude: point.latitude,
+      longitude: point.longitude,
+      order: point.order,
+    }));
   }
 
   private buildSnapshotRpcParams(

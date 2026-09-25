@@ -23,16 +23,14 @@ import type {
 } from '../../../../domain/models/mass-inclusion';
 
 const BACKGROUND_POLYGON_COLORS = [
-  '#059669',
-  '#2563eb',
-  '#dc2626',
-  '#9333ea',
-  '#ca8a04',
-  '#0891b2',
-  '#db2777',
-  '#16a34a',
-  '#4f46e5',
-  '#ea580c',
+  '#f97316', // Laranja vibrante
+  '#2563eb', // Azul royal
+  '#9333ea', // Roxo
+  '#dc2626', // Vermelho
+  '#0891b2', // Ciano
+  '#ca8a04', // Âmbar
+  '#db2777', // Rosa
+  '#4f46e5', // Índigo
 ];
 
 @Component({
@@ -67,6 +65,32 @@ const BACKGROUND_POLYGON_COLORS = [
       .animate-pulse-slow {
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
+      .animate-pulse-slow {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      :host ::ng-deep .map-zone-label {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(15, 23, 42, 0.16);
+        border-radius: 999px;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+        color: #000000;
+        display: inline-flex;
+        font-size: 11px;
+        font-weight: 700;
+        justify-content: center;
+        line-height: 1;
+        padding: 5px 9px;
+        pointer-events: none;
+        white-space: nowrap;
+        width: auto !important;
+        height: auto !important;
+      }
+      :host-context(.dark) ::ng-deep .map-zone-label {
+        background: rgba(15, 23, 42, 0.88);
+        border-color: rgba(255, 255, 255, 0.18);
+        color: #ffffff;
+      }
     `,
   ],
 })
@@ -82,8 +106,15 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   @Input() maxPolygons: number = 1;
   @Input() allowDrawingWithoutPlants = false;
 
-  @Input() set plants(plants: Plant[]) {
-    this._plants = plants;
+  @Input() set plants(
+    plants: Array<{
+      latitude: number;
+      longitude: number;
+      zone_id?: string | null;
+      zoneId?: string | null;
+    }>,
+  ) {
+    this._plants = plants as Plant[];
     this.renderPlantCircles();
   }
 
@@ -104,6 +135,13 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.focusPolygon();
   }
 
+  @Input() backgroundPolygonColor?: string;
+  @Input() backgroundPolygonColors: string[] | null = null;
+  @Input() backgroundPolygonLabels: string[] | null = null;
+  @Input() backgroundPolygonDashArray: string | null = '6, 6';
+  @Input() backgroundPolygonDashArrays: Array<string | null> | null = null;
+  @Input() backgroundPolygonFillOpacity = 0.24;
+  @Input() backgroundPolygonFillOpacities: number[] | null = null;
   @Output() polygonSelected = new EventEmitter<PolygonSelection>();
   @Output() polygonCleared = new EventEmitter<void>();
   @Output() drawingStarted = new EventEmitter<void>();
@@ -118,6 +156,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private map!: L.Map;
+  private canvasRenderer = L.canvas({ padding: 0.5 });
   private drawnLayers: L.Polygon[] = [];
   private tempPoints: L.LatLng[] = [];
   private tempMarkers: L.CircleMarker[] = [];
@@ -125,8 +164,14 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private previewLine: L.Polyline | null = null;
   private _backgroundPolygonCoords: [number, number][][] = [];
   private _focusedPolygonCoords: [number, number][] | null = null;
-  private _plants: Plant[] = [];
+  private _plants: Array<{
+    latitude: number;
+    longitude: number;
+    zone_id?: string | null;
+    zoneId?: string | null;
+  }> = [];
   private backgroundLayers: L.Polygon[] = [];
+  private backgroundLabelLayers: L.Marker[] = [];
   private plantCircles: L.CircleMarker[] = [];
   private hasAppliedDataBounds = false;
 
@@ -143,6 +188,20 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['clearSignal'] && !changes['clearSignal'].firstChange) {
       this.clearAll(false);
+    }
+
+    const backgroundStyleChanged = [
+      'backgroundPolygonColor',
+      'backgroundPolygonColors',
+      'backgroundPolygonLabels',
+      'backgroundPolygonDashArray',
+      'backgroundPolygonDashArrays',
+      'backgroundPolygonFillOpacity',
+      'backgroundPolygonFillOpacities',
+    ].some((inputName) => changes[inputName]);
+
+    if (backgroundStyleChanged) {
+      this.renderBackgroundPolygon();
     }
   }
 
@@ -184,6 +243,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
     this.backgroundLayers.forEach((layer) => this.map.removeLayer(layer));
     this.backgroundLayers = [];
+    this.backgroundLabelLayers.forEach((layer) => this.map.removeLayer(layer));
+    this.backgroundLabelLayers = [];
 
     const validPolygons = this._backgroundPolygonCoords.filter(
       (polygon) => polygon.length > 0,
@@ -192,15 +253,39 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     if (validPolygons.length > 0) {
       this.backgroundLayers = validPolygons.map((polygon, index) => {
         const color =
+          this.backgroundPolygonColors?.[index] ??
+          this.backgroundPolygonColor ??
           BACKGROUND_POLYGON_COLORS[index % BACKGROUND_POLYGON_COLORS.length];
-
-        return L.polygon(polygon, {
+        const dashArray =
+          this.backgroundPolygonDashArrays?.[index] ??
+          this.backgroundPolygonDashArray ??
+          undefined;
+        const fillOpacity =
+          this.backgroundPolygonFillOpacities?.[index] ??
+          this.backgroundPolygonFillOpacity;
+        const layer = L.polygon(polygon, {
           color,
           fillColor: color,
-          fillOpacity: 0.08,
-          weight: 2.5,
+          fillOpacity,
+          weight: 2,
+          dashArray,
           interactive: false,
         }).addTo(this.map);
+
+        layer.bringToBack();
+
+        const label = this.backgroundPolygonLabels?.[index];
+        if (label) {
+          const labelLayer = L.marker(layer.getBounds().getCenter(), {
+            interactive: false,
+            icon: L.divIcon({
+              className: 'map-zone-label',
+              html: escapeHtml(label),
+            }),
+          }).addTo(this.map);
+          this.backgroundLabelLayers.push(labelLayer);
+        }
+        return layer;
       });
 
       const bounds = L.latLngBounds([]);
@@ -244,11 +329,13 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.plantCircles = [];
 
     this._plants.forEach((plant) => {
+      const hasZone = !!(plant.zone_id || plant.zoneId);
       const circle = L.circleMarker([plant.latitude, plant.longitude], {
-        radius: 4.5,
-        color: '#34d399', // green border
-        fillColor: '#10b981', // green fill
-        fillOpacity: 0.9,
+        renderer: this.canvasRenderer,
+        radius: 4,
+        color: hasZone ? '#2563eb' : '#34d399',
+        fillColor: hasZone ? '#3b82f6' : '#10b981',
+        fillOpacity: 0.85,
         weight: 0.75,
         interactive: false,
       }).addTo(this.map);
@@ -512,9 +599,59 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     return [...this.tempPoints];
   }
 
+  public setExternalPolygon(coordinates: [number, number][]): void {
+    if (!this.map || coordinates.length < 3) return;
+
+    this.clearAll(false);
+
+    const latLngs = coordinates.map(([lat, lng]) => L.latLng(lat, lng));
+    const polygon = L.polygon(latLngs, {
+      color: '#2563eb',
+      fillColor: '#3b82f6',
+      fillOpacity: 0.25,
+      weight: 2,
+    }).addTo(this.map);
+
+    this.drawnLayers.push(polygon);
+
+    const polygonCoords: PolygonCoordinate[] = coordinates.map(([lat, lng]) => ({
+      lat: parseFloat(lat.toFixed(6)),
+      lng: parseFloat(lng.toFixed(6)),
+    }));
+
+    const geoJson: PolygonSelection['geoJson'] = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            ...polygonCoords.map((c) => [c.lng, c.lat]),
+            [polygonCoords[0].lng, polygonCoords[0].lat],
+          ],
+        ],
+      },
+      properties: {},
+    };
+
+    const selection: PolygonSelection = { coordinates: polygonCoords, geoJson };
+    this.polygons = [selection];
+    this.selectedPolygonCoords = polygonCoords;
+    this.polygonSelected.emit(selection);
+  }
+
   public invalidateSize(): void {
     if (this.map) {
       this.map.invalidateSize();
     }
   }
+}
+
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

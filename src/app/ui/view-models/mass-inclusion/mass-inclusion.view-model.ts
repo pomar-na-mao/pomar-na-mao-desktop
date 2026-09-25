@@ -1,18 +1,20 @@
-import { computed, effect, Injectable, inject, signal } from "@angular/core";
-import { LoadingService } from "../../../data/services/loading";
-import { MessageService } from "../../../data/services/message/message.service";
+import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
-import { PlantsRepository } from "../../../data/repositories/plants/plants-repository";
 import { MassInclusionRepository } from "../../../data/repositories/mass-inclusion/mass-inclusion.repository";
+import { RegionsRepository } from "../../../data/repositories/regions/regions-repository";
 import { ZonesRepository } from "../../../data/repositories/zones/zones-repository";
+import { FarmBoundaryService } from "../../../data/services/farm-boundary/farm-boundary-service";
+import { MessageService } from "../../../data/services/message/message.service";
 import type {
-  MassInclusionData,
-  MassInclusionFormValue,
-  MassInclusionCoordinate,
-  PolygonBulkUpdatePayload,
+    MassInclusionCoordinate,
+    MassInclusionData,
+    MassInclusionFormValue,
+    PolygonBulkUpdatePayload,
 } from "../../../domain/models/mass-inclusion";
 import type { Plant } from "../../../domain/models/plant-data.model";
 import type { SelectOption } from "../../../shared/components/select/select";
+import { LoadingService } from "../../../shared/services/loading.service";
+import { buildOrderedMapBoundary } from "../../../shared/utils/ordered-map-boundary";
 import { toClosedGeoJsonPolygon } from "../../../shared/utils/polygon-geojson";
 
 @Injectable({
@@ -21,8 +23,9 @@ import { toClosedGeoJsonPolygon } from "../../../shared/utils/polygon-geojson";
 export class MassInclusionViewModel {
   private formBuilder = inject(FormBuilder);
   private massInclusionRepository = inject(MassInclusionRepository);
-  private plantsRepository = inject(PlantsRepository);
   private zonesRepository = inject(ZonesRepository);
+  private regionsRepository = inject(RegionsRepository);
+  private farmBoundaryService = inject(FarmBoundaryService);
   public loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
 
@@ -69,8 +72,36 @@ export class MassInclusionViewModel {
     }))
   ]);
 
-  public backgroundPolygon = computed<[number, number][] | null>(() => null);
-
+  public zonePolygonCoords = signal<[number, number][] | null>(null);
+  public farmPolygonCoords = signal<[number, number][] | null>(null);
+  public backgroundPolygons = computed<[number, number][][]>(() => {
+    const farm = this.farmPolygonCoords();
+    const zone = this.zonePolygonCoords();
+    return [farm, zone].filter((polygon): polygon is [number, number][] => !!polygon && polygon.length >= 3);
+  });
+  public focusedBackgroundPolygon = computed<[number, number][] | null>(
+    () => this.zonePolygonCoords() ?? this.farmPolygonCoords(),
+  );
+  public backgroundPolygonColors = computed<string[]>(() => {
+    const colors: string[] = [];
+    if (this.farmPolygonCoords()) {
+      colors.push('#2563eb');
+    }
+    if (this.zonePolygonCoords()) {
+      colors.push('#f97316');
+    }
+    return colors;
+  });
+  public backgroundPolygonDashArrays = computed<Array<string | null>>(() => {
+    const dashArrays: Array<string | null> = [];
+    if (this.farmPolygonCoords()) {
+      dashArrays.push(null);
+    }
+    if (this.zonePolygonCoords()) {
+      dashArrays.push('6, 6');
+    }
+    return dashArrays;
+  });
   public massInclusionDataForm = this.formBuilder.group({
     occurrenceAction: this.formBuilder.nonNullable.control<'add' | 'remove'>('add'),
     occurrences: this.formBuilder.nonNullable.control<string[]>([]),
@@ -129,6 +160,8 @@ export class MassInclusionViewModel {
     this.massInclusionDataForm.valueChanges.subscribe(() => {
       this.formVersion.update((value) => value + 1);
     });
+
+    void this.loadFarmBoundary();
   }
 
   public onPolygonSelected(coordinates: MassInclusionCoordinate[]): void {
@@ -172,6 +205,7 @@ export class MassInclusionViewModel {
       this.clearMapSignal.update((v) => v + 1);
       this.zonesRepository.currentZone.set(null);
       this.plants.set([]);
+      this.zonePolygonCoords.set(null);
       return;
     }
 
@@ -179,10 +213,31 @@ export class MassInclusionViewModel {
 
     if (selectedZone) {
       this.zonesRepository.currentZone.set(selectedZone);
-      await this.loadPlantsForMap();
+      this.plants.set([]);
+      await this.loadZonePolygon(normalizedZoneId);
     } else {
       this.zonesRepository.currentZone.set(null);
       this.plants.set([]);
+      this.zonePolygonCoords.set(null);
+    }
+  }
+
+  private async loadFarmBoundary(): Promise<void> {
+    try {
+      const points = await this.farmBoundaryService.getBoundary();
+      this.farmPolygonCoords.set(buildOrderedMapBoundary(points)?.latLngs ?? null);
+    } catch (error) {
+      console.error('Failed to load farm boundary for mass inclusion map', error);
+      this.farmPolygonCoords.set(null);
+    }
+  }
+
+  private async loadZonePolygon(zoneId: string): Promise<void> {
+    const { data } = await this.regionsRepository.findByZoneId(zoneId);
+    if (data && data.length >= 3) {
+      this.zonePolygonCoords.set(data.map((r) => [r.latitude, r.longitude]));
+    } else {
+      this.zonePolygonCoords.set(null);
     }
   }
 
@@ -280,6 +335,7 @@ export class MassInclusionViewModel {
     this.massInclusionRepository.saveMassInclusionData(massInclusionFormData);
 
     this.isSaving.set(true);
+    this.loadingService.show('Salvando alterações...');
     try {
       const payload = this.buildBulkUpdatePayload(massInclusionFormData);
       const { data, error } = await this.massInclusionRepository.syncPolygonBulkUpdate(payload);
@@ -300,6 +356,7 @@ export class MassInclusionViewModel {
       this.clearMapSignal.update((v) => v + 1);
     } finally {
       this.isSaving.set(false);
+      this.loadingService.hide();
     }
   }
 
@@ -367,18 +424,6 @@ export class MassInclusionViewModel {
     };
   }
 
-  private async loadPlantsForMap(): Promise<void> {
-    const zoneId = this.selectedZoneId();
-    if (!zoneId) {
-      this.plants.set([]);
-      return;
-    }
-
-    const data = await this.plantsRepository.queryPlants({
-      zoneId,
-    });
-    this.plants.set(data);
-  }
 
   private toSingleValue(value: string | string[]): string {
     if (Array.isArray(value)) {

@@ -2,6 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import * as L from 'leaflet';
 import { HomeDashboardRepository } from '../../../data/repositories/home-dashboard/home-dashboard-repository';
 import type {
+  HomeDashboardBoundaryPoint,
   HomeDashboardLegendItem,
   HomeDashboardOccurrence,
   HomeDashboardPlant,
@@ -11,6 +12,10 @@ import type {
   HomeDashboardZone,
 } from '../../../domain/models/home-dashboard.model';
 import { LoadingService } from '../../../shared/services/loading.service';
+import {
+  buildOrderedMapBoundary,
+  type OrderedMapBoundary,
+} from '../../../shared/utils/ordered-map-boundary';
 
 const DEFAULT_CENTER: L.LatLngTuple = [-23.403, -49.149];
 const VARIETY_COLORS = [
@@ -45,11 +50,16 @@ export class DashboardViewModel {
   private map: L.Map | null = null;
   private plantLayers: L.LayerGroup | null = null;
   private zonePolygonLayer: L.GeoJSON | null = null;
+  private farmPolygonLayer: L.Polygon | null = null;
   private plantRenderer = L.canvas({ padding: 0.5 });
+  private zoneBoundaryCache = new Map<string, OrderedMapBoundary | null>();
+  private zoneBoundaryRequestId = 0;
 
   public isMapFullscreen = signal(false);
   public summary = signal<HomeDashboardSummary | null>(null);
   public mapPlants = signal<HomeDashboardPlant[]>([]);
+  public farmBoundary = signal<OrderedMapBoundary | null>(null);
+  public selectedZoneBoundary = signal<OrderedMapBoundary | null>(null);
 
   // --- Filter state ---
   public filterPlantingStartDate = signal('');
@@ -89,10 +99,10 @@ export class DashboardViewModel {
     // 2. Filter by Zone
     const zoneId = this.filterZoneId();
     if (zoneId) {
-      const zone = this.availableZones().find((z) => z.id === zoneId);
-      if (zone?.polygon) {
+      const boundary = this.selectedZoneBoundary();
+      if (boundary) {
         plants = plants.filter((plant) =>
-          isPointInPolygon(plant.latitude, plant.longitude, zone.polygon!),
+          isPointInPolygon(plant.latitude, plant.longitude, boundary.geoJson),
         );
       }
     }
@@ -135,7 +145,17 @@ export class DashboardViewModel {
 
     effect(() => {
       const zoneId = this.filterZoneId();
-      this.renderZonePolygon(zoneId);
+      void this.loadSelectedZoneBoundary(zoneId);
+    });
+
+    effect(() => {
+      this.farmBoundary();
+      this.renderFarmPolygon();
+    });
+
+    effect(() => {
+      this.selectedZoneBoundary();
+      this.renderZonePolygon();
     });
 
     effect(() => {
@@ -180,9 +200,16 @@ export class DashboardViewModel {
         dashArray: '6 4',
       },
     }).addTo(this.map);
+    this.farmPolygonLayer = L.polygon([], {
+      color: '#2563eb',
+      weight: 3,
+      fillColor: '#60a5fa',
+      fillOpacity: 0.08,
+    }).addTo(this.map);
 
+    this.renderFarmPolygon();
     this.renderPlants();
-    this.renderZonePolygon(this.filterZoneId());
+    this.renderZonePolygon();
   }
 
   public invalidateMapSize(): void {
@@ -229,7 +256,13 @@ export class DashboardViewModel {
 
     const plants = this.filteredPlants();
     if (plants.length === 0) {
-      map.setView(DEFAULT_CENTER, 16);
+      const farmBounds = this.getFarmBounds();
+      if (farmBounds) {
+        map.fitBounds(farmBounds, { padding: [48, 48], maxZoom: 18 });
+      } else {
+        map.setView(DEFAULT_CENTER, 16);
+      }
+      this.bringFarmPolygonToFront();
       return;
     }
 
@@ -271,39 +304,63 @@ export class DashboardViewModel {
         .addTo(plantLayers);
     });
 
-    const bounds = L.latLngBounds(
+    const plantBounds = L.latLngBounds(
       plants.map(
         (plant) => [plant.latitude, plant.longitude] as [number, number],
       ),
     );
+    const bounds = this.filterZoneId()
+      ? this.extendBoundsWithFarm(plantBounds)
+      : this.getFarmBounds() ?? plantBounds;
 
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
     }
+    this.bringFarmPolygonToFront();
   }
 
-  private renderZonePolygon(zoneId: string): void {
+  private renderFarmPolygon(): void {
+    if (!this.farmPolygonLayer || !this.map) {
+      return;
+    }
+
+    this.farmPolygonLayer.setLatLngs([]);
+
+    const farmBoundary = this.farmBoundary();
+    if (!farmBoundary) {
+      return;
+    }
+
+    this.farmPolygonLayer.setLatLngs(farmBoundary.latLngs);
+    this.bringFarmPolygonToFront();
+
+    if (!this.filterZoneId() && this.filteredPlants().length === 0) {
+      const bounds = this.getFarmBounds() ?? this.farmPolygonLayer.getBounds();
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
+      }
+    }
+  }
+
+  private renderZonePolygon(): void {
     if (!this.zonePolygonLayer || !this.map) {
       return;
     }
 
     this.zonePolygonLayer.clearLayers();
 
-    if (!zoneId) {
+    const boundary = this.selectedZoneBoundary();
+    if (!boundary) {
       return;
     }
 
-    const zone = this.availableZones().find((z) => z.id === zoneId);
-    if (!zone?.polygon) {
-      return;
-    }
+    this.zonePolygonLayer.addData(boundary.geoJson);
 
-    this.zonePolygonLayer.addData(zone.polygon);
-
-    const polygonBounds = this.zonePolygonLayer.getBounds();
-    if (polygonBounds.isValid()) {
-      this.map.fitBounds(polygonBounds, { padding: [48, 48], maxZoom: 18 });
+    const bounds = this.extendBoundsWithFarm(this.zonePolygonLayer.getBounds());
+    if (bounds.isValid()) {
+      this.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
     }
+    this.bringFarmPolygonToFront();
   }
 
   private buildVarietyLegend(
@@ -355,6 +412,36 @@ export class DashboardViewModel {
     }
   }
 
+  private async loadSelectedZoneBoundary(zoneId: string): Promise<void> {
+    const requestId = ++this.zoneBoundaryRequestId;
+
+    if (!zoneId) {
+      this.selectedZoneBoundary.set(null);
+      return;
+    }
+
+    if (this.zoneBoundaryCache.has(zoneId)) {
+      this.selectedZoneBoundary.set(this.zoneBoundaryCache.get(zoneId) ?? null);
+      return;
+    }
+
+    try {
+      const regions = await this.homeDashboardRepository.getZoneRegions(zoneId);
+      const boundary = buildOrderedMapBoundary(regions);
+      this.zoneBoundaryCache.set(zoneId, boundary);
+
+      if (requestId === this.zoneBoundaryRequestId) {
+        this.selectedZoneBoundary.set(boundary);
+      }
+    } catch (error) {
+      console.error('Failed to load selected zone boundary', error);
+
+      if (requestId === this.zoneBoundaryRequestId) {
+        this.selectedZoneBoundary.set(null);
+      }
+    }
+  }
+
   private async loadSnapshot(
     filters: HomeDashboardSnapshotFilters,
   ): Promise<void> {
@@ -376,6 +463,7 @@ export class DashboardViewModel {
       }
 
       this.summary.set(snapshot.summary);
+      this.farmBoundary.set(this.buildBoundary(snapshot.farmBoundary));
       this.mapPlants.set(snapshot.plants);
     } catch (error) {
       if (requestId !== this.snapshotRequestId) {
@@ -390,6 +478,7 @@ export class DashboardViewModel {
         totalVarieties: 0,
         varieties: [],
       });
+      this.farmBoundary.set(null);
       this.mapPlants.set([]);
     } finally {
       if (requestId === this.snapshotRequestId && this.snapshotLoadingVisible) {
@@ -426,6 +515,40 @@ export class DashboardViewModel {
   private normalizeDateFilter(value: string): string | null {
     const trimmed = value.trim();
     return trimmed.length > 0 ? trimmed : null;
+  }
+
+  private buildBoundary(
+    points: HomeDashboardBoundaryPoint[],
+  ): OrderedMapBoundary | null {
+    return buildOrderedMapBoundary(points);
+  }
+
+  private extendBoundsWithFarm(bounds: L.LatLngBounds): L.LatLngBounds {
+    const farmBounds = this.getFarmBounds();
+    if (!farmBounds) {
+      return bounds;
+    }
+
+    const nextBounds = bounds.isValid()
+      ? L.latLngBounds(bounds.getSouthWest(), bounds.getNorthEast())
+      : L.latLngBounds([]);
+
+    nextBounds.extend(farmBounds);
+    return nextBounds;
+  }
+
+  private getFarmBounds(): L.LatLngBounds | null {
+    const farmBoundary = this.farmBoundary();
+    if (!farmBoundary) {
+      return null;
+    }
+
+    const bounds = L.latLngBounds(farmBoundary.latLngs);
+    return bounds.isValid() ? bounds : null;
+  }
+
+  private bringFarmPolygonToFront(): void {
+    this.farmPolygonLayer?.bringToFront();
   }
 }
 

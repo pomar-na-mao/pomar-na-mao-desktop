@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { OperationsViewModel } from './operations.view-model';
 import { OperationsRepository } from '../../../data/repositories/operations/operations-repository';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { signal } from '@angular/core';
 
 describe('OperationsViewModel', () => {
@@ -12,12 +13,14 @@ describe('OperationsViewModel', () => {
   const mockGetSprayingOperations = vi.fn();
   const mockGetInspectionOperations = vi.fn();
   const mockGetAnnotationOperations = vi.fn();
+  const mockGetBoundary = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockSprayingOperationsSignal.set([]);
     mockInspectionOperationsSignal.set([]);
     mockAnnotationOperationsSignal.set([]);
+    mockGetBoundary.mockResolvedValue([]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -32,6 +35,12 @@ describe('OperationsViewModel', () => {
             getAnnotationOperations: mockGetAnnotationOperations,
             annotationOperations: mockAnnotationOperationsSignal
           }
+        },
+        {
+          provide: FarmBoundaryService,
+          useValue: {
+            getBoundary: mockGetBoundary,
+          },
         }
       ]
     });
@@ -43,40 +52,43 @@ describe('OperationsViewModel', () => {
     expect(viewModel).toBeTruthy();
   });
 
-  it('should fetch spraying operations when type is pulverizacao', async () => {
+  it('should load the farm boundary on creation', async () => {
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(mockGetBoundary).toHaveBeenCalled();
+  });
+
+  it('should fetch spraying operations without a zone filter when type is pulverizacao', async () => {
     viewModel.startDate.set('2023-01-01');
     viewModel.endDate.set('2023-12-31');
-    viewModel.selectedZoneId.set('zone-1');
     viewModel.selectedOperation.set('pulverizacao');
 
     TestBed.flushEffects();
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(mockGetSprayingOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-1');
+    expect(mockGetSprayingOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', null);
   });
 
-  it('should fetch inspection operations when type is inspecao', async () => {
+  it('should fetch inspection operations without a zone filter when type is inspecao', async () => {
     viewModel.startDate.set('2023-01-01');
     viewModel.endDate.set('2023-12-31');
-    viewModel.selectedZoneId.set('zone-2');
     viewModel.selectedOperation.set('inspecao');
 
     TestBed.flushEffects();
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(mockGetInspectionOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-2');
+    expect(mockGetInspectionOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', null);
   });
 
-  it('should fetch annotation operations when type is anotacao', async () => {
+  it('should fetch annotation operations without a zone filter when type is anotacao', async () => {
     viewModel.startDate.set('2023-01-01');
     viewModel.endDate.set('2023-12-31');
-    viewModel.selectedZoneId.set('zone-3');
     viewModel.selectedOperation.set('anotacao');
 
     TestBed.flushEffects();
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(mockGetAnnotationOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', 'zone-3');
+    expect(mockGetAnnotationOperations).toHaveBeenCalledWith('2023-01-01', '2023-12-31', null);
   });
 
   it('should clear spraying operations when type is not pulverizacao', async () => {

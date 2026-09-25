@@ -35,9 +35,17 @@ export interface HomeDashboardPlant {
   varietyName: string | null;
 }
 
+export interface HomeDashboardBoundaryPoint {
+  id?: string | null;
+  latitude: number;
+  longitude: number;
+  order: number;
+}
+
 export interface HomeDashboardSnapshot {
   summary: HomeDashboardSummary;
   plants: HomeDashboardPlant[];
+  farmBoundary: HomeDashboardBoundaryPoint[];
 }
 
 export interface HomeDashboardLegendItem {

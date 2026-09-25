@@ -86,9 +86,9 @@ describe('ZonesService', () => {
         coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]],
       },
       points: [
-        { latitude: 1, longitude: 2 },
-        { latitude: 3, longitude: 4 },
-        { latitude: 5, longitude: 6 },
+        { latitude: 1, longitude: 2, order: 1 },
+        { latitude: 3, longitude: 4, order: 2 },
+        { latitude: 5, longitude: 6, order: 3 },
       ],
     });
 
@@ -101,9 +101,9 @@ describe('ZonesService', () => {
         coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]],
       },
       p_points: [
-        { latitude: 1, longitude: 2 },
-        { latitude: 3, longitude: 4 },
-        { latitude: 5, longitude: 6 },
+        { latitude: 1, longitude: 2, order: 1 },
+        { latitude: 3, longitude: 4, order: 2 },
+        { latitude: 5, longitude: 6, order: 3 },
       ],
     });
     expect(invalidate).toHaveBeenCalledWith(['reference-data', 'dashboard']);

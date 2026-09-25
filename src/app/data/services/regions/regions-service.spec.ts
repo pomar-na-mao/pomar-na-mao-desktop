@@ -7,6 +7,7 @@ import { RegionsService } from './regions-service';
 describe('RegionsService', () => {
   let service: RegionsService;
   const mockFrom = vi.fn();
+  const mockRpc = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -17,7 +18,7 @@ describe('RegionsService', () => {
         {
           provide: SupabaseService,
           useValue: {
-            getClient: () => ({ from: mockFrom }) as Partial<SupabaseClient> as SupabaseClient
+            getClient: () => ({ from: mockFrom, rpc: mockRpc }) as Partial<SupabaseClient> as SupabaseClient
           }
         }
       ]
@@ -59,5 +60,29 @@ describe('RegionsService', () => {
     expect(eq).toHaveBeenCalledWith('id', 'region-1');
     expect(single).toHaveBeenCalled();
     expect(result).toBe(mockResponse);
+  });
+
+  it('findByZoneId should call the ordered zone regions rpc', async () => {
+    const mockResponse = {
+      data: [
+        {
+          id: 'region-1',
+          latitude: -23.5,
+          longitude: -46.6,
+          order: 1,
+          region: 'North',
+          zone_id: 'zone-1',
+        },
+      ],
+      error: null,
+    };
+    mockRpc.mockResolvedValue(mockResponse);
+
+    const result = await service.findByZoneId('zone-1');
+
+    expect(mockRpc).toHaveBeenCalledWith('get_zone_regions', {
+      p_zone_id: 'zone-1',
+    });
+    expect(result.data?.[0].order).toBe(1);
   });
 });

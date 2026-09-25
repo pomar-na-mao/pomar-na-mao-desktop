@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { RegionsRepository } from '../regions/regions-repository';
 import { HomeDashboardService } from '../../services/home-dashboard/home-dashboard-service';
 import { HomeDashboardRepository } from './home-dashboard-repository';
 
@@ -9,6 +10,7 @@ describe('HomeDashboardRepository', () => {
   const getHomeDashboardData = vi.fn();
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
+  const findByZoneId = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -22,6 +24,12 @@ describe('HomeDashboardRepository', () => {
             getHomeDashboardData,
             getFilterOptions,
             getOpenOccurrences,
+          },
+        },
+        {
+          provide: RegionsRepository,
+          useValue: {
+            findByZoneId,
           },
         },
       ],
@@ -66,6 +74,7 @@ describe('HomeDashboardRepository', () => {
             varieties: [],
           },
           plants: [],
+          farmBoundary: [],
         };
       },
     );
@@ -101,5 +110,34 @@ describe('HomeDashboardRepository', () => {
     expect(result.length).toBe(1);
     expect(result[0].plant_id).toBe('p1');
     expect(getOpenOccurrences).toHaveBeenCalled();
+  });
+
+  it('should delegate selected zone region loading', async () => {
+    findByZoneId.mockResolvedValue({
+      data: [
+        {
+          id: 'r1',
+          created_at: '2026-01-01T00:00:00Z',
+          latitude: -21.1,
+          longitude: -47.1,
+          region: 'A',
+          zone_id: 'z1',
+          order: 1,
+        },
+      ],
+      error: null,
+    });
+
+    const result = await repository.getZoneRegions('z1');
+
+    expect(findByZoneId).toHaveBeenCalledWith('z1');
+    expect(result[0].order).toBe(1);
+  });
+
+  it('should throw when selected zone region loading fails', async () => {
+    const error = new Error('failed');
+    findByZoneId.mockResolvedValue({ data: [], error });
+
+    await expect(repository.getZoneRegions('z1')).rejects.toBe(error);
   });
 });
