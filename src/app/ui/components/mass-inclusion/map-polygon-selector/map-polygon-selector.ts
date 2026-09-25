@@ -65,6 +65,32 @@ const BACKGROUND_POLYGON_COLORS = [
       .animate-pulse-slow {
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
+      .animate-pulse-slow {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      :host ::ng-deep .map-zone-label {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(15, 23, 42, 0.16);
+        border-radius: 999px;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+        color: #000000;
+        display: inline-flex;
+        font-size: 11px;
+        font-weight: 700;
+        justify-content: center;
+        line-height: 1;
+        padding: 5px 9px;
+        pointer-events: none;
+        white-space: nowrap;
+        width: auto !important;
+        height: auto !important;
+      }
+      :host-context(.dark) ::ng-deep .map-zone-label {
+        background: rgba(15, 23, 42, 0.88);
+        border-color: rgba(255, 255, 255, 0.18);
+        color: #ffffff;
+      }
     `,
   ],
 })
@@ -110,7 +136,12 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   @Input() backgroundPolygonColor?: string;
-
+  @Input() backgroundPolygonColors: string[] | null = null;
+  @Input() backgroundPolygonLabels: string[] | null = null;
+  @Input() backgroundPolygonDashArray: string | null = '6, 6';
+  @Input() backgroundPolygonDashArrays: Array<string | null> | null = null;
+  @Input() backgroundPolygonFillOpacity = 0.24;
+  @Input() backgroundPolygonFillOpacities: number[] | null = null;
   @Output() polygonSelected = new EventEmitter<PolygonSelection>();
   @Output() polygonCleared = new EventEmitter<void>();
   @Output() drawingStarted = new EventEmitter<void>();
@@ -140,6 +171,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     zoneId?: string | null;
   }> = [];
   private backgroundLayers: L.Polygon[] = [];
+  private backgroundLabelLayers: L.Marker[] = [];
   private plantCircles: L.CircleMarker[] = [];
   private hasAppliedDataBounds = false;
 
@@ -156,6 +188,20 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['clearSignal'] && !changes['clearSignal'].firstChange) {
       this.clearAll(false);
+    }
+
+    const backgroundStyleChanged = [
+      'backgroundPolygonColor',
+      'backgroundPolygonColors',
+      'backgroundPolygonLabels',
+      'backgroundPolygonDashArray',
+      'backgroundPolygonDashArrays',
+      'backgroundPolygonFillOpacity',
+      'backgroundPolygonFillOpacities',
+    ].some((inputName) => changes[inputName]);
+
+    if (backgroundStyleChanged) {
+      this.renderBackgroundPolygon();
     }
   }
 
@@ -197,6 +243,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
     this.backgroundLayers.forEach((layer) => this.map.removeLayer(layer));
     this.backgroundLayers = [];
+    this.backgroundLabelLayers.forEach((layer) => this.map.removeLayer(layer));
+    this.backgroundLabelLayers = [];
 
     const validPolygons = this._backgroundPolygonCoords.filter(
       (polygon) => polygon.length > 0,
@@ -205,19 +253,38 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     if (validPolygons.length > 0) {
       this.backgroundLayers = validPolygons.map((polygon, index) => {
         const color =
+          this.backgroundPolygonColors?.[index] ??
           this.backgroundPolygonColor ??
           BACKGROUND_POLYGON_COLORS[index % BACKGROUND_POLYGON_COLORS.length];
-
+        const dashArray =
+          this.backgroundPolygonDashArrays?.[index] ??
+          this.backgroundPolygonDashArray ??
+          undefined;
+        const fillOpacity =
+          this.backgroundPolygonFillOpacities?.[index] ??
+          this.backgroundPolygonFillOpacity;
         const layer = L.polygon(polygon, {
           color,
           fillColor: color,
-          fillOpacity: 0.18,
-          weight: 3,
-          dashArray: '6, 6',
+          fillOpacity,
+          weight: 2,
+          dashArray,
           interactive: false,
         }).addTo(this.map);
 
         layer.bringToBack();
+
+        const label = this.backgroundPolygonLabels?.[index];
+        if (label) {
+          const labelLayer = L.marker(layer.getBounds().getCenter(), {
+            interactive: false,
+            icon: L.divIcon({
+              className: 'map-zone-label',
+              html: escapeHtml(label),
+            }),
+          }).addTo(this.map);
+          this.backgroundLabelLayers.push(labelLayer);
+        }
         return layer;
       });
 
@@ -579,3 +646,12 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   }
 }
 
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}

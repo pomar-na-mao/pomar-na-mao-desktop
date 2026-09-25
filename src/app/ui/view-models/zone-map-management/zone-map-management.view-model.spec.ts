@@ -5,6 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { MessageService } from '../../../data/services/message/message.service';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
+import type { Region } from '../../../domain/models/regions.model';
 import type { Zone } from '../../../domain/models/zone.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { ZoneMapManagementViewModel } from './zone-map-management.view-model';
@@ -36,7 +38,10 @@ describe('ZoneMapManagementViewModel', () => {
     createWithRegions: vi.fn(),
   };
 
+  const regionsSignal = signal<Region[]>([]);
+
   const mockRegionsRepository = {
+    regions: regionsSignal,
     findAll: vi.fn(),
   };
 
@@ -51,12 +56,18 @@ describe('ZoneMapManagementViewModel', () => {
     hide: vi.fn(),
   };
 
+  const mockFarmBoundaryService = {
+    getBoundary: vi.fn().mockResolvedValue([]),
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     TestBed.resetTestingModule();
     zonesSignal.set([createZone()]);
+    regionsSignal.set([]);
     mockZonesRepository.findAll.mockResolvedValue({ error: null });
     mockRegionsRepository.findAll.mockResolvedValue({ error: null });
+    mockFarmBoundaryService.getBoundary.mockResolvedValue([]);
 
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
@@ -66,10 +77,41 @@ describe('ZoneMapManagementViewModel', () => {
         { provide: RegionsRepository, useValue: mockRegionsRepository },
         { provide: MessageService, useValue: mockMessageService },
         { provide: LoadingService, useValue: mockLoadingService },
+        { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
       ],
     });
 
     viewModel = TestBed.inject(ZoneMapManagementViewModel);
+  });
+
+  it('should keep the farm polygon plotted before zone polygons', async () => {
+    mockFarmBoundaryService.getBoundary.mockResolvedValue([
+      { latitude: 1, longitude: 2, order: 2 },
+      { latitude: 3, longitude: 4, order: 1 },
+      { latitude: 5, longitude: 6, order: 3 },
+    ]);
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
+      providers: [
+        ZoneMapManagementViewModel,
+        { provide: ZonesRepository, useValue: mockZonesRepository },
+        { provide: RegionsRepository, useValue: mockRegionsRepository },
+        { provide: MessageService, useValue: mockMessageService },
+        { provide: LoadingService, useValue: mockLoadingService },
+        { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
+      ],
+    });
+
+    viewModel = TestBed.inject(ZoneMapManagementViewModel);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(viewModel.mapBackgroundPolygons()[0]).toEqual([[3, 4], [1, 2], [5, 6]]);
+    expect(viewModel.mapBackgroundPolygonLabels()[0]).toBe('');
+    expect(viewModel.mapBackgroundPolygonColors()[0]).toBe('#0f3b8f');
+    expect(viewModel.mapBackgroundPolygonDashArrays()[0]).toBeNull();
+    expect(viewModel.mapBackgroundPolygonFillOpacities()[0]).toBe(0);
   });
 
   it('should load zones and regions on startup', async () => {
@@ -160,9 +202,9 @@ describe('ZoneMapManagementViewModel', () => {
         ],
       },
       points: [
-        { latitude: 1, longitude: 2 },
-        { latitude: 3, longitude: 4 },
-        { latitude: 5, longitude: 6 },
+        { latitude: 1, longitude: 2, order: 1 },
+        { latitude: 3, longitude: 4, order: 2 },
+        { latitude: 5, longitude: 6, order: 3 },
       ],
     });
     expect(mockZonesRepository.findAll).toHaveBeenCalledTimes(1);
@@ -209,7 +251,125 @@ describe('ZoneMapManagementViewModel', () => {
     expect(mockLoadingService.hide).toHaveBeenCalled();
   });
 
-  it('should expose all existing zone polygons for the map', () => {
+  it('should expose existing zone polygons ordered by region point order', () => {
+    zonesSignal.set([
+      createZone({
+        id: 'zone-1',
+        name: 'Zona A',
+        code: 'ZA',
+        polygon: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [200, 100],
+              [400, 300],
+              [600, 500],
+              [200, 100],
+            ],
+          ],
+        },
+      }),
+    ]);
+    regionsSignal.set([
+      {
+        id: 'r2',
+        created_at: '2026-01-01T00:00:00Z',
+        longitude: 4,
+        latitude: 3,
+        region: 'ZA',
+        zone_id: 'zone-1',
+        order: 2,
+      },
+      {
+        id: 'r1',
+        created_at: '2026-01-01T00:00:00Z',
+        longitude: 2,
+        latitude: 1,
+        region: 'ZA',
+        zone_id: 'zone-1',
+        order: 1,
+      },
+      {
+        id: 'r3',
+        created_at: '2026-01-01T00:00:00Z',
+        longitude: 6,
+        latitude: 5,
+        region: 'ZA',
+        zone_id: 'zone-1',
+        order: 3,
+      },
+    ]);
+
+    expect(viewModel.existingZonePolygons()).toEqual([
+      [
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ],
+    ]);
+    expect(viewModel.existingZonePolygonLabels()).toEqual(['Zona A']);
+    expect(viewModel.existingZonePolygonColors()[0]).toBe('#0ea5e9');
+    expect(viewModel.existingZonePolygonDashArrays()).toEqual([null]);
+  });
+
+  it('should ignore region polygons without valid order values', () => {
+    zonesSignal.set([
+      createZone({
+        id: 'zone-1',
+        name: 'Zona A',
+        code: 'ZA',
+        polygon: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [2, 1],
+              [4, 3],
+              [6, 5],
+              [2, 1],
+            ],
+          ],
+        },
+      }),
+    ]);
+    regionsSignal.set([
+      {
+        id: 'r1',
+        created_at: '2026-01-01T00:00:00Z',
+        longitude: 20,
+        latitude: 10,
+        region: 'ZA',
+        zone_id: 'zone-1',
+        order: null,
+      },
+      {
+        id: 'r2',
+        created_at: '2026-01-01T00:00:00Z',
+        longitude: 40,
+        latitude: 30,
+        region: 'ZA',
+        zone_id: 'zone-1',
+        order: null,
+      },
+      {
+        id: 'r3',
+        created_at: '2026-01-01T00:00:00Z',
+        longitude: 60,
+        latitude: 50,
+        region: 'ZA',
+        zone_id: 'zone-1',
+        order: null,
+      },
+    ]);
+
+    expect(viewModel.existingZonePolygons()).toEqual([
+      [
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ],
+    ]);
+  });
+  it('should fall back to zone polygon when ordered regions are unavailable', () => {
     zonesSignal.set([
       createZone({
         id: 'zone-1',

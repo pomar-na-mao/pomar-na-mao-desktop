@@ -2,12 +2,11 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MassInclusionViewModel } from './mass-inclusion.view-model';
 import { MassInclusionRepository } from '../../../data/repositories/mass-inclusion/mass-inclusion.repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
-import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
-import { LoadingService } from '../../../data/services/loading';
+import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
 import {
   EMPTY_MASS_INCLUSION_DATA,
@@ -15,6 +14,8 @@ import {
   type PolygonBulkSelectedPlant,
 } from '../../../domain/models/mass-inclusion';
 import type { Zone } from '../../../domain/models/zone.model';
+import { LoadingService } from '../../../shared/services/loading.service';
+import { MassInclusionViewModel } from './mass-inclusion.view-model';
 
 function createZone(overrides: Partial<Zone> = {}): Zone {
   return {
@@ -89,6 +90,15 @@ describe('MassInclusionViewModel', () => {
 
   const mockLoadingService = {
     isLoading: signal(false),
+    message: signal<string | undefined>(undefined),
+    show: vi.fn((message?: string) => {
+      mockLoadingService.message.set(message);
+      mockLoadingService.isLoading.set(true);
+    }),
+    hide: vi.fn(() => {
+      mockLoadingService.isLoading.set(false);
+      mockLoadingService.message.set(undefined);
+    }),
   };
 
   const mockMessageService = {
@@ -100,11 +110,17 @@ describe('MassInclusionViewModel', () => {
     findByZoneId: vi.fn().mockResolvedValue({ data: [], error: null }),
   };
 
+  const mockFarmBoundaryService = {
+    getBoundary: vi.fn().mockResolvedValue([]),
+  };
   beforeEach(() => {
     vi.clearAllMocks();
     TestBed.resetTestingModule();
     mockZonesRepository.currentZone.set(null);
     mockPlantsRepository.queryPlants.mockResolvedValue([]);
+    mockLoadingService.isLoading.set(false);
+    mockLoadingService.message.set(undefined);
+    mockFarmBoundaryService.getBoundary.mockResolvedValue([]);
 
     polygonCoordsSignal = signal([]);
     previewPlantsSignal = signal([]);
@@ -146,6 +162,7 @@ describe('MassInclusionViewModel', () => {
         { provide: RegionsRepository, useValue: mockRegionsRepository },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: MessageService, useValue: mockMessageService },
+        { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
       ],
     });
 
@@ -167,6 +184,37 @@ describe('MassInclusionViewModel', () => {
     expect(viewModel.massInclusionDataForm.controls.occurrenceAction.value).toBe('add');
   });
 
+  it('should load farm boundary as the first background polygon', async () => {
+    mockFarmBoundaryService.getBoundary.mockResolvedValue([
+      { latitude: 1, longitude: 2, order: 2 },
+      { latitude: 3, longitude: 4, order: 1 },
+      { latitude: 5, longitude: 6, order: 3 },
+    ]);
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
+      providers: [
+        MassInclusionViewModel,
+        { provide: MassInclusionRepository, useValue: mockMassInclusionRepository },
+        { provide: PlantsRepository, useValue: mockPlantsRepository },
+        { provide: ZonesRepository, useValue: mockZonesRepository },
+        { provide: RegionsRepository, useValue: mockRegionsRepository },
+        { provide: LoadingService, useValue: mockLoadingService },
+        { provide: MessageService, useValue: mockMessageService },
+        { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
+      ],
+    });
+
+    viewModel = TestBed.inject(MassInclusionViewModel);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(viewModel.backgroundPolygons()).toEqual([[[3, 4], [1, 2], [5, 6]]]);
+    expect(viewModel.focusedBackgroundPolygon()).toEqual([[3, 4], [1, 2], [5, 6]]);
+    expect(viewModel.backgroundPolygonColors()).toEqual(['#2563eb']);
+    expect(viewModel.backgroundPolygonDashArrays()).toEqual([null]);
+  });
+
   it('loadZones should load zones and database-backed form options', async () => {
     await viewModel.loadZones();
 
@@ -176,17 +224,14 @@ describe('MassInclusionViewModel', () => {
     expect(viewModel.isLoadingZones()).toBe(false);
   });
 
-  it('should load map plants filtered by zone id', async () => {
-    const plants = [{ id: 'plant-1', latitude: -21.23, longitude: -47.79 }] as never[];
-    mockPlantsRepository.queryPlants.mockResolvedValueOnce(plants);
-
+  it('should load only zone polygon when zone changes', async () => {
     await viewModel.onZoneChange('z1');
 
-    expect(mockPlantsRepository.queryPlants).toHaveBeenCalledWith({ zoneId: 'z1' });
+    expect(mockPlantsRepository.queryPlants).not.toHaveBeenCalled();
     expect(mockZonesRepository.currentZone()).toEqual(createZone());
-    expect(viewModel.plants()).toEqual(plants);
+    expect(viewModel.plants()).toEqual([]);
+    expect(mockRegionsRepository.findByZoneId).toHaveBeenCalledWith('z1');
   });
-
   it('should save only valid polygons', () => {
     viewModel.onPolygonSelected([{ lat: 1, lng: 2 }]);
     expect(mockMassInclusionRepository.savePolygonCoordinates).not.toHaveBeenCalled();
@@ -274,6 +319,8 @@ describe('MassInclusionViewModel', () => {
 
     await viewModel.onSaveMassInclusionDataHandler();
 
+    expect(mockLoadingService.show).toHaveBeenCalledWith('Salvando alterações...');
+    expect(mockLoadingService.hide).toHaveBeenCalled();
     expect(mockMassInclusionRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
       plants: [{ plantId: 'p1', selectionSource: 'polygon_selected' }],
       plantsFoundCount: 1,

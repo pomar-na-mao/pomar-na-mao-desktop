@@ -1,37 +1,37 @@
 import { inject, Injectable, signal, effect } from '@angular/core';
 import * as L from 'leaflet';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { OperationsRepository } from '../../../data/repositories/operations/operations-repository';
-import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
-import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { SprayingOperationResponse, InspectionOperationResponse, InspectionPlant, InspectionEntry } from '../../../domain/models/operations.model';
-import { Plant } from '../../../domain/models/plant-data.model';
+import {
+  buildOrderedMapBoundary,
+  type OrderedMapBoundary,
+} from '../../../shared/utils/ordered-map-boundary';
+
+const DEFAULT_CENTER: L.LatLngTuple = [-23.403, -49.149];
 
 @Injectable()
 export class OperationsViewModel {
+  private farmBoundaryService = inject(FarmBoundaryService);
   private operationsRepository = inject(OperationsRepository);
-  private zonesRepository = inject(ZonesRepository);
-  private plantsRepository = inject(PlantsRepository);
 
   public isMapFullscreen = signal(false);
   private map: L.Map | null = null;
   private geoJsonLayer: L.GeoJSON | null = null;
-  private zonePolygonLayer: L.GeoJSON | null = null;
-  private plantLayers: L.LayerGroup | null = null;
+  private farmPolygonLayer: L.Polygon | null = null;
   private inspectionPlantLayers: L.LayerGroup | null = null;
   private plantRenderer = L.canvas({ padding: 0.5 });
 
   public startDate = signal<string>('');
   public endDate = signal<string>('');
-  public selectedZoneId = signal<string>('');
   public selectedOperation = signal<string>('');
   public selectedOperationDetails = signal<SprayingOperationResponse | null>(null);
   public selectedInspectionDetails = signal<InspectionOperationResponse | null>(null);
   public selectedInspectionPlant = signal<InspectionPlant | null>(null);
   public inspectionEntriesForPlant = signal<InspectionEntry[]>([]);
   public currentInspectionIndex = signal<number>(0);
+  public farmBoundary = signal<OrderedMapBoundary | null>(null);
 
-  public showPlants = signal<boolean>(false);
-  public zonePlants = signal<Plant[]>([]);
 
   constructor() {
     const today = new Date();
@@ -47,21 +47,20 @@ export class OperationsViewModel {
       const type = this.selectedOperation();
       const start = this.startDate();
       const end = this.endDate();
-      const zone = this.selectedZoneId();
 
       if (type === 'pulverizacao') {
-        this.fetchSprayingOperations(start, end, zone);
+        this.fetchSprayingOperations(start, end);
         this.operationsRepository.inspectionOperations.set([]);
         this.operationsRepository.annotationOperations.set([]);
         this.clearInspectionSelection();
       } else if (type === 'inspecao') {
-        this.fetchInspectionOperations(start, end, zone);
+        this.fetchInspectionOperations(start, end);
         this.operationsRepository.sprayingOperations.set([]);
         this.operationsRepository.annotationOperations.set([]);
         this.selectedOperationDetails.set(null);
         this.clearInspectionSelection();
       } else if (type === 'anotacao') {
-        this.fetchAnnotationOperations(start, end, zone);
+        this.fetchAnnotationOperations(start, end);
         this.operationsRepository.sprayingOperations.set([]);
         this.operationsRepository.inspectionOperations.set([]);
         this.selectedOperationDetails.set(null);
@@ -91,54 +90,35 @@ export class OperationsViewModel {
     });
 
     effect(() => {
-      const zoneId = this.selectedZoneId();
-      this.renderZonePolygon(zoneId);
+      this.farmBoundary();
+      this.renderFarmPolygon();
     });
 
-    effect(() => {
-      const zoneId = this.selectedZoneId();
-      if (!zoneId) {
-        this.showPlants.set(false);
-      }
-    }, { allowSignalWrites: true });
 
-    effect(() => {
-      const show = this.showPlants();
-      const zoneId = this.selectedZoneId();
-
-      if (show && zoneId) {
-        this.fetchZonePlants(zoneId);
-      } else {
-        this.zonePlants.set([]);
-      }
-    }, { allowSignalWrites: true });
-
-    effect(() => {
-      this.renderPlants(this.zonePlants());
-    });
+    void this.loadFarmBoundary();
   }
 
-  private async fetchSprayingOperations(start: string, end: string, zone: string) {
+  private async fetchSprayingOperations(start: string, end: string) {
     await this.operationsRepository.getSprayingOperations(
-      start || null, 
-      end || null, 
-      zone || null
+      start || null,
+      end || null,
+      null
     );
   }
 
-  private async fetchInspectionOperations(start: string, end: string, zone: string) {
+  private async fetchInspectionOperations(start: string, end: string) {
     await this.operationsRepository.getInspectionOperations(
-      start || null, 
-      end || null, 
-      zone || null
+      start || null,
+      end || null,
+      null
     );
   }
 
-  private async fetchAnnotationOperations(start: string, end: string, zone: string) {
+  private async fetchAnnotationOperations(start: string, end: string) {
     await this.operationsRepository.getAnnotationOperations(
-      start || null, 
-      end || null, 
-      zone || null
+      start || null,
+      end || null,
+      null
     );
   }
 
@@ -160,29 +140,26 @@ export class OperationsViewModel {
       zoomControl: false,
       attributionControl: false,
       maxZoom: 22,
-    }).setView([-23.403, -49.149], 14);
+    }).setView(DEFAULT_CENTER, 14);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 22,
       maxNativeZoom: 19,
     }).addTo(this.map);
 
-    this.zonePolygonLayer = L.geoJSON(undefined, {
+    this.farmPolygonLayer = L.polygon([], {
       interactive: false,
-      style: {
-        color: '#3b82f6', // blue
-        weight: 3,
-        fillColor: '#3b82f6',
-        fillOpacity: 0.15,
-      },
+      color: '#2563eb',
+      weight: 3,
+      fillColor: '#60a5fa',
+      fillOpacity: 0.08,
     }).addTo(this.map);
 
-    this.plantLayers = L.layerGroup().addTo(this.map);
     this.inspectionPlantLayers = L.layerGroup().addTo(this.map);
-    
+
+    this.renderFarmPolygon();
     this.drawOperations(this.operations());
     this.drawInspectionPlants(this.inspectionOperations());
-    this.renderZonePolygon(this.selectedZoneId());
   }
 
   private drawInspectionPlants(operations: InspectionOperationResponse[]): void {
@@ -192,7 +169,6 @@ export class OperationsViewModel {
 
     if (!operations || operations.length === 0) return;
 
-    // Group by plant_id across all operations
     const plantMap = new Map<string, InspectionEntry[]>();
 
     operations.forEach(op => {
@@ -206,14 +182,12 @@ export class OperationsViewModel {
       }
     });
 
-    // Sort each plant's entries by date descending (newest first)
     plantMap.forEach(entries => {
       entries.sort((a, b) => new Date(b.operation.started_at).getTime() - new Date(a.operation.started_at).getTime());
     });
 
     const bounds = L.latLngBounds([]);
 
-    // Create one marker per unique plant
     plantMap.forEach((entries) => {
       const { plant } = entries[0];
       const marker = L.circleMarker([plant.latitude, plant.longitude], {
@@ -244,6 +218,7 @@ export class OperationsViewModel {
     } catch {
       // ignore fitBounds failures
     }
+    this.bringFarmPolygonToFront();
   }
 
   private drawOperations(operations: SprayingOperationResponse[]) {
@@ -258,7 +233,7 @@ export class OperationsViewModel {
 
     this.geoJsonLayer = L.geoJSON(undefined, {
       style: {
-        color: '#f59e0b', // orange
+        color: '#f59e0b',
         weight: 4,
         opacity: 0.7
       },
@@ -288,29 +263,27 @@ export class OperationsViewModel {
     } catch {
       // fitBounds can fail if coordinates are invalid; ignore safely
     }
+    this.bringFarmPolygonToFront();
   }
 
-  private renderZonePolygon(zoneId: string): void {
-    if (!this.zonePolygonLayer || !this.map) {
+  private renderFarmPolygon(): void {
+    if (!this.farmPolygonLayer || !this.map) {
       return;
     }
 
-    this.zonePolygonLayer.clearLayers();
+    this.farmPolygonLayer.setLatLngs([]);
 
-    if (!zoneId) {
+    const farmBoundary = this.farmBoundary();
+    if (!farmBoundary) {
       return;
     }
 
-    const zone = this.zonesRepository.zones().find((z) => z.id === zoneId);
-    if (!zone?.polygon) {
-      return;
-    }
+    this.farmPolygonLayer.setLatLngs(farmBoundary.latLngs);
+    this.bringFarmPolygonToFront();
 
-    this.zonePolygonLayer.addData(zone.polygon as unknown as Parameters<L.GeoJSON['addData']>[0]);
-
-    const polygonBounds = this.zonePolygonLayer.getBounds();
-    if (polygonBounds.isValid()) {
-      this.map.fitBounds(polygonBounds, { padding: [48, 48], maxZoom: 18 });
+    const farmBounds = this.getFarmBounds() ?? this.farmPolygonLayer.getBounds();
+    if (farmBounds.isValid()) {
+      this.map.fitBounds(farmBounds, { padding: [48, 48], maxZoom: 18 });
     }
   }
 
@@ -347,40 +320,27 @@ export class OperationsViewModel {
     this.currentInspectionIndex.set(0);
   }
 
-  private async fetchZonePlants(zoneId: string) {
-    const plants = await this.plantsRepository.queryPlants({ zoneId });
-    this.zonePlants.set(plants);
+  private async loadFarmBoundary(): Promise<void> {
+    try {
+      const points = await this.farmBoundaryService.getBoundary();
+      this.farmBoundary.set(buildOrderedMapBoundary(points));
+    } catch (error) {
+      console.error('Failed to load farm boundary for operations map', error);
+      this.farmBoundary.set(null);
+    }
   }
 
-  private renderPlants(plants: Plant[]): void {
-    if (!this.map || !this.plantLayers) {
-      return;
+  private getFarmBounds(): L.LatLngBounds | null {
+    const farmBoundary = this.farmBoundary();
+    if (!farmBoundary) {
+      return null;
     }
 
-    this.plantLayers.clearLayers();
+    const bounds = L.latLngBounds(farmBoundary.latLngs);
+    return bounds.isValid() ? bounds : null;
+  }
 
-    if (plants.length === 0) {
-      return;
-    }
-
-    plants.forEach((plant) => {
-      L.circleMarker([plant.latitude, plant.longitude], {
-        radius: 4.5,
-        color: '#34d399', // green border
-        fillColor: '#10b981', // green fill
-        fillOpacity: 0.9,
-        weight: 0.75,
-        renderer: this.plantRenderer,
-      })
-        .bindPopup(
-          `
-            <div style="font-family: sans-serif; font-size: 12px; min-width: 140px">
-              ID: ${plant.id}<br/>
-              ${plant.latitude.toFixed(6)}, ${plant.longitude.toFixed(6)}
-            </div>
-          `,
-        )
-        .addTo(this.plantLayers!);
-    });
+  private bringFarmPolygonToFront(): void {
+    this.farmPolygonLayer?.bringToFront();
   }
 }

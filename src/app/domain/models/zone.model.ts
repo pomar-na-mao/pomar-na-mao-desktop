@@ -15,6 +15,7 @@ export interface Zone {
 export interface ZoneRegionPointPayload {
   latitude: number;
   longitude: number;
+  order: number;
 }
 
 export interface CreateZoneWithRegionsPayload {
