@@ -20,6 +20,15 @@ import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
   templateUrl: './zone-assignment.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [ZoneAssignmentViewModel],
+  styles: [
+    `
+      :host {
+        display: block;
+        height: 100%;
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class ZoneAssignment implements OnInit, OnDestroy {
   public viewModel = inject(ZoneAssignmentViewModel);

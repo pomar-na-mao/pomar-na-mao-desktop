@@ -24,12 +24,12 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
       },
       {
-        path: 'atribuicao-zonas',
-        loadComponent: () => import('./ui/views/zone-assignment/zone-assignment').then(m => m.ZoneAssignment)
+        path: 'zonas',
+        loadComponent: () => import('./ui/views/zones/zones').then(m => m.Zones)
       },
       {
-        path: 'zonas',
-        loadComponent: () => import('./ui/views/zone-map-management/zone-map-management').then(m => m.ZoneMapManagement)
+        path: 'atribuicao-zonas',
+        redirectTo: 'zonas'
       },
       {
         path: 'configuracoes',

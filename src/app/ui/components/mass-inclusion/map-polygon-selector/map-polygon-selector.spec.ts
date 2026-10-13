@@ -55,4 +55,65 @@ describe('MapPolygonSelector', () => {
       maxZoom: 19,
     });
   });
+
+  it('should request device location and set view when locateUserOnInit is true', () => {
+    const component = TestBed.runInInjectionContext(
+      () => new MapPolygonSelector(),
+    );
+    component.locateUserOnInit = true;
+    component.userLocationZoom = 18;
+
+    const setView = vi.fn();
+    const addLayer = vi.fn();
+    component['map'] = {
+      setView,
+      addLayer,
+    } as never;
+
+    const getCurrentPosition = vi.fn((success) => {
+      success({ coords: { latitude: -23.1234, longitude: -49.5678 } });
+    });
+    vi.stubGlobal('navigator', {
+      geolocation: { getCurrentPosition },
+    });
+
+    component.centerOnCurrentDeviceLocation();
+
+    expect(getCurrentPosition).toHaveBeenCalled();
+    expect(setView).toHaveBeenCalledWith([-23.1234, -49.5678], 18);
+    expect(addLayer).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('should center on device location when invalidateSize is called and locateUserOnInit is true', () => {
+    const component = TestBed.runInInjectionContext(
+      () => new MapPolygonSelector(),
+    );
+    component.locateUserOnInit = true;
+    component.userLocationZoom = 18;
+
+    const invalidateSize = vi.fn();
+    const setView = vi.fn();
+    const addLayer = vi.fn();
+    component['map'] = {
+      invalidateSize,
+      setView,
+      addLayer,
+    } as never;
+
+    const getCurrentPosition = vi.fn((success) => {
+      success({ coords: { latitude: -23.1234, longitude: -49.5678 } });
+    });
+    vi.stubGlobal('navigator', {
+      geolocation: { getCurrentPosition },
+    });
+
+    component.invalidateSize();
+
+    expect(invalidateSize).toHaveBeenCalled();
+    expect(getCurrentPosition).toHaveBeenCalled();
+    expect(setView).toHaveBeenCalledWith([-23.1234, -49.5678], 18);
+    expect(addLayer).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
 });

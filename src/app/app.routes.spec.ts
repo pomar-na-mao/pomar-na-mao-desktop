@@ -18,4 +18,26 @@ describe('ROUTES', () => {
       ]),
     );
   });
+
+  it('should redirect legacy atribuicao-zonas to zonas', () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const atribuicaoRoute = mainRoute?.children?.find(
+      (route) => route.path === 'atribuicao-zonas',
+    );
+
+    expect(atribuicaoRoute).toBeDefined();
+    expect(atribuicaoRoute?.redirectTo).toBe('zonas');
+  });
+
+  it('should lazy-load the unified Zones component for /zonas', async () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const zonasRoute = mainRoute?.children?.find(
+      (route) => route.path === 'zonas',
+    );
+
+    expect(zonasRoute?.loadComponent).toBeDefined();
+    const loadFn = zonasRoute?.loadComponent as () => Promise<unknown>;
+    const component = await loadFn();
+    expect(component).toBeDefined();
+  });
 });
