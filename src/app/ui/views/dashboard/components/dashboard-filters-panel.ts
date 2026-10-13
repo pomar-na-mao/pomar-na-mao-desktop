@@ -3,7 +3,9 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
 import { Input } from '../../../../shared/components/input/input';
-import { Select } from '../../../../shared/components/select/select';
+import { Select, SelectOption } from '../../../../shared/components/select/select';
+
+const LIVING_PLANT_COLOR = '#10b981';
 
 @Component({
   selector: 'app-dashboard-filters-panel',
@@ -59,6 +61,16 @@ import { Select } from '../../../../shared/components/select/select';
           ></app-select>
         </section>
 
+        <!-- Status da Planta -->
+        <section>
+          <app-select
+            label="Status da Planta"
+            [ngModel]="dashboardViewModel.filterPlantStatus()"
+            (ngModelChange)="dashboardViewModel.filterPlantStatus.set($event)"
+            [options]="plantStatusOptions"
+          ></app-select>
+        </section>
+
         <!-- Variedade -->
         <section>
           <app-select
@@ -69,40 +81,13 @@ import { Select } from '../../../../shared/components/select/select';
           ></app-select>
         </section>
       </div>
-
-      <!-- Divider and Legend Footer -->
-      <hr class="border-slate-200 dark:border-slate-800" />
-
-      <div class="px-4 py-4 shrink-0">
-        <label
-          class="mb-2 block text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100"
-        >
-          Legenda de Variedades
-        </label>
-        <div class="flex flex-wrap gap-x-3 gap-y-1.5">
-          @for (
-            legend of dashboardViewModel.varietyLegend();
-            track legend.label
-          ) {
-            <div class="flex items-center gap-1.5">
-              <span
-                class="h-2.5 w-2.5 shrink-0 rounded-sm border border-white/60 shadow-sm dark:border-white/10"
-                [style.backgroundColor]="legend.color"
-              ></span>
-              <span class="text-[11px] text-slate-600 dark:text-slate-400">{{
-                legend.label
-              }}</span>
-            </div>
-          }
-        </div>
-      </div>
     </aside>
   `,
 })
 export class DashboardFiltersPanel {
   public dashboardViewModel = inject(DashboardViewModel);
 
-  public get zoneOptions() {
+  public get zoneOptions(): SelectOption[] {
     return [
       { label: 'Todas as Zonas', value: '' },
       ...this.dashboardViewModel.availableZones().map((z) => ({
@@ -112,7 +97,7 @@ export class DashboardFiltersPanel {
     ];
   }
 
-  public get occurrenceOptions() {
+  public get occurrenceOptions(): SelectOption[] {
     return [
       { label: 'Remover todas', value: '' },
       ...this.dashboardViewModel.availableOccurrences().map((o) => ({
@@ -122,13 +107,39 @@ export class DashboardFiltersPanel {
     ];
   }
 
-  public get varietyOptions() {
+  public get plantStatusOptions(): SelectOption[] {
     return [
-      { label: 'Todas as Variedades', value: '' },
-      ...this.dashboardViewModel.availableVarieties().map((v) => ({
-        label: v.name,
-        value: v.id,
-      })),
+      { label: 'Todos', value: '' },
+      {
+        label: 'Planta viva',
+        value: 'alive',
+        color: LIVING_PLANT_COLOR,
+      },
+      {
+        label: 'Ponto vazio',
+        value: 'empty',
+        color: '#ef4444',
+      },
     ];
+  }
+
+  public get varietyOptions(): SelectOption[] {
+    const options: SelectOption[] = [
+      { label: 'Todas as Variedades', value: '' },
+      {
+        label: 'Sem variedade',
+        value: 'none',
+      },
+    ];
+
+    const varieties = this.dashboardViewModel.availableVarieties();
+    for (const v of varieties) {
+      options.push({
+        label: v.name,
+        value: String(v.id),
+      });
+    }
+
+    return options;
   }
 }

@@ -33,6 +33,7 @@ export interface HomeDashboardPlant {
   longitude: number;
   varietyId: number | null;
   varietyName: string | null;
+  nonExistent: boolean;
 }
 
 export interface HomeDashboardBoundaryPoint {

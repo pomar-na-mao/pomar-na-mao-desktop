@@ -37,7 +37,7 @@ const VARIETY_COLORS = [
   '#4f46e5',
 ];
 const CLASSICA_VARIETY_COLOR = '#ec4899';
-const FALLBACK_VARIETY_COLOR = '#16a34a';
+const FALLBACK_VARIETY_COLOR = '#64748b';
 
 @Injectable()
 export class DashboardViewModel {
@@ -67,6 +67,7 @@ export class DashboardViewModel {
   public filterZoneId = signal('');
   public filterOccurrenceId = signal('');
   public filterVarietyId = signal('');
+  public filterPlantStatus = signal('');
 
   // --- Filter options (loaded from DB) ---
   public availableZones = signal<HomeDashboardZone[]>([]);
@@ -91,9 +92,24 @@ export class DashboardViewModel {
 
     // 1. Filter by Variety
     const varietyId = this.filterVarietyId();
-    if (varietyId) {
+    if (varietyId === 'none') {
+      plants = plants.filter(
+        (plant) =>
+          !plant.nonExistent && (plant.varietyId === null || !plant.varietyName),
+      );
+    } else if (varietyId) {
       const varietyIdNum = Number(varietyId);
-      plants = plants.filter((plant) => plant.varietyId === varietyIdNum);
+      plants = plants.filter(
+        (plant) => !plant.nonExistent && plant.varietyId === varietyIdNum,
+      );
+    }
+
+    // 2. Filter by Plant Status (Planta viva vs Ponto vazio)
+    const plantStatus = this.filterPlantStatus();
+    if (plantStatus === 'alive') {
+      plants = plants.filter((plant) => !plant.nonExistent);
+    } else if (plantStatus === 'empty') {
+      plants = plants.filter((plant) => plant.nonExistent);
     }
 
     // 2. Filter by Zone
@@ -269,9 +285,12 @@ export class DashboardViewModel {
     const occurrenceId = this.filterOccurrenceId();
 
     plants.forEach((plant) => {
-      let plantColor = this.getVarietyColor(plant.varietyId, plant.varietyName);
+      const isNonExistent = Boolean(plant.nonExistent);
+      let plantColor = isNonExistent
+        ? '#ef4444'
+        : this.getVarietyColor(plant.varietyId, plant.varietyName);
+      let strokeColor = isNonExistent ? '#dc2626' : plantColor;
       let radius = 4.5;
-      let strokeColor = plantColor;
       let weight = 0.75;
       let fillOpacity = 0.9;
 
@@ -284,6 +303,14 @@ export class DashboardViewModel {
         fillOpacity = 1.0;
       }
 
+      const popupTitle = isNonExistent
+        ? 'Ponto vazio'
+        : (plant.varietyName ?? 'Sem variedade');
+      const popupVariety =
+        isNonExistent && plant.varietyName
+          ? `<span style="color: #64748b">Variedade: ${plant.varietyName}</span><br/>`
+          : '';
+
       L.circleMarker([plant.latitude, plant.longitude], {
         radius,
         color: strokeColor,
@@ -295,7 +322,8 @@ export class DashboardViewModel {
         .bindPopup(
           `
             <div style="font-family: sans-serif; font-size: 12px; min-width: 160px">
-              <strong>${plant.varietyName ?? 'Sem variedade'}</strong><br/>
+              <strong>${popupTitle}</strong><br/>
+              ${popupVariety}
               ID: ${plant.id}<br/>
               ${plant.latitude.toFixed(6)}, ${plant.longitude.toFixed(6)}
             </div>
@@ -375,7 +403,9 @@ export class DashboardViewModel {
       }),
     );
 
-    const hasPlantsWithoutVariety = plants.some((plant) => !plant.varietyName);
+    const hasPlantsWithoutVariety = plants.some(
+      (plant) => !plant.nonExistent && !plant.varietyName,
+    );
 
     if (hasPlantsWithoutVariety) {
       varietyEntries.push({

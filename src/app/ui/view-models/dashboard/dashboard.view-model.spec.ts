@@ -28,8 +28,8 @@ describe('DashboardViewModel', () => {
         ],
       },
       plants: [
-        { id: 'p1', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala' },
-        { id: 'p2', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null },
+        { id: 'p1', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
+        { id: 'p2', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: false },
       ],
       farmBoundary: [
         { id: 'f3', latitude: -21.3, longitude: -47.3, order: 3 },
@@ -169,6 +169,55 @@ describe('DashboardViewModel', () => {
     viewModel.filterVarietyId.set('1');
     expect(viewModel.filteredPlants().length).toBe(1);
     expect(viewModel.filteredPlants()[0].id).toBe('p1');
+
+    viewModel.filterVarietyId.set('none');
+    expect(viewModel.filteredPlants().length).toBe(1);
+    expect(viewModel.filteredPlants()[0].id).toBe('p2');
+  });
+
+  it('should filter plants by plant status when filterPlantStatus is set', async () => {
+    getHomeDashboardData.mockResolvedValueOnce({
+      summary: null,
+      plants: [
+        { id: 'p-alive', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
+        { id: 'p-empty', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: true },
+      ],
+      farmBoundary: [],
+    });
+
+    await viewModel.loadDashboard();
+    expect(viewModel.filteredPlants().length).toBe(2);
+
+    viewModel.filterPlantStatus.set('alive');
+    expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-alive']);
+
+    viewModel.filterPlantStatus.set('empty');
+    expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-empty']);
+
+    viewModel.filterPlantStatus.set('');
+    expect(viewModel.filteredPlants().length).toBe(2);
+  });
+
+  it('should not include empty spots (nonExistent) when filtering by Sem variedade or by specific variety', async () => {
+    getHomeDashboardData.mockResolvedValueOnce({
+      summary: null,
+      plants: [
+        { id: 'p-alive-gala', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
+        { id: 'p-empty-no-variety', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: true },
+      ],
+      farmBoundary: [],
+    });
+
+    await viewModel.loadDashboard();
+    expect(viewModel.filteredPlants().length).toBe(2);
+
+    // When filtering by 'none' (Sem variedade), empty spots must NOT be shown
+    viewModel.filterVarietyId.set('none');
+    expect(viewModel.filteredPlants().length).toBe(0);
+
+    // When filtering by variety 1, only living Gala plant is shown
+    viewModel.filterVarietyId.set('1');
+    expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-alive-gala']);
   });
 
   it('should filter plants by occurrence when filterOccurrenceId is set', async () => {
@@ -199,8 +248,8 @@ describe('DashboardViewModel', () => {
     await viewModel.loadDashboard();
     await waitForAsyncEffects();
     viewModel.mapPlants.set([
-      { id: 'inside', latitude: -21.1, longitude: -47.2, varietyId: null, varietyName: null },
-      { id: 'outside', latitude: -22.5, longitude: -48.5, varietyId: null, varietyName: null },
+      { id: 'inside', latitude: -21.1, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: false },
+      { id: 'outside', latitude: -22.5, longitude: -48.5, varietyId: null, varietyName: null, nonExistent: false },
     ]);
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -259,10 +308,10 @@ describe('DashboardViewModel', () => {
     expect(viewModel.varietyLegend()).toEqual([
       { label: 'Gala', color: '#0f766e', varietyId: 1 },
       { label: 'Fuji', color: '#1d4ed8', varietyId: 2 },
-      { label: 'Sem variedade', color: '#16a34a', varietyId: null },
+      { label: 'Sem variedade', color: '#64748b', varietyId: null },
     ]);
     expect(viewModel.getVarietyColor(1, 'Coracao')).toBe('#0f766e');
-    expect(viewModel.getVarietyColor(null, null)).toBe('#16a34a');
+    expect(viewModel.getVarietyColor(null, null)).toBe('#64748b');
   });
 
   it('should use normalized variety name when id is not available', async () => {
@@ -281,7 +330,7 @@ describe('DashboardViewModel', () => {
         varieties: [{ id: 9, name: 'Classica' }],
       },
       plants: [
-        { id: 'p9', latitude: -21.1, longitude: -47.1, varietyId: 9, varietyName: 'Classica' },
+        { id: 'p9', latitude: -21.1, longitude: -47.1, varietyId: 9, varietyName: 'Classica', nonExistent: false },
       ],
     });
 
@@ -291,6 +340,28 @@ describe('DashboardViewModel', () => {
       { label: 'Classica', color: '#ec4899', varietyId: 9 },
     ]);
     expect(viewModel.getVarietyColor(9, 'Classica')).toBe('#ec4899');
+  });
+
+  it('should include nonExistent plants in mapPlants and filteredPlants', async () => {
+    getHomeDashboardData.mockResolvedValueOnce({
+      summary: {
+        totalPlants: 3,
+        totalZones: 0,
+        totalOccurrenceTypes: 0,
+        totalVarieties: 1,
+        varieties: [{ id: 1, name: 'Gala' }],
+      },
+      plants: [
+        { id: 'p1', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
+        { id: 'p-empty', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: true },
+      ],
+      farmBoundary: [],
+    });
+
+    await viewModel.loadDashboard();
+
+    expect(viewModel.mapPlants().length).toBe(2);
+    expect(viewModel.filteredPlants().find((p) => p.id === 'p-empty')?.nonExistent).toBe(true);
   });
 
   it('should start with empty planting date filters', () => {
