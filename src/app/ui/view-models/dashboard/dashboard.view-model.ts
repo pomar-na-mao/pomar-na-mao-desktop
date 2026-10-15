@@ -272,11 +272,13 @@ export class DashboardViewModel {
 
     const plants = this.filteredPlants();
     if (plants.length === 0) {
-      const farmBounds = this.getFarmBounds();
-      if (farmBounds) {
-        map.fitBounds(farmBounds, { padding: [48, 48], maxZoom: 18 });
-      } else {
-        map.setView(DEFAULT_CENTER, 16);
+      if (!this.fitSelectedZoneBounds()) {
+        const farmBounds = this.getFarmBounds();
+        if (farmBounds) {
+          map.fitBounds(farmBounds, { padding: [48, 48], maxZoom: 18 });
+        } else {
+          map.setView(DEFAULT_CENTER, 16);
+        }
       }
       this.bringFarmPolygonToFront();
       return;
@@ -338,7 +340,7 @@ export class DashboardViewModel {
       ),
     );
     const bounds = this.filterZoneId()
-      ? this.extendBoundsWithFarm(plantBounds)
+      ? this.getSelectedZoneBounds() ?? plantBounds
       : this.getFarmBounds() ?? plantBounds;
 
     if (bounds.isValid()) {
@@ -383,11 +385,7 @@ export class DashboardViewModel {
     }
 
     this.zonePolygonLayer.addData(boundary.geoJson);
-
-    const bounds = this.extendBoundsWithFarm(this.zonePolygonLayer.getBounds());
-    if (bounds.isValid()) {
-      this.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
-    }
+    this.fitSelectedZoneBounds();
     this.bringFarmPolygonToFront();
   }
 
@@ -553,18 +551,28 @@ export class DashboardViewModel {
     return buildOrderedMapBoundary(points);
   }
 
-  private extendBoundsWithFarm(bounds: L.LatLngBounds): L.LatLngBounds {
-    const farmBounds = this.getFarmBounds();
-    if (!farmBounds) {
-      return bounds;
+  private fitSelectedZoneBounds(): boolean {
+    const bounds = this.getSelectedZoneBounds();
+    if (!this.map || !bounds) {
+      return false;
     }
 
-    const nextBounds = bounds.isValid()
-      ? L.latLngBounds(bounds.getSouthWest(), bounds.getNorthEast())
-      : L.latLngBounds([]);
+    this.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
+    return true;
+  }
 
-    nextBounds.extend(farmBounds);
-    return nextBounds;
+  private getSelectedZoneBounds(): L.LatLngBounds | null {
+    if (!this.filterZoneId()) {
+      return null;
+    }
+
+    const boundary = this.selectedZoneBoundary();
+    if (!boundary) {
+      return null;
+    }
+
+    const bounds = L.latLngBounds(boundary.latLngs);
+    return bounds.isValid() ? bounds : null;
   }
 
   private getFarmBounds(): L.LatLngBounds | null {

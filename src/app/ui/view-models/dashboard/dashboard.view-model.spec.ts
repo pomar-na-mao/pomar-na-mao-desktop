@@ -244,6 +244,25 @@ describe('DashboardViewModel', () => {
     ]);
   });
 
+  it('should fit the map to the selected zone without extending to the farm boundary', async () => {
+    await viewModel.loadDashboard();
+
+    viewModel.filterZoneId.set('z1');
+    await waitForAsyncEffects();
+
+    const fitBounds = vi.fn();
+    viewModel['map'] = { fitBounds } as never;
+
+    expect(viewModel['fitSelectedZoneBounds']()).toBe(true);
+    expect(fitBounds).toHaveBeenCalledOnce();
+
+    const fittedBounds = fitBounds.mock.calls[0][0];
+    expect(fittedBounds.getSouthWest().lat).toBeCloseTo(-21.3);
+    expect(fittedBounds.getSouthWest().lng).toBeCloseTo(-47.5);
+    expect(fittedBounds.getNorthEast().lat).toBeCloseTo(-21.0);
+    expect(fittedBounds.getNorthEast().lng).toBeCloseTo(-47.0);
+  });
+
   it('should filter plants using the ordered selected zone polygon', async () => {
     await viewModel.loadDashboard();
     await waitForAsyncEffects();
