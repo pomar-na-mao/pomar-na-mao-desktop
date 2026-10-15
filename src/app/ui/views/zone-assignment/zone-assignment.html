@@ -3,8 +3,8 @@
 <div
   [class]="
     viewModel.isMapFullscreen()
-      ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex overflow-hidden bg-white dark:bg-slate-950'
-      : 'flex h-[calc(100vh-64px)] overflow-hidden'
+      ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex h-[calc(100vh-60px)] w-full flex-col overflow-hidden bg-white dark:bg-slate-950 md:flex-row'
+      : 'flex h-full w-full flex-col overflow-hidden md:flex-row'
   "
 >
   @if (viewModel.messageService.showMessage() && currentMessage) {
@@ -23,18 +23,22 @@
 
   <!-- Left Sidebar (Form) -->
   <aside
-    class="flex h-full w-[380px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
+    class="flex max-h-[50vh] md:max-h-none w-full md:w-[380px] lg:w-[400px] shrink-0 flex-col border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60 md:h-full"
   >
-    <app-zone-assignment-form class="block h-full" />
+    <app-zone-assignment-form class="flex h-full min-h-0 flex-1 flex-col" />
   </aside>
 
   <!-- Map Area -->
-  <div class="flex-1 relative overflow-hidden h-full">
+  <div class="relative min-h-[250px] md:min-h-0 flex-1 overflow-hidden h-full">
     <app-map-polygon-selector
       class="absolute inset-0 w-full h-full"
       [center]="[-23.398772, -49.148646]"
       [zoom]="16"
+      [locateUserOnInit]="true"
+      [userLocationZoom]="18"
       [plants]="viewModel.allPlants()"
+      [plantColor]="'#047857'"
+      [plantFillColor]="'#10b981'"
       [backgroundPolygon]="viewModel.selectedZonePolygon()"
       [focusedPolygon]="viewModel.selectedZonePolygon()"
       [backgroundPolygonColor]="'#f97316'"
@@ -46,17 +50,15 @@
 
     <!-- Fullscreen button floating over map -->
     <button
+      type="button"
       (click)="toggleFullscreen()"
-      class="absolute right-3 top-14 z-[400] rounded-lg bg-white/90 p-2 text-slate-600 shadow-md backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 focus:outline-none dark:bg-slate-800/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
-      [title]="
-        viewModel.isMapFullscreen()
-          ? 'Sair da tela cheia'
-          : 'Tela cheia'
-      "
+      class="absolute right-3 top-14 z-[400] min-h-10 min-w-10 md:min-h-11 md:min-w-11 rounded-lg bg-white/90 p-2 text-slate-600 shadow-md backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 dark:bg-slate-800/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white flex items-center justify-center"
+      [title]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+      [attr.aria-label]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
     >
       @if (viewModel.isMapFullscreen()) {
         <svg
-          class="h-4 w-4"
+          class="h-5 w-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -70,7 +72,7 @@
         </svg>
       } @else {
         <svg
-          class="h-4 w-4"
+          class="h-5 w-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

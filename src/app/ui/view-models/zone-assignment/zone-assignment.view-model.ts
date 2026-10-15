@@ -1,12 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
-import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
+import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { MessageService } from '../../../data/services/message/message.service';
-import { LoadingService } from '../../../shared/services/loading.service';
-import type { Region } from '../../../domain/models/regions.model';
 import type { PolygonCoordinate } from '../../../domain/models/mass-inclusion';
+import type { Region } from '../../../domain/models/regions.model';
 import type { SelectOption } from '../../../shared/components/select/select';
+import { LoadingService } from '../../../shared/services/loading.service';
 import { toClosedGeoJsonPolygon } from '../../../shared/utils/polygon-geojson';
 
 @Injectable({
@@ -47,10 +47,10 @@ export class ZoneAssignmentViewModel {
   });
 
   public zoneOptions = computed<SelectOption[]>(() => [
-    { value: '', label: 'Selecione uma zona...' },
+    { value: '', label: 'Selecione uma zona' },
     ...this.zones().map((z) => ({
       value: z.id,
-      label: `${z.name}${z.code ? ' (' + z.code + ')' : ''}`,
+      label: z.name,
     })),
   ]);
 

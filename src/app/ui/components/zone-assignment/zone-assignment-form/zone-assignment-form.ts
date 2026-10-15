@@ -9,6 +9,18 @@ import { ZoneAssignmentViewModel } from '../../../view-models/zone-assignment/zo
   imports: [CommonModule, Select],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './zone-assignment-form.html',
+  styles: [
+    `
+      :host {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 0%;
+        min-height: 0;
+        height: 100%;
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class ZoneAssignmentForm {
   public viewModel = inject(ZoneAssignmentViewModel);

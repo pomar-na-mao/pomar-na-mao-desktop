@@ -3,8 +3,8 @@
 <div
   [class]="
     massInclusionViewModel.isMapFullscreen()
-      ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex overflow-hidden bg-white dark:bg-slate-950'
-      : 'flex h-[calc(100vh-64px)] overflow-hidden'
+      ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex h-[calc(100vh-60px)] w-full flex-col overflow-hidden bg-white dark:bg-slate-950 md:flex-row'
+      : 'flex h-[calc(100vh-64px)] w-full flex-col overflow-hidden md:flex-row'
   "
 >
   @if (massInclusionViewModel.messageService.showMessage() && currentMessage) {
@@ -23,13 +23,13 @@
 
   <!-- Left Sidebar (Form) -->
   <aside
-    class="flex h-full w-[380px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
+    class="flex max-h-[50vh] w-full shrink-0 flex-col border-b border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60 md:h-full md:max-h-none md:w-[380px] md:border-b-0 md:border-r"
   >
-    <app-mass-inclusion-form class="block h-full" />
+    <app-mass-inclusion-form class="flex h-full min-h-0 flex-1 flex-col" />
   </aside>
 
   <!-- Map Area -->
-  <div class="flex-1 relative overflow-hidden h-full">
+  <div class="relative h-full min-h-[250px] flex-1 overflow-hidden md:min-h-0">
     <app-map-polygon-selector
       class="absolute inset-0 w-full h-full"
       [center]="[-23.398772, -49.148646]"
