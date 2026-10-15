@@ -114,6 +114,7 @@ describe('HomeDashboardService', () => {
           longitude: -47.1,
           varietyId: 1,
           varietyName: 'Gala',
+          nonExistent: false,
         },
         {
           id: 'p2',
@@ -121,6 +122,7 @@ describe('HomeDashboardService', () => {
           longitude: -47.2,
           varietyId: null,
           varietyName: null,
+          nonExistent: false,
         },
       ],
       farmBoundary: [
@@ -213,6 +215,7 @@ describe('HomeDashboardService', () => {
           longitude: -47.2,
           varietyId: null,
           varietyName: null,
+          nonExistent: false,
         },
       ],
       farmBoundary: [
@@ -296,4 +299,38 @@ describe('HomeDashboardService', () => {
     expect(mockRpc).toHaveBeenCalledTimes(1);
     expect(mockRpc).toHaveBeenCalledWith('get_open_occurrences');
   });
+
+  it('should map nonExistent plants correctly', async () => {
+    mockRpc.mockResolvedValue({
+      data: {
+        summary: null,
+        plants: [
+          {
+            id: 'p-empty',
+            latitude: -21.5,
+            longitude: -47.5,
+            varietyId: null,
+            varietyName: null,
+            nonExistent: true,
+          },
+        ],
+        farmBoundary: [],
+      },
+      error: null,
+    });
+
+    const result = await service.getHomeDashboardData();
+
+    expect(result.plants).toEqual([
+      {
+        id: 'p-empty',
+        latitude: -21.5,
+        longitude: -47.5,
+        varietyId: null,
+        varietyName: null,
+        nonExistent: true,
+      },
+    ]);
+  });
 });
+

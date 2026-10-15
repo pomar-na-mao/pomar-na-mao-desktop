@@ -18,6 +18,15 @@ import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
   templateUrl: './zone-map-management.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [ZoneMapManagementViewModel],
+  styles: [
+    `
+      :host {
+        display: block;
+        height: 100%;
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class ZoneMapManagement implements OnInit, OnDestroy {
   public viewModel = inject(ZoneMapManagementViewModel);

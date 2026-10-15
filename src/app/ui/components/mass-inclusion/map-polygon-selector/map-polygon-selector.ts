@@ -142,6 +142,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   @Input() backgroundPolygonDashArrays: Array<string | null> | null = null;
   @Input() backgroundPolygonFillOpacity = 0.24;
   @Input() backgroundPolygonFillOpacities: number[] | null = null;
+  @Input() plantColor?: string;
+  @Input() plantFillColor?: string;
   @Output() polygonSelected = new EventEmitter<PolygonSelection>();
   @Output() polygonCleared = new EventEmitter<void>();
   @Output() drawingStarted = new EventEmitter<void>();
@@ -174,6 +176,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private backgroundLabelLayers: L.Marker[] = [];
   private plantCircles: L.CircleMarker[] = [];
   private hasAppliedDataBounds = false;
+  private hasLocatedUser = false;
+  private userLocationMarker?: L.CircleMarker;
 
   public drawingMode = false;
   public polygons: PolygonSelection[] = [];
@@ -203,9 +207,20 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     if (backgroundStyleChanged) {
       this.renderBackgroundPolygon();
     }
+
+    const plantStyleChanged = ['plantColor', 'plantFillColor'].some(
+      (inputName) => changes[inputName],
+    );
+
+    if (plantStyleChanged) {
+      this.renderPlantCircles();
+    }
   }
 
   public ngOnDestroy(): void {
+    if (this.userLocationMarker) {
+      this.userLocationMarker.remove();
+    }
     if (this.map) this.map.remove();
   }
 
@@ -293,13 +308,13 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
         bounds.extend(layer.getBounds());
       });
 
-      if (bounds.isValid()) {
+      if (!this.locateUserOnInit && bounds.isValid()) {
         this.map.fitBounds(bounds, {
           padding: [40, 40],
           maxZoom: 18,
         });
+        this.hasAppliedDataBounds = true;
       }
-      this.hasAppliedDataBounds = true;
       this.focusPolygon();
     }
   }
@@ -330,11 +345,13 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
     this._plants.forEach((plant) => {
       const hasZone = !!(plant.zone_id || plant.zoneId);
+      const strokeColor = this.plantColor ?? (hasZone ? '#047857' : '#059669');
+      const fillColor = this.plantFillColor ?? (hasZone ? '#10b981' : '#34d399');
       const circle = L.circleMarker([plant.latitude, plant.longitude], {
         renderer: this.canvasRenderer,
         radius: 4,
-        color: hasZone ? '#2563eb' : '#34d399',
-        fillColor: hasZone ? '#3b82f6' : '#10b981',
+        color: strokeColor,
+        fillColor: fillColor,
         fillOpacity: 0.85,
         weight: 0.75,
         interactive: false,
@@ -343,7 +360,11 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       this.plantCircles.push(circle);
     });
 
-    if (this._plants.length > 0 && this._backgroundPolygonCoords.length === 0) {
+    if (
+      !this.locateUserOnInit &&
+      this._plants.length > 0 &&
+      this._backgroundPolygonCoords.length === 0
+    ) {
       const bounds = L.latLngBounds(
         this._plants.map(
           (plant) => [plant.latitude, plant.longitude] as [number, number],
@@ -358,7 +379,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private centerOnUserLocationIfNeeded(): void {
-    if (!this.locateUserOnInit || this.hasAppliedDataBounds) {
+    if (!this.locateUserOnInit) {
       return;
     }
 
@@ -374,10 +395,32 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       (position) => {
         if (!this.map) return;
 
+        this.hasLocatedUser = true;
         this.map.setView(
           [position.coords.latitude, position.coords.longitude],
           this.userLocationZoom,
         );
+
+        if (typeof (this.map as unknown as { addLayer?: unknown }).addLayer === 'function') {
+          if (this.userLocationMarker) {
+            this.userLocationMarker.setLatLng([
+              position.coords.latitude,
+              position.coords.longitude,
+            ]);
+          } else {
+            this.userLocationMarker = L.circleMarker(
+              [position.coords.latitude, position.coords.longitude],
+              {
+                radius: 6,
+                color: '#ffffff',
+                fillColor: '#3b82f6',
+                fillOpacity: 1,
+                weight: 2,
+                interactive: false,
+              },
+            ).addTo(this.map);
+          }
+        }
       },
       () => undefined,
       {
@@ -642,6 +685,9 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   public invalidateSize(): void {
     if (this.map) {
       this.map.invalidateSize();
+      if (this.locateUserOnInit && (!this.hasLocatedUser || this.drawnLayers.length === 0)) {
+        this.centerOnCurrentDeviceLocation();
+      }
     }
   }
 }

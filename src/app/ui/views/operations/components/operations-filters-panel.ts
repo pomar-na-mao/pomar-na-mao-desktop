@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
 import { Input } from '../../../../shared/components/input/input';
 import { Select } from '../../../../shared/components/select/select';
+import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
 
 @Component({
   selector: 'app-operations-filters-panel',
@@ -56,9 +56,8 @@ export class OperationsFiltersPanel {
   public operationsViewModel = inject(OperationsViewModel);
 
   public operationOptions = [
-    { label: 'Todas as Opera\u00e7\u00f5es', value: '' },
-    { label: 'Pulveriza\u00e7\u00e3o', value: 'pulverizacao' },
-    { label: 'Inspe\u00e7\u00e3o', value: 'inspecao' },
-    { label: 'Anota\u00e7\u00e3o', value: 'anotacao' }
+    { label: 'Todas as Operações', value: '' },
+    { label: 'Pulverização', value: 'pulverizacao' },
+    { label: 'Inspeção', value: 'inspecao' },
   ];
 }

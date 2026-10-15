@@ -39,6 +39,8 @@ type PlantMapRow = {
   longitude: number | null;
   varietyId: number | null;
   varietyName: string | null;
+  nonExistent?: boolean | null;
+  non_existent?: boolean | null;
 };
 
 type BoundaryPointRow = {
@@ -235,6 +237,7 @@ export class HomeDashboardService {
         longitude: Number(row.longitude),
         varietyId: row.varietyId,
         varietyName: row.varietyName,
+        nonExistent: Boolean(row.nonExistent ?? row.non_existent),
       }));
   }
 
