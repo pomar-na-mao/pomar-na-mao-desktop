@@ -7,6 +7,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginViewModel } from '../../../view-models/authentication/login.view-model';
 import { Input } from '../../../../shared/components/input/input';
+import { ButtonDirective } from '../../../../shared/directives/button/button.directive';
 import {
   createLoginForm,
   emailErrors,
@@ -16,7 +17,7 @@ import {
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, Input],
+  imports: [ReactiveFormsModule, Input, ButtonDirective],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [LoginViewModel],

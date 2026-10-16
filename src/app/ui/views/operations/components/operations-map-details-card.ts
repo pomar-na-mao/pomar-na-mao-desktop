@@ -10,7 +10,7 @@ import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe'
   template: `
     <!-- Case 1: Spraying Operation Details -->
     @if (sprayingDetails()) {
-      <div class="absolute bottom-4 right-4 z-[400] w-88 rounded-2xl bg-white/95 p-6 shadow-2xl ring-1 ring-slate-900/10 dark:bg-slate-900/95 dark:ring-white/10 backdrop-blur-md transition-all duration-300 border border-slate-200/50 dark:border-slate-800/50">
+      <div class="ui-surface-raised fixed inset-x-3 bottom-3 z-[400] max-h-[calc(100vh-5rem)] overflow-y-auto p-4 sm:absolute sm:inset-x-auto sm:bottom-4 sm:right-4 sm:w-[22rem] sm:p-5">
         <!-- Header -->
         <div class="mb-4 flex items-center justify-between border-b border-slate-100 pb-3.5 dark:border-slate-800">
           <div class="flex items-center gap-2.5">
@@ -27,7 +27,8 @@ import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe'
           </div>
           <button
             (click)="close()"
-            class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
+            class="ui-icon-button min-h-9 min-w-9 border-transparent shadow-none"
+            aria-label="Fechar detalhes da operação"
           >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -99,7 +100,7 @@ import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe'
 
     <!-- Case 2: Inspection Operation Details (Plant Clicked) -->
     @if (inspectionDetails() && inspectionPlant()) {
-      <div class="absolute top-4 bottom-4 right-4 z-[400] w-88 rounded-2xl bg-white/95 shadow-2xl ring-1 ring-slate-900/10 dark:bg-slate-900/95 dark:ring-white/10 backdrop-blur-md transition-all duration-300 border border-slate-200/50 dark:border-slate-800/50 flex flex-col overflow-hidden">
+      <div class="ui-surface-raised fixed inset-x-3 bottom-3 z-[400] flex max-h-[calc(100vh-5rem)] flex-col overflow-hidden sm:absolute sm:bottom-4 sm:right-4 sm:top-4 sm:left-auto sm:w-[22rem]">
         <!-- Header -->
         <div class="px-6 pt-6 pb-0 shrink-0">
           <div class="mb-4 flex items-center justify-between border-b border-slate-100 pb-3.5 dark:border-slate-800">
@@ -118,7 +119,8 @@ import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe'
             </div>
             <button
               (click)="close()"
-              class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors"
+              class="ui-icon-button min-h-9 min-w-9 border-transparent shadow-none"
+              aria-label="Fechar detalhes da planta"
             >
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -132,7 +134,7 @@ import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe'
               <button
                 (click)="operationsViewModel.navigateInspection('prev')"
                 [disabled]="operationsViewModel.currentInspectionIndex() === 0"
-                class="rounded-lg p-1 text-slate-500 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-600"
+                class="ui-icon-button min-h-9 min-w-9 disabled:pointer-events-none disabled:opacity-30"
               >
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -152,7 +154,7 @@ import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe'
               <button
                 (click)="operationsViewModel.navigateInspection('next')"
                 [disabled]="operationsViewModel.currentInspectionIndex() === operationsViewModel.inspectionEntriesForPlant().length - 1"
-                class="rounded-lg p-1 text-slate-500 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-600"
+                class="ui-icon-button min-h-9 min-w-9 disabled:pointer-events-none disabled:opacity-30"
               >
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

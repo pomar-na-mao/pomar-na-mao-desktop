@@ -11,7 +11,7 @@ describe('Login', () => {
       isLoading: signal(false),
     },
     messageService: {
-      currentMessage: signal(null),
+      currentMessage: signal<{ type: string; text: string } | null>(null),
       showMessage: signal(false),
     },
     checkLoginFormCredentials: vi.fn(),
@@ -19,6 +19,9 @@ describe('Login', () => {
   };
 
   beforeEach(async () => {
+    loginViewModel.loadingService.isLoading.set(false);
+    loginViewModel.messageService.currentMessage.set(null);
+    loginViewModel.messageService.showMessage.set(false);
     await TestBed.configureTestingModule({
       imports: [Login],
     })
@@ -76,5 +79,29 @@ describe('Login', () => {
     await fixture.whenStable();
 
     expect(submitSpy).not.toHaveBeenCalled();
+  });
+
+  it('keeps the 60/40 desktop split and a single-column mobile form', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelector('.hidden.lg\\:block.lg\\:w-\\[60\\%\\]')).toBeTruthy();
+    expect(root.querySelector('.w-full.lg\\:w-\\[40\\%\\]')).toBeTruthy();
+  });
+
+  it('disables the shared submit button while loading', () => {
+    loginViewModel.loadingService.isLoading.set(true);
+    fixture.detectChanges();
+    const submit = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('button[type="submit"]');
+    expect(submit?.disabled).toBe(true);
+    expect(submit?.classList.contains('ui-btn')).toBe(true);
+    expect(submit?.textContent).toContain('Entrando');
+  });
+
+  it('renders an accessible semantic error alert', () => {
+    loginViewModel.messageService.currentMessage.set({ type: 'error', text: 'Credenciais inválidas' });
+    loginViewModel.messageService.showMessage.set(true);
+    fixture.detectChanges();
+    const alert = (fixture.nativeElement as HTMLElement).querySelector('[role="alert"]');
+    expect(alert?.classList.contains('ui-alert')).toBe(true);
+    expect(alert?.textContent).toContain('Credenciais inválidas');
   });
 });

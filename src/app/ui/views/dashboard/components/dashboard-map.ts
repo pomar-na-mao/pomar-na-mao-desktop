@@ -30,7 +30,8 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
       <!-- Fullscreen button floating over map -->
       <button
         (click)="toggleFullscreen()"
-        class="absolute right-3 top-3 z-[400] rounded-lg bg-white/90 p-2 text-slate-600 shadow-md backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 focus:outline-none dark:bg-slate-800/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+        class="ui-icon-button absolute right-3 top-3 z-[400]"
+        [attr.aria-label]="dashboardViewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
         [title]="
           dashboardViewModel.isMapFullscreen()
             ? 'Sair da tela cheia'

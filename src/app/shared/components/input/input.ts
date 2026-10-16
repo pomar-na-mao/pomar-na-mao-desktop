@@ -16,12 +16,12 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <div class="space-y-1 w-full">
+    <div class="w-full space-y-1">
       @if (label) {
         <div class="flex items-center justify-between">
           <label
             [for]="id"
-            class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            class="ui-field-label"
             >{{ label }}</label
           >
           <ng-content select="[label-extra]"></ng-content>
@@ -30,7 +30,7 @@ import { CommonModule } from '@angular/common';
       <div class="relative">
         @if (icon) {
           <div
-            class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500"
+            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-ink-subtle"
             [innerHTML]="icon"
           ></div>
         }
@@ -42,15 +42,17 @@ import { CommonModule } from '@angular/common';
           (input)="onInput($event)"
           (blur)="onBlur()"
           [disabled]="disabled"
-          class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          [readOnly]="readonly"
+          [attr.aria-invalid]="errorMessage ? 'true' : null"
+          [attr.aria-describedby]="errorMessage ? id + '-error' : null"
+          class="ui-field"
           [ngClass]="{
+            'ui-field--sm': size === 'sm',
+            'ui-field--error': errorMessage,
             'pl-10': icon,
             'pl-3': !icon,
             'pr-10': trailingAction,
-            'pr-3': !trailingAction,
-            'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500':
-              errorMessage,
-            'border-slate-200 dark:border-slate-700': !errorMessage,
+            'pr-3': !trailingAction
           }"
         />
         @if (trailingAction) {
@@ -60,7 +62,7 @@ import { CommonModule } from '@angular/common';
         }
       </div>
       @if (errorMessage) {
-        <p class="mt-1 text-xs text-red-500 animate-in slide-in-from-top-1">
+        <p [id]="id + '-error'" class="ui-field-error" role="alert">
           {{ errorMessage }}
         </p>
       }
@@ -76,6 +78,8 @@ export class Input implements ControlValueAccessor {
   @NgInput() trailingAction = false;
   @NgInput() errors: Record<string, string> = {};
   @NgInput() disabled = false;
+  @NgInput() readonly = false;
+  @NgInput() size: 'sm' | 'md' = 'md';
 
   public ngControl = inject(NgControl, { optional: true, self: true });
 

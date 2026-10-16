@@ -20,7 +20,7 @@ Ambas as rotas utilizam componentes baseados no Leaflet (`MapPolygonSelector`) e
   - Estética visual: design limpo, segmented control moderno com suporte a modo claro e escuro, indicação ativa clara com tema esmeralda.
   - Ícones SVG claros para cada aba.
 - Preservar estado dos formulários e mapas ao alternar abas, garantindo que o mapa redimensione corretamente (`invalidateSize()`).
-- Suportar sincronização de aba via query param opcional (`?aba=gerenciamento` e `?aba=atribuicao`).
+- Suportar sincronização de aba via query param opcional (`?aba=cadastro` e `?aba=atribuicao`).
 
 **Non-Goals:**
 - Modificar o schema de banco de dados ou RPCs do Supabase.

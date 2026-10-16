@@ -2,7 +2,7 @@
 = loginViewModel.messageService.currentMessage();
 
 <div
-  class="min-h-screen flex bg-slate-50 dark:bg-slate-950 transition-colors duration-700 overflow-hidden"
+  class="flex min-h-screen overflow-hidden bg-canvas text-ink transition-colors duration-[180ms]"
 >
   <!-- Left Side: Image/Decorative -->
   <div
@@ -12,20 +12,20 @@
 
   <!-- Right Side: Login Form Container -->
   <div
-    class="w-full lg:w-[40%] flex items-center justify-center p-6 sm:p-12 relative z-10 bg-white dark:bg-slate-900 shadow-[-20px_0_40px_rgba(0,0,0,0.05)] dark:shadow-[-20px_0_40px_rgba(0,0,0,0.3)]"
+    class="relative z-10 flex w-full items-center justify-center bg-surface p-4 shadow-ui-md sm:p-8 lg:w-[40%]"
   >
     <div
-      class="w-full max-w-md animate-in fade-in slide-in-from-right-8 duration-700"
+      class="w-full max-w-sm"
     >
       <!-- Mobile-only Logo/Header -->
-      <div class="flex flex-col items-center mb-10 lg:hidden">
+      <div class="mb-8 flex flex-col items-center lg:hidden">
         <img
           src="assets/images/logo.png"
           alt="Pomar na Mão"
-          class="w-24 h-auto mb-4 drop-shadow-md"
+          class="mb-3 h-auto w-20 drop-shadow-md"
         />
         <h1
-          class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors text-center"
+          class="text-center text-page font-bold tracking-tight text-ink"
         >
           Pomar na mão
         </h1>
@@ -35,11 +35,11 @@
       </div>
 
       <!-- Desktop Header -->
-      <div class="hidden lg:block mb-10">
-        <h2 class="text-3xl font-black text-slate-900 dark:text-white">
+      <div class="mb-8 hidden lg:block">
+        <h2 class="text-page font-bold text-ink">
           Bem-vindo(a)
         </h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">
+        <p class="mt-1 text-body font-medium text-ink-muted">
           Faça login para acessar o sistema.
         </p>
         <div class="h-1 w-12 bg-emerald-500 rounded-full mt-4"></div>
@@ -49,7 +49,7 @@
       <form
         [formGroup]="loginForm"
         (ngSubmit)="loginHandler()"
-        class="flex flex-col gap-6"
+        class="flex flex-col gap-4"
       >
         <app-input
           label="E-mail"
@@ -76,7 +76,7 @@
               passwordVisible() ? 'Ocultar senha' : 'Mostrar senha'
             "
             [title]="passwordVisible() ? 'Ocultar senha' : 'Mostrar senha'"
-            class="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            class="flex h-8 w-8 items-center justify-center rounded-ui-sm text-ink-subtle transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
             @if (passwordVisible()) {
               <svg
@@ -115,7 +115,7 @@
 
         <button
           type="button"
-          class="self-end mt-[-15px] hover:underline text-xs text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 font-medium transition-colors"
+          class="-mt-2 self-end text-label font-medium text-primary transition-colors hover:text-primary-strong hover:underline"
           >Esqueceu a senha?</button
         >
 
@@ -123,7 +123,9 @@
         @if (loginViewModel.messageService.showMessage() && currentMessage?.type
         === 'error') {
         <div
-          class="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 text-sm animate-in fade-in transition-colors"
+          class="ui-alert"
+          data-ui-status="danger"
+          role="alert"
         >
           {{ loginViewModel.messageService.currentMessage()?.text }}
         </div>
@@ -131,9 +133,11 @@
 
         <!-- Submit Button -->
         <button
+          appButton
           type="submit"
           [disabled]="isLoading"
-          class="w-full mt-4 flex justify-center py-4 px-4 border border-transparent rounded-2xl shadow-[0_20px_40px_-15px_rgba(16,185,129,0.3)] text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-widest"
+          [block]="true"
+          class="mt-2 uppercase tracking-widest"
         >
           @if (isLoading) {
           <svg
@@ -162,12 +166,12 @@
 
       <!-- Footer -->
       <div
-        class="mt-4 flex items-center justify-between gap-4 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors"
+        class="mt-4 flex items-center justify-between gap-4 text-label font-medium text-ink-muted"
       >
         <span class="whitespace-nowrap">Não tem uma conta?</span>
         <button
           type="button"
-          class="font-bold hover:underline text-emerald-600 dark:text-emerald-500 transition-all text-[10px] sm:text-xs tracking-widest whitespace-nowrap"
+          class="whitespace-nowrap text-caption font-bold tracking-widest text-primary transition-colors hover:text-primary-strong hover:underline sm:text-label"
         >
           Contate o administrador
         </button>

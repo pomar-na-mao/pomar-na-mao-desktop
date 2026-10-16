@@ -10,20 +10,24 @@ import { OperationsViewModel } from '../../../view-models/operations/operations.
   imports: [CommonModule, FormsModule, Input, Select],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <aside
-      class="flex h-full w-[320px] shrink-0 flex-col border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60"
-    >
-      <div class="sidebar-scroll flex-1 space-y-5 overflow-y-auto px-4 py-4">
-        <h2 class="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          Filtros de busca
-        </h2>
+    <aside class="ui-form-panel responsive-filter-shell h-auto md:h-full">
+      <details open class="flex h-full min-h-0 flex-col">
+        <summary class="ui-form-panel-header responsive-filter-summary">
+          <span>Filtros de busca</span>
+          <span aria-hidden="true">⌄</span>
+        </summary>
+        <div class="ui-form-panel-header hidden md:block">
+          <h2 class="ui-form-panel-title">Filtros de busca</h2>
+          <p class="ui-form-panel-description">Filtre o período e o tipo de operação.</p>
+        </div>
+      <div class="ui-form-panel-body responsive-filter-content sidebar-scroll max-h-[min(24rem,calc(100vh-8rem))] space-y-3.5 overflow-y-auto md:max-h-none">
 
         <!-- Periodo -->
         <section>
           <label
-            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+            class="ui-field-label mb-1"
           >
-            Per\u00edodo
+            Período
           </label>
           <div class="grid grid-cols-2 gap-2">
             <app-input
@@ -49,6 +53,7 @@ import { OperationsViewModel } from '../../../view-models/operations/operations.
           ></app-select>
         </section>
       </div>
+      </details>
     </aside>
   `
 })

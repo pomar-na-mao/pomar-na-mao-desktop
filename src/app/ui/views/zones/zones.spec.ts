@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { Zones } from './zones';
-import { ZoneMapManagement } from '../zone-map-management/zone-map-management';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ZoneAssignment } from '../zone-assignment/zone-assignment';
+import { ZoneMapManagement } from '../zone-map-management/zone-map-management';
+import { Zones } from './zones';
 
 @Component({
   selector: 'app-zone-map-management',
@@ -80,7 +80,7 @@ describe('Zones Component', () => {
     const tabs = compiled.querySelectorAll('[role="tab"]');
     expect(tabs.length).toBe(2);
 
-    const managementTab = compiled.querySelector('#tab-gerenciamento');
+    const managementTab = compiled.querySelector('#tab-cadastro');
     const assignmentTab = compiled.querySelector('#tab-atribuicao');
 
     expect(managementTab).toBeTruthy();
@@ -89,12 +89,12 @@ describe('Zones Component', () => {
     expect(assignmentTab?.getAttribute('aria-selected')).toBe('false');
   });
 
-  it('should default activeTab to "gerenciamento" and display the management panel', () => {
+  it('should default activeTab to "cadastro" and display the management panel', () => {
     fixture.detectChanges();
-    expect(component.activeTab()).toBe('gerenciamento');
+    expect(component.activeTab()).toBe('cadastro');
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const managementPanel = compiled.querySelector('#panel-gerenciamento');
+    const managementPanel = compiled.querySelector('#panel-cadastro');
     const assignmentPanel = compiled.querySelector('#panel-atribuicao');
 
     expect(managementPanel?.classList.contains('hidden')).toBe(false);
@@ -112,7 +112,7 @@ describe('Zones Component', () => {
     expect(component.activeTab()).toBe('atribuicao');
     expect(assignmentTab?.getAttribute('aria-selected')).toBe('true');
 
-    const managementPanel = compiled.querySelector('#panel-gerenciamento');
+    const managementPanel = compiled.querySelector('#panel-cadastro');
     const assignmentPanel = compiled.querySelector('#panel-atribuicao');
 
     expect(managementPanel?.classList.contains('hidden')).toBe(true);
@@ -131,8 +131,8 @@ describe('Zones Component', () => {
     component.setActiveTab('atribuicao');
     expect(triggerSpy).toHaveBeenCalledWith('atribuicao');
 
-    component.setActiveTab('gerenciamento');
-    expect(triggerSpy).toHaveBeenCalledWith('gerenciamento');
+    component.setActiveTab('cadastro');
+    expect(triggerSpy).toHaveBeenCalledWith('cadastro');
   });
 
   it('should initialize with "atribuicao" tab when route query param contains aba=atribuicao', async () => {

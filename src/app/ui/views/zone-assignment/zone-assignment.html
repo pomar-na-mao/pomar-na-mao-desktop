@@ -3,28 +3,22 @@
 <div
   [class]="
     viewModel.isMapFullscreen()
-      ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex h-[calc(100vh-60px)] w-full flex-col overflow-hidden bg-white dark:bg-slate-950 md:flex-row'
-      : 'flex h-full w-full flex-col overflow-hidden md:flex-row'
+      ? 'fixed top-14 inset-x-0 bottom-0 z-[100] flex h-[calc(100vh-56px)] w-full flex-col overflow-hidden bg-canvas md:flex-row'
+      : 'flex h-full w-full flex-col overflow-hidden bg-canvas md:flex-row'
   "
 >
   @if (viewModel.messageService.showMessage() && currentMessage) {
     <div
-      class="fixed right-6 top-20 z-[1200] max-w-md rounded-lg border px-4 py-3 text-sm font-semibold shadow-xl backdrop-blur-md transition-colors"
-      [ngClass]="{
-        'border-emerald-200 bg-emerald-50/95 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300': currentMessage.type === 'success',
-        'border-red-200 bg-red-50/95 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300': currentMessage.type === 'error',
-        'border-amber-200 bg-amber-50/95 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300': currentMessage.type === 'warn',
-        'border-blue-200 bg-blue-50/95 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-300': currentMessage.type === 'info'
-      }"
+      class="ui-alert fixed left-3 right-3 top-[4.25rem] z-[1220] max-w-md shadow-ui-md backdrop-blur-md sm:left-auto sm:right-4"
+      [attr.data-ui-status]="currentMessage.type === 'warn' ? 'warning' : currentMessage.type === 'error' ? 'danger' : currentMessage.type === 'info' ? 'info' : null"
+      role="status"
     >
       {{ currentMessage.text }}
     </div>
   }
 
   <!-- Left Sidebar (Form) -->
-  <aside
-    class="flex max-h-[50vh] md:max-h-none w-full md:w-[380px] lg:w-[400px] shrink-0 flex-col border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60 md:h-full"
-  >
+  <aside class="ui-form-panel ui-form-panel--rail">
     <app-zone-assignment-form class="flex h-full min-h-0 flex-1 flex-col" />
   </aside>
 
@@ -52,7 +46,7 @@
     <button
       type="button"
       (click)="toggleFullscreen()"
-      class="absolute right-3 top-14 z-[400] min-h-10 min-w-10 md:min-h-11 md:min-w-11 rounded-lg bg-white/90 p-2 text-slate-600 shadow-md backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 dark:bg-slate-800/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white flex items-center justify-center"
+      class="ui-icon-button absolute right-3 top-14 z-[400]"
       [title]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
       [attr.aria-label]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
     >

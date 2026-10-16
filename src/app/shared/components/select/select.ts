@@ -1,20 +1,20 @@
+import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
-  Input as NgInput,
-  Output,
+  ElementRef,
   EventEmitter,
   forwardRef,
-  ChangeDetectionStrategy,
-  ElementRef,
   HostListener,
   inject,
+  Input as NgInput,
+  Output,
 } from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 export interface SelectOption {
   label: string;
@@ -24,40 +24,55 @@ export interface SelectOption {
 
 @Component({
   selector: 'app-select',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="space-y-1 w-full relative">
+    <div class="relative w-full space-y-1">
       @if (label) {
         <label
           [for]="id"
-          class="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors"
+          class="ui-field-label"
           >{{ label }}</label
         >
       }
 
       @if (!hasColors) {
-        <select
-          [id]="id"
-          [disabled]="disabled"
-          [multiple]="multiple"
-          (change)="onInput($event)"
-          (blur)="onBlur()"
-          [class]="
-            multiple
-              ? 'block w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed h-32'
-              : 'block w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed'
-          "
-        >
-          @if (placeholder && !multiple) {
-            <option value="" disabled>{{ placeholder }}</option>
+        <div class="relative w-full">
+          <select
+            [id]="id"
+            [disabled]="disabled"
+            [multiple]="multiple"
+            (change)="onInput($event)"
+            (blur)="onBlur()"
+            class="ui-field ui-select-native"
+            [class.ui-field--sm]="size === 'sm'"
+            [class.h-32]="multiple"
+          >
+            @if (placeholder && !multiple) {
+              <option value="" disabled>{{ placeholder }}</option>
+            }
+            @for (option of options; track option.value) {
+              <option [value]="option.value" [selected]="isSelected(option.value)">
+                {{ option.label }}
+              </option>
+            }
+          </select>
+          @if (!multiple) {
+            <svg
+              class="ui-select-chevron"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
           }
-          @for (option of options; track option.value) {
-            <option [value]="option.value" [selected]="isSelected(option.value)">
-              {{ option.label }}
-            </option>
-          }
-        </select>
+        </div>
       } @else {
         <div class="relative w-full">
           <button
@@ -66,8 +81,12 @@ export interface SelectOption {
             [disabled]="disabled"
             (click)="toggleOpen()"
             (keydown.escape)="isOpen = false"
-            class="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-left text-sm text-slate-700 transition-all outline-none hover:bg-slate-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700/60"
+            (blur)="onBlur()"
+            class="ui-field ui-select-trigger"
+            [class.ui-field--sm]="size === 'sm'"
             [attr.aria-expanded]="isOpen"
+            aria-haspopup="listbox"
+            [attr.aria-controls]="id + '-listbox'"
           >
             <div class="flex items-center gap-2 truncate">
               @if (selectedOption?.color) {
@@ -79,11 +98,12 @@ export interface SelectOption {
               <span class="truncate">{{ selectedOption?.label || placeholder || 'Selecione...' }}</span>
             </div>
             <svg
-              class="h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200"
+              class="ui-select-chevron ui-select-chevron--inline transition-transform duration-[180ms]"
               [class.rotate-180]="isOpen"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 stroke-linecap="round"
@@ -96,7 +116,8 @@ export interface SelectOption {
 
           @if (isOpen) {
             <ul
-              class="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800"
+              [id]="id + '-listbox'"
+              class="ui-select-menu"
               role="listbox"
             >
               @for (option of options; track option.value) {
@@ -104,9 +125,10 @@ export interface SelectOption {
                   role="option"
                   [attr.aria-selected]="isSelected(option.value)"
                   (click)="selectOption(option)"
-                  class="flex cursor-pointer items-center justify-between px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-700/60"
-                  [class.bg-slate-100]="isSelected(option.value)"
-                  [class.dark:bg-slate-700/60]="isSelected(option.value)"
+                  (keydown.enter)="selectOption(option)"
+                  (keydown.space)="selectOption(option); $event.preventDefault()"
+                  class="ui-select-option"
+                  tabindex="0"
                 >
                   <div class="flex items-center gap-2 truncate">
                     @if (option.color) {
@@ -167,12 +189,14 @@ export class Select implements ControlValueAccessor {
   @NgInput() placeholder = '';
   @NgInput() disabled = false;
   @NgInput() multiple = false;
+  @NgInput() size: 'sm' | 'md' = 'md';
 
   @Output() valueChange = new EventEmitter<string | string[]>();
 
   @NgInput() set value(val: string | number | string[] | null) {
     this._value = val !== null ? val : '';
   }
+  
   get value(): string | number | string[] {
     return this._value;
   }

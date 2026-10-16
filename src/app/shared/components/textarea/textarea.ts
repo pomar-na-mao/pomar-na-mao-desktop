@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
         <div class="flex items-center justify-between">
           <label
             [for]="id"
-            class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            class="ui-field-label"
             >{{ label }}</label
           >
           <ng-content select="[label-extra]"></ng-content>
@@ -37,16 +37,18 @@ import { CommonModule } from '@angular/common';
           (input)="onInput($event)"
           (blur)="onBlur()"
           [disabled]="disabled"
-          class="block w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+          [readOnly]="readonly"
+          [attr.aria-invalid]="errorMessage ? 'true' : null"
+          [attr.aria-describedby]="errorMessage ? id + '-error' : null"
+          class="ui-field resize-none"
           [ngClass]="{
-            'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500':
-              errorMessage,
-            'border-slate-200 dark:border-slate-700': !errorMessage,
+            'ui-field--sm': size === 'sm',
+            'ui-field--error': errorMessage
           }"
         ></textarea>
       </div>
       @if (errorMessage) {
-        <p class="mt-1 text-xs text-red-500 animate-in slide-in-from-top-1">
+        <p [id]="id + '-error'" class="ui-field-error" role="alert">
           {{ errorMessage }}
         </p>
       }
@@ -60,6 +62,8 @@ export class Textarea implements ControlValueAccessor {
   @NgInput() rows = 3;
   @NgInput() errors: Record<string, string> = {};
   @NgInput() disabled = false;
+  @NgInput() readonly = false;
+  @NgInput() size: 'sm' | 'md' = 'md';
 
   public ngControl = inject(NgControl, { optional: true, self: true });
 

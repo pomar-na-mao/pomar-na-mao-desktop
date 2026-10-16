@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Input } from '../../../shared/components/input/input';
+import { ButtonDirective } from '../../../shared/directives/button/button.directive';
 
 export interface User {
   id: number;
@@ -13,7 +14,7 @@ export interface User {
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, Input],
+  imports: [CommonModule, Input, ButtonDirective],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './users.html',
 })
@@ -66,29 +67,29 @@ export class Users {
     },
   ];
 
-  getRoleClass(role: string) {
+  getRoleStatus(role: string) {
     switch (role) {
       case 'Administrador':
-        return 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-500/10';
+        return 'primary';
       case 'Editor':
-        return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-500/10';
+        return 'info';
       case 'Visualizador':
-        return 'text-slate-600 bg-slate-50 dark:text-slate-300 dark:bg-slate-500/10';
+        return 'neutral';
       default:
-        return 'text-slate-600 bg-slate-50 dark:text-slate-300 dark:bg-slate-500/10';
+        return 'neutral';
     }
   }
 
-  getStatusClass(status: string) {
+  getStatusTone(status: string) {
     switch (status) {
       case 'Ativo':
-        return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400';
+        return 'primary';
       case 'Inativo':
-        return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
+        return 'neutral';
       case 'Pendente':
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400';
+        return 'warning';
       default:
-        return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
+        return 'neutral';
     }
   }
 }

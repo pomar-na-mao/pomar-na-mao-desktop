@@ -1,18 +1,21 @@
+import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
-  Output,
+  ElementRef,
   EventEmitter,
-  inject,
-  signal,
+  Input,
   OnInit,
+  Output,
+  ViewChild,
   computed,
   effect,
-  ChangeDetectionStrategy,
+  inject,
+  signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { AuthenticationRepository } from '../../../../../data/repositories/authentication/authentication-repository';
 import { UsersRepository } from '../../../../../data/repositories/users/users-repository';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -20,17 +23,20 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <header
-      class="fixed top-0 left-0 right-0 h-[60px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm z-[1200] flex items-center justify-between px-4 transition-colors"
+      class="fixed inset-x-0 top-0 z-[1210] flex h-14 items-center justify-between bg-surface/95 px-3 backdrop-blur-md transition-colors sm:px-4"
     >
       <div class="flex items-center gap-4">
         <button
+          #navigationToggle
           (click)="sidebarToggled.emit()"
-          class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none"
-          aria-label="Toggle Sidebar"
+          class="ui-icon-button border-transparent shadow-none"
+          aria-label="Alternar navegação"
+          aria-controls="app-navigation"
+          [attr.aria-expanded]="isNavigationOpen"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-slate-600 dark:text-slate-300"
+            class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -47,10 +53,10 @@ import { Router } from '@angular/router';
           <img
             src="assets/images/logo.png"
             alt="Logo"
-            class="w-10 h-10 object-contain drop-shadow-sm"
+            class="h-9 w-9 object-contain drop-shadow-sm"
           />
           <span
-            class="font-bold text-xl tracking-tight hidden sm:block dark:text-white"
+            class="hidden text-section font-bold tracking-tight text-ink sm:block"
             >Pomar na mão</span
           >
         </div>
@@ -60,14 +66,14 @@ import { Router } from '@angular/router';
         <!-- Theme Toggle -->
         <button
           (click)="toggleTheme()"
-          class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none"
-          aria-label="Toggle Theme"
+          class="ui-icon-button border-transparent shadow-none"
+          [attr.aria-label]="isDarkMode() ? 'Ativar tema claro' : 'Ativar tema escuro'"
         >
           @if (isDarkMode()) {
             <!-- Sun Icon -->
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-slate-600 dark:text-slate-300"
+              class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -83,7 +89,7 @@ import { Router } from '@angular/router';
             <!-- Moon Icon -->
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-slate-600 dark:text-slate-300"
+              class="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -123,19 +129,21 @@ import { Router } from '@angular/router';
         <div class="relative">
           <button
             (click)="toggleUserDropdown()"
-            class="flex items-center gap-2 p-1 pl-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus:outline-none"
+            class="flex min-h-10 items-center gap-2 rounded-ui-md px-1.5 transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            aria-label="Abrir menu do usuário"
+            [attr.aria-expanded]="isUserDropdownOpen()"
           >
             @if (usersRepository.currentUser()) {
               <div class="hidden text-right lg:block">
                 <p
-                  class="text-xs font-semibold text-slate-900 dark:text-white leading-tight"
+                  class="text-label font-semibold leading-tight text-ink"
                 >
                   Olá {{ ''
                   }}{{
                     usersRepository.currentUser()?.full_name!.split(' ')[0]
                   }}
                 </p>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400">
+                <p class="text-caption text-ink-subtle">
                   Bem-vindo!
                 </p>
               </div>
@@ -164,11 +172,11 @@ import { Router } from '@angular/router';
           @if (isUserDropdownOpen()) {
             <div
               (mouseleave)="isUserDropdownOpen.set(false)"
-              class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+              class="ui-surface-raised absolute right-0 z-50 mt-2 w-48 py-1"
             >
               <a
                 href="/configuracoes"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                class="flex min-h-10 items-center gap-2 px-3 text-body text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -186,10 +194,10 @@ import { Router } from '@angular/router';
                 </svg>
                 Meu Perfil
               </a>
-              <div class="h-px bg-slate-100 dark:bg-slate-700 my-1"></div>
+              <div class="my-1 h-px bg-border"></div>
               <button
                 (click)="logout()"
-                class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-left"
+                class="flex min-h-10 w-full items-center gap-2 px-3 text-left text-body font-medium text-danger transition-colors hover:bg-[color-mix(in_srgb,var(--ui-danger)_10%,transparent)]"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -215,6 +223,8 @@ import { Router } from '@angular/router';
   `,
 })
 export class Header implements OnInit {
+  @ViewChild('navigationToggle') navigationToggle?: ElementRef<HTMLButtonElement>;
+  @Input() isNavigationOpen = false;
   @Output() sidebarToggled = new EventEmitter<void>();
 
   private authenticationRepository = inject(AuthenticationRepository);
@@ -271,6 +281,10 @@ export class Header implements OnInit {
 
   public toggleUserDropdown() {
     this.isUserDropdownOpen.update((v) => !v);
+  }
+
+  public focusNavigationToggle(): void {
+    this.navigationToggle?.nativeElement.focus();
   }
 
   public onAvatarError() {

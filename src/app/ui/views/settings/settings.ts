@@ -2,10 +2,11 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Input } from '../../../shared/components/input/input';
 import { UsersRepository } from '../../../data/repositories/users/users-repository';
+import { ButtonDirective } from '../../../shared/directives/button/button.directive';
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, Input],
+  imports: [CommonModule, Input, ButtonDirective],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './settings.html',
 })

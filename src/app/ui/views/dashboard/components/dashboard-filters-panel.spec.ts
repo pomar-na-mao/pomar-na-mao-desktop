@@ -40,6 +40,23 @@ describe('DashboardFiltersPanel', () => {
     const component = fixture.componentInstance;
     const compiled = fixture.nativeElement as HTMLElement;
 
+    expect(compiled.querySelector('.responsive-filter-shell')).toBeTruthy();
+    expect(compiled.querySelector('.ui-form-panel')).toBeTruthy();
+    expect(compiled.querySelector('.ui-form-panel-header')).toBeTruthy();
+    expect(compiled.querySelector('.ui-form-panel-body')).toBeTruthy();
+    expect(compiled.textContent).toContain('Refine os dados exibidos no mapa.');
+    expect(compiled.querySelector('summary.responsive-filter-summary')).toBeTruthy();
+    expect(compiled.querySelectorAll('app-input input[type="date"]')).toHaveLength(2);
+    expect(compiled.querySelectorAll('app-select')).toHaveLength(4);
+
+    const statusTrigger = compiled.querySelector<HTMLButtonElement>('button[aria-haspopup="listbox"]');
+    statusTrigger?.click();
+    fixture.detectChanges();
+    const filterContent = compiled.querySelector<HTMLElement>('.responsive-filter-content');
+    expect(statusTrigger?.getAttribute('aria-expanded')).toBe('true');
+    expect(compiled.querySelectorAll('.ui-select-menu [role="option"]')).toHaveLength(3);
+    expect(getComputedStyle(filterContent!).overflowY).toBe('visible');
+
     // Verify filter fields
     expect(compiled.textContent).toContain('Filtros de busca');
     expect(compiled.textContent).toContain('Data de plantio');

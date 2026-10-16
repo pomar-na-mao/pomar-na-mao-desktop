@@ -1,7 +1,7 @@
-<div class="flex flex-col w-full h-full bg-white dark:bg-slate-900 relative overflow-hidden transition-colors">
+<div class="relative flex h-full w-full flex-col overflow-hidden bg-surface text-ink transition-colors">
   <!-- Toolbar -->
   <div
-    class="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 shrink-0 transition-colors"
+    class="z-10 flex shrink-0 items-center justify-between border-b border-border bg-surface/90 px-3 py-1.5 backdrop-blur-sm transition-colors"
   >
     <div class="flex items-center gap-3">
       <span
@@ -10,25 +10,13 @@
         Área de Seleção
       </span>
       <div
-        class="flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-300"
-        [class.bg-blue-50]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.dark:bg-blue-500/10]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.text-blue-700]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.dark:text-blue-400]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.border]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.border-blue-100]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.dark:border-blue-500/20]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.bg-slate-100]="!drawingMode && !hasPolygon"
-        [class.dark:bg-slate-800]="!drawingMode && !hasPolygon"
-        [class.text-slate-500]="!drawingMode && !hasPolygon"
-        [class.dark:text-slate-400]="!drawingMode && !hasPolygon"
+        class="ui-badge gap-2 rounded-full"
+        [attr.data-ui-status]="drawingMode || hasPolygon ? 'primary' : null"
       >
         <span
-          class="w-2 h-2 rounded-full transition-colors"
-          [class.bg-blue-500]="drawingMode || (hasPolygon && !drawingMode)"
+          class="ui-status-dot transition-colors"
+          [attr.data-ui-status]="drawingMode || hasPolygon ? 'primary' : null"
           [class.animate-pulse-slow]="drawingMode"
-          [class.bg-slate-300]="!drawingMode && !hasPolygon"
-          [class.dark:bg-slate-600]="!drawingMode && !hasPolygon"
         ></span>
         {{ drawingMode ? 'Desenhando (' + pointsCount + ' pontos)' : hasPolygon
         ? 'Área Selecionada' : 'Aguardando' }}
@@ -38,9 +26,10 @@
     <div class="flex items-center gap-2">
       <!-- Undo -->
       <button
-        class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        class="ui-icon-button"
         [disabled]="!drawingMode || pointsCount === 0"
         (click)="undoLastPoint()"
+        aria-label="Desfazer último ponto"
         title="Desfazer último ponto"
       >
         <svg
@@ -58,9 +47,12 @@
 
       <!-- Finish -->
       <button
-        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-semibold"
+        class="ui-btn"
+        data-ui-variant="primary"
+        data-ui-size="sm"
         [disabled]="!drawingMode || pointsCount < 3"
         (click)="completePolygon()"
+        aria-label="Finalizar área"
         title="Finalizar área"
       >
         <svg
@@ -78,17 +70,12 @@
 
       <!-- Toggle Draw -->
       <button
-        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
-        [class.border-blue-500]="!drawingMode"
-        [class.bg-blue-600]="!drawingMode"
-        [class.text-white]="!drawingMode"
-        [class.hover:bg-blue-700]="!drawingMode"
-        [class.border-red-200]="drawingMode"
-        [class.bg-red-50]="drawingMode"
-        [class.text-red-700]="drawingMode"
-        [class.hover:bg-red-100]="drawingMode"
+        class="ui-btn"
+        [attr.data-ui-variant]="drawingMode ? 'danger' : 'info'"
+        data-ui-size="sm"
         [disabled]="!canDraw"
         (click)="toggleDrawingMode()"
+        [attr.aria-label]="drawingMode ? 'Cancelar desenho' : 'Desenhar nova área'"
         [title]="!canDraw ? 'Selecione uma zona com plantas primeiro' : (drawingMode ? 'Cancelar desenho' : 'Desenhar nova área')"
       >
         <svg
@@ -106,9 +93,10 @@
 
       <!-- Clear -->
       <button
-        class="p-1.5 rounded-lg border border-red-200 dark:border-red-500/20 bg-white dark:bg-slate-800 text-red-400 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        class="ui-icon-button text-danger"
         [disabled]="!hasPolygon && !drawingMode"
         (click)="clearAll()"
+        aria-label="Limpar desenho"
         title="Limpar tudo"
       >
         <svg
@@ -158,7 +146,7 @@
     class="absolute bottom-4 right-4 flex flex-col gap-2 max-w-[300px] z-[1000]"
   >
     <div
-      class="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-xl transition-colors"
+      class="ui-surface-raised p-3"
     >
       <div class="flex items-center justify-between mb-2">
         <span class="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors">
@@ -177,9 +165,10 @@
         </span>
         <div class="flex gap-1">
           <button
-            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
+            class="ui-icon-button min-h-9 min-w-9"
             (click)="showCoords = !showCoords"
             title="Ver coordenadas"
+            aria-label="Alternar lista de coordenadas"
           >
             <svg
               width="12"
@@ -194,11 +183,12 @@
             </svg>
           </button>
           <button
-            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
+            class="ui-icon-button min-h-9 min-w-9"
             [class.text-emerald-600]="copiedFeedback"
             [class.dark:text-emerald-400]="copiedFeedback"
             (click)="copyCoordinates()"
             title="Copiar JSON"
+            aria-label="Copiar coordenadas em JSON"
           >
             <svg
               width="12"
