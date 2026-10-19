@@ -5,12 +5,14 @@ import { ToastModule } from 'primeng/toast';
 import { LayoutService } from './data/services/shared/layout';
 import { Loading } from './shared/components/loading/loading';
 import { LoadingService } from './shared/services/loading.service';
+import { AppToast } from './shared/components/toast/toast';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Loading, ToastModule],
+  imports: [RouterOutlet, Loading, ToastModule, AppToast],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
+    <app-toast />
     <p-toast class="hidden md:block" position="top-right" />
     <p-toast class="md:hidden block" position="top-center" />
     <router-outlet />
