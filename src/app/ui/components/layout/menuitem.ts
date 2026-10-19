@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostBinding,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
@@ -99,6 +107,8 @@ export class AppMenuitem implements OnInit, OnDestroy {
 
   private layoutService = inject(LayoutService);
 
+  private changeDetectorRef = inject(ChangeDetectorRef);
+
   @Input() public item!: MenuItem;
 
   @Input() public index!: number;
@@ -119,47 +129,58 @@ export class AppMenuitem implements OnInit, OnDestroy {
     this.menuSourceSubscription = this.layoutService.menuSource$.subscribe(value => {
       Promise.resolve(null).then(() => {
         if (value.routeEvent) {
-          this.active = value.key === this.key || value.key.startsWith(this.key + '-') ? true : false;
-        } else {
-          if (value.key !== this.key && !value.key.startsWith(this.key + '-')) {
-            this.active = false;
-          }
+          this.setActive(value.key === this.key || value.key.startsWith(this.key + '-'));
+        } else if (value.key !== this.key && !value.key.startsWith(this.key + '-')) {
+          this.setActive(false);
         }
       });
     });
 
     this.menuResetSubscription = this.layoutService.resetSource$.subscribe(() => {
-      this.active = false;
+      this.setActive(false);
     });
 
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-      if (this.item.routerLink) {
-        this.updateActiveStateFromRoute();
-      }
+      this.updateActiveStateFromRoute();
     });
   }
 
   public ngOnInit(): void {
-    this.active = this.checkRouterHasChildren() ? true : false;
-
     this.key = this.parentKey ? this.parentKey + '-' + this.index : String(this.index);
 
-    if (this.item.routerLink) {
-      this.updateActiveStateFromRoute();
-    }
+    this.active = this.hasActiveRoute(this.item);
   }
 
   public updateActiveStateFromRoute(): void {
-    const activeRoute = this.router.isActive(this.item.routerLink[0], {
-      paths: 'exact',
-      queryParams: 'ignored',
-      matrixParams: 'ignored',
-      fragment: 'ignored',
-    });
+    this.setActive(this.hasActiveRoute(this.item));
+  }
 
-    if (activeRoute) {
-      this.layoutService.onMenuStateChange({ key: this.key, routeEvent: true });
+  private hasActiveRoute(item: MenuItem): boolean {
+    if (item.routerLink) {
+      const url = Array.isArray(item.routerLink) ? item.routerLink[0] : item.routerLink;
+
+      if (
+        this.router.isActive(url, {
+          paths: 'exact',
+          queryParams: 'ignored',
+          matrixParams: 'ignored',
+          fragment: 'ignored',
+        })
+      ) {
+        return true;
+      }
     }
+
+    return item.items?.some(child => this.hasActiveRoute(child)) ?? false;
+  }
+
+  private setActive(active: boolean): void {
+    if (this.active === active) {
+      return;
+    }
+
+    this.active = active;
+    this.changeDetectorRef.markForCheck();
   }
 
   public itemClick(event: Event): void {
@@ -199,9 +220,5 @@ export class AppMenuitem implements OnInit, OnDestroy {
     if (this.menuResetSubscription) {
       this.menuResetSubscription.unsubscribe();
     }
-  }
-
-  public checkRouterHasChildren(): boolean {
-    return this.router.url.split('/').length >= 4 ? true : false;
   }
 }
