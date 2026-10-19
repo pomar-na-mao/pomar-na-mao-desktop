@@ -44,13 +44,13 @@ describe('visual primitives fixture', () => {
 
     for (const selector of [
       '.ui-surface', '.ui-card', '.ui-alert', '.ui-menu', '.ui-menu-item',
-      '.ui-tab[aria-selected="true"]', '.ui-table-row', '.ui-icon-button', '.ui-btn',
+      '.ui-tab[aria-selected="true"]', '.ui-table-row', '.ui-icon-button', '.p-button',
       '.ui-form-panel', '.ui-form-panel-header', '.ui-form-panel-body', '.ui-form-panel-footer',
     ]) {
       expect(root.querySelector(selector), selector).toBeTruthy();
     }
     expect(root.querySelectorAll('[class*="transition-all"]')).toHaveLength(0);
-    expect(root.querySelector<HTMLButtonElement>('.ui-btn:disabled')?.disabled).toBe(true);
+    expect(root.querySelector<HTMLButtonElement>('.p-button:disabled')?.disabled).toBe(true);
     document.documentElement.classList.remove('dark');
   });
 });

@@ -74,7 +74,7 @@ describe('OperationsMapDetailsCard', () => {
     const card = compiled.querySelector('.ui-surface-raised');
     expect(card?.className).toContain('max-h-[calc(100vh-5rem)]');
     expect(card?.className).toContain('overflow-y-auto');
-    expect(compiled.querySelector('button[aria-label="Fechar detalhes da operação"]')).toBeTruthy();
+    expect(compiled.querySelector('button[aria-label="Fechar detalhes da operação"], [aria-label="Fechar detalhes da operação"]')).toBeTruthy();
   });
 
   it('should close the card', () => {

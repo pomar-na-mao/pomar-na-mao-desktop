@@ -1,92 +1,119 @@
-import { TestBed } from '@angular/core/testing';
-import { describe, expect, it } from 'vitest';
-import { Select } from './select';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Select, type SelectOption } from './select';
 
 describe('Select Component', () => {
-  it('should render native select when options do not have colors', () => {
-    const fixture = TestBed.createComponent(Select);
-    const component = fixture.componentInstance;
-    component.options = [
-      { label: 'Opção 1', value: '1' },
-      { label: 'Opção 2', value: '2' },
-    ];
-    component.size = 'sm';
+  let fixture: ComponentFixture<Select>;
+  let component: Select;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Select],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Select);
+    component = fixture.componentInstance;
     fixture.detectChanges();
+  });
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    const select = compiled.querySelector('select');
-    const customButton = compiled.querySelector('button');
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
+  });
 
-    expect(select).toBeTruthy();
-    expect(customButton).toBeFalsy();
+  it('should detect hasColors based on options', () => {
+    component.options = [
+      { label: 'Option 1', value: '1' },
+      { label: 'Option 2', value: '2' },
+    ];
     expect(component.hasColors).toBe(false);
-    expect(select?.classList.contains('ui-field')).toBe(true);
-    expect(select?.classList.contains('ui-field--sm')).toBe(true);
-    expect(compiled.querySelector('svg.ui-select-chevron[aria-hidden="true"]')).toBeTruthy();
+
+    component.options = [
+      { label: 'Option 1', value: '1', color: '#10b981' },
+      { label: 'Option 2', value: '2' },
+    ];
+    expect(component.hasColors).toBe(true);
   });
 
-  it('should render custom dropdown with color badge when options have colors', () => {
-    const fixture = TestBed.createComponent(Select);
-    const component = fixture.componentInstance;
-    component.options = [
-      { label: 'Todos', value: '' },
-      { label: 'Planta viva', value: 'alive', color: '#10b981' },
-      { label: 'Ponto vazio', value: 'empty', color: '#ef4444' },
-    ];
-    component.value = 'alive';
+  it('should compute currentSingleValue correctly', () => {
+    component.value = 'single';
+    expect(component.currentSingleValue).toBe('single');
+
+    component.value = ['item1', 'item2'];
+    expect(component.currentSingleValue).toBe('item1');
+
+    component.value = null;
+    expect(component.currentSingleValue).toBe('');
+  });
+
+  it('should compute currentMultiValue correctly', () => {
+    component.value = ['val1', 'val2'];
+    expect(component.currentMultiValue).toEqual(['val1', 'val2']);
+
+    component.value = 'single-val';
+    expect(component.currentMultiValue).toEqual(['single-val']);
+
+    component.value = null;
+    expect(component.currentMultiValue).toEqual([]);
+  });
+
+  it('should handle single selection changes through onPrimeChange', () => {
+    const onChangeSpy = vi.fn();
+    const emitSpy = vi.spyOn(component.valueChange, 'emit');
+    component.registerOnChange(onChangeSpy);
+
+    component.onPrimeChange('selected-value');
+
+    expect(component.value).toBe('selected-value');
+    expect(onChangeSpy).toHaveBeenCalledWith('selected-value');
+    expect(emitSpy).toHaveBeenCalledWith('selected-value');
+  });
+
+  it('should handle multi selection changes through onPrimeMultiChange', () => {
+    const onChangeSpy = vi.fn();
+    const emitSpy = vi.spyOn(component.valueChange, 'emit');
+    component.registerOnChange(onChangeSpy);
+
+    component.onPrimeMultiChange(['val1', 'val2']);
+
+    expect(component.value).toEqual(['val1', 'val2']);
+    expect(onChangeSpy).toHaveBeenCalledWith(['val1', 'val2']);
+    expect(emitSpy).toHaveBeenCalledWith(['val1', 'val2']);
+  });
+
+  it('should trigger onTouched when onBlur is called', () => {
+    const onTouchedSpy = vi.fn();
+    component.registerOnTouched(onTouchedSpy);
+
+    component.onBlur();
+
+    expect(onTouchedSpy).toHaveBeenCalledOnce();
+  });
+
+  it('should implement ControlValueAccessor writeValue', () => {
+    component.writeValue('test-value');
+    expect(component.value).toBe('test-value');
+
+    component.writeValue(null);
+    expect(component.value).toBe('');
+  });
+
+  it('should implement ControlValueAccessor setDisabledState', () => {
+    expect(component.disabled).toBe(false);
+    component.setDisabledState(true);
+    expect(component.disabled).toBe(true);
+    component.setDisabledState(false);
+    expect(component.disabled).toBe(false);
+  });
+
+  it('should render label when provided', () => {
+    component.label = 'Test Label';
+    component.id = 'custom-id';
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const nativeSelect = compiled.querySelector('select');
-    const customButton = compiled.querySelector('button');
-
-    expect(nativeSelect).toBeFalsy();
-    expect(customButton).toBeTruthy();
-    expect(component.hasColors).toBe(true);
-    expect(compiled.textContent).toContain('Planta viva');
-    expect(customButton?.querySelector('svg.ui-select-chevron[aria-hidden="true"]')).toBeTruthy();
-
-    // Click to open dropdown
-    customButton?.click();
-    fixture.detectChanges();
-
-    expect(component.isOpen).toBe(true);
-    const options = compiled.querySelectorAll('li[role="option"]');
-    expect(options.length).toBe(3);
-    expect(options[0].getAttribute('tabindex')).toBe('0');
-    expect(options[1].getAttribute('aria-selected')).toBe('true');
-
-    // Select "Ponto vazio"
-    (options[2] as HTMLElement).click();
-    fixture.detectChanges();
-
-    expect(component.value).toBe('empty');
-    expect(component.isOpen).toBe(false);
-    expect(compiled.textContent).toContain('Ponto vazio');
-  });
-
-  it('preserves multiple native selection values and touched state', () => {
-    const fixture = TestBed.createComponent(Select);
-    const component = fixture.componentInstance;
-    const onChange = vi.fn();
-    const onTouched = vi.fn();
-    component.multiple = true;
-    component.options = [
-      { label: 'A', value: 'a' },
-      { label: 'B', value: 'b' },
-    ];
-    component.registerOnChange(onChange);
-    component.registerOnTouched(onTouched);
-    fixture.detectChanges();
-    const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
-    expect(fixture.nativeElement.querySelector('.ui-select-chevron')).toBeFalsy();
-    select.options[0].selected = true;
-    select.options[1].selected = true;
-    select.dispatchEvent(new Event('change'));
-    select.dispatchEvent(new Event('blur'));
-
-    expect(onChange).toHaveBeenCalledWith(['a', 'b']);
-    expect(onTouched).toHaveBeenCalledOnce();
-    expect(component.value).toEqual(['a', 'b']);
+    const labelEl = compiled.querySelector('label');
+    expect(labelEl).toBeTruthy();
+    expect(labelEl?.textContent?.trim()).toBe('Test Label');
+    expect(labelEl?.getAttribute('for')).toBe('custom-id');
   });
 });

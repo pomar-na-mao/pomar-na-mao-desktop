@@ -7,6 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
 import { MassInclusionViewModel } from '../../view-models/mass-inclusion/mass-inclusion.view-model';
 import { MassInclusionForm } from '../../components/mass-inclusion/mass-inclusion-form/mass-inclusion-form';
 import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
@@ -19,6 +20,7 @@ import { MapPolygonSelector } from '../../components/mass-inclusion/map-polygon-
     CommonModule,
     MassInclusionForm,
     MapPolygonSelector,
+    ButtonModule,
   ],
   templateUrl: './mass-inclusion.html',
   changeDetection: ChangeDetectionStrategy.Eager,

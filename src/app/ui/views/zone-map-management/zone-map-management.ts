@@ -8,13 +8,23 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
 import { MapPolygonSelector } from '../../components/mass-inclusion/map-polygon-selector/map-polygon-selector';
 import { ZoneMapManagementViewModel } from '../../view-models/zone-map-management/zone-map-management.view-model';
 import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
 
 @Component({
   selector: 'app-zone-map-management',
-  imports: [CommonModule, ReactiveFormsModule, MapPolygonSelector],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MapPolygonSelector,
+    ButtonModule,
+    InputTextModule,
+    TextareaModule,
+  ],
   templateUrl: './zone-map-management.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [ZoneMapManagementViewModel],
@@ -58,7 +68,7 @@ export class ZoneMapManagement implements OnInit, OnDestroy {
     this.viewModel.isMapFullscreen.set(nextValue);
     document.body.style.overflow = nextValue ? 'hidden' : '';
     setTimeout(() => {
-      this.mapSelector.invalidateSize();
-    }, 0);
+      this.mapSelector?.invalidateSize();
+    }, 50);
   }
 }

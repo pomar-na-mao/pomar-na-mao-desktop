@@ -47,7 +47,7 @@ describe('OperationsMap', () => {
 
   it('names the fullscreen control and preserves its toggle behavior', () => {
     const root = fixture.nativeElement as HTMLElement;
-    const button = root.querySelector<HTMLButtonElement>('button[aria-label="Tela cheia"]');
+    const button = root.querySelector<HTMLElement>('button[aria-label="Tela cheia"], [aria-label="Tela cheia"]');
     expect(button).toBeTruthy();
     button?.click();
     expect(mockViewModel.setMapFullscreen).toHaveBeenCalledWith(true);

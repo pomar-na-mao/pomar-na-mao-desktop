@@ -38,9 +38,15 @@ describe('ButtonDirective', () => {
     return fixture;
   }
 
-  it.each<ButtonVariant>(['primary', 'secondary', 'warning', 'info', 'danger'])(
+  it.each<[ButtonVariant, string]>([
+    ['primary', 'p-button-primary'],
+    ['secondary', 'p-button-secondary'],
+    ['warning', 'p-button-warn'],
+    ['info', 'p-button-info'],
+    ['danger', 'p-button-danger'],
+  ])(
     'applies the %s semantic variant without replacing native content',
-    (variant) => {
+    (variant, expectedClass) => {
       const fixture = createFixture();
       const directive = fixture.debugElement
         .query(By.directive(ButtonDirective))
@@ -48,7 +54,8 @@ describe('ButtonDirective', () => {
       directive.variant = variant;
       const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
 
-      expect(button.classList.contains('ui-btn')).toBe(true);
+      expect(button.classList.contains('p-button')).toBe(true);
+      expect(button.classList.contains(expectedClass)).toBe(true);
       expect(button.dataset['uiVariant']).toBe(variant);
       expect(button.textContent).toContain('Conteúdo preservado');
       expect(button.type).toBe('button');
@@ -66,8 +73,9 @@ describe('ButtonDirective', () => {
     const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
 
     expect(button.dataset['uiSize']).toBe('sm');
-    expect(button.classList.contains('ui-btn--icon')).toBe(true);
-    expect(button.classList.contains('ui-btn--block')).toBe(true);
+    expect(button.classList.contains('p-button-sm')).toBe(true);
+    expect(button.classList.contains('p-button-icon-only')).toBe(true);
+    expect(button.classList.contains('w-full')).toBe(true);
     expect(button.getAttribute('aria-label')).toBe('Ação de teste');
   });
 

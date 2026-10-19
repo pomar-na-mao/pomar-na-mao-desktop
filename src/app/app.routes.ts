@@ -8,12 +8,16 @@ export const ROUTES: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./ui/views/layout/main-layout').then(m => m.MainLayout),
+    loadComponent: () => import('./ui/views/layout/layout').then(m => m.AppLayoutComponent),
     canActivate: [isLoggedGuard],
     children: [
       {
-        path: 'inicio',
+        path: 'pomar',
         loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
+      },
+      {
+        path: 'inicio',
+        redirectTo: 'pomar',
       },
       {
         path: 'operacoes',
@@ -25,11 +29,17 @@ export const ROUTES: Routes = [
       },
       {
         path: 'zonas',
-        loadComponent: () => import('./ui/views/zones/zones').then(m => m.Zones)
+        loadComponent: () => import('./ui/views/zones/zones').then(m => m.Zones),
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('./ui/views/zones/zones.routes')
+          }
+        ]
       },
       {
         path: 'atribuicao-zonas',
-        redirectTo: 'zonas'
+        redirectTo: 'zonas/atribuicao'
       },
       {
         path: 'configuracoes',
@@ -41,7 +51,7 @@ export const ROUTES: Routes = [
       },
       {
         path: '',
-        redirectTo: 'inicio',
+        redirectTo: 'pomar',
         pathMatch: 'full'
       },
     ]

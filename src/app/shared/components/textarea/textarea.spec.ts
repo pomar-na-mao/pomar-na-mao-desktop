@@ -34,9 +34,10 @@ describe('Textarea', () => {
     fixture.detectChanges();
     expect(control.value).toBe('Texto de teste');
     expect(control.touched).toBe(true);
-    expect(textarea.classList.contains('ui-field--sm')).toBe(true);
+    expect(textarea.classList.contains('p-inputtext-sm')).toBe(true);
 
     control.setValue('');
+    control.markAsTouched();
     fixture.detectChanges();
     expect(textarea.getAttribute('aria-invalid')).toBe('true');
     expect(fixture.nativeElement.textContent).toContain('Observação obrigatória');

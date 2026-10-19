@@ -1,20 +1,22 @@
+import { CommonModule } from '@angular/common';
 import {
-  Component,
-  inject,
-  Input as NgInput,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    Input as NgInput,
 } from '@angular/core';
 import {
-  ControlValueAccessor,
-  NgControl,
-  ReactiveFormsModule,
+    ControlValueAccessor,
+    NgControl,
+    ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { MessageModule } from 'primeng/message';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'app-textarea',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TextareaModule, MessageModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-1 w-full">
@@ -22,7 +24,7 @@ import { CommonModule } from '@angular/common';
         <div class="flex items-center justify-between">
           <label
             [for]="id"
-            class="ui-field-label"
+            class="block text-md font-medium text-surface-700 dark:text-surface-200"
             >{{ label }}</label
           >
           <ng-content select="[label-extra]"></ng-content>
@@ -30,6 +32,7 @@ import { CommonModule } from '@angular/common';
       }
       <div class="relative">
         <textarea
+          pTextarea
           [id]="id"
           [placeholder]="placeholder"
           [value]="value"
@@ -40,17 +43,17 @@ import { CommonModule } from '@angular/common';
           [readOnly]="readonly"
           [attr.aria-invalid]="errorMessage ? 'true' : null"
           [attr.aria-describedby]="errorMessage ? id + '-error' : null"
-          class="ui-field resize-none"
+          class="w-full resize-none"
           [ngClass]="{
-            'ui-field--sm': size === 'sm',
-            'ui-field--error': errorMessage
+            'p-inputtext-sm': size === 'sm',
+            'ng-invalid ng-dirty': !!errorMessage
           }"
         ></textarea>
       </div>
       @if (errorMessage) {
-        <p [id]="id + '-error'" class="ui-field-error" role="alert">
-          {{ errorMessage }}
-        </p>
+        <p-message severity="error" variant="simple" class="mt-[3px] flex items-start">
+          <span class="text-sm" [id]="id + '-error'">{{ errorMessage }}</span>
+        </p-message>
       }
     </div>
   `,

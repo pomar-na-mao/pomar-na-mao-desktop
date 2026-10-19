@@ -1,7 +1,15 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Input } from '../../../shared/components/input/input';
-import { ButtonDirective } from '../../../shared/directives/button/button.directive';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { TableModule, Table } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { TagModule } from 'primeng/tag';
+import { ToolbarModule } from 'primeng/toolbar';
+import { AvatarModule } from 'primeng/avatar';
+import { TooltipModule } from 'primeng/tooltip';
 
 export interface User {
   id: number;
@@ -14,16 +22,30 @@ export interface User {
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, Input, ButtonDirective],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    TableModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    TagModule,
+    ToolbarModule,
+    AvatarModule,
+    TooltipModule,
+  ],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './users.html',
 })
 export class Users {
+  selectedUsers: User[] = [];
+
   users: User[] = [
     {
       id: 1,
       name: 'Admin User',
-      email: 'admin@example.com',
+      email: 'admin@pomarnamao.com',
       role: 'Administrador',
       status: 'Ativo',
       avatar:
@@ -32,7 +54,7 @@ export class Users {
     {
       id: 2,
       name: 'João Silva',
-      email: 'joao.silva@example.com',
+      email: 'joao.silva@pomarnamao.com',
       role: 'Editor',
       status: 'Ativo',
       avatar:
@@ -41,7 +63,7 @@ export class Users {
     {
       id: 3,
       name: 'Maria Souza',
-      email: 'maria.souza@example.com',
+      email: 'maria.souza@pomarnamao.com',
       role: 'Visualizador',
       status: 'Inativo',
       avatar:
@@ -50,7 +72,7 @@ export class Users {
     {
       id: 4,
       name: 'Carlos Oliveira',
-      email: 'carlos.o@example.com',
+      email: 'carlos.o@pomarnamao.com',
       role: 'Editor',
       status: 'Ativo',
       avatar:
@@ -59,7 +81,7 @@ export class Users {
     {
       id: 5,
       name: 'Ana Paula',
-      email: 'ana.paula@example.com',
+      email: 'ana.paula@pomarnamao.com',
       role: 'Administrador',
       status: 'Pendente',
       avatar:
@@ -67,29 +89,37 @@ export class Users {
     },
   ];
 
-  getRoleStatus(role: string) {
+  onGlobalFilter(table: Table, event: Event): void {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  getRoleSeverity(role: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
     switch (role) {
       case 'Administrador':
-        return 'primary';
+        return 'danger';
       case 'Editor':
         return 'info';
       case 'Visualizador':
-        return 'neutral';
+        return 'secondary';
       default:
-        return 'neutral';
+        return 'secondary';
     }
   }
 
-  getStatusTone(status: string) {
+  getStatusSeverity(status: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
     switch (status) {
       case 'Ativo':
-        return 'primary';
+        return 'success';
       case 'Inativo':
-        return 'neutral';
+        return 'danger';
       case 'Pendente':
-        return 'warning';
+        return 'warn';
       default:
-        return 'neutral';
+        return 'secondary';
     }
+  }
+
+  exportCSV(table: Table): void {
+    table.exportCSV();
   }
 }

@@ -1,27 +1,52 @@
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { describe, expect, it } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
 import { OperationsFiltersPanel } from './operations-filters-panel';
 
 describe('OperationsFiltersPanel', () => {
-  it('renders the responsive filter rail/sheet with preserved date and operation bindings', async () => {
-    const viewModel = { startDate: signal(''), endDate: signal(''), selectedOperation: signal('') };
+  let fixture: ComponentFixture<OperationsFiltersPanel>;
+  let component: OperationsFiltersPanel;
+  let mockViewModel: {
+    startDate: ReturnType<typeof signal<string>>;
+    endDate: ReturnType<typeof signal<string>>;
+    selectedOperation: ReturnType<typeof signal<string>>;
+  };
+
+  beforeEach(async () => {
+    mockViewModel = {
+      startDate: signal('2026-01-01'),
+      endDate: signal('2026-01-31'),
+      selectedOperation: signal('pulverizacao'),
+    };
+
     await TestBed.configureTestingModule({
       imports: [OperationsFiltersPanel],
-      providers: [{ provide: OperationsViewModel, useValue: viewModel }],
+      providers: [{ provide: OperationsViewModel, useValue: mockViewModel }],
     }).compileComponents();
-    const fixture = TestBed.createComponent(OperationsFiltersPanel);
+
+    fixture = TestBed.createComponent(OperationsFiltersPanel);
+    component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('renders title, date pickers and operation select', () => {
     const root = fixture.nativeElement as HTMLElement;
-    expect(root.querySelector('.responsive-filter-shell')).toBeTruthy();
-    expect(root.querySelector('.ui-form-panel')).toBeTruthy();
-    expect(root.querySelector('.ui-form-panel-header')).toBeTruthy();
-    expect(root.querySelector('.ui-form-panel-body')).toBeTruthy();
-    expect(root.textContent).toContain('Filtre o período e o tipo de operação.');
-    expect(root.querySelector('summary.responsive-filter-summary')).toBeTruthy();
-    expect(root.querySelectorAll('app-input input[type="date"]')).toHaveLength(2);
+    expect(root.textContent).toContain('Operações');
+    expect(root.textContent).toContain('Período');
+    expect(root.querySelectorAll('p-datepicker')).toHaveLength(2);
     expect(root.querySelector('app-select')).toBeTruthy();
-    expect(fixture.componentInstance.operationOptions.map((option) => option.value)).toEqual(['', 'pulverizacao', 'inspecao']);
+    expect(component.operationOptions.map((o) => o.value)).toEqual(['', 'pulverizacao', 'inspecao']);
+  });
+
+  it('clears filters when clearFilters is called', () => {
+    component.clearFilters();
+    expect(mockViewModel.startDate()).toBe('');
+    expect(mockViewModel.endDate()).toBe('');
+    expect(mockViewModel.selectedOperation()).toBe('');
   });
 });

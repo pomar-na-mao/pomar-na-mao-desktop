@@ -1,15 +1,15 @@
 <div
   [class]="
     operationsViewModel.isMapFullscreen()
-      ? 'fixed top-14 inset-x-0 bottom-0 z-[100] flex overflow-hidden bg-canvas'
-      : 'relative flex h-[calc(100vh-56px)] overflow-hidden bg-canvas'
+      ? 'fixed inset-0 z-[1100] flex h-screen w-screen overflow-hidden bg-surface-0 dark:bg-surface-900'
+      : 'h-[calc(100vh-8rem)] w-full overflow-hidden flex flex-col md:flex-row rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm bg-surface-0 dark:bg-surface-900 !mb-0'
   "
 >
   <!-- Left Filter Sidebar -->
-  <app-operations-filters-panel class="block h-full min-h-0" />
+  <app-operations-filters-panel class="w-full md:w-80 lg:w-[22rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800" />
 
   <!-- Map Area -->
-  <div class="min-w-0 flex-1 overflow-hidden">
+  <div class="relative min-w-0 flex-1 h-full overflow-hidden bg-surface-100 dark:bg-surface-950">
     <app-operations-map />
   </div>
 </div>

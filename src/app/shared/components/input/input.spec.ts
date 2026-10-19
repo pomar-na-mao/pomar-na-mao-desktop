@@ -49,13 +49,11 @@ describe('Input', () => {
     control.markAsTouched();
     fixture.detectChanges();
     const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
-    const error = fixture.nativeElement.querySelector('[role="alert"]') as HTMLElement;
 
-    expect(input.classList.contains('ui-field--sm')).toBe(true);
-    expect(input.classList.contains('ui-field--error')).toBe(true);
+    expect(input.classList.contains('p-inputtext-sm')).toBe(true);
+    expect(input.classList.contains('ng-invalid')).toBe(true);
     expect(input.getAttribute('aria-invalid')).toBe('true');
-    expect(input.getAttribute('aria-describedby')).toBe(error.id);
-    expect(error.textContent).toContain('Nome obrigatório');
+    expect(fixture.nativeElement.textContent).toContain('Nome obrigatório');
   });
 
   it('preserves disabled and readonly native states', () => {

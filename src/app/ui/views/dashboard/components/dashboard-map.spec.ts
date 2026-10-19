@@ -27,7 +27,7 @@ describe('DashboardMap', () => {
   it('keeps a full-size map area and names the fullscreen control', () => {
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelector('#dashboard-map')?.className).toContain('h-full');
-    expect(root.querySelector('button[aria-label="Tela cheia"]')).toBeTruthy();
+    expect(root.querySelector('button[aria-label="Tela cheia"], [aria-label="Tela cheia"]')).toBeTruthy();
     expect(viewModel.initMap).toHaveBeenCalledWith('dashboard-map');
   });
 

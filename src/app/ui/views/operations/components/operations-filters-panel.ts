@@ -1,59 +1,77 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Input } from '../../../../shared/components/input/input';
+import { ButtonModule } from 'primeng/button';
+import { DatePickerModule } from 'primeng/datepicker';
 import { Select } from '../../../../shared/components/select/select';
 import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
 
 @Component({
   selector: 'app-operations-filters-panel',
-  imports: [CommonModule, FormsModule, Input, Select],
+  imports: [CommonModule, FormsModule, DatePickerModule, Select, ButtonModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <aside class="ui-form-panel responsive-filter-shell h-auto md:h-full">
-      <details open class="flex h-full min-h-0 flex-col">
-        <summary class="ui-form-panel-header responsive-filter-summary">
-          <span>Filtros de busca</span>
-          <span aria-hidden="true">⌄</span>
-        </summary>
-        <div class="ui-form-panel-header hidden md:block">
-          <h2 class="ui-form-panel-title">Filtros de busca</h2>
-          <p class="ui-form-panel-description">Filtre o período e o tipo de operação.</p>
-        </div>
-      <div class="ui-form-panel-body responsive-filter-content sidebar-scroll max-h-[min(24rem,calc(100vh-8rem))] space-y-3.5 overflow-y-auto md:max-h-none">
+    <aside class="flex flex-col h-full min-h-0 bg-surface-0 dark:bg-surface-900">
+      <!-- Title above form on the left -->
+      <div class="px-3.5 pt-4 pb-2 border-b border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
+        <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Operações</h4>
+        <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none">Filtros de inspeções e pulverizações</p>
+      </div>
 
+      <!-- Form Body (Scrollable) -->
+      <div class="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-4 space-y-3.5">
         <!-- Periodo -->
-        <section>
-          <label
-            class="ui-field-label mb-1"
-          >
+        <div>
+          <label class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1">
             Período
           </label>
           <div class="grid grid-cols-2 gap-2">
-            <app-input
-              type="date"
+            <p-datepicker
+              appendTo="body"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+              dataType="string"
+              placeholder="Início"
               [ngModel]="operationsViewModel.startDate()"
-              (ngModelChange)="operationsViewModel.startDate.set($event)"
-            ></app-input>
-            <app-input
-              type="date"
+              (ngModelChange)="operationsViewModel.startDate.set($event || '')"
+              [fluid]="true"
+            />
+            <p-datepicker
+              appendTo="body"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+              dataType="string"
+              placeholder="Fim"
               [ngModel]="operationsViewModel.endDate()"
-              (ngModelChange)="operationsViewModel.endDate.set($event)"
-            ></app-input>
+              (ngModelChange)="operationsViewModel.endDate.set($event || '')"
+              [fluid]="true"
+            />
           </div>
-        </section>
+        </div>
 
         <!-- Operacao -->
-        <section>
+        <div>
           <app-select
-            label="Tipo de Opera\u00e7\u00e3o"
+            label="Tipo de Operação"
             [ngModel]="operationsViewModel.selectedOperation()"
             (ngModelChange)="operationsViewModel.selectedOperation.set($event)"
             [options]="operationOptions"
           ></app-select>
-        </section>
+        </div>
       </div>
-      </details>
+
+      <!-- Pinned Footer -->
+      <div class="p-3.5 sm:p-4 border-t border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
+        <p-button
+          label="Limpar Filtros"
+          icon="pi pi-filter-slash"
+          severity="secondary"
+          size="small"
+          [outlined]="true"
+          (onClick)="clearFilters()"
+          styleClass="w-full"
+        />
+      </div>
     </aside>
   `
 })
@@ -65,4 +83,10 @@ export class OperationsFiltersPanel {
     { label: 'Pulverização', value: 'pulverizacao' },
     { label: 'Inspeção', value: 'inspecao' },
   ];
+
+  public clearFilters(): void {
+    this.operationsViewModel.startDate.set('');
+    this.operationsViewModel.endDate.set('');
+    this.operationsViewModel.selectedOperation.set('');
+  }
 }
