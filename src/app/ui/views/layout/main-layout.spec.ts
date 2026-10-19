@@ -107,7 +107,6 @@ describe('MainLayout Component', () => {
   });
 
   it('should identify outside clicks accurately', () => {
-    const insideEl = document.createElement('div');
     const outsideEl = document.createElement('div');
     document.body.appendChild(outsideEl);
 

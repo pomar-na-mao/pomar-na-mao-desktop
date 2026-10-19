@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Select, type SelectOption } from './select';
+import { Select } from './select';
 
 describe('Select Component', () => {
   let fixture: ComponentFixture<Select>;
