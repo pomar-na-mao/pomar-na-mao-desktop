@@ -40,4 +40,18 @@ describe('ROUTES', () => {
     const component = await loadFn();
     expect(component).toBeDefined();
   });
+
+  it('should lazy-load the Orchard shell with child routes for /pomar', async () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const pomarRoute = mainRoute?.children?.find(
+      (route) => route.path === 'pomar',
+    );
+
+    expect(pomarRoute?.loadComponent).toBeDefined();
+    expect(pomarRoute?.children?.[0]?.loadChildren).toBeDefined();
+
+    const loadFn = pomarRoute?.loadComponent as () => Promise<unknown>;
+    const component = await loadFn();
+    expect(component).toBeDefined();
+  });
 });

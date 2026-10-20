@@ -13,7 +13,13 @@ export const ROUTES: Routes = [
     children: [
       {
         path: 'pomar',
-        loadComponent: () => import('./ui/views/dashboard/dashboard').then(m => m.Dashboard)
+        loadComponent: () => import('./ui/views/orchard/orchard').then(m => m.Orchard),
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('./ui/views/orchard/orchard.routes')
+          }
+        ]
       },
       {
         path: 'inicio',
