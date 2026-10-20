@@ -1,4 +1,6 @@
 import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import {
   Component,
   OnDestroy,
@@ -36,7 +38,7 @@ const BACKGROUND_POLYGON_COLORS = [
 @Component({
   selector: 'app-map-polygon-selector',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonModule, TooltipModule],
   templateUrl: './map-polygon-selector.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: [

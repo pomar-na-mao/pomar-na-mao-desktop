@@ -1,130 +1,91 @@
-<div class="flex flex-col w-full h-full bg-white dark:bg-slate-900 relative overflow-hidden transition-colors">
+<div class="relative flex h-full w-full flex-col overflow-hidden bg-surface-0 dark:bg-surface-900 text-surface-900 dark:text-surface-0 transition-colors">
   <!-- Toolbar -->
   <div
-    class="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-sm z-10 shrink-0 transition-colors"
+    class="z-10 flex shrink-0 items-center justify-between bg-surface-0 dark:bg-surface-900 px-3 py-1.5 transition-colors"
   >
     <div class="flex items-center gap-3">
       <span
-        class="hidden text-[10px] font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase transition-colors sm:inline"
+        class="hidden text-xs font-medium text-surface-600 dark:text-surface-400 transition-colors sm:inline"
       >
         Área de Seleção
       </span>
       <div
-        class="flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-300"
-        [class.bg-blue-50]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.dark:bg-blue-500/10]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.text-blue-700]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.dark:text-blue-400]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.border]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.border-blue-100]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.dark:border-blue-500/20]="drawingMode || (hasPolygon && !drawingMode)"
-        [class.bg-slate-100]="!drawingMode && !hasPolygon"
-        [class.dark:bg-slate-800]="!drawingMode && !hasPolygon"
-        [class.text-slate-500]="!drawingMode && !hasPolygon"
-        [class.dark:text-slate-400]="!drawingMode && !hasPolygon"
+        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors"
+        [ngClass]="
+          drawingMode || hasPolygon
+            ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800'
+            : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 border-surface-200 dark:border-surface-700'
+        "
       >
         <span
           class="w-2 h-2 rounded-full transition-colors"
-          [class.bg-blue-500]="drawingMode || (hasPolygon && !drawingMode)"
-          [class.animate-pulse-slow]="drawingMode"
-          [class.bg-slate-300]="!drawingMode && !hasPolygon"
-          [class.dark:bg-slate-600]="!drawingMode && !hasPolygon"
+          [ngClass]="
+            drawingMode
+              ? 'bg-primary-500 animate-pulse'
+              : hasPolygon
+                ? 'bg-primary-500'
+                : 'bg-surface-400'
+          "
         ></span>
         {{ drawingMode ? 'Desenhando (' + pointsCount + ' pontos)' : hasPolygon
         ? 'Área Selecionada' : 'Aguardando' }}
       </div>
     </div>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
       <!-- Undo -->
-      <button
-        class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+      <p-button
+        icon="pi pi-undo"
+        size="small"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
         [disabled]="!drawingMode || pointsCount === 0"
-        (click)="undoLastPoint()"
-        title="Desfazer último ponto"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M3 7v6h6" />
-          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
-        </svg>
-      </button>
+        (onClick)="undoLastPoint()"
+        aria-label="Desfazer último ponto"
+        pTooltip="Desfazer último ponto"
+        tooltipPosition="bottom"
+      />
 
       <!-- Finish -->
-      <button
-        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-xs font-semibold"
+      <p-button
+        icon="pi pi-check"
+        label="Finalizar"
+        size="small"
+        severity="primary"
         [disabled]="!drawingMode || pointsCount < 3"
-        (click)="completePolygon()"
-        title="Finalizar área"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-        <span class="hidden sm:inline">Finalizar</span>
-      </button>
+        (onClick)="completePolygon()"
+        aria-label="Finalizar área"
+        pTooltip="Finalizar área"
+        tooltipPosition="bottom"
+      />
 
       <!-- Toggle Draw -->
-      <button
-        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
-        [class.border-blue-500]="!drawingMode"
-        [class.bg-blue-600]="!drawingMode"
-        [class.text-white]="!drawingMode"
-        [class.hover:bg-blue-700]="!drawingMode"
-        [class.border-red-200]="drawingMode"
-        [class.bg-red-50]="drawingMode"
-        [class.text-red-700]="drawingMode"
-        [class.hover:bg-red-100]="drawingMode"
+      <p-button
+        [icon]="drawingMode ? 'pi pi-times' : 'pi pi-pencil'"
+        [label]="drawingMode ? 'Cancelar' : 'Desenhar'"
+        size="small"
+        [severity]="drawingMode ? 'danger' : 'info'"
         [disabled]="!canDraw"
-        (click)="toggleDrawingMode()"
-        [title]="!canDraw ? 'Selecione uma zona com plantas primeiro' : (drawingMode ? 'Cancelar desenho' : 'Desenhar nova área')"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <polygon points="3 11 22 2 13 21 11 13 3 11" />
-        </svg>
-        <span class="hidden sm:inline">{{ drawingMode ? 'Cancelar' : 'Desenhar' }}</span>
-      </button>
+        (onClick)="toggleDrawingMode()"
+        [aria-label]="drawingMode ? 'Cancelar desenho' : 'Desenhar nova área'"
+        [pTooltip]="!canDraw ? 'Selecione uma zona com plantas primeiro' : (drawingMode ? 'Cancelar desenho' : 'Desenhar nova área')"
+        tooltipPosition="bottom"
+      />
 
       <!-- Clear -->
-      <button
-        class="p-1.5 rounded-lg border border-red-200 dark:border-red-500/20 bg-white dark:bg-slate-800 text-red-400 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        severity="danger"
+        [text]="true"
+        [rounded]="true"
         [disabled]="!hasPolygon && !drawingMode"
-        (click)="clearAll()"
-        title="Limpar tudo"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <polyline points="3 6 5 6 21 6" />
-          <path d="M19 6l-1 14H6L5 6" />
-          <path d="M10 11v6" />
-          <path d="M14 11v6" />
-        </svg>
-      </button>
+        (onClick)="clearAll()"
+        aria-label="Limpar desenho"
+        pTooltip="Limpar tudo"
+        tooltipPosition="bottom"
+      />
     </div>
   </div>
 
@@ -136,18 +97,7 @@
   <div
     class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-[11px] font-medium shadow-lg z-[1000] border border-white/20 animate-bounce"
   >
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2.5"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
+    <i class="pi pi-info-circle"></i>
     Clique no mapa para adicionar pontos. Clique duplo para finalizar.
   </div>
   }
@@ -158,62 +108,36 @@
     class="absolute bottom-4 right-4 flex flex-col gap-2 max-w-[300px] z-[1000]"
   >
     <div
-      class="p-3 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-xl transition-colors"
+      class="rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-0/95 dark:bg-surface-900/95 backdrop-blur-md shadow-lg p-3"
     >
       <div class="flex items-center justify-between mb-2">
         <span class="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
+          <i class="pi pi-map-marker text-primary"></i>
           {{ selectedPolygonCoords.length }} Pontos
         </span>
         <div class="flex gap-1">
-          <button
-            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
-            (click)="showCoords = !showCoords"
-            title="Ver coordenadas"
-          >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          </button>
-          <button
-            class="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
-            [class.text-emerald-600]="copiedFeedback"
-            [class.dark:text-emerald-400]="copiedFeedback"
-            (click)="copyCoordinates()"
-            title="Copiar JSON"
-          >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path
-                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-              />
-            </svg>
-          </button>
+          <p-button
+            icon="pi pi-eye"
+            size="small"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            (onClick)="showCoords = !showCoords"
+            pTooltip="Ver coordenadas"
+            tooltipPosition="top"
+            aria-label="Alternar lista de coordenadas"
+          />
+          <p-button
+            [icon]="copiedFeedback ? 'pi pi-check' : 'pi pi-copy'"
+            size="small"
+            [text]="true"
+            [rounded]="true"
+            [severity]="copiedFeedback ? 'success' : 'secondary'"
+            (onClick)="copyCoordinates()"
+            pTooltip="Copiar JSON"
+            tooltipPosition="top"
+            aria-label="Copiar coordenadas em JSON"
+          />
         </div>
       </div>
 

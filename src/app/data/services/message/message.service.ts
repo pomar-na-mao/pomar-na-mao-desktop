@@ -13,19 +13,28 @@ export interface ToastMessage {
 export class MessageService {
   public showMessage = signal<boolean>(false);
   public currentMessage = signal<ToastMessage | null>(null);
+  private hideTimeout: ReturnType<typeof setTimeout> | null = null;
 
   public show(text: string, type: ToastType = 'info'): void {
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+      this.hideTimeout = null;
+    }
     const translatedText = text;
     this.currentMessage.set({ text: translatedText, type });
     this.showMessage.set(true);
 
     // Auto-hide after 5 seconds
-    setTimeout(() => {
+    this.hideTimeout = setTimeout(() => {
       this.hide();
     }, 5000);
   }
 
   public hide(): void {
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+      this.hideTimeout = null;
+    }
     this.showMessage.set(false);
   }
 

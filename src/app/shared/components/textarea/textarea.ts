@@ -1,20 +1,22 @@
+import { CommonModule } from '@angular/common';
 import {
-  Component,
-  inject,
-  Input as NgInput,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    Input as NgInput,
 } from '@angular/core';
 import {
-  ControlValueAccessor,
-  NgControl,
-  ReactiveFormsModule,
+    ControlValueAccessor,
+    NgControl,
+    ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { MessageModule } from 'primeng/message';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'app-textarea',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TextareaModule, MessageModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-1 w-full">
@@ -22,7 +24,7 @@ import { CommonModule } from '@angular/common';
         <div class="flex items-center justify-between">
           <label
             [for]="id"
-            class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            class="block text-md font-medium text-surface-700 dark:text-surface-200"
             >{{ label }}</label
           >
           <ng-content select="[label-extra]"></ng-content>
@@ -30,6 +32,7 @@ import { CommonModule } from '@angular/common';
       }
       <div class="relative">
         <textarea
+          pTextarea
           [id]="id"
           [placeholder]="placeholder"
           [value]="value"
@@ -37,18 +40,20 @@ import { CommonModule } from '@angular/common';
           (input)="onInput($event)"
           (blur)="onBlur()"
           [disabled]="disabled"
-          class="block w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+          [readOnly]="readonly"
+          [attr.aria-invalid]="errorMessage ? 'true' : null"
+          [attr.aria-describedby]="errorMessage ? id + '-error' : null"
+          class="w-full resize-none"
           [ngClass]="{
-            'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500':
-              errorMessage,
-            'border-slate-200 dark:border-slate-700': !errorMessage,
+            'p-inputtext-sm': size === 'sm',
+            'ng-invalid ng-dirty': !!errorMessage
           }"
         ></textarea>
       </div>
       @if (errorMessage) {
-        <p class="mt-1 text-xs text-red-500 animate-in slide-in-from-top-1">
-          {{ errorMessage }}
-        </p>
+        <p-message severity="error" variant="simple" class="mt-[3px] flex items-start">
+          <span class="text-sm" [id]="id + '-error'">{{ errorMessage }}</span>
+        </p-message>
       }
     </div>
   `,
@@ -60,6 +65,8 @@ export class Textarea implements ControlValueAccessor {
   @NgInput() rows = 3;
   @NgInput() errors: Record<string, string> = {};
   @NgInput() disabled = false;
+  @NgInput() readonly = false;
+  @NgInput() size: 'sm' | 'md' = 'md';
 
   public ngControl = inject(NgControl, { optional: true, self: true });
 

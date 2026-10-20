@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -13,34 +13,48 @@ export interface MenuItem {
   imports: [CommonModule, RouterModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
+    @if (isMobileOpen) {
+      <button
+        type="button"
+        class="fixed inset-x-0 bottom-0 top-14 z-[1190] bg-black/35 backdrop-blur-[2px] md:hidden"
+        aria-label="Fechar navegação"
+        (click)="navigationSelected.emit()"
+      ></button>
+    }
     <aside
-      class="fixed top-[60px] left-0 hidden h-[calc(100vh-60px)] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out z-20 shadow-sm md:block"
-      [ngClass]="isCollapsed ? 'w-[64px]' : 'w-[240px]'"
+      id="app-navigation"
+      class="fixed bottom-0 left-0 top-14 z-[1200] w-56 -translate-x-full bg-surface shadow-ui-md transition-[width,transform] duration-[180ms] ease-ui md:z-20 md:translate-x-0"
+      [ngClass]="{
+        'translate-x-0': isMobileOpen,
+        'md:w-16': isCollapsed,
+        'md:w-56': !isCollapsed
+      }"
     >
-      <nav class="p-3 space-y-1">
+      <nav class="space-y-1 p-2.5" aria-label="Navegação principal">
         @for (item of menuItems; track item) {
           <div>
             <a
               [routerLink]="item.path"
-              routerLinkActive="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+              routerLinkActive="bg-primary-soft text-primary-strong"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="relative flex items-center h-12 rounded-xl transition-all group hover:bg-slate-50 dark:hover:bg-slate-800 overflow-hidden text-slate-700 dark:text-slate-300"
+              class="group relative flex h-10 items-center overflow-hidden rounded-ui-md text-ink-muted transition-[background-color,color] duration-120 hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               [ngClass]="
-                isCollapsed ? 'justify-center px-0 gap-0' : 'px-4 gap-3'
+                isCollapsed ? 'md:justify-center md:px-0 md:gap-0 px-3 gap-3' : 'px-3 gap-3'
               "
               [title]="isCollapsed ? item.label : ''"
+              (click)="navigationSelected.emit()"
             >
               <!-- Active Indicator (Only visible when expanded) -->
               @if (!isCollapsed) {
                 <div
                   routerLinkActive="scale-y-100 opacity-100"
                   [routerLinkActiveOptions]="{ exact: true }"
-                  class="absolute left-0 top-0 bottom-0 w-2 bg-emerald-600  scale-y-0 opacity-0 transition-all duration-300"
+                  class="absolute bottom-1 left-0 top-1 w-1 scale-y-0 rounded-full bg-primary opacity-0 transition-[transform,opacity] duration-[180ms]"
                 ></div>
               }
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 flex-shrink-0 transition-colors group-hover:text-emerald-500"
+                class="h-5 w-5 flex-shrink-0 transition-colors group-hover:text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -53,8 +67,8 @@ export interface MenuItem {
                 />
               </svg>
               <span
-                class="font-medium transition-all duration-300 whitespace-nowrap"
-                [ngClass]="isCollapsed ? 'opacity-0 w-0' : 'opacity-100'"
+                class="whitespace-nowrap text-body font-medium transition-[width,opacity] duration-[180ms]"
+                [ngClass]="isCollapsed ? 'md:w-0 md:opacity-0' : 'opacity-100'"
               >
                 {{ item.label }}
               </span>
@@ -67,12 +81,14 @@ export interface MenuItem {
 })
 export class Sidebar {
   @Input() isCollapsed = false;
+  @Input() isMobileOpen = false;
+  @Output() navigationSelected = new EventEmitter<void>();
 
   public menuItems: MenuItem[] = [
     {
-      label: 'Dashboard',
+      label: 'Pomar',
       icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-      path: '/inicio',
+      path: '/pomar',
     },
     {
       label: 'Operações',

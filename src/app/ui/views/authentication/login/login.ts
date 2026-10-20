@@ -2,21 +2,34 @@ import {
   Component,
   inject,
   ChangeDetectionStrategy,
-  signal,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { RippleModule } from 'primeng/ripple';
 import { LoginViewModel } from '../../../view-models/authentication/login.view-model';
-import { Input } from '../../../../shared/components/input/input';
+import { CustomValidationMessageComponent } from '../../../components/shared/custom-validation-message/custom-validation-message';
 import {
   createLoginForm,
-  emailErrors,
-  passwordErrors,
   type LoginFormValue,
 } from '../../../view-models/authentication/login-form';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, Input],
+  imports: [
+    ButtonModule,
+    CheckboxModule,
+    InputTextModule,
+    PasswordModule,
+    FormsModule,
+    RouterModule,
+    RippleModule,
+    ReactiveFormsModule,
+    CustomValidationMessageComponent,
+  ],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [LoginViewModel],
@@ -25,16 +38,6 @@ export class Login {
   public loginViewModel = inject(LoginViewModel);
 
   public loginForm = createLoginForm();
-
-  public emailErrors = emailErrors();
-
-  public passwordErrors = passwordErrors();
-
-  public passwordVisible = signal(false);
-
-  public togglePasswordVisibility(): void {
-    this.passwordVisible.update((visible) => !visible);
-  }
 
   public async loginHandler(): Promise<void> {
     this.loginForm.markAllAsTouched();
