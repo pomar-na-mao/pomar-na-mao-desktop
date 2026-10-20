@@ -44,7 +44,7 @@ export class VarietiesService implements IVarietiesService {
           .select('id, name, description, created_at, updated_at', {
             count: 'exact',
           })
-          .order('name', { ascending: true }),
+          .order('updated_at', { ascending: false }),
     ) as Promise<PostgrestResponse<Variety>>;
   }
 

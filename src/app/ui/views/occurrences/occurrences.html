@@ -1,0 +1,298 @@
+<div
+  class="flex h-[calc(100vh-8rem)] w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-surface-0 shadow-sm dark:border-surface-800 dark:bg-surface-900"
+>
+  <div
+    class="flex shrink-0 flex-col gap-3 border-b border-surface-200 bg-surface-50/50 px-4 py-3 dark:border-surface-800 dark:bg-surface-800/20 lg:flex-row lg:items-center lg:justify-between"
+  >
+    <div
+      class="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-5"
+    >
+      <div class="shrink-0">
+        <h4 class="font-bold leading-none text-surface-900 dark:text-surface-0">
+          Ocorrências
+        </h4>
+        <p
+          class="text-[10px] leading-none text-surface-500 dark:text-surface-400"
+        >
+          Gerenciamento do catálogo do pomar
+        </p>
+      </div>
+
+      <div class="w-full sm:w-72">
+        <p-iconfield class="w-full">
+          <p-inputicon class="pi pi-search" />
+          <input
+            pInputText
+            type="search"
+            (input)="onGlobalFilter($event)"
+            placeholder="Buscar por nome..."
+            aria-label="Buscar ocorrências"
+            class="w-full p-inputtext-sm"
+          />
+        </p-iconfield>
+      </div>
+    </div>
+
+    <div class="flex w-full flex-wrap items-center justify-end gap-2 lg:w-auto">
+      <p-button
+        label="Excluir selecionadas"
+        icon="pi pi-trash"
+        severity="danger"
+        size="small"
+        [outlined]="true"
+        [disabled]="viewModel.selectedOccurrenceTypes().length === 0 || viewModel.isSaving()"
+        (onClick)="confirmDeleteSelected()"
+      />
+      <p-button
+        label="Download Excel"
+        icon="pi pi-file-excel"
+        severity="secondary"
+        size="small"
+        [outlined]="true"
+        [disabled]="viewModel.isLoading()"
+        (onClick)="exportExcel()"
+      />
+      <p-button
+        label="Adicionar"
+        icon="pi pi-plus"
+        size="small"
+        [disabled]="viewModel.isSaving()"
+        (onClick)="viewModel.openCreate()"
+      />
+    </div>
+  </div>
+
+  @if (viewModel.loadFailed()) {
+  <div
+    class="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-surface-600 dark:text-surface-300"
+    role="alert"
+  >
+    <i class="pi pi-exclamation-circle text-3xl text-red-500"></i>
+    <p>Não foi possível carregar as ocorrências.</p>
+    <p-button
+      label="Tentar novamente"
+      icon="pi pi-refresh"
+      size="small"
+      [outlined]="true"
+      (onClick)="viewModel.loadInitialData()"
+    />
+  </div>
+  } @else {
+  <div class="min-h-0 flex-1 overflow-y-auto">
+    <p-table
+      #dt
+      [value]="viewModel.occurrenceTypes()"
+      [selection]="viewModel.selectedOccurrenceTypes()"
+      (selectionChange)="viewModel.selectedOccurrenceTypes.set($event)"
+      dataKey="id"
+      [rows]="10"
+      [paginator]="true"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} ocorrências"
+      [globalFilterFields]="['name']"
+      [rowHover]="true"
+      [loading]="viewModel.isLoading()"
+      responsiveLayout="stack"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template #header>
+        <tr
+          class="bg-surface-50 text-xs uppercase tracking-wider text-surface-500 dark:bg-surface-800/50 dark:text-surface-400"
+        >
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox />
+          </th>
+          <th pSortableColumn="name" style="min-width: 12rem">
+            <div class="flex items-center gap-2">
+              Nome
+              <p-sortIcon field="name" />
+            </div>
+          </th>
+          <th pSortableColumn="category" style="min-width: 11rem">
+            <div class="flex items-center gap-2">
+              Categoria
+              <p-sortIcon field="category" />
+            </div>
+          </th>
+          <th pSortableColumn="created_at" style="min-width: 10rem">
+            <div class="flex items-center gap-2">
+              Criado em
+              <p-sortIcon field="created_at" />
+            </div>
+          </th>
+          <th pSortableColumn="updated_at" style="min-width: 10rem">
+            <div class="flex items-center gap-2">
+              Atualizado em
+              <p-sortIcon field="updated_at" />
+            </div>
+          </th>
+          <th style="width: 7rem; text-align: center">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-occurrenceType>
+        <tr
+          class="transition-colors hover:bg-surface-50 dark:hover:bg-surface-800/40"
+        >
+          <td>
+            <p-tableCheckbox [value]="occurrenceType" />
+          </td>
+          <td>
+            <span
+              class="text-sm font-semibold text-surface-900 dark:text-surface-0"
+            >
+              {{ occurrenceType.name }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="occurrence-category inline-flex rounded-full px-2 py-1 text-xs font-semibold"
+              [attr.data-category]="occurrenceType.category ?? 'UNCLASSIFIED'"
+            >
+              {{ viewModel.categoryLabel(occurrenceType.category) }}
+            </span>
+          </td>
+          <td>
+            <time class="text-sm text-surface-600 dark:text-surface-300">
+              {{ occurrenceType.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </time>
+          </td>
+          <td>
+            <time class="text-sm text-surface-600 dark:text-surface-300">
+              {{ occurrenceType.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+            </time>
+          </td>
+          <td style="text-align: center">
+            <div class="flex items-center justify-center gap-1">
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="info"
+                size="small"
+                pTooltip="Editar ocorrência"
+                tooltipPosition="top"
+                ariaLabel="Editar ocorrência"
+                [disabled]="viewModel.isSaving()"
+                (onClick)="viewModel.openEdit(occurrenceType)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                size="small"
+                pTooltip="Excluir ocorrência"
+                tooltipPosition="top"
+                ariaLabel="Excluir ocorrência"
+                [disabled]="viewModel.isSaving()"
+                (onClick)="confirmDelete(occurrenceType)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td
+            colspan="6"
+            class="py-8 text-center text-sm text-surface-500 dark:text-surface-400"
+          >
+            <div class="flex flex-col items-center justify-center gap-2">
+              <i class="pi pi-list text-3xl text-surface-400"></i>
+              <span>Nenhuma ocorrência encontrada.</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  }
+</div>
+
+<p-dialog
+  [visible]="viewModel.dialogVisible()"
+  (visibleChange)="viewModel.dialogVisible.set($event)"
+  (onHide)="viewModel.closeDialog()"
+  [header]="viewModel.editingOccurrenceType() ? 'Editar ocorrência' : 'Adicionar ocorrência'"
+  [modal]="true"
+  [closable]="!viewModel.isSaving()"
+  [dismissableMask]="!viewModel.isSaving()"
+  [style]="{ width: 'min(32rem, calc(100vw - 2rem))' }"
+>
+  <form
+    [formGroup]="viewModel.form"
+    (ngSubmit)="viewModel.save()"
+    class="flex flex-col gap-5 pt-2"
+  >
+    <div class="flex flex-col gap-2">
+      <label
+        for="occurrence-name"
+        class="text-sm font-medium text-surface-700 dark:text-surface-200"
+      >
+        Nome <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+      <input
+        id="occurrence-name"
+        pInputText
+        formControlName="name"
+        maxlength="120"
+        autocomplete="off"
+        [attr.aria-invalid]="!!viewModel.nameError()"
+        [attr.aria-describedby]="viewModel.nameError() ? 'occurrence-name-error' : null"
+      />
+      @if (viewModel.nameError(); as error) {
+      <small id="occurrence-name-error" class="text-red-600" role="alert">
+        {{ error }}
+      </small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label
+        for="occurrence-category"
+        class="text-sm font-medium text-surface-700 dark:text-surface-200"
+      >
+        Categoria <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+      <p-select
+        inputId="occurrence-category"
+        formControlName="category"
+        [options]="viewModel.categoryOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Selecione uma categoria"
+        appendTo="body"
+        [fluid]="true"
+        [attr.aria-invalid]="!!viewModel.categoryError()"
+        [attr.aria-describedby]="viewModel.categoryError() ? 'occurrence-category-error' : null"
+      />
+      @if (viewModel.categoryError(); as error) {
+      <small id="occurrence-category-error" class="text-red-600" role="alert">
+        {{ error }}
+      </small>
+      }
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <p-button
+        type="button"
+        label="Cancelar"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="viewModel.isSaving()"
+        (onClick)="viewModel.closeDialog()"
+      />
+      <p-button
+        type="submit"
+        [label]="viewModel.editingOccurrenceType() ? 'Salvar alterações' : 'Adicionar'"
+        icon="pi pi-check"
+        [disabled]="!viewModel.canSubmit()"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-confirmDialog />

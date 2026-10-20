@@ -64,8 +64,10 @@ export class VarietiesRepository {
   }
 
   private sort(items: Variety[]): Variety[] {
-    return [...items].sort((left, right) =>
-      left.name.localeCompare(right.name, 'pt-BR'),
+    return [...items].sort(
+      (left, right) =>
+        right.updated_at.localeCompare(left.updated_at) ||
+        left.name.localeCompare(right.name, 'pt-BR'),
     );
   }
 }

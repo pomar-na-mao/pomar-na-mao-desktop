@@ -69,6 +69,11 @@ describe('Varieties', () => {
     expect(root.querySelector('input[aria-label="Buscar variedades"]')).toBeTruthy();
     expect(root.querySelector('button[aria-label="Editar variedade"]')).toBeTruthy();
     expect(root.querySelector('button[aria-label="Excluir variedade"]')).toBeTruthy();
+    expect(
+      root
+        .querySelector('button[aria-label="Editar variedade"]')
+        ?.closest('.justify-center'),
+    ).toBeTruthy();
   });
 
   it('renders empty and failed-load states without stale rows', () => {
