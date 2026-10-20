@@ -1,68 +1,93 @@
+import { CommonModule } from '@angular/common';
 import {
-  Component,
-  inject,
-  Input as NgInput,
-  ChangeDetectionStrategy,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    Input as NgInput,
 } from '@angular/core';
 import {
-  ControlValueAccessor,
-  NgControl,
-  ReactiveFormsModule,
+    ControlValueAccessor,
+    FormsModule,
+    NgControl,
+    ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-input',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, DatePickerModule, MessageModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <div class="space-y-1 w-full">
+    <div class="w-full space-y-1">
       @if (label) {
         <div class="flex items-center justify-between">
           <label
             [for]="id"
-            class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+            class="block text-md font-medium text-surface-700 dark:text-surface-200"
             >{{ label }}</label
           >
           <ng-content select="[label-extra]"></ng-content>
         </div>
       }
       <div class="relative">
-        @if (icon) {
-          <div
-            class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500"
-            [innerHTML]="icon"
-          ></div>
-        }
-        <input
-          [id]="id"
-          [type]="type"
-          [placeholder]="placeholder"
-          [value]="value"
-          (input)="onInput($event)"
-          (blur)="onBlur()"
-          [disabled]="disabled"
-          class="block w-full py-2.5 bg-slate-50 dark:bg-slate-800 dark:text-slate-200 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-          [ngClass]="{
-            'pl-10': icon,
-            'pl-3': !icon,
-            'pr-10': trailingAction,
-            'pr-3': !trailingAction,
-            'border-red-500 bg-red-50 dark:bg-red-500/10 focus:ring-red-500 focus:border-red-500':
-              errorMessage,
-            'border-slate-200 dark:border-slate-700': !errorMessage,
-          }"
-        />
-        @if (trailingAction) {
-          <div class="absolute inset-y-0 right-0 flex items-center pr-2">
-            <ng-content select="[input-extra]"></ng-content>
-          </div>
+        @if (type === 'date') {
+          <p-datepicker
+            [id]="id"
+            [placeholder]="placeholder"
+            [ngModel]="value"
+            (ngModelChange)="onDateChange($event)"
+            (onBlur)="onBlur()"
+            [disabled]="disabled"
+            [readonlyInput]="readonly"
+            dateFormat="yy-mm-dd"
+            dataType="string"
+            [showIcon]="true"
+            appendTo="body"
+            [fluid]="true"
+            [ngClass]="{
+              'ng-invalid ng-dirty': !!errorMessage
+            }"
+          />
+        } @else {
+          @if (icon) {
+            <div
+              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-surface-400 z-10"
+              [innerHTML]="icon"
+            ></div>
+          }
+          <input
+            pInputText
+            [id]="id"
+            [type]="type"
+            [placeholder]="placeholder"
+            [value]="value"
+            (input)="onInput($event)"
+            (blur)="onBlur()"
+            [disabled]="disabled"
+            [readOnly]="readonly"
+            [attr.aria-invalid]="errorMessage ? 'true' : null"
+            [attr.aria-describedby]="errorMessage ? id + '-error' : null"
+            class="w-full"
+            [ngClass]="{
+              'p-inputtext-sm': size === 'sm',
+              'ng-invalid ng-dirty': !!errorMessage,
+              'pl-10': !!icon,
+              'pr-10': trailingAction
+            }"
+          />
+          @if (trailingAction) {
+            <div class="absolute inset-y-0 right-0 flex items-center pr-2 z-10">
+              <ng-content select="[input-extra]"></ng-content>
+            </div>
+          }
         }
       </div>
       @if (errorMessage) {
-        <p class="mt-1 text-xs text-red-500 animate-in slide-in-from-top-1">
-          {{ errorMessage }}
-        </p>
+        <p-message severity="error" variant="simple" class="mt-[3px] flex items-start">
+          <span class="text-sm" [id]="id + '-error'">{{ errorMessage }}</span>
+        </p-message>
       }
     </div>
   `,
@@ -76,6 +101,8 @@ export class Input implements ControlValueAccessor {
   @NgInput() trailingAction = false;
   @NgInput() errors: Record<string, string> = {};
   @NgInput() disabled = false;
+  @NgInput() readonly = false;
+  @NgInput() size: 'sm' | 'md' = 'md';
 
   public ngControl = inject(NgControl, { optional: true, self: true });
 
@@ -108,6 +135,11 @@ export class Input implements ControlValueAccessor {
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this._value = target.value;
+    this.onChange(this._value);
+  }
+
+  onDateChange(newVal: string | null): void {
+    this._value = newVal || '';
     this.onChange(this._value);
   }
 

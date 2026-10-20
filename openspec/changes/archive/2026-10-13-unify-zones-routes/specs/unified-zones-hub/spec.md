@@ -9,7 +9,7 @@ The `/zonas` screen SHALL render a top horizontal tab bar allowing users to swit
 
 #### Scenario: User views the zones screen
 - **WHEN** the user navigates to `/zonas`
-- **THEN** the screen MUST render a horizontal navigation bar containing tabs for "Gerenciamento de Zonas" and "Atribuição de Zonas".
+- **THEN** the screen MUST render a horizontal navigation bar containing tabs for "Cadastro de Zonas" and "Atribuição de Zonas".
 - **THEN** the navigation bar MUST have semantic accessibility attributes including `role="tablist"` and `role="tab"`.
 - **THEN** interactive tab buttons MUST have an accessible touch target of at least 44px in height.
 - **THEN** the active tab MUST be visibly highlighted with primary theme colors and have `aria-selected="true"`.
@@ -23,8 +23,8 @@ The system SHALL switch the active content between Zone Polygon Management and Z
 - **THEN** the zone polygon management content MUST be hidden.
 - **THEN** the map layout MUST invalidate its size to properly fill the available view area.
 
-#### Scenario: User switches to Gerenciamento de Zonas tab
-- **WHEN** the user clicks on the "Gerenciamento de Zonas" tab
+#### Scenario: User switches to Cadastro de Zonas tab
+- **WHEN** the user clicks on the "Cadastro de Zonas" tab
 - **THEN** the screen MUST display the zone creation/editing form and zone map polygons.
 - **THEN** the zone assignment content MUST be hidden.
 - **THEN** the map layout MUST invalidate its size to properly fill the available view area.
@@ -38,4 +38,4 @@ The `/zonas` view SHALL support URL query parameters to determine the initial ac
 
 #### Scenario: User opens /zonas without query parameters
 - **WHEN** the user accesses `/zonas` without query parameters
-- **THEN** the active tab MUST default to "Gerenciamento de Zonas" (ou `gerenciamento`).
+- **THEN** the active tab MUST default to "Cadastro de Zonas" (ou `cadastro`).

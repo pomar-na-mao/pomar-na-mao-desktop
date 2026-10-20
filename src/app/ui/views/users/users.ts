@@ -1,6 +1,15 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Input } from '../../../shared/components/input/input';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { TableModule, Table } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { TagModule } from 'primeng/tag';
+import { ToolbarModule } from 'primeng/toolbar';
+import { AvatarModule } from 'primeng/avatar';
+import { TooltipModule } from 'primeng/tooltip';
 
 export interface User {
   id: number;
@@ -13,16 +22,30 @@ export interface User {
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, Input],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    TableModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    TagModule,
+    ToolbarModule,
+    AvatarModule,
+    TooltipModule,
+  ],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './users.html',
 })
 export class Users {
+  selectedUsers: User[] = [];
+
   users: User[] = [
     {
       id: 1,
       name: 'Admin User',
-      email: 'admin@example.com',
+      email: 'admin@pomarnamao.com',
       role: 'Administrador',
       status: 'Ativo',
       avatar:
@@ -31,7 +54,7 @@ export class Users {
     {
       id: 2,
       name: 'João Silva',
-      email: 'joao.silva@example.com',
+      email: 'joao.silva@pomarnamao.com',
       role: 'Editor',
       status: 'Ativo',
       avatar:
@@ -40,7 +63,7 @@ export class Users {
     {
       id: 3,
       name: 'Maria Souza',
-      email: 'maria.souza@example.com',
+      email: 'maria.souza@pomarnamao.com',
       role: 'Visualizador',
       status: 'Inativo',
       avatar:
@@ -49,7 +72,7 @@ export class Users {
     {
       id: 4,
       name: 'Carlos Oliveira',
-      email: 'carlos.o@example.com',
+      email: 'carlos.o@pomarnamao.com',
       role: 'Editor',
       status: 'Ativo',
       avatar:
@@ -58,7 +81,7 @@ export class Users {
     {
       id: 5,
       name: 'Ana Paula',
-      email: 'ana.paula@example.com',
+      email: 'ana.paula@pomarnamao.com',
       role: 'Administrador',
       status: 'Pendente',
       avatar:
@@ -66,29 +89,37 @@ export class Users {
     },
   ];
 
-  getRoleClass(role: string) {
+  onGlobalFilter(table: Table, event: Event): void {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  getRoleSeverity(role: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
     switch (role) {
       case 'Administrador':
-        return 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-500/10';
+        return 'danger';
       case 'Editor':
-        return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-500/10';
+        return 'info';
       case 'Visualizador':
-        return 'text-slate-600 bg-slate-50 dark:text-slate-300 dark:bg-slate-500/10';
+        return 'secondary';
       default:
-        return 'text-slate-600 bg-slate-50 dark:text-slate-300 dark:bg-slate-500/10';
+        return 'secondary';
     }
   }
 
-  getStatusClass(status: string) {
+  getStatusSeverity(status: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
     switch (status) {
       case 'Ativo':
-        return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400';
+        return 'success';
       case 'Inativo':
-        return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
+        return 'danger';
       case 'Pendente':
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400';
+        return 'warn';
       default:
-        return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
+        return 'secondary';
     }
+  }
+
+  exportCSV(table: Table): void {
+    table.exportCSV();
   }
 }

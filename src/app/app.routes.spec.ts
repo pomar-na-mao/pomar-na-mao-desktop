@@ -9,7 +9,7 @@ describe('ROUTES', () => {
     expect(childPaths).toContain('zonas');
     expect(childPaths).toEqual(
       expect.arrayContaining([
-        'inicio',
+        'pomar',
         'operacoes',
         'inclusoes-em-massa',
         'zonas',
@@ -26,7 +26,7 @@ describe('ROUTES', () => {
     );
 
     expect(atribuicaoRoute).toBeDefined();
-    expect(atribuicaoRoute?.redirectTo).toBe('zonas');
+    expect(atribuicaoRoute?.redirectTo).toBe('zonas/atribuicao');
   });
 
   it('should lazy-load the unified Zones component for /zonas', async () => {

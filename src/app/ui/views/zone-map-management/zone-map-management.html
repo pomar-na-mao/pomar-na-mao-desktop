@@ -1,44 +1,16 @@
-@let currentMessage = viewModel.messageService.currentMessage();
-
 <div
   [class]="
     viewModel.isMapFullscreen()
-      ? 'fixed top-[60px] inset-x-0 bottom-0 z-[100] flex h-[calc(100vh-60px)] w-full flex-col overflow-hidden bg-white dark:bg-slate-950 md:flex-row'
-      : 'flex h-full w-full flex-col overflow-hidden md:flex-row'
+      ? 'fixed inset-0 z-[1100] flex h-screen w-screen overflow-hidden bg-surface-0 dark:bg-surface-900'
+      : 'h-[calc(100vh-8rem)] w-full overflow-hidden flex flex-col md:flex-row rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm bg-surface-0 dark:bg-surface-900 !mb-0'
   "
 >
-  @if (viewModel.messageService.showMessage() && currentMessage) {
-  <div
-    class="fixed right-6 top-20 z-[1200] max-w-md rounded-lg border px-4 py-3 text-sm font-semibold shadow-xl backdrop-blur-md transition-colors"
-    [ngClass]="{
-      'border-emerald-200 bg-emerald-50/95 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300': currentMessage.type === 'success',
-      'border-red-200 bg-red-50/95 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300': currentMessage.type === 'error',
-      'border-amber-200 bg-amber-50/95 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300': currentMessage.type === 'warn',
-      'border-blue-200 bg-blue-50/95 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-300': currentMessage.type === 'info'
-    }"
-  >
-    {{ currentMessage.text }}
-  </div>
-  }
 
   <!-- Left Sidebar (Form) -->
-  <aside
-    class="flex max-h-[50vh] md:max-h-none w-full md:w-[380px] lg:w-[400px] shrink-0 flex-col border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60 md:h-full"
-  >
-    <!-- Header -->
-    <div
-      class="shrink-0 border-b border-slate-200 dark:border-slate-800 p-4 md:px-5 md:py-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
-    >
-      <h2
-        class="text-lg font-bold text-slate-800 dark:text-white transition-colors"
-      >
-        Cadastrar Nova Zona
-      </h2>
-      <p
-        class="mt-1 text-sm text-slate-500 dark:text-slate-400 transition-colors"
-      >
-        Desenhe o polígono no mapa e preencha os dados da zona.
-      </p>
+  <aside class="w-full md:w-80 lg:w-[22rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 overflow-hidden">
+    <div class="px-3.5 pt-4 pb-2 border-b border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
+      <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Cadastro de Zonas</h4>
+      <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none">Delimitação e registro de áreas no mapa</p>
     </div>
 
     <!-- Form with Scrollable Body & Fixed Footer -->
@@ -48,158 +20,138 @@
       (ngSubmit)="onSubmit()"
     >
       <!-- Scrollable Body -->
-      <div class="flex-1 min-h-0 overflow-y-auto p-4 md:p-5 space-y-4">
+      <div class="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-4 space-y-3.5">
         <!-- Zones Count Info Card -->
-        <div
-          class="rounded-xl border border-emerald-200 bg-emerald-50/80 px-3.5 py-2.5 text-sm font-medium text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 flex items-center justify-between"
-        >
-          <span class="flex items-center gap-2">
-            <svg class="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
-            Zonas cadastradas
+        <div class="flex items-center justify-between p-2.5 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50/70 dark:bg-surface-800/30 text-xs">
+          <span class="flex items-center gap-2 font-medium text-surface-700 dark:text-surface-200">
+            <i class="pi pi-map text-primary"></i>
+            Zonas cadastradas:
           </span>
-          <span class="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+          <span class="font-bold px-2 py-0.5 rounded-full bg-primary-50 dark:bg-primary-950/50 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/50 text-[11px]">
             {{ viewModel.existingZonePolygons().length }} no mapa
           </span>
         </div>
 
         @if (viewModel.zonesLoadFailed()) {
-        <div
-          class="rounded-xl border border-red-200 bg-red-50/80 px-3.5 py-2.5 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
-        >
-          Erro ao carregar zonas existentes.
-        </div>
-        } @if (viewModel.saveError()) {
-        <div
-          class="rounded-xl border border-red-200 bg-red-50/80 px-3.5 py-2.5 text-sm font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
-        >
-          {{ viewModel.saveError() }}
-        </div>
+          <div class="p-2.5 rounded-xl border border-rose-200 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-800 dark:text-rose-200 flex items-center gap-2" role="alert">
+            <i class="pi pi-times-circle text-rose-500"></i>
+            Erro ao carregar zonas existentes.
+          </div>
+        }
+        @if (viewModel.saveError()) {
+          <div class="p-2.5 rounded-xl border border-rose-200 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-800 dark:text-rose-200 flex items-center gap-2" role="alert">
+            <i class="pi pi-times-circle text-rose-500"></i>
+            {{ viewModel.saveError() }}
+          </div>
         }
 
         <!-- Name Input -->
-        <div class="space-y-1.5">
-          <label
-            for="zone-name"
-            class="text-sm font-semibold text-slate-700 dark:text-slate-200"
-          >
+        <div>
+          <label for="zone-name" class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1">
             Nome da Zona
           </label>
           <input
+            pInputText
             id="zone-name"
             type="text"
             formControlName="name"
-            placeholder="Ex: Zona Norte"
-            class="min-h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-400"
+            placeholder="Ex: Zona A"
+            class="w-full"
             autocomplete="off"
           />
           @if (viewModel.nameError()) {
-          <p class="text-xs font-medium text-red-600 dark:text-red-400">
-            {{ viewModel.nameError() }}
-          </p>
+            <p class="text-xs text-rose-600 dark:text-rose-400 mt-1" role="alert">
+              {{ viewModel.nameError() }}
+            </p>
           }
         </div>
 
         <!-- Code Input -->
-        <div class="space-y-1.5">
-          <label
-            for="zone-code"
-            class="text-sm font-semibold text-slate-700 dark:text-slate-200"
-          >
+        <div>
+          <label for="zone-code" class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1">
             Código
           </label>
           <input
+            pInputText
             id="zone-code"
             type="text"
             formControlName="code"
-            placeholder="Ex: ZN-01"
-            class="min-h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-400"
+            placeholder="Ex: A"
+            class="w-full"
             autocomplete="off"
           />
           @if (viewModel.codeError()) {
-          <p class="text-xs font-medium text-red-600 dark:text-red-400">
-            {{ viewModel.codeError() }}
-          </p>
+            <p class="text-xs text-rose-600 dark:text-rose-400 mt-1" role="alert">
+              {{ viewModel.codeError() }}
+            </p>
           }
         </div>
 
         <!-- Description Textarea -->
-        <div class="space-y-1.5">
-          <label
-            for="zone-description"
-            class="text-sm font-semibold text-slate-700 dark:text-slate-200"
-          >
+        <div>
+          <label for="zone-description" class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1">
             Descrição
           </label>
           <textarea
+            pTextarea
             id="zone-description"
             formControlName="description"
             rows="3"
             placeholder="Detalhes opcionais sobre a zona..."
-            class="w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-400"
+            class="w-full resize-none"
           ></textarea>
         </div>
 
         <!-- Polygon Points Card -->
-        <div
-          class="rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900/80 transition-colors"
-        >
-          <div class="flex items-center justify-between gap-3">
-            <span
-              class="text-sm font-semibold text-slate-700 dark:text-slate-200"
-            >
-              Polígono
+        <div class="p-3 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50/70 dark:bg-surface-800/30 text-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-semibold text-surface-800 dark:text-surface-200 flex items-center gap-1.5">
+              <i class="pi pi-pencil text-primary"></i>
+              Vértices do Polígono:
             </span>
-            <span
-              class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300"
-            >
+            <span class="font-bold px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-[11px]">
               {{ viewModel.selectedPolygonCoordinates().length }} pontos
             </span>
           </div>
           @if (viewModel.polygonError()) {
-          <p class="mt-2 text-xs font-medium text-red-600 dark:text-red-400">
-            {{ viewModel.polygonError() }}
-          </p>
+            <p class="text-xs text-rose-600 dark:text-rose-400" role="alert">
+              {{ viewModel.polygonError() }}
+            </p>
           }
         </div>
       </div>
 
       <!-- Pinned Footer Actions -->
-      <div
-        class="shrink-0 border-t border-slate-200 dark:border-slate-800 p-4 md:px-5 md:py-3.5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
-      >
-        <div class="grid grid-cols-2 gap-3">
-          <button
+      <div class="p-3.5 sm:p-4 border-t border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
+        <div class="grid grid-cols-2 gap-2">
+          <p-button
             type="button"
-            class="min-h-10 md:min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 flex items-center justify-center gap-1.5 active:scale-[0.98]"
+            label="Limpar"
+            severity="secondary"
+            size="small"
+            [outlined]="true"
             [disabled]="viewModel.isSaving()"
-            (click)="viewModel.clear()"
-          >
-            Limpar
-          </button>
-          <button
+            (onClick)="viewModel.clear()"
+            styleClass="w-full"
+          />
+          <p-button
             type="submit"
-            class="min-h-10 md:min-h-11 rounded-lg bg-emerald-600 px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 flex items-center justify-center gap-1.5 active:scale-[0.98]"
+            label="Salvar Zona"
+            icon="pi pi-check"
+            [loading]="viewModel.isSaving()"
+            loadingIcon="pi pi-spin pi-spinner"
+            severity="primary"
+            size="small"
             [disabled]="!viewModel.canSave()"
-          >
-            @if (viewModel.isSaving()) {
-              <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-              </svg>
-              Salvando...
-            } @else {
-              Salvar zona
-            }
-          </button>
+            styleClass="w-full"
+          />
         </div>
       </div>
     </form>
   </aside>
 
   <!-- Map Area -->
-  <div class="relative min-h-[250px] md:min-h-0 flex-1 overflow-hidden h-full">
+  <div class="relative min-w-0 flex-1 h-full overflow-hidden bg-surface-100 dark:bg-surface-950">
     <app-map-polygon-selector
       class="absolute inset-0 h-full w-full"
       [center]="[-23.398772, -49.148646]"
@@ -220,42 +172,15 @@
     />
 
     <!-- Fullscreen Button -->
-    <button
+    <p-button
       type="button"
-      (click)="toggleFullscreen()"
-      class="absolute right-3 top-14 z-[400] min-h-10 min-w-10 md:min-h-11 md:min-w-11 rounded-lg bg-white/90 p-2 text-slate-600 shadow-md backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 dark:bg-slate-800/90 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white flex items-center justify-center"
+      (onClick)="toggleFullscreen()"
+      [icon]="viewModel.isMapFullscreen() ? 'pi pi-window-minimize' : 'pi pi-window-maximize'"
+      [rounded]="true"
+      severity="secondary"
+      styleClass="!absolute right-3 top-14 z-[400] shadow-md"
       [title]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
       [attr.aria-label]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
-    >
-      @if (viewModel.isMapFullscreen()) {
-      <svg
-        class="h-5 w-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 11v-5h5M15 13v5h-5M4 20l5-5M20 4l-5 5"
-        />
-      </svg>
-      } @else {
-      <svg
-        class="h-5 w-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-        />
-      </svg>
-      }
-    </button>
+    />
   </div>
 </div>

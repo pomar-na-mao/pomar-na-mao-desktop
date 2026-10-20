@@ -1,60 +1,23 @@
-<div class="flex flex-col h-[calc(100vh-60px)] overflow-hidden bg-white dark:bg-slate-950">
-  <!-- Horizontal Navigation Bar (UI/UX Pro Max) -->
+<div class="flex h-[calc(100vh-56px)] flex-col overflow-hidden bg-canvas text-ink">
+  <!-- Horizontal Navigation Bar -->
   <header
-    class="shrink-0 border-b border-slate-200 bg-white/95 px-4 py-2 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95 z-20"
+    class="z-20 shrink-0 border-b border-border bg-surface px-4 pt-3 sm:px-5"
   >
-    <div class="flex flex-wrap items-center justify-between gap-3">
-      <!-- Title & Context -->
-      <div class="flex items-center gap-3">
-        <div
-          class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400"
-        >
-          <svg
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-            />
-          </svg>
-        </div>
-        <div>
-          <h1
-            class="text-base font-semibold leading-tight text-slate-900 dark:text-slate-100"
-          >
-            Zonas
-          </h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            Gerenciamento de zonas/talhões e atribuição de plantas
-          </p>
-        </div>
-      </div>
-
+    <div class="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-start">
       <!-- Segmented Control Horizontal Navigation -->
       <nav
         role="tablist"
         aria-label="Navegação de Zonas"
-        class="inline-flex gap-1 max-w-full items-center overflow-x-auto rounded-xl border border-slate-200/90 bg-slate-100/90 p-1 shadow-inner dark:border-slate-800 dark:bg-slate-950/80"
+        class="flex max-w-full items-center gap-5 overflow-x-auto"
       >
         <button
           type="button"
           role="tab"
-          id="tab-gerenciamento"
-          aria-controls="panel-gerenciamento"
-          [attr.aria-selected]="activeTab() === 'gerenciamento'"
-          (click)="setActiveTab('gerenciamento')"
-          class="inline-flex min-h-[40px] sm:min-h-[44px] items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium sm:px-4 sm:py-2 sm:text-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-          [ngClass]="
-            activeTab() === 'gerenciamento'
-              ? 'bg-white font-semibold text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400 dark:shadow-slate-950/40'
-              : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200'
-          "
+          id="tab-cadastro"
+          aria-controls="panel-cadastro"
+          [attr.aria-selected]="activeTab() === 'cadastro'"
+          (click)="setActiveTab('cadastro')"
+          class="zones-tab"
         >
           <svg
             class="h-4 w-4 shrink-0"
@@ -70,7 +33,7 @@
               d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
             />
           </svg>
-          <span>Gerenciamento de Zonas</span>
+          <span>Cadastro de Zonas</span>
         </button>
 
         <button
@@ -80,12 +43,7 @@
           aria-controls="panel-atribuicao"
           [attr.aria-selected]="activeTab() === 'atribuicao'"
           (click)="setActiveTab('atribuicao')"
-          class="inline-flex min-h-[40px] sm:min-h-[44px] items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium sm:px-4 sm:py-2 sm:text-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-          [ngClass]="
-            activeTab() === 'atribuicao'
-              ? 'bg-white font-semibold text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400 dark:shadow-slate-950/40'
-              : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200'
-          "
+          class="zones-tab"
         >
           <svg
             class="h-4 w-4 shrink-0"
@@ -110,11 +68,11 @@
   <!-- Views Content Panels -->
   <main class="relative flex-1 min-h-0 overflow-hidden">
     <div
-      id="panel-gerenciamento"
+      id="panel-cadastro"
       role="tabpanel"
-      aria-labelledby="tab-gerenciamento"
+      aria-labelledby="tab-cadastro"
       class="h-full w-full"
-      [class.hidden]="activeTab() !== 'gerenciamento'"
+      [class.hidden]="activeTab() !== 'cadastro'"
     >
       <app-zone-map-management #managementView class="block h-full w-full" />
     </div>
