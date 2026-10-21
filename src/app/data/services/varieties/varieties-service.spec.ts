@@ -32,8 +32,14 @@ describe('VarietiesService', () => {
     vi.useRealTimers();
   });
 
-  it('loads varieties ordered by name and caches the result', async () => {
-    const response = { data: [], error: null, count: 0, status: 200, statusText: 'OK' };
+  it('loads varieties ordered by most recent update and caches the result', async () => {
+    const response = {
+      data: [],
+      error: null,
+      count: 0,
+      status: 200,
+      statusText: 'OK',
+    };
     const order = vi.fn().mockResolvedValue(response);
     const select = vi.fn().mockReturnValue({ order });
     from.mockReturnValue({ select });
@@ -47,7 +53,7 @@ describe('VarietiesService', () => {
       'id, name, description, created_at, updated_at',
       { count: 'exact' },
     );
-    expect(order).toHaveBeenCalledWith('name', { ascending: true });
+    expect(order).toHaveBeenCalledWith('updated_at', { ascending: false });
     expect(first).toBe(response);
     expect(cached).toBe(response);
   });

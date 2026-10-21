@@ -6,12 +6,8 @@
   >
     <div class="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
       <div class="shrink-0">
-        <h1 class="text-base font-bold leading-none text-surface-900 dark:text-surface-0">
-          Variedades
-        </h1>
-        <p class="mt-1 text-[11px] leading-none text-surface-500 dark:text-surface-400">
-          Gerenciamento do catálogo do pomar
-        </p>
+        <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Variedades</h4>
+        <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none">Gerenciamento do catálogo do pomar</p>
       </div>
 
       <div class="w-full sm:w-72">
@@ -123,7 +119,7 @@
                 <p-sortIcon field="updated_at" />
               </div>
             </th>
-            <th style="width: 7rem; text-align: right">Ações</th>
+            <th style="width: 7rem; text-align: center">Ações</th>
           </tr>
         </ng-template>
 
@@ -152,8 +148,8 @@
                 {{ variety.updated_at | date: 'dd/MM/yyyy HH:mm' }}
               </time>
             </td>
-            <td style="text-align: right">
-              <div class="flex items-center justify-end gap-1">
+            <td style="text-align: center">
+              <div class="flex items-center justify-center gap-1">
                 <p-button
                   icon="pi pi-pencil"
                   [text]="true"

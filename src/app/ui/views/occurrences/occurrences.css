@@ -1,0 +1,58 @@
+.occurrence-category {
+  border: 1px solid transparent;
+}
+
+.occurrence-category[data-category="STRUCTURAL"] {
+  border-color: rgb(139 92 246 / 45%);
+  background: rgb(139 92 246 / 14%);
+  box-shadow: 0 0 12px rgb(139 92 246 / 32%);
+  color: #6d28d9;
+}
+
+.occurrence-category[data-category="ENVIRONMENTAL"] {
+  border-color: rgb(16 185 129 / 45%);
+  background: rgb(16 185 129 / 14%);
+  box-shadow: 0 0 12px rgb(16 185 129 / 32%);
+  color: #047857;
+}
+
+.occurrence-category[data-category="PEST_DISEASE"] {
+  border-color: rgb(245 158 11 / 50%);
+  background: rgb(245 158 11 / 16%);
+  box-shadow: 0 0 12px rgb(245 158 11 / 34%);
+  color: #92400e;
+}
+
+.occurrence-category[data-category="ANTHROPIC"] {
+  border-color: rgb(244 63 94 / 45%);
+  background: rgb(244 63 94 / 14%);
+  box-shadow: 0 0 12px rgb(244 63 94 / 32%);
+  color: #be123c;
+}
+
+.occurrence-category[data-category="UNCLASSIFIED"] {
+  border-color: rgb(100 116 139 / 40%);
+  background: rgb(100 116 139 / 12%);
+  box-shadow: 0 0 10px rgb(100 116 139 / 24%);
+  color: #475569;
+}
+
+:host-context(.dark) .occurrence-category[data-category="STRUCTURAL"] {
+  color: #ddd6fe;
+}
+
+:host-context(.dark) .occurrence-category[data-category="ENVIRONMENTAL"] {
+  color: #a7f3d0;
+}
+
+:host-context(.dark) .occurrence-category[data-category="PEST_DISEASE"] {
+  color: #fde68a;
+}
+
+:host-context(.dark) .occurrence-category[data-category="ANTHROPIC"] {
+  color: #fecdd3;
+}
+
+:host-context(.dark) .occurrence-category[data-category="UNCLASSIFIED"] {
+  color: #cbd5e1;
+}
