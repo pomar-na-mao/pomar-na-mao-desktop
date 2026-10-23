@@ -64,6 +64,12 @@ export class AppMenu implements OnInit {
             routerLink: ['/operacoes'],
           },
           {
+            label: 'Mipd',
+            visible: true,
+            icon: 'pi pi-fw pi-shield',
+            routerLink: ['/mipd'],
+          },
+          {
             label: 'Inclusões em Massa',
             visible: true,
             icon: 'pi pi-fw pi-file-arrow-up',

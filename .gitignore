@@ -54,4 +54,4 @@ PLANNING.md
 CODE_OF_CONDUCT.md
 design_system.md
 database.md
-migration.sql
+migration*.sql

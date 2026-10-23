@@ -11,12 +11,24 @@ describe('ROUTES', () => {
       expect.arrayContaining([
         'pomar',
         'operacoes',
+        'mipd',
         'inclusoes-em-massa',
         'zonas',
         'configuracoes',
         'usuarios',
       ]),
     );
+  });
+
+  it('should lazy-load the MIPD screen for /mipd', async () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const mipdRoute = mainRoute?.children?.find(
+      (route) => route.path === 'mipd',
+    );
+
+    expect(mipdRoute?.loadComponent).toBeDefined();
+    const loadFn = mipdRoute?.loadComponent as () => Promise<unknown>;
+    await expect(loadFn()).resolves.toBeDefined();
   });
 
   it('should redirect legacy atribuicao-zonas to zonas', () => {
