@@ -4,6 +4,17 @@ import { describe, expect, it, vi } from 'vitest';
 import { Sidebar } from './sidebar';
 
 describe('Sidebar', () => {
+  it('shows Mipd immediately below operations', () => {
+    const sidebar = new Sidebar();
+    const operationsIndex = sidebar.menuItems.findIndex(
+      (item) => item.path === '/operacoes',
+    );
+
+    expect(sidebar.menuItems[operationsIndex + 1]).toEqual(
+      expect.objectContaining({ label: 'Mipd', path: '/mipd' }),
+    );
+  });
+
   it('should show zones navigation directly below mass inclusion without separate assignment entry', () => {
     const sidebar = new Sidebar();
     const massInclusionIndex = sidebar.menuItems.findIndex(

@@ -30,6 +30,10 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/operations/operations').then(m => m.Operations)
       },
       {
+        path: 'mipd',
+        loadComponent: () => import('./ui/views/mipd/mipd').then(m => m.Mipd)
+      },
+      {
         path: 'inclusoes-em-massa',
         loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
       },
