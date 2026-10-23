@@ -36,13 +36,38 @@ export class AppMenu implements OnInit {
             label: 'Pomar',
             visible: true,
             icon: 'pi pi-fw pi-warehouse',
-            routerLink: ['/pomar'],
+            items: [
+              {
+                label: 'Visão geral',
+                visible: true,
+                icon: 'pi pi-fw pi-chart-bar',
+                routerLink: ['/pomar/visao-geral'],
+              },
+              {
+                label: 'Variedades',
+                visible: true,
+                icon: 'pi pi-fw pi-list',
+                routerLink: ['/pomar/variedades'],
+              },
+              {
+                label: 'Ocorrências',
+                visible: true,
+                icon: 'pi pi-fw pi-exclamation-triangle',
+                routerLink: ['/pomar/ocorrencias'],
+              },
+            ],
           },
           {
             label: 'Operações',
             visible: true,
             icon: 'pi pi-fw pi-briefcase',
             routerLink: ['/operacoes'],
+          },
+          {
+            label: 'Mipd',
+            visible: true,
+            icon: 'pi pi-fw pi-shield',
+            routerLink: ['/mipd'],
           },
           {
             label: 'Inclusões em Massa',

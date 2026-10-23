@@ -24,7 +24,12 @@ class MenuHost {
     items: [
       {
         label: 'Pomar',
-        routerLink: ['/pomar'],
+        items: [
+          {
+            label: 'Visão geral',
+            routerLink: ['/pomar/visao-geral'],
+          },
+        ],
       },
       {
         label: 'Zonas',
@@ -47,7 +52,7 @@ describe('AppMenuitem', () => {
       imports: [MenuHost],
       providers: [
         provideRouter([
-          { path: 'pomar', component: EmptyRoute },
+          { path: 'pomar/visao-geral', component: EmptyRoute },
           { path: 'zonas/cadastro', component: EmptyRoute },
         ]),
       ],
@@ -71,7 +76,7 @@ describe('AppMenuitem', () => {
   });
 
   it('keeps sibling submenus closed when the current route belongs to another parent', async () => {
-    await router.navigateByUrl('/pomar');
+    await router.navigateByUrl('/pomar/visao-geral');
 
     const fixture = TestBed.createComponent(MenuHost);
     fixture.detectChanges();
@@ -82,5 +87,19 @@ describe('AppMenuitem', () => {
 
     expect(zonesItem.classList.contains('active-menuitem')).toBe(false);
     expect(zonesItem.querySelector('.layout-submenu')?.classList.contains('collapsed')).toBe(true);
+  });
+
+  it('opens the Pomar submenu when the current route is one of its children', async () => {
+    await router.navigateByUrl('/pomar/visao-geral');
+
+    const fixture = TestBed.createComponent(MenuHost);
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const rootItems = Array.from(root.querySelector('.layout-submenu')?.children ?? []) as HTMLElement[];
+    const orchardItem = rootItems[0];
+
+    expect(orchardItem.classList.contains('active-menuitem')).toBe(true);
+    expect(orchardItem.querySelector('.layout-submenu')?.classList.contains('expanded')).toBe(true);
   });
 });
