@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseService } from '../supabase';
-import { HomeDashboardService } from './home-dashboard-service';
+import { OverviewService } from './overview-service';
 
-describe('HomeDashboardService', () => {
-  let service: HomeDashboardService;
+describe('OverviewService', () => {
+  let service: OverviewService;
   const mockRpc = vi.fn();
   const mockFrom = vi.fn();
 
@@ -14,7 +14,7 @@ describe('HomeDashboardService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        HomeDashboardService,
+        OverviewService,
         {
           provide: SupabaseService,
           useValue: {
@@ -28,10 +28,10 @@ describe('HomeDashboardService', () => {
       ],
     });
 
-    service = TestBed.inject(HomeDashboardService);
+    service = TestBed.inject(OverviewService);
   });
 
-  it('should return dashboard snapshot from a single rpc call', async () => {
+  it('should return overview snapshot from a single rpc call', async () => {
     mockRpc.mockResolvedValue({
       data: {
         summary: {
@@ -84,8 +84,8 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    const result = await service.getHomeDashboardData();
-    const cachedResult = await service.getHomeDashboardData();
+    const result = await service.getOverviewData();
+    const cachedResult = await service.getOverviewData();
 
     expect(mockRpc).toHaveBeenCalledWith('get_home_dashboard_snapshot', {
       p_period_start_date: null,
@@ -114,6 +114,7 @@ describe('HomeDashboardService', () => {
           longitude: -47.1,
           varietyId: 1,
           varietyName: 'Gala',
+          isDead: false,
           nonExistent: false,
         },
         {
@@ -122,6 +123,7 @@ describe('HomeDashboardService', () => {
           longitude: -47.2,
           varietyId: null,
           varietyName: null,
+          isDead: false,
           nonExistent: false,
         },
       ],
@@ -198,7 +200,7 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    const result = await service.getHomeDashboardData();
+    const result = await service.getOverviewData();
 
     expect(result).toEqual({
       summary: {
@@ -215,6 +217,7 @@ describe('HomeDashboardService', () => {
           longitude: -47.2,
           varietyId: null,
           varietyName: null,
+          isDead: false,
           nonExistent: false,
         },
       ],
@@ -235,7 +238,7 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    await service.getHomeDashboardData({
+    await service.getOverviewData({
       plantingStartDate: '2026-01-01',
       plantingEndDate: '2026-02-01',
     });
@@ -258,12 +261,12 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    const result = await service.getHomeDashboardData();
+    const result = await service.getOverviewData();
 
     expect(result.farmBoundary).toEqual([]);
   });
 
-  it('should cache dashboard reference options across loads', async () => {
+  it('should cache overview reference options across loads', async () => {
     const zoneOrder = vi.fn().mockResolvedValue({
       data: [{ id: 'z1', name: 'Zona A', polygon: null }],
       error: null,
@@ -311,6 +314,7 @@ describe('HomeDashboardService', () => {
             longitude: -47.5,
             varietyId: null,
             varietyName: null,
+            isDead: true,
             nonExistent: true,
           },
         ],
@@ -319,7 +323,7 @@ describe('HomeDashboardService', () => {
       error: null,
     });
 
-    const result = await service.getHomeDashboardData();
+    const result = await service.getOverviewData();
 
     expect(result.plants).toEqual([
       {
@@ -328,6 +332,7 @@ describe('HomeDashboardService', () => {
         longitude: -47.5,
         varietyId: null,
         varietyName: null,
+        isDead: true,
         nonExistent: true,
       },
     ]);

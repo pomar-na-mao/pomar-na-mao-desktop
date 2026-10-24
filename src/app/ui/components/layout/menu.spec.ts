@@ -17,23 +17,72 @@ describe('AppMenu', () => {
     }).compileComponents();
   });
 
-  it('shows Mipd between Operações and Dados básicos', () => {
+  it('shows overview first and outside the registration submenu', () => {
     const fixture = TestBed.createComponent(AppMenu);
     fixture.detectChanges();
 
     const items = fixture.componentInstance.menuItems[0].items ?? [];
-    const operationsIndex = items.findIndex((item) => item.routerLink?.[0] === '/operacoes');
+    const registrationItem = items.find((item) => item.label === 'Cadastro');
+    const registrationItems = registrationItem?.items ?? [];
 
-    expect(operationsIndex).toBeGreaterThanOrEqual(0);
-    expect(items[operationsIndex + 1]).toMatchObject({
-      label: 'Mipd',
-      icon: 'pi pi-fw pi-shield',
-      routerLink: ['/mipd'],
+    expect(items[0]).toMatchObject({
+      label: 'Visão geral',
+      icon: 'pi pi-fw pi-chart-bar',
+      routerLink: ['/visao-geral'],
     });
-    expect(items[operationsIndex + 2]).toMatchObject({
-      label: 'Dados básicos',
-      icon: 'pi pi-fw pi-receipt',
-      routerLink: ['/dados-basicos'],
+    expect(registrationItem).toMatchObject({
+      icon: 'pi pi-fw pi-file-import',
     });
+    expect(registrationItems.map((item) => item.routerLink?.[0])).toEqual([
+      '/cadastro/variedades',
+      '/cadastro/ocorrencias',
+      '/cadastro/zonas',
+      '/cadastro/infraestrutura',
+      '/cadastro/maquinas',
+      '/cadastro/insumos',
+    ]);
+    expect(registrationItems[2]).toMatchObject({
+      label: 'Zonas',
+      icon: 'pi pi-fw pi-map',
+    });
+
+    expect(items.find((item) => item.label === 'Zoneamento')).toMatchObject({
+      icon: 'pi pi-fw pi-share-alt',
+      routerLink: ['/zoneamento'],
+    });
+    expect(items.find((item) => item.label === 'Zonas')).toBeUndefined();
+
+    const registrationIndex = items.findIndex(
+      (item) => item.label === 'Cadastro',
+    );
+    expect(items[registrationIndex + 1]).toMatchObject({
+      label: 'Caderno de campo',
+      items: [
+        expect.objectContaining({
+          label: 'Operações realizadas',
+          routerLink: ['/caderno-de-campo/operacoes-realizadas'],
+        }),
+      ],
+    });
+  });
+
+  it('groups Operações and Mipd under Visão das operações', () => {
+    const fixture = TestBed.createComponent(AppMenu);
+    fixture.detectChanges();
+
+    const items = fixture.componentInstance.menuItems[0].items ?? [];
+    const operationsView = items.find(
+      (item) => item.label === 'Visão das operações',
+    );
+
+    expect(operationsView).toMatchObject({
+      icon: 'pi pi-fw pi-hammer',
+    });
+    expect(operationsView?.items?.map((item) => item.routerLink?.[0])).toEqual([
+      '/visao-das-operacoes/operacoes',
+      '/visao-das-operacoes/mipd',
+    ]);
+    expect(items.find((item) => item.routerLink?.[0] === '/operacoes')).toBeUndefined();
+    expect(items.find((item) => item.routerLink?.[0] === '/mipd')).toBeUndefined();
   });
 });

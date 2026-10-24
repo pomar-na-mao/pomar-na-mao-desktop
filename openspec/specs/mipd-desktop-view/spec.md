@@ -11,7 +11,7 @@ Permitir que usuários do desktop localizem e auditem no mapa as marcações MIP
 O aplicativo SHALL apresentar a tela MIPD com painel de filtros à esquerda e mapa à direita, reutilizando o padrão visual observável da tela de Operações para contêiner, dimensões, espaçamentos, cores, bordas, sombras, responsividade, modo escuro e controle de tela cheia.
 
 #### Scenario: Abrir MIPD em viewport desktop
-- **WHEN** o usuário autenticado acessa `/mipd` em uma viewport desktop
+- **WHEN** o usuário autenticado acessa `/visao-das-operacoes/mipd` em uma viewport desktop
 - **THEN** o painel de filtros MUST aparecer à esquerda e o mapa MUST ocupar a área restante à direita
 - **AND** a composição visual MUST corresponder à tela de Operações.
 

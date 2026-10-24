@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { Select, SelectOption } from '../../../../shared/components/select/select';
-import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
+import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
 
 const LIVING_PLANT_COLOR = '#10b981';
+const DEAD_PLANT_COLOR = '#ef4444';
 
 @Component({
-  selector: 'app-dashboard-filters-panel',
+  selector: 'app-overview-filters-panel',
   imports: [CommonModule, FormsModule, DatePickerModule, Select, ButtonModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
@@ -34,8 +35,8 @@ const LIVING_PLANT_COLOR = '#10b981';
               dateFormat="yy-mm-dd"
               dataType="string"
               placeholder="Início"
-              [ngModel]="dashboardViewModel.filterPlantingStartDate()"
-              (ngModelChange)="dashboardViewModel.filterPlantingStartDate.set($event || '')"
+              [ngModel]="overviewViewModel.filterPlantingStartDate()"
+              (ngModelChange)="overviewViewModel.filterPlantingStartDate.set($event || '')"
               [fluid]="true"
             />
             <p-datepicker
@@ -44,8 +45,8 @@ const LIVING_PLANT_COLOR = '#10b981';
               dateFormat="yy-mm-dd"
               dataType="string"
               placeholder="Fim"
-              [ngModel]="dashboardViewModel.filterPlantingEndDate()"
-              (ngModelChange)="dashboardViewModel.filterPlantingEndDate.set($event || '')"
+              [ngModel]="overviewViewModel.filterPlantingEndDate()"
+              (ngModelChange)="overviewViewModel.filterPlantingEndDate.set($event || '')"
               [fluid]="true"
             />
           </div>
@@ -55,8 +56,8 @@ const LIVING_PLANT_COLOR = '#10b981';
         <div>
           <app-select
             label="Zona"
-            [ngModel]="dashboardViewModel.filterZoneId()"
-            (ngModelChange)="dashboardViewModel.filterZoneId.set($event)"
+            [ngModel]="overviewViewModel.filterZoneId()"
+            (ngModelChange)="overviewViewModel.filterZoneId.set($event)"
             [options]="zoneOptions"
           ></app-select>
         </div>
@@ -65,8 +66,8 @@ const LIVING_PLANT_COLOR = '#10b981';
         <div>
           <app-select
             label="Ocorrência"
-            [ngModel]="dashboardViewModel.filterOccurrenceId()"
-            (ngModelChange)="dashboardViewModel.filterOccurrenceId.set($event)"
+            [ngModel]="overviewViewModel.filterOccurrenceId()"
+            (ngModelChange)="overviewViewModel.filterOccurrenceId.set($event)"
             [options]="occurrenceOptions"
           ></app-select>
         </div>
@@ -75,8 +76,8 @@ const LIVING_PLANT_COLOR = '#10b981';
         <div>
           <app-select
             label="Status da Planta"
-            [ngModel]="dashboardViewModel.filterPlantStatus()"
-            (ngModelChange)="dashboardViewModel.filterPlantStatus.set($event)"
+            [ngModel]="overviewViewModel.filterPlantStatus()"
+            (ngModelChange)="overviewViewModel.filterPlantStatus.set($event)"
             [options]="plantStatusOptions"
           ></app-select>
         </div>
@@ -85,8 +86,8 @@ const LIVING_PLANT_COLOR = '#10b981';
         <div>
           <app-select
             label="Variedade"
-            [ngModel]="dashboardViewModel.filterVarietyId()"
-            (ngModelChange)="dashboardViewModel.filterVarietyId.set($event)"
+            [ngModel]="overviewViewModel.filterVarietyId()"
+            (ngModelChange)="overviewViewModel.filterVarietyId.set($event)"
             [options]="varietyOptions"
           ></app-select>
         </div>
@@ -107,22 +108,22 @@ const LIVING_PLANT_COLOR = '#10b981';
     </aside>
   `,
 })
-export class DashboardFiltersPanel {
-  public dashboardViewModel = inject(DashboardViewModel);
+export class OverviewFiltersPanel {
+  public overviewViewModel = inject(OverviewViewModel);
 
   public clearFilters(): void {
-    this.dashboardViewModel.filterPlantingStartDate.set('');
-    this.dashboardViewModel.filterPlantingEndDate.set('');
-    this.dashboardViewModel.filterZoneId.set('');
-    this.dashboardViewModel.filterOccurrenceId.set('');
-    this.dashboardViewModel.filterPlantStatus.set('');
-    this.dashboardViewModel.filterVarietyId.set('');
+    this.overviewViewModel.filterPlantingStartDate.set('');
+    this.overviewViewModel.filterPlantingEndDate.set('');
+    this.overviewViewModel.filterZoneId.set('');
+    this.overviewViewModel.filterOccurrenceId.set('');
+    this.overviewViewModel.filterPlantStatus.set('');
+    this.overviewViewModel.filterVarietyId.set('');
   }
 
   public get zoneOptions(): SelectOption[] {
     return [
       { label: 'Todas as Zonas', value: '' },
-      ...this.dashboardViewModel.availableZones().map((z) => ({
+      ...this.overviewViewModel.availableZones().map((z) => ({
         label: z.name,
         value: z.id,
       })),
@@ -132,7 +133,7 @@ export class DashboardFiltersPanel {
   public get occurrenceOptions(): SelectOption[] {
     return [
       { label: 'Todas as Ocorrências', value: '' },
-      ...this.dashboardViewModel.availableOccurrences().map((o) => ({
+      ...this.overviewViewModel.availableOccurrences().map((o) => ({
         label: o.name,
         value: o.id,
       })),
@@ -143,15 +144,14 @@ export class DashboardFiltersPanel {
     return [
       { label: 'Todos os Status', value: '' },
       { label: 'Vivas', value: 'alive', color: LIVING_PLANT_COLOR },
-      { label: 'Mortas', value: 'dead', color: '#ef4444' },
-      { label: 'Sem Status', value: 'unknown' },
+      { label: 'Mortas', value: 'dead', color: DEAD_PLANT_COLOR },
     ];
   }
 
   public get varietyOptions(): SelectOption[] {
     return [
       { label: 'Todas as Variedades', value: '' },
-      ...this.dashboardViewModel.availableVarieties().map((v) => ({
+      ...this.overviewViewModel.availableVarieties().map((v) => ({
         label: v.name,
         value: v.id,
       })),

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RegionsRepository } from '../regions/regions-repository';
-import { HomeDashboardService } from '../../services/home-dashboard/home-dashboard-service';
-import { HomeDashboardRepository } from './home-dashboard-repository';
+import { OverviewService } from '../../services/overview/overview-service';
+import { OverviewRepository } from './overview-repository';
 
-describe('HomeDashboardRepository', () => {
-  let repository: HomeDashboardRepository;
+describe('OverviewRepository', () => {
+  let repository: OverviewRepository;
 
-  const getHomeDashboardData = vi.fn();
+  const getOverviewData = vi.fn();
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
   const findByZoneId = vi.fn();
@@ -17,11 +17,11 @@ describe('HomeDashboardRepository', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        HomeDashboardRepository,
+        OverviewRepository,
         {
-          provide: HomeDashboardService,
+          provide: OverviewService,
           useValue: {
-            getHomeDashboardData,
+            getOverviewData,
             getFilterOptions,
             getOpenOccurrences,
           },
@@ -35,11 +35,11 @@ describe('HomeDashboardRepository', () => {
       ],
     });
 
-    repository = TestBed.inject(HomeDashboardRepository);
+    repository = TestBed.inject(OverviewRepository);
   });
 
   it('should delegate snapshot loading', async () => {
-    getHomeDashboardData.mockResolvedValue({
+    getOverviewData.mockResolvedValue({
       summary: {
         totalPlants: 1,
         totalZones: 2,
@@ -54,15 +54,15 @@ describe('HomeDashboardRepository', () => {
       plantingStartDate: null,
       plantingEndDate: null,
     } as const;
-    const result = await repository.getHomeDashboardData(filters);
+    const result = await repository.getOverviewData(filters);
 
     expect(result.summary.totalPlants).toBe(1);
-    expect(getHomeDashboardData).toHaveBeenCalledWith(filters, undefined);
+    expect(getOverviewData).toHaveBeenCalledWith(filters, undefined);
   });
 
   it('should forward the cache-miss callback', async () => {
     const onCacheMiss = vi.fn();
-    getHomeDashboardData.mockImplementation(
+    getOverviewData.mockImplementation(
       async (_filters, callback?: () => void) => {
         callback?.();
         return {
@@ -79,7 +79,7 @@ describe('HomeDashboardRepository', () => {
       },
     );
 
-    await repository.getHomeDashboardData(
+    await repository.getOverviewData(
       { plantingStartDate: null, plantingEndDate: null },
       onCacheMiss,
     );

@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { HomeDashboardRepository } from '../../../data/repositories/home-dashboard/home-dashboard-repository';
+import { OverviewRepository } from '../../../data/repositories/overview/overview-repository';
 import { LoadingService } from '../../../shared/services/loading.service';
-import { DashboardViewModel } from './dashboard.view-model';
+import { OverviewViewModel } from './overview.view-model';
 
-describe('DashboardViewModel', () => {
-  let viewModel: DashboardViewModel;
+describe('OverviewViewModel', () => {
+  let viewModel: OverviewViewModel;
   let loadingService: LoadingService;
 
-  const getHomeDashboardData = vi.fn();
+  const getOverviewData = vi.fn();
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
   const getZoneRegions = vi.fn();
@@ -16,7 +16,7 @@ describe('DashboardViewModel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    getHomeDashboardData.mockResolvedValue({
+    getOverviewData.mockResolvedValue({
       summary: {
         totalPlants: 12,
         totalZones: 3,
@@ -28,8 +28,8 @@ describe('DashboardViewModel', () => {
         ],
       },
       plants: [
-        { id: 'p1', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
-        { id: 'p2', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: false },
+        { id: 'p1', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', isDead: false, nonExistent: false },
+        { id: 'p2', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, isDead: false, nonExistent: false },
       ],
       farmBoundary: [
         { id: 'f3', latitude: -21.3, longitude: -47.3, order: 3 },
@@ -85,11 +85,11 @@ describe('DashboardViewModel', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        DashboardViewModel,
+        OverviewViewModel,
         {
-          provide: HomeDashboardRepository,
+          provide: OverviewRepository,
           useValue: {
-            getHomeDashboardData,
+            getOverviewData,
             getFilterOptions,
             getOpenOccurrences,
             getZoneRegions,
@@ -98,14 +98,14 @@ describe('DashboardViewModel', () => {
       ],
     });
 
-    viewModel = TestBed.inject(DashboardViewModel);
+    viewModel = TestBed.inject(OverviewViewModel);
     loadingService = TestBed.inject(LoadingService);
   });
 
-  it('should load dashboard snapshot, filter options and open occurrences on initialization', async () => {
-    await viewModel.loadDashboard();
+  it('should load overview snapshot, filter options and open occurrences on initialization', async () => {
+    await viewModel.loadOverview();
 
-    expect(getHomeDashboardData).toHaveBeenLastCalledWith(
+    expect(getOverviewData).toHaveBeenLastCalledWith(
       {
         plantingStartDate: null,
         plantingEndDate: null,
@@ -126,15 +126,15 @@ describe('DashboardViewModel', () => {
   });
 
   it('should not show loading when the snapshot comes from cache', async () => {
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     expect(loadingService.isLoading()).toBe(false);
     expect(loadingService.message()).toBeUndefined();
   });
 
   it('should show loading only while an HTTP-backed snapshot is pending', async () => {
-    const snapshot = await getHomeDashboardData();
-    getHomeDashboardData.mockImplementationOnce(
+    const snapshot = await getOverviewData();
+    getOverviewData.mockImplementationOnce(
       async (
         _filters: unknown,
         onCacheMiss?: () => void,
@@ -146,14 +146,14 @@ describe('DashboardViewModel', () => {
       },
     );
 
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     expect(loadingService.isLoading()).toBe(false);
     expect(loadingService.message()).toBeUndefined();
   });
 
   it('should expose available varieties from summary', async () => {
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     expect(viewModel.availableVarieties()).toEqual([
       { id: 1, name: 'Gala' },
@@ -162,7 +162,7 @@ describe('DashboardViewModel', () => {
   });
 
   it('should filter plants by variety when filterVarietyId is set', async () => {
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     expect(viewModel.filteredPlants().length).toBe(2);
 
@@ -176,39 +176,39 @@ describe('DashboardViewModel', () => {
   });
 
   it('should filter plants by plant status when filterPlantStatus is set', async () => {
-    getHomeDashboardData.mockResolvedValueOnce({
+    getOverviewData.mockResolvedValueOnce({
       summary: null,
       plants: [
-        { id: 'p-alive', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
-        { id: 'p-empty', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: true },
+        { id: 'p-alive', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', isDead: false, nonExistent: false },
+        { id: 'p-dead', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, isDead: true, nonExistent: false },
       ],
       farmBoundary: [],
     });
 
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
     expect(viewModel.filteredPlants().length).toBe(2);
 
     viewModel.filterPlantStatus.set('alive');
     expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-alive']);
 
-    viewModel.filterPlantStatus.set('empty');
-    expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-empty']);
+    viewModel.filterPlantStatus.set('dead');
+    expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-dead']);
 
     viewModel.filterPlantStatus.set('');
     expect(viewModel.filteredPlants().length).toBe(2);
   });
 
   it('should not include empty spots (nonExistent) when filtering by Sem variedade or by specific variety', async () => {
-    getHomeDashboardData.mockResolvedValueOnce({
+    getOverviewData.mockResolvedValueOnce({
       summary: null,
       plants: [
-        { id: 'p-alive-gala', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
-        { id: 'p-empty-no-variety', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: true },
+        { id: 'p-alive-gala', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', isDead: false, nonExistent: false },
+        { id: 'p-empty-no-variety', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, isDead: false, nonExistent: true },
       ],
       farmBoundary: [],
     });
 
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
     expect(viewModel.filteredPlants().length).toBe(2);
 
     // When filtering by 'none' (Sem variedade), empty spots must NOT be shown
@@ -221,7 +221,7 @@ describe('DashboardViewModel', () => {
   });
 
   it('should filter plants by occurrence when filterOccurrenceId is set', async () => {
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     expect(viewModel.filteredPlants().length).toBe(2);
 
@@ -231,7 +231,7 @@ describe('DashboardViewModel', () => {
   });
 
   it('should load selected zone boundary by collected point order', async () => {
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -245,7 +245,7 @@ describe('DashboardViewModel', () => {
   });
 
   it('should fit the map to the selected zone without extending to the farm boundary', async () => {
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -264,11 +264,11 @@ describe('DashboardViewModel', () => {
   });
 
   it('should filter plants using the ordered selected zone polygon', async () => {
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
     await waitForAsyncEffects();
     viewModel.mapPlants.set([
-      { id: 'inside', latitude: -21.1, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: false },
-      { id: 'outside', latitude: -22.5, longitude: -48.5, varietyId: null, varietyName: null, nonExistent: false },
+      { id: 'inside', latitude: -21.1, longitude: -47.2, varietyId: null, varietyName: null, isDead: false, nonExistent: false },
+      { id: 'outside', latitude: -22.5, longitude: -48.5, varietyId: null, varietyName: null, isDead: false, nonExistent: false },
     ]);
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -299,7 +299,7 @@ describe('DashboardViewModel', () => {
         order: 2,
       },
     ]);
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -308,10 +308,10 @@ describe('DashboardViewModel', () => {
     expect(viewModel.filteredPlants().length).toBe(2);
   });
 
-  it('should keep dashboard plants available when selected zone boundary loading fails', async () => {
+  it('should keep overview plants available when selected zone boundary loading fails', async () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     getZoneRegions.mockRejectedValueOnce(new Error('failed'));
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -321,48 +321,28 @@ describe('DashboardViewModel', () => {
     consoleError.mockRestore();
   });
 
-  it('should build variety legend with fallback for plants without variety', async () => {
-    await viewModel.loadDashboard();
+  it('should use green for living plants and red for dead plants', async () => {
+    await viewModel.loadOverview();
 
-    expect(viewModel.varietyLegend()).toEqual([
-      { label: 'Gala', color: '#0f766e', varietyId: 1 },
-      { label: 'Fuji', color: '#1d4ed8', varietyId: 2 },
-      { label: 'Sem variedade', color: '#64748b', varietyId: null },
-    ]);
-    expect(viewModel.getVarietyColor(1, 'Coracao')).toBe('#0f766e');
-    expect(viewModel.getVarietyColor(null, null)).toBe('#64748b');
-  });
-
-  it('should use normalized variety name when id is not available', async () => {
-    await viewModel.loadDashboard();
-
-    expect(viewModel.getVarietyColor(null, ' gala ')).toBe('#0f766e');
-  });
-
-  it('should use pink for classica varieties', async () => {
-    getHomeDashboardData.mockResolvedValueOnce({
-      summary: {
-        totalPlants: 12,
-        totalZones: 3,
-        totalOccurrenceTypes: 7,
-        totalVarieties: 1,
-        varieties: [{ id: 9, name: 'Classica' }],
-      },
-      plants: [
-        { id: 'p9', latitude: -21.1, longitude: -47.1, varietyId: 9, varietyName: 'Classica', nonExistent: false },
-      ],
+    expect(viewModel.getPlantStatusPresentation(viewModel.mapPlants()[0])).toEqual({
+      label: 'Viva',
+      color: '#10b981',
+      strokeColor: '#047857',
     });
-
-    await viewModel.loadDashboard();
-
-    expect(viewModel.varietyLegend()).toEqual([
-      { label: 'Classica', color: '#ec4899', varietyId: 9 },
-    ]);
-    expect(viewModel.getVarietyColor(9, 'Classica')).toBe('#ec4899');
+    expect(
+      viewModel.getPlantStatusPresentation({
+        ...viewModel.mapPlants()[0],
+        isDead: true,
+      }),
+    ).toEqual({
+      label: 'Morta',
+      color: '#ef4444',
+      strokeColor: '#b91c1c',
+    });
   });
 
   it('should include nonExistent plants in mapPlants and filteredPlants', async () => {
-    getHomeDashboardData.mockResolvedValueOnce({
+    getOverviewData.mockResolvedValueOnce({
       summary: {
         totalPlants: 3,
         totalZones: 0,
@@ -371,13 +351,13 @@ describe('DashboardViewModel', () => {
         varieties: [{ id: 1, name: 'Gala' }],
       },
       plants: [
-        { id: 'p1', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', nonExistent: false },
-        { id: 'p-empty', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, nonExistent: true },
+        { id: 'p1', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', isDead: false, nonExistent: false },
+        { id: 'p-empty', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, isDead: true, nonExistent: true },
       ],
       farmBoundary: [],
     });
 
-    await viewModel.loadDashboard();
+    await viewModel.loadOverview();
 
     expect(viewModel.mapPlants().length).toBe(2);
     expect(viewModel.filteredPlants().find((p) => p.id === 'p-empty')?.nonExistent).toBe(true);

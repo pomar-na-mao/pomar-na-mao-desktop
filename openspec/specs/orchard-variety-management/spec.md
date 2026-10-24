@@ -7,7 +7,7 @@ Permitir que usuários autenticados consultem e mantenham o catálogo de varieda
 ## Requirements
 
 ### Requirement: Listagem de variedades
-O sistema SHALL carregar as variedades persistidas ao acessar `/pomar/variedades` e SHALL exibi-las em uma tabela com colunas de seleção, nome, descrição, criação, atualização e ações.
+O sistema SHALL carregar as variedades persistidas ao acessar `/cadastro/variedades` e SHALL exibi-las em uma tabela com colunas de seleção, nome, descrição, criação, atualização e ações.
 
 #### Scenario: Variedades disponíveis
 - **WHEN** a rota termina de carregar dados com sucesso

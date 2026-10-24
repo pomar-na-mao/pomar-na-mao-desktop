@@ -11,7 +11,7 @@
 
 ## ✨ Key Features
 
-- 📊 **Field Works Dashboard**: A centralized view of all ongoing agricultural tasks and routine checks.
+- 📊 **Field Works Overview**: A centralized view of all ongoing agricultural tasks and routine checks.
 - 📍 **Basic Data**: Efficiently plot occurrences, pests, and diseases directly on a map using Leaflet.
 - 🌦️ **Weather Intelligence**: Integrated weather widgets to monitor field conditions in real-time.
 - 🗺️ **Geospatial Tracking**: Detailed map views for orchard layout and occurrence tracking.

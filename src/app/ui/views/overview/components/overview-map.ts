@@ -6,10 +6,10 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
+import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
 
 @Component({
-  selector: 'app-dashboard-map',
+  selector: 'app-overview-map',
   imports: [ButtonModule],
   styles: [
     `
@@ -24,28 +24,28 @@ import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.vie
   template: `
     <div class="relative h-full w-full">
       <div
-        id="dashboard-map"
+        id="overview-map"
         class="h-full w-full bg-slate-100 dark:bg-slate-900 dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)] transition-[filter]"
       ></div>
 
       <!-- Fullscreen button floating over map -->
       <p-button
         (onClick)="toggleFullscreen()"
-        [icon]="dashboardViewModel.isMapFullscreen() ? 'pi pi-window-minimize' : 'pi pi-window-maximize'"
+        [icon]="overviewViewModel.isMapFullscreen() ? 'pi pi-window-minimize' : 'pi pi-window-maximize'"
         [rounded]="true"
         severity="secondary"
         styleClass="absolute right-3 top-3 z-[400]"
-        [ariaLabel]="dashboardViewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
-        [title]="dashboardViewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+        [ariaLabel]="overviewViewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+        [title]="overviewViewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
       />
     </div>
   `,
 })
-export class DashboardMap implements AfterViewInit, OnDestroy {
-  public dashboardViewModel = inject(DashboardViewModel);
+export class OverviewMap implements AfterViewInit, OnDestroy {
+  public overviewViewModel = inject(OverviewViewModel);
 
   public ngAfterViewInit(): void {
-    this.dashboardViewModel.initMap('dashboard-map');
+    this.overviewViewModel.initMap('overview-map');
   }
 
   public ngOnDestroy(): void {
@@ -53,9 +53,9 @@ export class DashboardMap implements AfterViewInit, OnDestroy {
   }
 
   public toggleFullscreen(): void {
-    const nextValue = !this.dashboardViewModel.isMapFullscreen();
-    this.dashboardViewModel.setMapFullscreen(nextValue);
+    const nextValue = !this.overviewViewModel.isMapFullscreen();
+    this.overviewViewModel.setMapFullscreen(nextValue);
     document.body.style.overflow = nextValue ? 'hidden' : '';
-    this.dashboardViewModel.invalidateMapSize();
+    this.overviewViewModel.invalidateMapSize();
   }
 }

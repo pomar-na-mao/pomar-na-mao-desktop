@@ -64,7 +64,7 @@ All active screens SHALL remain usable at 320px, 768px, 1024px, and 1440px viewp
 - **THEN** the main content MUST use the full available width and remain clear of the fixed header
 
 #### Scenario: Map and filter workflow is displayed on a narrow viewport
-- **WHEN** dashboard, operations, basic data, zone management, or zone assignment is displayed on a narrow viewport
+- **WHEN** overview, operations, basic data, zone management, or zone assignment is displayed on a narrow viewport
 - **THEN** the filter or form panel MUST become a collapsible sheet, drawer, or bounded top panel
 - **THEN** the map MUST retain a usable minimum height and its controls MUST remain reachable without overlapping primary actions
 

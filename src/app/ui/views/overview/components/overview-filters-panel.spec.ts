@@ -2,16 +2,16 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type {
-  HomeDashboardOccurrence,
-  HomeDashboardVariety,
-  HomeDashboardZone,
-} from '../../../../domain/models/home-dashboard.model';
-import { DashboardViewModel } from '../../../view-models/dashboard/dashboard.view-model';
-import { DashboardFiltersPanel } from './dashboard-filters-panel';
+  OverviewOccurrence,
+  OverviewVariety,
+  OverviewZone,
+} from '../../../../domain/models/overview.model';
+import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
+import { OverviewFiltersPanel } from './overview-filters-panel';
 
-describe('DashboardFiltersPanel', () => {
-  let fixture: ComponentFixture<DashboardFiltersPanel>;
-  let component: DashboardFiltersPanel;
+describe('OverviewFiltersPanel', () => {
+  let fixture: ComponentFixture<OverviewFiltersPanel>;
+  let component: OverviewFiltersPanel;
   let mockViewModel: {
     filterPlantingStartDate: ReturnType<typeof signal<string>>;
     filterPlantingEndDate: ReturnType<typeof signal<string>>;
@@ -19,9 +19,9 @@ describe('DashboardFiltersPanel', () => {
     filterOccurrenceId: ReturnType<typeof signal<string | number>>;
     filterPlantStatus: ReturnType<typeof signal<string>>;
     filterVarietyId: ReturnType<typeof signal<string | number>>;
-    availableZones: ReturnType<typeof signal<HomeDashboardZone[]>>;
-    availableOccurrences: ReturnType<typeof signal<HomeDashboardOccurrence[]>>;
-    availableVarieties: ReturnType<typeof signal<HomeDashboardVariety[]>>;
+    availableZones: ReturnType<typeof signal<OverviewZone[]>>;
+    availableOccurrences: ReturnType<typeof signal<OverviewOccurrence[]>>;
+    availableVarieties: ReturnType<typeof signal<OverviewVariety[]>>;
   };
 
   beforeEach(async () => {
@@ -32,22 +32,22 @@ describe('DashboardFiltersPanel', () => {
       filterOccurrenceId: signal('occ-1'),
       filterPlantStatus: signal('alive'),
       filterVarietyId: signal(1),
-      availableZones: signal<HomeDashboardZone[]>([{ id: 'z1', name: 'Zona 1' } as unknown as HomeDashboardZone]),
-      availableOccurrences: signal<HomeDashboardOccurrence[]>([{ id: 'o1', name: 'Praga 1' } as unknown as HomeDashboardOccurrence]),
-      availableVarieties: signal<HomeDashboardVariety[]>([{ id: 1, name: 'Gala' } as unknown as HomeDashboardVariety]),
+      availableZones: signal<OverviewZone[]>([{ id: 'z1', name: 'Zona 1' } as unknown as OverviewZone]),
+      availableOccurrences: signal<OverviewOccurrence[]>([{ id: 'o1', name: 'Praga 1' } as unknown as OverviewOccurrence]),
+      availableVarieties: signal<OverviewVariety[]>([{ id: 1, name: 'Gala' } as unknown as OverviewVariety]),
     };
 
     await TestBed.configureTestingModule({
-      imports: [DashboardFiltersPanel],
+      imports: [OverviewFiltersPanel],
       providers: [
         {
-          provide: DashboardViewModel,
+          provide: OverviewViewModel,
           useValue: mockViewModel,
         },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DashboardFiltersPanel);
+    fixture = TestBed.createComponent(OverviewFiltersPanel);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -79,7 +79,6 @@ describe('DashboardFiltersPanel', () => {
       { label: 'Todos os Status', value: '' },
       { label: 'Vivas', value: 'alive', color: '#10b981' },
       { label: 'Mortas', value: 'dead', color: '#ef4444' },
-      { label: 'Sem Status', value: 'unknown' },
     ]);
 
     expect(component.varietyOptions).toEqual([

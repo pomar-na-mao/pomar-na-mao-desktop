@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { HomeStatsService } from './home-stats-service';
+import { OverviewStatsService } from './overview-stats-service';
 import { SupabaseService } from '../supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-describe('HomeStatsService', () => {
-  let service: HomeStatsService;
+describe('OverviewStatsService', () => {
+  let service: OverviewStatsService;
   const mockInvoke = vi.fn();
 
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('HomeStatsService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        HomeStatsService,
+        OverviewStatsService,
         {
           provide: SupabaseService,
           useValue: {
@@ -27,14 +27,14 @@ describe('HomeStatsService', () => {
       ],
     });
 
-    service = TestBed.inject(HomeStatsService);
+    service = TestBed.inject(OverviewStatsService);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('getHomeStats', () => {
+  describe('getOverviewStats', () => {
     it('should return stats from the edge function on success', async () => {
       const stats = {
         total_plants: 100,
@@ -44,8 +44,8 @@ describe('HomeStatsService', () => {
       };
       mockInvoke.mockResolvedValue({ data: { status: 'ok', data: stats }, error: null });
 
-      const result = await service.getHomeStats();
-      const cachedResult = await service.getHomeStats();
+      const result = await service.getOverviewStats();
+      const cachedResult = await service.getOverviewStats();
 
       expect(mockInvoke).toHaveBeenCalledWith('get-home-stats');
       expect(mockInvoke).toHaveBeenCalledTimes(1);
@@ -56,13 +56,13 @@ describe('HomeStatsService', () => {
     it('should throw error on network failure', async () => {
       mockInvoke.mockResolvedValue({ data: null, error: { message: 'Network error' } });
 
-      await expect(service.getHomeStats()).rejects.toThrowError('Network error');
+      await expect(service.getOverviewStats()).rejects.toThrowError('Network error');
     });
 
     it('should throw error when status is not ok', async () => {
       mockInvoke.mockResolvedValue({ data: { status: 'error', data: null }, error: null });
 
-      await expect(service.getHomeStats()).rejects.toThrowError('error');
+      await expect(service.getOverviewStats()).rejects.toThrowError('error');
     });
   });
 });

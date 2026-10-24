@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { PlantsService, type PlantsFilter } from "../../services/plants/plants-service";
-import { HomeStatsService, type HomeStats } from "../../services/home-stats/home-stats-service";
+import { OverviewStatsService, type OverviewStats } from "../../services/overview-stats/overview-stats-service";
 import type { Plant, PlantData, PlantInsert, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
 import type { PostgrestError } from "@supabase/supabase-js";
 
@@ -9,7 +9,7 @@ import type { PostgrestError } from "@supabase/supabase-js";
 })
 export class PlantsRepository {
   private plantsService = inject(PlantsService);
-  private homeStatsService = inject(HomeStatsService);
+  private overviewStatsService = inject(OverviewStatsService);
 
   public plants = signal<Plant[]>([]);
   private _routineCurrentPlants = signal<PlantData[]>([]);
@@ -83,11 +83,11 @@ export class PlantsRepository {
     return await this.plantsService.getLatestUpdatedAt();
   }
 
-  public async getHomeStats(): Promise<HomeStats> {
-    return await this.homeStatsService.getHomeStats();
+  public async getOverviewStats(): Promise<OverviewStats> {
+    return await this.overviewStatsService.getOverviewStats();
   }
 
   public async getRecentUpdates(): Promise<PlantRecentUpdate[]> {
-    return await this.homeStatsService.getRecentUpdates();
+    return await this.overviewStatsService.getRecentUpdates();
   }
 }

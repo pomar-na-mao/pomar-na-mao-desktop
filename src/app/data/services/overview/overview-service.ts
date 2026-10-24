@@ -1,15 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import type { PostgrestResponse } from '@supabase/supabase-js';
 import type {
-  HomeDashboardBoundaryPoint,
-  HomeDashboardFilterOptions,
-  HomeDashboardOccurrence,
-  HomeDashboardPlant,
-  HomeDashboardSnapshot,
-  HomeDashboardSnapshotFilters,
-  HomeDashboardVariety,
-  HomeDashboardZone,
-} from '../../../domain/models/home-dashboard.model';
+  OverviewBoundaryPoint,
+  OverviewFilterOptions,
+  OverviewOccurrence,
+  OverviewPlant,
+  OverviewSnapshot,
+  OverviewSnapshotFilters,
+  OverviewVariety,
+  OverviewZone,
+} from '../../../domain/models/overview.model';
 import { normalizeOrderedBoundaryPoints } from '../../../shared/utils/ordered-map-boundary';
 import { injectSupabase } from '../supabase';
 import {
@@ -39,6 +39,8 @@ type PlantMapRow = {
   longitude: number | null;
   varietyId: number | null;
   varietyName: string | null;
+  isDead?: boolean | null;
+  is_dead?: boolean | null;
   nonExistent?: boolean | null;
   non_existent?: boolean | null;
 };
@@ -58,13 +60,13 @@ type SnapshotSummaryRow = {
   varieties?: VarietyRow[] | null;
 };
 
-type HomeDashboardSnapshotRow = {
+type OverviewSnapshotRow = {
   summary?: SnapshotSummaryRow | null;
   plants?: PlantMapRow[] | null;
   farmBoundary?: BoundaryPointRow[] | null;
 };
 
-type HomeDashboardSnapshotRpcParams = {
+type OverviewSnapshotRpcParams = {
   p_period_start_date: string | null;
   p_period_end_date: string | null;
   p_planting_start_date: string | null;
@@ -72,7 +74,7 @@ type HomeDashboardSnapshotRpcParams = {
   p_operation_code: string | null;
 };
 
-const EMPTY_SNAPSHOT_FILTERS: HomeDashboardSnapshotFilters = {
+const EMPTY_SNAPSHOT_FILTERS: OverviewSnapshotFilters = {
   plantingStartDate: null,
   plantingEndDate: null,
 };
@@ -80,21 +82,21 @@ const EMPTY_SNAPSHOT_FILTERS: HomeDashboardSnapshotFilters = {
 @Injectable({
   providedIn: 'root',
 })
-export class HomeDashboardService {
+export class OverviewService {
   private supabase = injectSupabase();
   private requestCache = inject(SupabaseRequestCacheService);
 
-  public async getHomeDashboardData(
-    filters: HomeDashboardSnapshotFilters = EMPTY_SNAPSHOT_FILTERS,
+  public async getOverviewData(
+    filters: OverviewSnapshotFilters = EMPTY_SNAPSHOT_FILTERS,
     onCacheMiss?: () => void,
-  ): Promise<HomeDashboardSnapshot> {
+  ): Promise<OverviewSnapshot> {
     return this.requestCache.read(
       {
         namespace: [
-          SUPABASE_CACHE_NAMESPACES.dashboard,
+          SUPABASE_CACHE_NAMESPACES.overview,
           SUPABASE_CACHE_NAMESPACES.plants,
         ],
-        operation: 'homeDashboard.getHomeDashboardData',
+        operation: 'overview.getOverviewData',
         params: filters,
         policy: { mode: 'ttl', ttlMs: 15_000 },
         onCacheMiss,
@@ -110,18 +112,18 @@ export class HomeDashboardService {
         }
 
         return this.mapSnapshot(
-          (data ?? null) as HomeDashboardSnapshotRow | null,
+          (data ?? null) as OverviewSnapshotRow | null,
         );
       },
     );
   }
 
-  public async getFilterOptions(): Promise<HomeDashboardFilterOptions> {
+  public async getFilterOptions(): Promise<OverviewFilterOptions> {
     const [zonesResult, occurrencesResult] = await Promise.all([
       this.requestCache.read<PostgrestResponse<ZoneOptionRow>>(
         {
           namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
-          operation: 'homeDashboard.zoneOptions',
+          operation: 'overview.zoneOptions',
           policy: { mode: 'until-invalidated' },
           cacheWhen: (response) => !response.error,
         },
@@ -131,7 +133,7 @@ export class HomeDashboardService {
       this.requestCache.read<PostgrestResponse<OccurrenceOptionRow>>(
         {
           namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
-          operation: 'homeDashboard.occurrenceOptions',
+          operation: 'overview.occurrenceOptions',
           policy: { mode: 'until-invalidated' },
           cacheWhen: (response) => !response.error,
         },
@@ -143,13 +145,13 @@ export class HomeDashboardService {
       ),
     ]);
 
-    const zones: HomeDashboardZone[] = (zonesResult.data ?? []).map((row) => ({
+    const zones: OverviewZone[] = (zonesResult.data ?? []).map((row) => ({
       id: row.id as string,
       name: row.name as string,
       polygon: (row.polygon as GeoJSON.Geometry) ?? null,
     }));
 
-    const occurrences: HomeDashboardOccurrence[] = (
+    const occurrences: OverviewOccurrence[] = (
       occurrencesResult.data ?? []
     ).map((row) => ({
       id: row.id as string,
@@ -166,9 +168,9 @@ export class HomeDashboardService {
       {
         namespace: [
           SUPABASE_CACHE_NAMESPACES.occurrences,
-          SUPABASE_CACHE_NAMESPACES.dashboard,
+          SUPABASE_CACHE_NAMESPACES.overview,
         ],
-        operation: 'homeDashboard.getOpenOccurrences',
+        operation: 'overview.getOpenOccurrences',
         policy: { mode: 'ttl', ttlMs: 15_000 },
       },
       async () => {
@@ -187,8 +189,8 @@ export class HomeDashboardService {
   }
 
   private mapSnapshot(
-    snapshot: HomeDashboardSnapshotRow | null,
-  ): HomeDashboardSnapshot {
+    snapshot: OverviewSnapshotRow | null,
+  ): OverviewSnapshot {
     const summary = snapshot?.summary;
     const varieties = this.mapVarieties(summary?.varieties ?? []);
     const plants = this.mapPlants(snapshot?.plants ?? []);
@@ -208,7 +210,7 @@ export class HomeDashboardService {
 
   private mapVarieties(
     rows: VarietyRow[] | null | undefined,
-  ): HomeDashboardVariety[] {
+  ): OverviewVariety[] {
     if (!Array.isArray(rows)) {
       return [];
     }
@@ -221,7 +223,7 @@ export class HomeDashboardService {
 
   private mapPlants(
     rows: PlantMapRow[] | null | undefined,
-  ): HomeDashboardPlant[] {
+  ): OverviewPlant[] {
     if (!Array.isArray(rows)) {
       return [];
     }
@@ -237,13 +239,16 @@ export class HomeDashboardService {
         longitude: Number(row.longitude),
         varietyId: row.varietyId,
         varietyName: row.varietyName,
+        isDead: Boolean(
+          row.isDead ?? row.is_dead ?? row.nonExistent ?? row.non_existent,
+        ),
         nonExistent: Boolean(row.nonExistent ?? row.non_existent),
       }));
   }
 
   private mapBoundaryPoints(
     rows: BoundaryPointRow[] | null | undefined,
-  ): HomeDashboardBoundaryPoint[] {
+  ): OverviewBoundaryPoint[] {
     return normalizeOrderedBoundaryPoints(rows).map((point) => ({
       id: point.id,
       latitude: point.latitude,
@@ -253,8 +258,8 @@ export class HomeDashboardService {
   }
 
   private buildSnapshotRpcParams(
-    filters: HomeDashboardSnapshotFilters,
-  ): HomeDashboardSnapshotRpcParams {
+    filters: OverviewSnapshotFilters,
+  ): OverviewSnapshotRpcParams {
     return {
       p_period_start_date: null,
       p_period_end_date: null,

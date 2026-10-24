@@ -161,7 +161,7 @@ describe('BasicDataService', () => {
     expect(invalidateSpy).toHaveBeenCalledWith([
       'plants',
       'plant-counters',
-      'dashboard',
+      'overview',
       'operations',
       'occurrences',
     ]);

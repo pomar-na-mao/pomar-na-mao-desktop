@@ -33,41 +33,85 @@ export class AppMenu implements OnInit {
         visible: true,
         items: [
           {
-            label: 'Pomar',
+            label: 'Visão geral',
             visible: true,
-            icon: 'pi pi-fw pi-warehouse',
+            icon: 'pi pi-fw pi-chart-bar',
+            routerLink: ['/visao-geral'],
+          },
+          {
+            label: 'Cadastro',
+            visible: true,
+            icon: 'pi pi-fw pi-file-import',
             items: [
-              {
-                label: 'Visão geral',
-                visible: true,
-                icon: 'pi pi-fw pi-chart-bar',
-                routerLink: ['/pomar/visao-geral'],
-              },
               {
                 label: 'Variedades',
                 visible: true,
                 icon: 'pi pi-fw pi-list',
-                routerLink: ['/pomar/variedades'],
+                routerLink: ['/cadastro/variedades'],
               },
               {
                 label: 'Ocorrências',
                 visible: true,
                 icon: 'pi pi-fw pi-exclamation-triangle',
-                routerLink: ['/pomar/ocorrencias'],
+                routerLink: ['/cadastro/ocorrencias'],
+              },
+              {
+                label: 'Zonas',
+                visible: true,
+                icon: 'pi pi-fw pi-map',
+                routerLink: ['/cadastro/zonas'],
+              },
+              {
+                label: 'Infraestrutura',
+                visible: true,
+                icon: 'pi pi-fw pi-building',
+                routerLink: ['/cadastro/infraestrutura'],
+              },
+              {
+                label: 'Máquinas',
+                visible: true,
+                icon: 'pi pi-fw pi-cog',
+                routerLink: ['/cadastro/maquinas'],
+              },
+              {
+                label: 'Insumos',
+                visible: true,
+                icon: 'pi pi-fw pi-box',
+                routerLink: ['/cadastro/insumos'],
               },
             ],
           },
           {
-            label: 'Operações',
+            label: 'Caderno de campo',
             visible: true,
-            icon: 'pi pi-fw pi-briefcase',
-            routerLink: ['/operacoes'],
+            icon: 'pi pi-fw pi-book',
+            items: [
+              {
+                label: 'Operações realizadas',
+                visible: true,
+                icon: 'pi pi-fw pi-check-circle',
+                routerLink: ['/caderno-de-campo/operacoes-realizadas'],
+              },
+            ],
           },
           {
-            label: 'Mipd',
+            label: 'Visão das operações',
             visible: true,
-            icon: 'pi pi-fw pi-shield',
-            routerLink: ['/mipd'],
+            icon: 'pi pi-fw pi-hammer',
+            items: [
+              {
+                label: 'Operações',
+                visible: true,
+                icon: 'pi pi-fw pi-briefcase',
+                routerLink: ['/visao-das-operacoes/operacoes'],
+              },
+              {
+                label: 'Mipd',
+                visible: true,
+                icon: 'pi pi-fw pi-shield',
+                routerLink: ['/visao-das-operacoes/mipd'],
+              },
+            ],
           },
           {
             label: 'Dados básicos',
@@ -76,23 +120,10 @@ export class AppMenu implements OnInit {
             routerLink: ['/dados-basicos'],
           },
           {
-            label: 'Zonas',
+            label: 'Zoneamento',
             visible: true,
-            icon: 'pi pi-fw pi-map',
-            items: [
-              {
-                label: 'Cadastro de Zonas',
-                visible: true,
-                icon: 'pi pi-fw pi-map-marker',
-                routerLink: ['/zonas/cadastro'],
-              },
-              {
-                label: 'Atribuição de Zonas',
-                visible: true,
-                icon: 'pi pi-fw pi-user-plus',
-                routerLink: ['/zonas/atribuicao'],
-              },
-            ],
+            icon: 'pi pi-fw pi-share-alt',
+            routerLink: ['/zoneamento'],
           },
           {
             label: 'Configurações',

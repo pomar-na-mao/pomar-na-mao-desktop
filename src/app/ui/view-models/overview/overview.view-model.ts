@@ -1,16 +1,15 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import * as L from 'leaflet';
-import { HomeDashboardRepository } from '../../../data/repositories/home-dashboard/home-dashboard-repository';
+import { OverviewRepository } from '../../../data/repositories/overview/overview-repository';
 import type {
-  HomeDashboardBoundaryPoint,
-  HomeDashboardLegendItem,
-  HomeDashboardOccurrence,
-  HomeDashboardPlant,
-  HomeDashboardSnapshotFilters,
-  HomeDashboardSummary,
-  HomeDashboardVariety,
-  HomeDashboardZone,
-} from '../../../domain/models/home-dashboard.model';
+  OverviewBoundaryPoint,
+  OverviewOccurrence,
+  OverviewPlant,
+  OverviewSnapshotFilters,
+  OverviewSummary,
+  OverviewVariety,
+  OverviewZone,
+} from '../../../domain/models/overview.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import {
   buildOrderedMapBoundary,
@@ -18,30 +17,20 @@ import {
 } from '../../../shared/utils/ordered-map-boundary';
 
 const DEFAULT_CENTER: L.LatLngTuple = [-23.403, -49.149];
-const VARIETY_COLORS = [
-  '#0f766e',
-  '#1d4ed8',
-  '#b45309',
-  '#b91c1c',
-  '#7c3aed',
-  '#0ea5e9',
-  '#be185d',
-  '#4338ca',
-  '#15803d',
-  '#c2410c',
-  '#0284c7',
-  '#a21caf',
-  '#ca8a04',
-  '#dc2626',
-  '#0369a1',
-  '#4f46e5',
-];
-const CLASSICA_VARIETY_COLOR = '#ec4899';
-const FALLBACK_VARIETY_COLOR = '#64748b';
+const LIVING_PLANT_COLOR = '#10b981';
+const LIVING_PLANT_STROKE_COLOR = '#047857';
+const DEAD_PLANT_COLOR = '#ef4444';
+const DEAD_PLANT_STROKE_COLOR = '#b91c1c';
+
+export interface OverviewPlantStatusPresentation {
+  label: 'Viva' | 'Morta';
+  color: string;
+  strokeColor: string;
+}
 
 @Injectable()
-export class DashboardViewModel {
-  private homeDashboardRepository = inject(HomeDashboardRepository);
+export class OverviewViewModel {
+  private overviewRepository = inject(OverviewRepository);
   private loadingService = inject(LoadingService);
   private supportDataLoaded = signal(false);
   private snapshotRequestId = 0;
@@ -56,8 +45,8 @@ export class DashboardViewModel {
   private zoneBoundaryRequestId = 0;
 
   public isMapFullscreen = signal(false);
-  public summary = signal<HomeDashboardSummary | null>(null);
-  public mapPlants = signal<HomeDashboardPlant[]>([]);
+  public summary = signal<OverviewSummary | null>(null);
+  public mapPlants = signal<OverviewPlant[]>([]);
   public farmBoundary = signal<OrderedMapBoundary | null>(null);
   public selectedZoneBoundary = signal<OrderedMapBoundary | null>(null);
 
@@ -70,24 +59,18 @@ export class DashboardViewModel {
   public filterPlantStatus = signal('');
 
   // --- Filter options (loaded from DB) ---
-  public availableZones = signal<HomeDashboardZone[]>([]);
-  public availableOccurrences = signal<HomeDashboardOccurrence[]>([]);
+  public availableZones = signal<OverviewZone[]>([]);
+  public availableOccurrences = signal<OverviewOccurrence[]>([]);
   public openOccurrences = signal<
     Array<{ plant_id: string; occurrence_type_id: string }>
   >([]);
 
-  public availableVarieties = computed<HomeDashboardVariety[]>(() => {
+  public availableVarieties = computed<OverviewVariety[]>(() => {
     const summary = this.summary();
     return summary?.varieties ?? [];
   });
 
-  public varietyLegend = computed<HomeDashboardLegendItem[]>(() => {
-    const summary = this.summary();
-    const plants = this.mapPlants();
-    return this.buildVarietyLegend(summary?.varieties ?? [], plants);
-  });
-
-  public filteredPlants = computed<HomeDashboardPlant[]>(() => {
+  public filteredPlants = computed<OverviewPlant[]>(() => {
     let plants = this.mapPlants();
 
     // 1. Filter by Variety
@@ -104,12 +87,12 @@ export class DashboardViewModel {
       );
     }
 
-    // 2. Filter by Plant Status (Planta viva vs Ponto vazio)
+    // 2. Filter by Plant Status (Planta viva vs morta)
     const plantStatus = this.filterPlantStatus();
     if (plantStatus === 'alive') {
-      plants = plants.filter((plant) => !plant.nonExistent);
-    } else if (plantStatus === 'empty') {
-      plants = plants.filter((plant) => plant.nonExistent);
+      plants = plants.filter((plant) => !plant.isDead);
+    } else if (plantStatus === 'dead') {
+      plants = plants.filter((plant) => plant.isDead);
     }
 
     // 2. Filter by Zone
@@ -138,7 +121,7 @@ export class DashboardViewModel {
   });
 
   public plottedPlantsCount = computed(() => this.filteredPlants().length);
-  public snapshotFilters = computed<HomeDashboardSnapshotFilters>(() => {
+  public snapshotFilters = computed<OverviewSnapshotFilters>(() => {
     const plantingStartDate = this.normalizeDateFilter(
       this.filterPlantingStartDate(),
     );
@@ -155,7 +138,6 @@ export class DashboardViewModel {
   constructor() {
     effect(() => {
       this.filteredPlants();
-      this.varietyLegend();
       this.renderPlants();
     });
 
@@ -186,7 +168,7 @@ export class DashboardViewModel {
     void this.loadSupportData();
   }
 
-  public async loadDashboard(): Promise<void> {
+  public async loadOverview(): Promise<void> {
     await this.loadSupportData();
     await this.loadSnapshot(this.snapshotFilters());
   }
@@ -238,26 +220,20 @@ export class DashboardViewModel {
     this.isMapFullscreen.set(value);
   }
 
-  public getVarietyColor(
-    varietyId: number | null,
-    varietyName: string | null,
-  ): string {
-    const legend = this.varietyLegend();
-
-    if (varietyId !== null) {
-      const entryById = legend.find((item) => item.varietyId === varietyId);
-      if (entryById) {
-        return entryById.color;
-      }
-    }
-
-    const normalizedVarietyName = this.normalizeVarietyLabel(varietyName);
-    const entryByLabel = legend.find(
-      (item) =>
-        this.normalizeVarietyLabel(item.label) === normalizedVarietyName,
-    );
-
-    return entryByLabel?.color ?? FALLBACK_VARIETY_COLOR;
+  public getPlantStatusPresentation(
+    plant: OverviewPlant,
+  ): OverviewPlantStatusPresentation {
+    return plant.isDead
+      ? {
+          label: 'Morta',
+          color: DEAD_PLANT_COLOR,
+          strokeColor: DEAD_PLANT_STROKE_COLOR,
+        }
+      : {
+          label: 'Viva',
+          color: LIVING_PLANT_COLOR,
+          strokeColor: LIVING_PLANT_STROKE_COLOR,
+        };
   }
 
   private renderPlants(): void {
@@ -287,31 +263,25 @@ export class DashboardViewModel {
     const occurrenceId = this.filterOccurrenceId();
 
     plants.forEach((plant) => {
-      const isNonExistent = Boolean(plant.nonExistent);
-      let plantColor = isNonExistent
-        ? '#ef4444'
-        : this.getVarietyColor(plant.varietyId, plant.varietyName);
-      let strokeColor = isNonExistent ? '#dc2626' : plantColor;
+      const status = this.getPlantStatusPresentation(plant);
+      const plantColor = status.color;
+      let strokeColor = status.strokeColor;
       let radius = 4.5;
       let weight = 0.75;
       let fillOpacity = 0.9;
 
       if (occurrenceId) {
-        // Plot with a striking neon magenta color with white border and larger size
-        plantColor = '#ff0055';
+        // Highlight the occurrence without replacing the plant status color.
         strokeColor = '#ffffff';
         radius = 9;
         weight = 1.5;
         fillOpacity = 1.0;
       }
 
-      const popupTitle = isNonExistent
-        ? 'Ponto vazio'
-        : (plant.varietyName ?? 'Sem variedade');
-      const popupVariety =
-        isNonExistent && plant.varietyName
-          ? `<span style="color: #64748b">Variedade: ${plant.varietyName}</span><br/>`
-          : '';
+      const popupTitle = plant.varietyName ?? 'Sem variedade';
+      const popupRegistration = plant.nonExistent
+        ? '<span style="color: #64748b">Cadastro: Pé inexistente</span><br/>'
+        : '';
 
       L.circleMarker([plant.latitude, plant.longitude], {
         radius,
@@ -325,7 +295,8 @@ export class DashboardViewModel {
           `
             <div style="font-family: sans-serif; font-size: 12px; min-width: 160px">
               <strong>${popupTitle}</strong><br/>
-              ${popupVariety}
+              Status: <strong>${status.label}</strong><br/>
+              ${popupRegistration}
               ID: ${plant.id}<br/>
               ${plant.latitude.toFixed(6)}, ${plant.longitude.toFixed(6)}
             </div>
@@ -389,33 +360,6 @@ export class DashboardViewModel {
     this.bringFarmPolygonToFront();
   }
 
-  private buildVarietyLegend(
-    varieties: HomeDashboardVariety[],
-    plants: HomeDashboardPlant[],
-  ): HomeDashboardLegendItem[] {
-    const varietyEntries: HomeDashboardLegendItem[] = varieties.map(
-      (variety, index) => ({
-        label: variety.name,
-        color: this.getLegendColor(variety.name, index),
-        varietyId: variety.id,
-      }),
-    );
-
-    const hasPlantsWithoutVariety = plants.some(
-      (plant) => !plant.nonExistent && !plant.varietyName,
-    );
-
-    if (hasPlantsWithoutVariety) {
-      varietyEntries.push({
-        label: 'Sem variedade',
-        color: FALLBACK_VARIETY_COLOR,
-        varietyId: null,
-      });
-    }
-
-    return varietyEntries;
-  }
-
   private async loadSupportData(): Promise<void> {
     if (this.supportDataLoaded()) {
       return;
@@ -423,15 +367,15 @@ export class DashboardViewModel {
 
     try {
       const [filterOptions, openOccs] = await Promise.all([
-        this.homeDashboardRepository.getFilterOptions(),
-        this.homeDashboardRepository.getOpenOccurrences(),
+        this.overviewRepository.getFilterOptions(),
+        this.overviewRepository.getOpenOccurrences(),
       ]);
 
       this.availableZones.set(filterOptions.zones);
       this.availableOccurrences.set(filterOptions.occurrences);
       this.openOccurrences.set(openOccs);
     } catch (error) {
-      console.error('Failed to load dashboard support data', error);
+      console.error('Failed to load overview support data', error);
       this.availableZones.set([]);
       this.availableOccurrences.set([]);
       this.openOccurrences.set([]);
@@ -454,7 +398,7 @@ export class DashboardViewModel {
     }
 
     try {
-      const regions = await this.homeDashboardRepository.getZoneRegions(zoneId);
+      const regions = await this.overviewRepository.getZoneRegions(zoneId);
       const boundary = buildOrderedMapBoundary(regions);
       this.zoneBoundaryCache.set(zoneId, boundary);
 
@@ -471,12 +415,12 @@ export class DashboardViewModel {
   }
 
   private async loadSnapshot(
-    filters: HomeDashboardSnapshotFilters,
+    filters: OverviewSnapshotFilters,
   ): Promise<void> {
     const requestId = ++this.snapshotRequestId;
 
     try {
-      const snapshot = await this.homeDashboardRepository.getHomeDashboardData(
+      const snapshot = await this.overviewRepository.getOverviewData(
         filters,
         () => {
           if (!this.snapshotLoadingVisible) {
@@ -498,7 +442,7 @@ export class DashboardViewModel {
         return;
       }
 
-      console.error('Failed to load dashboard snapshot', error);
+      console.error('Failed to load overview snapshot', error);
       this.summary.set({
         totalPlants: 0,
         totalZones: 0,
@@ -520,33 +464,13 @@ export class DashboardViewModel {
     return new Intl.NumberFormat('pt-BR').format(value);
   }
 
-  private normalizeVarietyLabel(value: string | null): string {
-    if (!value) {
-      return 'sem variedade';
-    }
-
-    return value
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .trim()
-      .toLocaleLowerCase('pt-BR');
-  }
-
-  private getLegendColor(varietyName: string, index: number): string {
-    if (this.normalizeVarietyLabel(varietyName) === 'classica') {
-      return CLASSICA_VARIETY_COLOR;
-    }
-
-    return VARIETY_COLORS[index % VARIETY_COLORS.length];
-  }
-
   private normalizeDateFilter(value: string): string | null {
     const trimmed = value.trim();
     return trimmed.length > 0 ? trimmed : null;
   }
 
   private buildBoundary(
-    points: HomeDashboardBoundaryPoint[],
+    points: OverviewBoundaryPoint[],
   ): OrderedMapBoundary | null {
     return buildOrderedMapBoundary(points);
   }

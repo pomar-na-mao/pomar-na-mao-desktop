@@ -12,7 +12,11 @@ export const ROUTES: Routes = [
     canActivate: [isLoggedGuard],
     children: [
       {
-        path: 'pomar',
+        path: 'visao-geral',
+        loadComponent: () => import('./ui/views/overview/overview').then(m => m.Overview)
+      },
+      {
+        path: 'cadastro',
         loadComponent: () => import('./ui/views/orchard/orchard').then(m => m.Orchard),
         children: [
           {
@@ -23,33 +27,51 @@ export const ROUTES: Routes = [
       },
       {
         path: 'inicio',
-        redirectTo: 'pomar',
+        redirectTo: 'visao-geral',
       },
       {
-        path: 'operacoes',
-        loadComponent: () => import('./ui/views/operations/operations').then(m => m.Operations)
+        path: 'caderno-de-campo',
+        children: [
+          {
+            path: '',
+            redirectTo: 'operacoes-realizadas',
+            pathMatch: 'full'
+          },
+          {
+            path: 'operacoes-realizadas',
+            loadComponent: () => import('./ui/views/completed-operations/completed-operations').then(m => m.CompletedOperations)
+          }
+        ]
       },
       {
-        path: 'mipd',
-        loadComponent: () => import('./ui/views/mipd/mipd').then(m => m.Mipd)
+        path: 'visao-das-operacoes',
+        children: [
+          {
+            path: '',
+            redirectTo: 'operacoes',
+            pathMatch: 'full'
+          },
+          {
+            path: 'operacoes',
+            loadComponent: () => import('./ui/views/operations/operations').then(m => m.Operations)
+          },
+          {
+            path: 'mipd',
+            loadComponent: () => import('./ui/views/mipd/mipd').then(m => m.Mipd)
+          }
+        ]
       },
       {
         path: 'dados-basicos',
         loadComponent: () => import('./ui/views/basic-data/basic-data').then(m => m.BasicData)
       },
       {
-        path: 'zonas',
-        loadComponent: () => import('./ui/views/zones/zones').then(m => m.Zones),
-        children: [
-          {
-            path: '',
-            loadChildren: () => import('./ui/views/zones/zones.routes')
-          }
-        ]
+        path: 'zoneamento',
+        loadComponent: () => import('./ui/views/zone-assignment/zone-assignment').then(m => m.ZoneAssignment)
       },
       {
         path: 'atribuicao-zonas',
-        redirectTo: 'zonas/atribuicao'
+        redirectTo: 'zoneamento'
       },
       {
         path: 'configuracoes',
@@ -61,7 +83,7 @@ export const ROUTES: Routes = [
       },
       {
         path: '',
-        redirectTo: 'pomar',
+        redirectTo: 'visao-geral',
         pathMatch: 'full'
       },
     ]

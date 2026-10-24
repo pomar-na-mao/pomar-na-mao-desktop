@@ -6,7 +6,7 @@ import {
   SupabaseRequestCacheService,
 } from "../supabase-request-cache/supabase-request-cache.service";
 
-export interface HomeStats {
+export interface OverviewStats {
   total_plants: number;
   alive_plants: number;
   updated_plants: number;
@@ -15,30 +15,30 @@ export interface HomeStats {
   total_new_plants: number;
 }
 
-export interface IHomeStatsService {
-  getHomeStats(): Promise<HomeStats>;
+export interface IOverviewStatsService {
+  getOverviewStats(): Promise<OverviewStats>;
   getRecentUpdates(): Promise<PlantRecentUpdate[]>;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class HomeStatsService implements IHomeStatsService {
+export class OverviewStatsService implements IOverviewStatsService {
   private supabase = injectSupabase();
   private requestCache = inject(SupabaseRequestCacheService);
 
-  public async getHomeStats(): Promise<HomeStats> {
+  public async getOverviewStats(): Promise<OverviewStats> {
     return this.requestCache.read(
       {
         namespace: [
-          SUPABASE_CACHE_NAMESPACES.dashboard,
+          SUPABASE_CACHE_NAMESPACES.overview,
           SUPABASE_CACHE_NAMESPACES.plantCounters,
         ],
-        operation: 'homeStats.getHomeStats',
+        operation: 'overviewStats.getOverviewStats',
         policy: { mode: 'ttl', ttlMs: 15_000 },
       },
       async () => {
-        const { data, error } = await this.supabase.functions.invoke<{ status: string; data: HomeStats }>(
+        const { data, error } = await this.supabase.functions.invoke<{ status: string; data: OverviewStats }>(
           'get-home-stats'
         );
 
@@ -56,7 +56,7 @@ export class HomeStatsService implements IHomeStatsService {
     return this.requestCache.read(
       {
         namespace: SUPABASE_CACHE_NAMESPACES.plants,
-        operation: 'homeStats.getRecentUpdates',
+        operation: 'overviewStats.getRecentUpdates',
         policy: { mode: 'ttl', ttlMs: 15_000 },
       },
       async () => {

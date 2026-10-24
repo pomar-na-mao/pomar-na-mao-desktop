@@ -113,7 +113,7 @@ export class ZoneAssignmentService {
     this.requestCache.invalidate([
       SUPABASE_CACHE_NAMESPACES.plants,
       SUPABASE_CACHE_NAMESPACES.plantCounters,
-      SUPABASE_CACHE_NAMESPACES.dashboard,
+      SUPABASE_CACHE_NAMESPACES.overview,
       SUPABASE_CACHE_NAMESPACES.operations,
     ]);
 
