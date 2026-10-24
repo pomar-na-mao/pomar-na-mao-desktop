@@ -4,7 +4,7 @@ import {
   SUPABASE_CACHE_NAMESPACES,
   SupabaseRequestCacheService,
 } from '../supabase-request-cache/supabase-request-cache.service';
-import type { GeoJsonPolygon } from '../../../domain/models/mass-inclusion';
+import type { GeoJsonPolygon } from '../../../domain/models/basic-data';
 import type {
   AssignZonePayload,
   AssignZoneResult,

@@ -1,20 +1,20 @@
-# mass-inclusion-polygon-bulk-update Specification
+# basic-data-polygon-bulk-update Specification
 
 ## Purpose
 TBD - created by archiving change adapt-mass-inclusion-database-architecture. Update Purpose after archive.
 ## Requirements
 ### Requirement: Existing polygon and form workflow is preserved
-The mass inclusion feature SHALL structure the screen with a left form sidebar and a full-height map on the right, and the Zone selector SHALL be integrated at the top of the left form sidebar.
+The basic data feature SHALL structure the screen with a left form sidebar and a full-height map on the right, and the Zone selector SHALL be integrated at the top of the left form sidebar.
 
 #### Scenario: User prepares a bulk change
-- **WHEN** the user opens the mass inclusion screen
+- **WHEN** the user opens the basic data screen
 - **THEN** the layout MUST display the form sidebar on the left and the map on the right.
 - **THEN** the Zone selector MUST be displayed at the top of the left form sidebar.
 - **THEN** the user MUST be able to select or generate a polygon using the map workflow.
 - **THEN** the user MUST be able to fill the mass association form before previewing or saving.
 
 ### Requirement: Plant preview is required before saving
-The mass inclusion feature SHALL call `find_plants_inside_polygon` with a GeoJSON Polygon and present the returned plants for review before any mutation RPC is called.
+The basic data feature SHALL call `find_plants_inside_polygon` with a GeoJSON Polygon and present the returned plants for review before any mutation RPC is called.
 
 #### Scenario: Polygon preview succeeds
 - **WHEN** the user has a valid polygon and requests preview
@@ -27,22 +27,22 @@ The mass inclusion feature SHALL call `find_plants_inside_polygon` with a GeoJSO
 - **THEN** no mutation RPC MUST be called.
 
 ### Requirement: Only reviewed plants are submitted
-The mass inclusion feature SHALL submit only plants that remain selected after review.
+The basic data feature SHALL submit only plants that remain selected after review.
 
 #### Scenario: User removes a plant from review
 - **WHEN** a plant returned by preview is unselected before confirmation
 - **THEN** that plant MUST NOT be included in the confirmed save payload.
 
 ### Requirement: Database-backed options are used
-The mass inclusion form SHALL load varieties and occurrence types from Supabase-backed data sources instead of relying on static frontend arrays for persisted values.
+The basic data form SHALL load varieties and occurrence types from Supabase-backed data sources instead of relying on static frontend arrays for persisted values.
 
 #### Scenario: Options are loaded
-- **WHEN** the mass inclusion screen initializes
+- **WHEN** the basic data screen initializes
 - **THEN** the variety selector MUST use persisted variety IDs.
 - **THEN** the occurrence selector MUST use persisted occurrence type IDs, codes, and names.
 
 ### Requirement: Conditional RPC orchestration is based on selected data
-The mass inclusion persistence layer SHALL call only the RPC path required by the selected data and SHALL support mixed submissions.
+The basic data persistence layer SHALL call only the RPC path required by the selected data and SHALL support mixed submissions.
 
 #### Scenario: Only plant attributes are selected
 - **WHEN** the confirmed payload contains a selected variety, life-of-tree, and/or planting date and no occurrences
@@ -60,7 +60,7 @@ The mass inclusion persistence layer SHALL call only the RPC path required by th
 - **THEN** the result MUST not leave a partial save if one path fails.
 
 ### Requirement: Bulk operation is recorded as Inserção em massa
-Every confirmed mass inclusion save SHALL record its field operation with operation type/name `Inserção em massa`.
+Every confirmed basic data save SHALL record its field operation with operation type/name `Inserção em massa`.
 
 #### Scenario: Confirmed save creates operation
 - **WHEN** a confirmed save succeeds
@@ -68,7 +68,7 @@ Every confirmed mass inclusion save SHALL record its field operation with operat
 - **THEN** the operation MUST be associated with the affected selected plants.
 
 ### Requirement: New database tables receive the correct writes
-The confirmed mass inclusion save SHALL write to the tables required by the new database architecture according to the selected data.
+The confirmed basic data save SHALL write to the tables required by the new database architecture according to the selected data.
 
 #### Scenario: Occurrences are applied
 - **WHEN** occurrences are selected for confirmed plants
@@ -81,7 +81,7 @@ The confirmed mass inclusion save SHALL write to the tables required by the new 
 - **THEN** each changed attribute MUST be recorded in `plant_attribute_change_history` with old and new values.
 
 ### Requirement: Empty or invalid submissions are blocked
-The mass inclusion feature SHALL block mutation when there are no selected plants or no selected changes.
+The basic data feature SHALL block mutation when there are no selected plants or no selected changes.
 
 #### Scenario: No selected plants
 - **WHEN** the preview has no selected plants
@@ -94,7 +94,7 @@ The mass inclusion feature SHALL block mutation when there are no selected plant
 - **THEN** no mutation RPC MUST be called.
 
 ### Requirement: RPC responses and errors are surfaced
-The mass inclusion feature SHALL expose success counts and actionable errors from RPC calls to the user.
+The basic data feature SHALL expose success counts and actionable errors from RPC calls to the user.
 
 #### Scenario: Confirmed save succeeds
 - **WHEN** the mutation RPC path succeeds
@@ -107,7 +107,7 @@ The mass inclusion feature SHALL expose success counts and actionable errors fro
 - **THEN** the local review state MUST remain available for correction or retry.
 
 ### Requirement: Occurrence action mode is selected for bulk occurrence changes
-The mass inclusion feature SHALL allow the user to choose whether selected occurrence types are added to or removed from the selected plants.
+The basic data feature SHALL allow the user to choose whether selected occurrence types are added to or removed from the selected plants.
 
 #### Scenario: Add mode is selected
 - **WHEN** the user selects occurrence types and chooses the add occurrence mode before confirming
@@ -120,7 +120,7 @@ The mass inclusion feature SHALL allow the user to choose whether selected occur
 - **THEN** the persistence layer MUST attempt to resolve matching open occurrences for each selected plant and occurrence type.
 
 ### Requirement: Bulk occurrence removal resolves only existing open occurrences
-The mass inclusion persistence layer SHALL resolve matching open plant occurrences during bulk occurrence removal and SHALL ignore selected plants without a matching open occurrence.
+The basic data persistence layer SHALL resolve matching open plant occurrences during bulk occurrence removal and SHALL ignore selected plants without a matching open occurrence.
 
 #### Scenario: Matching open occurrence exists
 - **WHEN** a selected plant has one or more `plant_occurrences` rows for the selected occurrence type with `status = 'open'`
@@ -141,10 +141,10 @@ Every confirmed bulk occurrence add or remove action SHALL keep the polygon bulk
 
 #### Scenario: Occurrence add is confirmed
 - **WHEN** the user confirms add mode with selected plants and occurrence types
-- **THEN** the operation MUST write `field_operations`, `field_operation_areas`, and `plant_operation_history` according to the existing mass inclusion audit behavior.
+- **THEN** the operation MUST write `field_operations`, `field_operation_areas`, and `plant_operation_history` according to the existing basic data audit behavior.
 
 #### Scenario: Occurrence remove is confirmed
 - **WHEN** the user confirms remove mode with selected plants and occurrence types
-- **THEN** the operation MUST write `field_operations`, `field_operation_areas`, and `plant_operation_history` according to the existing mass inclusion audit behavior.
+- **THEN** the operation MUST write `field_operations`, `field_operation_areas`, and `plant_operation_history` according to the existing basic data audit behavior.
 - **THEN** the user-facing result MUST expose how many occurrence rows were resolved or updated.
 

@@ -6,10 +6,10 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { Select } from '../../../../shared/components/select/select';
-import { MassInclusionViewModel } from '../../../view-models/mass-inclusion/mass-inclusion.view-model';
+import { BasicDataViewModel } from '../../../view-models/basic-data/basic-data.view-model';
 
 @Component({
-  selector: 'app-mass-inclusion-form',
+  selector: 'app-basic-data-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -21,25 +21,25 @@ import { MassInclusionViewModel } from '../../../view-models/mass-inclusion/mass
     TextareaModule,
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
-  templateUrl: './mass-inclusion-form.html',
+  templateUrl: './basic-data-form.html',
 })
-export class MassInclusionForm {
-  public massInclusionViewModel = inject(MassInclusionViewModel);
+export class BasicDataForm {
+  public basicDataViewModel = inject(BasicDataViewModel);
 
-  public onSaveMassInclusionData(): void {
-    this.massInclusionViewModel.onSaveMassInclusionDataHandler();
+  public onSaveBasicDataFormData(): void {
+    this.basicDataViewModel.onSaveBasicDataFormDataHandler();
   }
 
   public onPreviewPlantsInsidePolygon(): void {
-    this.massInclusionViewModel.onPreviewPlantsInsidePolygonHandler();
+    this.basicDataViewModel.onPreviewPlantsInsidePolygonHandler();
   }
 
-  public onClearMassInclusionFormData(): void {
-    this.massInclusionViewModel.onClearMassInclusionFormDataHandler();
+  public onClearBasicDataFormData(): void {
+    this.basicDataViewModel.onClearBasicDataFormDataHandler();
   }
 
   public onPlantSelectionChange(plantId: string, event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.massInclusionViewModel.setPreviewPlantSelected(plantId, input.checked);
+    this.basicDataViewModel.setPreviewPlantSelected(plantId, input.checked);
   }
 }

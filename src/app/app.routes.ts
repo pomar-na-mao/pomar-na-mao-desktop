@@ -34,8 +34,8 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/mipd/mipd').then(m => m.Mipd)
       },
       {
-        path: 'inclusoes-em-massa',
-        loadComponent: () => import('./ui/views/mass-inclusion/mass-inclusion').then(m => m.MassInclusion)
+        path: 'dados-basicos',
+        loadComponent: () => import('./ui/views/basic-data/basic-data').then(m => m.BasicData)
       },
       {
         path: 'zonas',

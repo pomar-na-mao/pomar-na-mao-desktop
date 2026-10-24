@@ -12,7 +12,7 @@ describe('ROUTES', () => {
         'pomar',
         'operacoes',
         'mipd',
-        'inclusoes-em-massa',
+        'dados-basicos',
         'zonas',
         'configuracoes',
         'usuarios',

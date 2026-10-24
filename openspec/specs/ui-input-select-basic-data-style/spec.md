@@ -1,4 +1,4 @@
-# ui-input-select-mass-inclusion-style Specification
+# ui-input-select-basic-data-style Specification
 
 ## Purpose
 

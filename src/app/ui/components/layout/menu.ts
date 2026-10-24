@@ -70,10 +70,10 @@ export class AppMenu implements OnInit {
             routerLink: ['/mipd'],
           },
           {
-            label: 'Inclusões em Massa',
+            label: 'Dados básicos',
             visible: true,
-            icon: 'pi pi-fw pi-file-arrow-up',
-            routerLink: ['/inclusoes-em-massa'],
+            icon: 'pi pi-fw pi-receipt',
+            routerLink: ['/dados-basicos'],
           },
           {
             label: 'Zonas',

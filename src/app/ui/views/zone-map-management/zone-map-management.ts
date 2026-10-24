@@ -11,9 +11,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { MapPolygonSelector } from '../../components/mass-inclusion/map-polygon-selector/map-polygon-selector';
+import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
 import { ZoneMapManagementViewModel } from '../../view-models/zone-map-management/zone-map-management.view-model';
-import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
+import type { PolygonSelection } from '../../../domain/models/basic-data';
 
 @Component({
   selector: 'app-zone-map-management',

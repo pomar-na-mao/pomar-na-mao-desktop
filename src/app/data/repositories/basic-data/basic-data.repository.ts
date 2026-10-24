@@ -1,37 +1,37 @@
 import { inject, Injectable, signal } from "@angular/core";
 import {
-  EMPTY_MASS_INCLUSION_DATA,
+  EMPTY_BASIC_DATA_FORM_DATA,
   type GeoJsonPolygon,
-  type MassInclusionCoordinate,
-  type MassInclusionData,
-  type MassInclusionOccurrenceOption,
-  type MassInclusionVarietyOption,
+  type BasicDataCoordinate,
+  type BasicDataFormData,
+  type BasicDataOccurrenceOption,
+  type BasicDataVarietyOption,
   type PlantInsidePolygon,
   type PolygonBulkSelectedPlant,
   type PolygonBulkUpdatePayload,
   type PolygonBulkUpdateResult,
-} from "../../../domain/models/mass-inclusion";
-import { MassInclusionService } from "../../services/mass-inclusion/mass-inclusion.service";
+} from "../../../domain/models/basic-data";
+import { BasicDataService } from "../../services/basic-data/basic-data.service";
 
 @Injectable({
   providedIn: 'root',
 })
-export class MassInclusionRepository {
-  private massInclusionService = inject(MassInclusionService);
+export class BasicDataRepository {
+  private basicDataService = inject(BasicDataService);
 
-  private _selectedPolygonCoordinates = signal<MassInclusionCoordinate[]>([]);
-  private _currentMassInclusionData = signal<MassInclusionData>(EMPTY_MASS_INCLUSION_DATA);
+  private _selectedPolygonCoordinates = signal<BasicDataCoordinate[]>([]);
+  private _currentBasicDataFormData = signal<BasicDataFormData>(EMPTY_BASIC_DATA_FORM_DATA);
   private _previewPlants = signal<PolygonBulkSelectedPlant[]>([]);
-  private _varietyOptions = signal<MassInclusionVarietyOption[]>([]);
-  private _occurrenceTypeOptions = signal<MassInclusionOccurrenceOption[]>([]);
+  private _varietyOptions = signal<BasicDataVarietyOption[]>([]);
+  private _occurrenceTypeOptions = signal<BasicDataOccurrenceOption[]>([]);
 
   public selectedPolygonCoordinates = this._selectedPolygonCoordinates.asReadonly();
-  public currentMassInclusionData = this._currentMassInclusionData.asReadonly();
+  public currentBasicDataFormData = this._currentBasicDataFormData.asReadonly();
   public previewPlants = this._previewPlants.asReadonly();
   public varietyOptions = this._varietyOptions.asReadonly();
   public occurrenceTypeOptions = this._occurrenceTypeOptions.asReadonly();
 
-  public savePolygonCoordinates(coordinates: MassInclusionCoordinate[]): void {
+  public savePolygonCoordinates(coordinates: BasicDataCoordinate[]): void {
     this._selectedPolygonCoordinates.set(
       coordinates.map((coordinate) => ({
         lat: coordinate.lat,
@@ -46,20 +46,20 @@ export class MassInclusionRepository {
     this.clearPreviewPlants();
   }
 
-  public saveMassInclusionData(data: MassInclusionData): void {
-    this._currentMassInclusionData.set(data);
+  public saveBasicDataFormData(data: BasicDataFormData): void {
+    this._currentBasicDataFormData.set(data);
   }
 
-  public async loadVarietyOptions(): Promise<{ data: MassInclusionVarietyOption[] | null; error: unknown }> {
-    const result = await this.massInclusionService.findVarietyOptions();
+  public async loadVarietyOptions(): Promise<{ data: BasicDataVarietyOption[] | null; error: unknown }> {
+    const result = await this.basicDataService.findVarietyOptions();
     if (!result.error && result.data) {
       this._varietyOptions.set(result.data);
     }
     return result;
   }
 
-  public async loadOccurrenceTypeOptions(): Promise<{ data: MassInclusionOccurrenceOption[] | null; error: unknown }> {
-    const result = await this.massInclusionService.findOccurrenceTypeOptions();
+  public async loadOccurrenceTypeOptions(): Promise<{ data: BasicDataOccurrenceOption[] | null; error: unknown }> {
+    const result = await this.basicDataService.findOccurrenceTypeOptions();
     if (!result.error && result.data) {
       this._occurrenceTypeOptions.set(result.data);
     }
@@ -69,7 +69,7 @@ export class MassInclusionRepository {
   public async previewPlantsInsidePolygon(
     polygonGeojson: GeoJsonPolygon
   ): Promise<{ data: PolygonBulkSelectedPlant[] | null; error: unknown }> {
-    const result = await this.massInclusionService.findPlantsInsidePolygon(polygonGeojson);
+    const result = await this.basicDataService.findPlantsInsidePolygon(polygonGeojson);
 
     if (result.error || !result.data) {
       return { data: null, error: result.error };
@@ -102,7 +102,7 @@ export class MassInclusionRepository {
   public async syncPolygonBulkUpdate(
     payload: PolygonBulkUpdatePayload
   ): Promise<{ data: PolygonBulkUpdateResult | null; error: unknown }> {
-    return this.massInclusionService.syncPolygonBulkUpdate(payload);
+    return this.basicDataService.syncPolygonBulkUpdate(payload);
   }
 
   private toSelectedPlant(plant: PlantInsidePolygon): PolygonBulkSelectedPlant {

@@ -20,13 +20,13 @@ export interface PolygonSelection {
     area?: number;
 }
 
-export interface MassInclusionCoordinate {
+export interface BasicDataCoordinate {
     lat: number;
     lng: number;
 }
 
-export interface MassInclusionData {
-    occurrenceAction: MassInclusionOccurrenceAction;
+export interface BasicDataFormData {
+    occurrenceAction: BasicDataOccurrenceAction;
     occurrences: string[];
     varietyId: string;
     lifeOfTree: string;
@@ -34,8 +34,8 @@ export interface MassInclusionData {
     description: string;
 }
 
-export interface MassInclusionFormValue {
-    occurrenceAction: MassInclusionOccurrenceAction;
+export interface BasicDataFormValue {
+    occurrenceAction: BasicDataOccurrenceAction;
     occurrences: string[];
     variety: string;
     lifeOfTree: string;
@@ -43,9 +43,9 @@ export interface MassInclusionFormValue {
     description: string;
 }
 
-export type MassInclusionOccurrenceAction = 'add' | 'remove';
+export type BasicDataOccurrenceAction = 'add' | 'remove';
 
-export const EMPTY_MASS_INCLUSION_DATA: MassInclusionData = {
+export const EMPTY_BASIC_DATA_FORM_DATA: BasicDataFormData = {
     occurrenceAction: 'add',
     occurrences: [],
     varietyId: '',
@@ -54,13 +54,13 @@ export const EMPTY_MASS_INCLUSION_DATA: MassInclusionData = {
     description: '',
 };
 
-export interface MassInclusionVarietyOption {
+export interface BasicDataVarietyOption {
     id: number;
     name: string;
     description?: string | null;
 }
 
-export interface MassInclusionOccurrenceOption {
+export interface BasicDataOccurrenceOption {
     id: string;
     code: string;
     name: string;
@@ -99,7 +99,7 @@ export interface PolygonBulkUpdatePayload {
     polygonGeojson: GeoJsonPolygon;
     plants: PolygonBulkSelectedPlantPayload[];
     plantsFoundCount: number;
-    occurrenceAction: MassInclusionOccurrenceAction;
+    occurrenceAction: BasicDataOccurrenceAction;
     occurrences: PolygonBulkOccurrencePayload[];
     varietyId: number | null;
     lifeOfTree: string | null;

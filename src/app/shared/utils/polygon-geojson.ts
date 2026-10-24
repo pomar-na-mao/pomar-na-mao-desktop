@@ -1,6 +1,6 @@
-import type { GeoJsonPolygon, MassInclusionCoordinate } from '../../domain/models/mass-inclusion';
+import type { GeoJsonPolygon, BasicDataCoordinate } from '../../domain/models/basic-data';
 
-export function toClosedGeoJsonPolygon(coordinates: MassInclusionCoordinate[]): GeoJsonPolygon {
+export function toClosedGeoJsonPolygon(coordinates: BasicDataCoordinate[]): GeoJsonPolygon {
   if (coordinates.length < 3) {
     throw new Error('A polygon needs at least 3 coordinates.');
   }

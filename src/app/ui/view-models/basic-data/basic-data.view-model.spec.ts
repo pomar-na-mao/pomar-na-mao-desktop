@@ -2,20 +2,20 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MassInclusionRepository } from '../../../data/repositories/mass-inclusion/mass-inclusion.repository';
+import { BasicDataRepository } from '../../../data/repositories/basic-data/basic-data.repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
 import {
-  EMPTY_MASS_INCLUSION_DATA,
-  type MassInclusionData,
+  EMPTY_BASIC_DATA_FORM_DATA,
+  type BasicDataFormData,
   type PolygonBulkSelectedPlant,
-} from '../../../domain/models/mass-inclusion';
+} from '../../../domain/models/basic-data';
 import type { Zone } from '../../../domain/models/zone.model';
 import { LoadingService } from '../../../shared/services/loading.service';
-import { MassInclusionViewModel } from './mass-inclusion.view-model';
+import { BasicDataViewModel } from './basic-data.view-model';
 
 function createZone(overrides: Partial<Zone> = {}): Zone {
   return {
@@ -49,22 +49,22 @@ function createPreviewPlant(overrides: Partial<PolygonBulkSelectedPlant> = {}): 
   };
 }
 
-describe('MassInclusionViewModel', () => {
-  let viewModel: MassInclusionViewModel;
+describe('BasicDataViewModel', () => {
+  let viewModel: BasicDataViewModel;
   let polygonCoordsSignal: ReturnType<typeof signal<{ lat: number; lng: number }[]>>;
   let previewPlantsSignal: ReturnType<typeof signal<PolygonBulkSelectedPlant[]>>;
   let varietyOptionsSignal: ReturnType<typeof signal<{ id: number; name: string }[]>>;
   let occurrenceTypeOptionsSignal: ReturnType<typeof signal<{ id: string; code: string; name: string }[]>>;
 
-  let mockMassInclusionRepository: {
+  let mockBasicDataRepository: {
     selectedPolygonCoordinates: typeof polygonCoordsSignal;
-    currentMassInclusionData: ReturnType<typeof signal<MassInclusionData>>;
+    currentBasicDataFormData: ReturnType<typeof signal<BasicDataFormData>>;
     previewPlants: typeof previewPlantsSignal;
     varietyOptions: typeof varietyOptionsSignal;
     occurrenceTypeOptions: typeof occurrenceTypeOptionsSignal;
     savePolygonCoordinates: ReturnType<typeof vi.fn>;
     clearPolygonCoordinates: ReturnType<typeof vi.fn>;
-    saveMassInclusionData: ReturnType<typeof vi.fn>;
+    saveBasicDataFormData: ReturnType<typeof vi.fn>;
     loadVarietyOptions: ReturnType<typeof vi.fn>;
     loadOccurrenceTypeOptions: ReturnType<typeof vi.fn>;
     previewPlantsInsidePolygon: ReturnType<typeof vi.fn>;
@@ -127,15 +127,15 @@ describe('MassInclusionViewModel', () => {
     varietyOptionsSignal = signal([{ id: 10, name: 'Gala' }]);
     occurrenceTypeOptionsSignal = signal([{ id: 'o1', code: 'mites', name: 'Acaros' }]);
 
-    mockMassInclusionRepository = {
+    mockBasicDataRepository = {
       selectedPolygonCoordinates: polygonCoordsSignal,
-      currentMassInclusionData: signal(EMPTY_MASS_INCLUSION_DATA),
+      currentBasicDataFormData: signal(EMPTY_BASIC_DATA_FORM_DATA),
       previewPlants: previewPlantsSignal,
       varietyOptions: varietyOptionsSignal,
       occurrenceTypeOptions: occurrenceTypeOptionsSignal,
       savePolygonCoordinates: vi.fn((coords) => polygonCoordsSignal.set(coords)),
       clearPolygonCoordinates: vi.fn(() => polygonCoordsSignal.set([])),
-      saveMassInclusionData: vi.fn(),
+      saveBasicDataFormData: vi.fn(),
       loadVarietyOptions: vi.fn().mockResolvedValue({ data: varietyOptionsSignal(), error: null }),
       loadOccurrenceTypeOptions: vi.fn().mockResolvedValue({ data: occurrenceTypeOptionsSignal(), error: null }),
       previewPlantsInsidePolygon: vi.fn().mockImplementation(async () => {
@@ -155,8 +155,8 @@ describe('MassInclusionViewModel', () => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
       providers: [
-        MassInclusionViewModel,
-        { provide: MassInclusionRepository, useValue: mockMassInclusionRepository },
+        BasicDataViewModel,
+        { provide: BasicDataRepository, useValue: mockBasicDataRepository },
         { provide: PlantsRepository, useValue: mockPlantsRepository },
         { provide: ZonesRepository, useValue: mockZonesRepository },
         { provide: RegionsRepository, useValue: mockRegionsRepository },
@@ -166,7 +166,7 @@ describe('MassInclusionViewModel', () => {
       ],
     });
 
-    viewModel = TestBed.inject(MassInclusionViewModel);
+    viewModel = TestBed.inject(BasicDataViewModel);
   });
 
   it('should create and map zone/options signals', () => {
@@ -181,7 +181,7 @@ describe('MassInclusionViewModel', () => {
       { value: '10', label: 'Gala' },
     ]);
     expect(viewModel.occurrenceOptions()).toEqual([{ value: 'o1', label: 'Acaros' }]);
-    expect(viewModel.massInclusionDataForm.controls.occurrenceAction.value).toBe('add');
+    expect(viewModel.basicDataForm.controls.occurrenceAction.value).toBe('add');
   });
 
   it('should load farm boundary as the first background polygon', async () => {
@@ -195,8 +195,8 @@ describe('MassInclusionViewModel', () => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
       providers: [
-        MassInclusionViewModel,
-        { provide: MassInclusionRepository, useValue: mockMassInclusionRepository },
+        BasicDataViewModel,
+        { provide: BasicDataRepository, useValue: mockBasicDataRepository },
         { provide: PlantsRepository, useValue: mockPlantsRepository },
         { provide: ZonesRepository, useValue: mockZonesRepository },
         { provide: RegionsRepository, useValue: mockRegionsRepository },
@@ -206,7 +206,7 @@ describe('MassInclusionViewModel', () => {
       ],
     });
 
-    viewModel = TestBed.inject(MassInclusionViewModel);
+    viewModel = TestBed.inject(BasicDataViewModel);
     await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(viewModel.backgroundPolygons()).toEqual([[[3, 4], [1, 2], [5, 6]]]);
@@ -219,8 +219,8 @@ describe('MassInclusionViewModel', () => {
     await viewModel.loadZones();
 
     expect(mockZonesRepository.findAll).toHaveBeenCalled();
-    expect(mockMassInclusionRepository.loadVarietyOptions).toHaveBeenCalled();
-    expect(mockMassInclusionRepository.loadOccurrenceTypeOptions).toHaveBeenCalled();
+    expect(mockBasicDataRepository.loadVarietyOptions).toHaveBeenCalled();
+    expect(mockBasicDataRepository.loadOccurrenceTypeOptions).toHaveBeenCalled();
     expect(viewModel.isLoadingZones()).toBe(false);
   });
 
@@ -234,11 +234,11 @@ describe('MassInclusionViewModel', () => {
   });
   it('should save only valid polygons', () => {
     viewModel.onPolygonSelected([{ lat: 1, lng: 2 }]);
-    expect(mockMassInclusionRepository.savePolygonCoordinates).not.toHaveBeenCalled();
+    expect(mockBasicDataRepository.savePolygonCoordinates).not.toHaveBeenCalled();
 
     const coords = [{ lat: 1, lng: 2 }, { lat: 3, lng: 4 }, { lat: 5, lng: 6 }];
     viewModel.onPolygonSelected(coords);
-    expect(mockMassInclusionRepository.savePolygonCoordinates).toHaveBeenCalledWith(coords);
+    expect(mockBasicDataRepository.savePolygonCoordinates).toHaveBeenCalledWith(coords);
   });
 
   it('should generate preview and select returned plants by default', async () => {
@@ -246,7 +246,7 @@ describe('MassInclusionViewModel', () => {
 
     await viewModel.onPreviewPlantsInsidePolygonHandler();
 
-    expect(mockMassInclusionRepository.previewPlantsInsidePolygon).toHaveBeenCalledWith({
+    expect(mockBasicDataRepository.previewPlantsInsidePolygon).toHaveBeenCalledWith({
       type: 'Polygon',
       coordinates: [[[2, 1], [4, 3], [6, 5], [2, 1]]],
     });
@@ -258,9 +258,9 @@ describe('MassInclusionViewModel', () => {
     polygonCoordsSignal.set([{ lat: 1, lng: 2 }, { lat: 3, lng: 4 }, { lat: 5, lng: 6 }]);
     viewModel.onOccurrencesChange('o1');
 
-    await viewModel.onSaveMassInclusionDataHandler();
+    await viewModel.onSaveBasicDataFormDataHandler();
 
-    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).not.toHaveBeenCalled();
+    expect(mockBasicDataRepository.syncPolygonBulkUpdate).not.toHaveBeenCalled();
     expect(mockMessageService.error).toHaveBeenCalledWith('Gere a prévia das plantas antes de confirmar.');
   });
 
@@ -270,9 +270,9 @@ describe('MassInclusionViewModel', () => {
     viewModel.previewLoaded.set(true);
     viewModel.onOccurrencesChange('o1');
 
-    await viewModel.onSaveMassInclusionDataHandler();
+    await viewModel.onSaveBasicDataFormDataHandler();
 
-    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).not.toHaveBeenCalled();
+    expect(mockBasicDataRepository.syncPolygonBulkUpdate).not.toHaveBeenCalled();
     expect(mockMessageService.error).toHaveBeenCalledWith('Selecione ao menos uma planta para confirmar.');
   });
 
@@ -281,9 +281,9 @@ describe('MassInclusionViewModel', () => {
     previewPlantsSignal.set([createPreviewPlant()]);
     viewModel.previewLoaded.set(true);
 
-    await viewModel.onSaveMassInclusionDataHandler();
+    await viewModel.onSaveBasicDataFormDataHandler();
 
-    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).not.toHaveBeenCalled();
+    expect(mockBasicDataRepository.syncPolygonBulkUpdate).not.toHaveBeenCalled();
     expect(mockMessageService.error).toHaveBeenCalledWith('Selecione ao menos uma alteração para confirmar.');
   });
 
@@ -291,7 +291,7 @@ describe('MassInclusionViewModel', () => {
     polygonCoordsSignal.set([{ lat: 1, lng: 2 }, { lat: 3, lng: 4 }, { lat: 5, lng: 6 }]);
     previewPlantsSignal.set([createPreviewPlant()]);
     viewModel.previewLoaded.set(true);
-    viewModel.massInclusionDataForm.controls.lifeOfTree.setValue('Primeira (1)');
+    viewModel.basicDataForm.controls.lifeOfTree.setValue('Primeira (1)');
 
     expect(viewModel.canConfirm()).toBe(true);
   });
@@ -303,10 +303,10 @@ describe('MassInclusionViewModel', () => {
     viewModel.selectedZoneId.set('z1');
     viewModel.onOccurrencesChange('o1');
     viewModel.onVarietyChange('10');
-    viewModel.massInclusionDataForm.controls.lifeOfTree.setValue('Primeira (1)');
-    viewModel.massInclusionDataForm.controls.plantingDate.setValue('2026-05-31');
-    viewModel.massInclusionDataForm.controls.description.setValue('Teste');
-    mockMassInclusionRepository.syncPolygonBulkUpdate.mockResolvedValue({
+    viewModel.basicDataForm.controls.lifeOfTree.setValue('Primeira (1)');
+    viewModel.basicDataForm.controls.plantingDate.setValue('2026-05-31');
+    viewModel.basicDataForm.controls.description.setValue('Teste');
+    mockBasicDataRepository.syncPolygonBulkUpdate.mockResolvedValue({
       data: {
         fieldOperationId: 'op1',
         plantsChangedCount: 1,
@@ -317,11 +317,11 @@ describe('MassInclusionViewModel', () => {
       error: null,
     });
 
-    await viewModel.onSaveMassInclusionDataHandler();
+    await viewModel.onSaveBasicDataFormDataHandler();
 
     expect(mockLoadingService.show).toHaveBeenCalledWith('Salvando alterações...');
     expect(mockLoadingService.hide).toHaveBeenCalled();
-    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockBasicDataRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
       plants: [{ plantId: 'p1', selectionSource: 'polygon_selected' }],
       plantsFoundCount: 1,
       occurrences: [{ occurrenceTypeId: 'o1', code: 'mites', name: 'Acaros', notes: 'Teste', severity: null }],
@@ -333,7 +333,7 @@ describe('MassInclusionViewModel', () => {
       zoneId: 'z1',
     }));
     expect(mockMessageService.success).toHaveBeenCalled();
-    expect(mockMassInclusionRepository.clearPolygonCoordinates).toHaveBeenCalled();
+    expect(mockBasicDataRepository.clearPolygonCoordinates).toHaveBeenCalled();
     expect(viewModel.clearMapSignal()).toBe(1);
   });
 
@@ -343,7 +343,7 @@ describe('MassInclusionViewModel', () => {
     viewModel.previewLoaded.set(true);
     viewModel.onOccurrenceActionChange('remove');
     viewModel.onOccurrencesChange('o1');
-    mockMassInclusionRepository.syncPolygonBulkUpdate.mockResolvedValue({
+    mockBasicDataRepository.syncPolygonBulkUpdate.mockResolvedValue({
       data: {
         fieldOperationId: 'op1',
         plantsChangedCount: 1,
@@ -354,9 +354,9 @@ describe('MassInclusionViewModel', () => {
       error: null,
     });
 
-    await viewModel.onSaveMassInclusionDataHandler();
+    await viewModel.onSaveBasicDataFormDataHandler();
 
-    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockBasicDataRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
       occurrenceAction: 'remove',
       occurrences: [{ occurrenceTypeId: 'o1', code: 'mites', name: 'Acaros', notes: null, severity: null }],
     }));
@@ -366,10 +366,10 @@ describe('MassInclusionViewModel', () => {
   it('should reset occurrence action to add when clearing form data', () => {
     viewModel.onOccurrenceActionChange('remove');
 
-    viewModel.onClearMassInclusionFormDataHandler();
+    viewModel.onClearBasicDataFormDataHandler();
 
-    expect(viewModel.massInclusionDataForm.controls.occurrenceAction.value).toBe('add');
-    expect(mockMassInclusionRepository.clearPreviewPlants).toHaveBeenCalled();
+    expect(viewModel.basicDataForm.controls.occurrenceAction.value).toBe('add');
+    expect(mockBasicDataRepository.clearPreviewPlants).toHaveBeenCalled();
   });
 
   it('should treat variety none as null in payload and not count as change', async () => {
@@ -387,7 +387,7 @@ describe('MassInclusionViewModel', () => {
     viewModel.onOccurrencesChange('o1');
     expect(viewModel.hasSelectedChanges()).toBe(true);
 
-    mockMassInclusionRepository.syncPolygonBulkUpdate.mockResolvedValue({
+    mockBasicDataRepository.syncPolygonBulkUpdate.mockResolvedValue({
       data: {
         fieldOperationId: 'op1',
         plantsChangedCount: 1,
@@ -398,9 +398,9 @@ describe('MassInclusionViewModel', () => {
       error: null,
     });
 
-    await viewModel.onSaveMassInclusionDataHandler();
+    await viewModel.onSaveBasicDataFormDataHandler();
 
-    expect(mockMassInclusionRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockBasicDataRepository.syncPolygonBulkUpdate).toHaveBeenCalledWith(expect.objectContaining({
       varietyId: null,
     }));
   });
@@ -410,16 +410,16 @@ describe('MassInclusionViewModel', () => {
     previewPlantsSignal.set([createPreviewPlant()]);
     viewModel.previewLoaded.set(true);
     viewModel.onOccurrencesChange('o1');
-    mockMassInclusionRepository.syncPolygonBulkUpdate.mockResolvedValue({
+    mockBasicDataRepository.syncPolygonBulkUpdate.mockResolvedValue({
       data: null,
       error: { message: 'failed' },
     });
 
-    await viewModel.onSaveMassInclusionDataHandler();
+    await viewModel.onSaveBasicDataFormDataHandler();
 
-    expect(mockMessageService.error).toHaveBeenCalledWith('Erro ao salvar as alterações em massa.');
+    expect(mockMessageService.error).toHaveBeenCalledWith('Erro ao salvar os dados básicos.');
     expect(viewModel.previewLoaded()).toBe(true);
     expect(viewModel.previewPlants()).toHaveLength(1);
-    expect(mockMassInclusionRepository.clearPolygonCoordinates).not.toHaveBeenCalled();
+    expect(mockBasicDataRepository.clearPolygonCoordinates).not.toHaveBeenCalled();
   });
 });

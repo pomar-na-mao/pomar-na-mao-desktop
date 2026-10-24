@@ -4,7 +4,7 @@ import { RegionsRepository } from '../../../data/repositories/regions/regions-re
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { MessageService } from '../../../data/services/message/message.service';
-import type { PolygonCoordinate } from '../../../domain/models/mass-inclusion';
+import type { PolygonCoordinate } from '../../../domain/models/basic-data';
 import type {
   CreateZoneWithRegionsPayload,
   Zone,

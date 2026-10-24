@@ -15,14 +15,14 @@ describe('Sidebar', () => {
     );
   });
 
-  it('should show zones navigation directly below mass inclusion without separate assignment entry', () => {
+  it('should show zones navigation directly below basic data without separate assignment entry', () => {
     const sidebar = new Sidebar();
-    const massInclusionIndex = sidebar.menuItems.findIndex(
-      (item) => item.path === '/inclusoes-em-massa',
+    const basicDataIndex = sidebar.menuItems.findIndex(
+      (item) => item.path === '/dados-basicos',
     );
 
-    expect(massInclusionIndex).toBeGreaterThanOrEqual(0);
-    expect(sidebar.menuItems[massInclusionIndex + 1]).toEqual(
+    expect(basicDataIndex).toBeGreaterThanOrEqual(0);
+    expect(sidebar.menuItems[basicDataIndex + 1]).toEqual(
       expect.objectContaining({
         label: 'Zonas',
         path: '/zonas',

@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { MassInclusionService } from './mass-inclusion.service';
+import { BasicDataService } from './basic-data.service';
 import { SupabaseService } from '../supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { GeoJsonPolygon, PolygonBulkUpdatePayload } from '../../../domain/models/mass-inclusion';
+import type { GeoJsonPolygon, PolygonBulkUpdatePayload } from '../../../domain/models/basic-data';
 import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';
 
-describe('MassInclusionService', () => {
-  let service: MassInclusionService;
+describe('BasicDataService', () => {
+  let service: BasicDataService;
   let requestCache: SupabaseRequestCacheService;
   const mockRpc = vi.fn();
   const mockFrom = vi.fn();
@@ -22,7 +22,7 @@ describe('MassInclusionService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        MassInclusionService,
+        BasicDataService,
         {
           provide: SupabaseService,
           useValue: {
@@ -32,7 +32,7 @@ describe('MassInclusionService', () => {
       ],
     });
 
-    service = TestBed.inject(MassInclusionService);
+    service = TestBed.inject(BasicDataService);
     requestCache = TestBed.inject(SupabaseRequestCacheService);
   });
 

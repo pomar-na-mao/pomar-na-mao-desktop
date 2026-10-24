@@ -1,30 +1,30 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { MassInclusionRepository } from './mass-inclusion.repository';
-import { MassInclusionService } from '../../services/mass-inclusion/mass-inclusion.service';
+import { BasicDataRepository } from './basic-data.repository';
+import { BasicDataService } from '../../services/basic-data/basic-data.service';
 import {
-  EMPTY_MASS_INCLUSION_DATA,
+  EMPTY_BASIC_DATA_FORM_DATA,
   type GeoJsonPolygon,
-  type MassInclusionData,
+  type BasicDataFormData,
   type PolygonBulkUpdatePayload,
-} from '../../../domain/models/mass-inclusion';
+} from '../../../domain/models/basic-data';
 
 const mockFindPlantsInsidePolygon = vi.fn();
 const mockFindVarietyOptions = vi.fn();
 const mockFindOccurrenceTypeOptions = vi.fn();
 const mockSyncPolygonBulkUpdate = vi.fn();
 
-describe('MassInclusionRepository', () => {
-  let repo: MassInclusionRepository;
+describe('BasicDataRepository', () => {
+  let repo: BasicDataRepository;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     TestBed.configureTestingModule({
       providers: [
-        MassInclusionRepository,
+        BasicDataRepository,
         {
-          provide: MassInclusionService,
+          provide: BasicDataService,
           useValue: {
             findPlantsInsidePolygon: mockFindPlantsInsidePolygon,
             findVarietyOptions: mockFindVarietyOptions,
@@ -35,12 +35,12 @@ describe('MassInclusionRepository', () => {
       ],
     });
 
-    repo = TestBed.inject(MassInclusionRepository);
+    repo = TestBed.inject(BasicDataRepository);
   });
 
   it('should start with empty state', () => {
     expect(repo.selectedPolygonCoordinates()).toEqual([]);
-    expect(repo.currentMassInclusionData()).toEqual(EMPTY_MASS_INCLUSION_DATA);
+    expect(repo.currentBasicDataFormData()).toEqual(EMPTY_BASIC_DATA_FORM_DATA);
     expect(repo.previewPlants()).toEqual([]);
   });
 
@@ -66,8 +66,8 @@ describe('MassInclusionRepository', () => {
     expect(repo.previewPlants()).toEqual([]);
   });
 
-  it('should persist mass inclusion data', () => {
-    const data: MassInclusionData = {
+  it('should persist basic data data', () => {
+    const data: BasicDataFormData = {
       occurrenceAction: 'remove',
       occurrences: ['o1'],
       varietyId: '3',
@@ -76,9 +76,9 @@ describe('MassInclusionRepository', () => {
       description: 'Desc',
     };
 
-    repo.saveMassInclusionData(data);
+    repo.saveBasicDataFormData(data);
 
-    expect(repo.currentMassInclusionData()).toEqual(data);
+    expect(repo.currentBasicDataFormData()).toEqual(data);
   });
 
   it('should load database-backed options into signals', async () => {

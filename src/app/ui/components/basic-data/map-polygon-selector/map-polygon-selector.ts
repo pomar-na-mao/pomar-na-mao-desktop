@@ -22,7 +22,7 @@ import type { Plant } from '../../../../domain/models/plant-data.model';
 import type {
   PolygonSelection,
   PolygonCoordinate,
-} from '../../../../domain/models/mass-inclusion';
+} from '../../../../domain/models/basic-data';
 
 const BACKGROUND_POLYGON_COLORS = [
   '#f97316', // Laranja vibrante

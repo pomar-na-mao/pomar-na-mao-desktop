@@ -1,16 +1,16 @@
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
-import { MassInclusionRepository } from "../../../data/repositories/mass-inclusion/mass-inclusion.repository";
+import { BasicDataRepository } from "../../../data/repositories/basic-data/basic-data.repository";
 import { RegionsRepository } from "../../../data/repositories/regions/regions-repository";
 import { ZonesRepository } from "../../../data/repositories/zones/zones-repository";
 import { FarmBoundaryService } from "../../../data/services/farm-boundary/farm-boundary-service";
 import { MessageService } from "../../../data/services/message/message.service";
 import type {
-    MassInclusionCoordinate,
-    MassInclusionData,
-    MassInclusionFormValue,
+    BasicDataCoordinate,
+    BasicDataFormData,
+    BasicDataFormValue,
     PolygonBulkUpdatePayload,
-} from "../../../domain/models/mass-inclusion";
+} from "../../../domain/models/basic-data";
 import type { Plant } from "../../../domain/models/plant-data.model";
 import type { SelectOption } from "../../../shared/components/select/select";
 import { LoadingService } from "../../../shared/services/loading.service";
@@ -20,9 +20,9 @@ import { toClosedGeoJsonPolygon } from "../../../shared/utils/polygon-geojson";
 @Injectable({
   providedIn: 'root'
 })
-export class MassInclusionViewModel {
+export class BasicDataViewModel {
   private formBuilder = inject(FormBuilder);
-  private massInclusionRepository = inject(MassInclusionRepository);
+  private basicDataRepository = inject(BasicDataRepository);
   private zonesRepository = inject(ZonesRepository);
   private regionsRepository = inject(RegionsRepository);
   private farmBoundaryService = inject(FarmBoundaryService);
@@ -41,8 +41,8 @@ export class MassInclusionViewModel {
   public isMapFullscreen = signal(false);
   private formVersion = signal(0);
 
-  public selectedPolygonCoordinates = this.massInclusionRepository.selectedPolygonCoordinates;
-  public previewPlants = this.massInclusionRepository.previewPlants;
+  public selectedPolygonCoordinates = this.basicDataRepository.selectedPolygonCoordinates;
+  public previewPlants = this.basicDataRepository.previewPlants;
   public lastSaveResult = signal<string | null>(null);
 
   public selectedPlants = computed(() => this.previewPlants().filter((plant) => plant.selected));
@@ -58,7 +58,7 @@ export class MassInclusionViewModel {
   ]);
 
   public occurrenceOptions = computed<SelectOption[]>(() =>
-    this.massInclusionRepository.occurrenceTypeOptions().map((occurrence) => ({
+    this.basicDataRepository.occurrenceTypeOptions().map((occurrence) => ({
       value: occurrence.id,
       label: occurrence.name,
     }))
@@ -66,7 +66,7 @@ export class MassInclusionViewModel {
 
   public varietyOptions = computed<SelectOption[]>(() => [
     { value: 'none', label: 'Nenhuma' },
-    ...this.massInclusionRepository.varietyOptions().map((variety) => ({
+    ...this.basicDataRepository.varietyOptions().map((variety) => ({
       value: String(variety.id),
       label: variety.name,
     }))
@@ -102,7 +102,7 @@ export class MassInclusionViewModel {
     }
     return dashArrays;
   });
-  public massInclusionDataForm = this.formBuilder.group({
+  public basicDataForm = this.formBuilder.group({
     occurrenceAction: this.formBuilder.nonNullable.control<'add' | 'remove'>('add'),
     occurrences: this.formBuilder.nonNullable.control<string[]>([]),
     variety: this.formBuilder.nonNullable.control<string>('none'),
@@ -115,7 +115,7 @@ export class MassInclusionViewModel {
 
   public hasSelectedChanges = computed(() => {
     this.formVersion();
-    const formValue = this.massInclusionDataForm.getRawValue() as MassInclusionFormValue;
+    const formValue = this.basicDataForm.getRawValue() as BasicDataFormValue;
     return formValue.occurrences.length > 0
       || (formValue.variety !== '' && formValue.variety !== 'none')
       || formValue.lifeOfTree.trim() !== ''
@@ -130,13 +130,13 @@ export class MassInclusionViewModel {
     && !this.isSaving()
   );
 
-  public get currentMassInclusionData(): MassInclusionData {
-    return this.toMassInclusionData(this.massInclusionDataForm.getRawValue() as MassInclusionFormValue);
+  public get currentBasicDataFormData(): BasicDataFormData {
+    return this.toBasicDataFormData(this.basicDataForm.getRawValue() as BasicDataFormValue);
   }
 
   constructor() {
-    const data = this.massInclusionRepository.currentMassInclusionData();
-    this.massInclusionDataForm.patchValue(
+    const data = this.basicDataRepository.currentBasicDataFormData();
+    this.basicDataForm.patchValue(
       {
         occurrenceAction: data.occurrenceAction,
         occurrences: data.occurrences,
@@ -151,20 +151,20 @@ export class MassInclusionViewModel {
     effect(() => {
       const isEnabled = this.canEditForm();
       if (isEnabled) {
-        this.massInclusionDataForm.enable({ emitEvent: false });
+        this.basicDataForm.enable({ emitEvent: false });
       } else {
-        this.massInclusionDataForm.disable({ emitEvent: false });
+        this.basicDataForm.disable({ emitEvent: false });
       }
     });
 
-    this.massInclusionDataForm.valueChanges.subscribe(() => {
+    this.basicDataForm.valueChanges.subscribe(() => {
       this.formVersion.update((value) => value + 1);
     });
 
     void this.loadFarmBoundary();
   }
 
-  public onPolygonSelected(coordinates: MassInclusionCoordinate[]): void {
+  public onPolygonSelected(coordinates: BasicDataCoordinate[]): void {
     if (!this.isValidPolygon(coordinates)) {
       return;
     }
@@ -172,14 +172,14 @@ export class MassInclusionViewModel {
     this.previewLoaded.set(false);
     this.previewError.set(null);
     this.lastSaveResult.set(null);
-    this.massInclusionRepository.savePolygonCoordinates(coordinates);
+    this.basicDataRepository.savePolygonCoordinates(coordinates);
   }
 
   public onPolygonCleared(): void {
     this.previewLoaded.set(false);
     this.previewError.set(null);
     this.lastSaveResult.set(null);
-    this.massInclusionRepository.clearPolygonCoordinates();
+    this.basicDataRepository.clearPolygonCoordinates();
   }
 
   public async loadZones(): Promise<void> {
@@ -188,7 +188,7 @@ export class MassInclusionViewModel {
     try {
       await Promise.all([
         this.zonesRepository.findAll(),
-        this.loadMassInclusionOptions(),
+        this.loadBasicDataOptions(),
       ]);
     } finally {
       this.isLoadingZones.set(false);
@@ -227,7 +227,7 @@ export class MassInclusionViewModel {
       const points = await this.farmBoundaryService.getBoundary();
       this.farmPolygonCoords.set(buildOrderedMapBoundary(points)?.latLngs ?? null);
     } catch (error) {
-      console.error('Failed to load farm boundary for mass inclusion map', error);
+      console.error('Failed to load farm boundary for basic data map', error);
       this.farmPolygonCoords.set(null);
     }
   }
@@ -247,23 +247,23 @@ export class MassInclusionViewModel {
 
   public onOccurrencesChange(value: string | string[]): void {
     const nextOccurrences = Array.isArray(value) ? value : value ? [value] : [];
-    this.massInclusionDataForm.controls.occurrences.setValue(nextOccurrences);
+    this.basicDataForm.controls.occurrences.setValue(nextOccurrences);
   }
 
   public onOccurrenceActionChange(value: 'add' | 'remove'): void {
-    this.massInclusionDataForm.controls.occurrenceAction.setValue(value);
+    this.basicDataForm.controls.occurrenceAction.setValue(value);
   }
 
   public onVarietyChange(value: string | string[]): void {
-    this.massInclusionDataForm.controls.variety.setValue(Array.isArray(value) ? (value[0] ?? '') : value);
+    this.basicDataForm.controls.variety.setValue(Array.isArray(value) ? (value[0] ?? '') : value);
   }
 
   public setPreviewPlantSelected(plantId: string, selected: boolean): void {
-    this.massInclusionRepository.setPlantSelected(plantId, selected);
+    this.basicDataRepository.setPlantSelected(plantId, selected);
   }
 
-  public onClearMassInclusionFormDataHandler(): void {
-    this.massInclusionDataForm.reset(
+  public onClearBasicDataFormDataHandler(): void {
+    this.basicDataForm.reset(
       {
         occurrenceAction: 'add',
         occurrences: [],
@@ -278,7 +278,7 @@ export class MassInclusionViewModel {
     this.previewLoaded.set(false);
     this.previewError.set(null);
     this.lastSaveResult.set(null);
-    this.massInclusionRepository.clearPreviewPlants();
+    this.basicDataRepository.clearPreviewPlants();
   }
 
   public async onPreviewPlantsInsidePolygonHandler(): Promise<void> {
@@ -290,7 +290,7 @@ export class MassInclusionViewModel {
 
     try {
       const polygonGeojson = toClosedGeoJsonPolygon(this.selectedPolygonCoordinates());
-      const { error } = await this.massInclusionRepository.previewPlantsInsidePolygon(polygonGeojson);
+      const { error } = await this.basicDataRepository.previewPlantsInsidePolygon(polygonGeojson);
 
       if (error) {
         this.previewLoaded.set(false);
@@ -309,12 +309,12 @@ export class MassInclusionViewModel {
     }
   }
 
-  public async onSaveMassInclusionDataHandler(): Promise<void> {
+  public async onSaveBasicDataFormDataHandler(): Promise<void> {
     if (!this.canEditForm()) return;
 
-    this.massInclusionDataForm.markAllAsTouched();
+    this.basicDataForm.markAllAsTouched();
 
-    if (this.massInclusionDataForm.invalid) return;
+    if (this.basicDataForm.invalid) return;
 
     if (!this.previewLoaded()) {
       this.messageService.error('Gere a prévia das plantas antes de confirmar.');
@@ -331,17 +331,17 @@ export class MassInclusionViewModel {
       return;
     }
 
-    const massInclusionFormData = this.toMassInclusionData(this.massInclusionDataForm.getRawValue() as MassInclusionFormValue);
-    this.massInclusionRepository.saveMassInclusionData(massInclusionFormData);
+    const basicDataFormData = this.toBasicDataFormData(this.basicDataForm.getRawValue() as BasicDataFormValue);
+    this.basicDataRepository.saveBasicDataFormData(basicDataFormData);
 
     this.isSaving.set(true);
     this.loadingService.show('Salvando alterações...');
     try {
-      const payload = this.buildBulkUpdatePayload(massInclusionFormData);
-      const { data, error } = await this.massInclusionRepository.syncPolygonBulkUpdate(payload);
+      const payload = this.buildBulkUpdatePayload(basicDataFormData);
+      const { data, error } = await this.basicDataRepository.syncPolygonBulkUpdate(payload);
 
       if (error || !data) {
-        this.messageService.error('Erro ao salvar as alterações em massa.');
+        this.messageService.error('Erro ao salvar os dados básicos.');
         return;
       }
 
@@ -349,8 +349,8 @@ export class MassInclusionViewModel {
         ? `${data.occurrencesUpdatedCount} ocorrências resolvidas`
         : `${data.occurrencesCreatedCount} ocorrências criadas, ${data.occurrencesUpdatedCount} ocorrências atualizadas`;
       const summary = `${data.plantsChangedCount} plantas alteradas, ${occurrenceSummary} e ${data.attributesUpdatedCount} atributos alterados.`;
-      this.messageService.success(`Alterações em massa salvas com sucesso: ${summary}`);
-      this.onClearMassInclusionFormDataHandler();
+      this.messageService.success(`Dados básicos salvos com sucesso: ${summary}`);
+      this.onClearBasicDataFormDataHandler();
       this.onPolygonCleared();
       this.lastSaveResult.set(summary);
       this.clearMapSignal.update((v) => v + 1);
@@ -360,18 +360,18 @@ export class MassInclusionViewModel {
     }
   }
 
-  private async loadMassInclusionOptions(): Promise<void> {
+  private async loadBasicDataOptions(): Promise<void> {
     const [varietiesResult, occurrencesResult] = await Promise.all([
-      this.massInclusionRepository.loadVarietyOptions(),
-      this.massInclusionRepository.loadOccurrenceTypeOptions(),
+      this.basicDataRepository.loadVarietyOptions(),
+      this.basicDataRepository.loadOccurrenceTypeOptions(),
     ]);
 
     if (varietiesResult.error || occurrencesResult.error) {
-      this.messageService.error('Erro ao carregar opções de inclusão em massa.');
+      this.messageService.error('Erro ao carregar opções de dados básicos.');
     }
   }
 
-  private isValidPolygon(coordinates: MassInclusionCoordinate[]): boolean {
+  private isValidPolygon(coordinates: BasicDataCoordinate[]): boolean {
     if (coordinates.length < 3) {
       return false;
     }
@@ -379,11 +379,11 @@ export class MassInclusionViewModel {
     return coordinates.every((coordinate) => Number.isFinite(coordinate.lat) && Number.isFinite(coordinate.lng));
   }
 
-  private toMassInclusionData(value: MassInclusionFormValue): MassInclusionData {
+  private toBasicDataFormData(value: BasicDataFormValue): BasicDataFormData {
     return {
       occurrenceAction: value.occurrenceAction,
       occurrences: value.occurrences.filter((occurrence) =>
-        this.massInclusionRepository.occurrenceTypeOptions().some((option) => option.id === occurrence)
+        this.basicDataRepository.occurrenceTypeOptions().some((option) => option.id === occurrence)
       ),
       varietyId: value.variety,
       lifeOfTree: value.lifeOfTree.trim(),
@@ -392,8 +392,8 @@ export class MassInclusionViewModel {
     };
   }
 
-  private buildBulkUpdatePayload(data: MassInclusionData): PolygonBulkUpdatePayload {
-    const occurrenceOptions = this.massInclusionRepository.occurrenceTypeOptions();
+  private buildBulkUpdatePayload(data: BasicDataFormData): PolygonBulkUpdatePayload {
+    const occurrenceOptions = this.basicDataRepository.occurrenceTypeOptions();
     const now = new Date().toISOString();
 
     return {

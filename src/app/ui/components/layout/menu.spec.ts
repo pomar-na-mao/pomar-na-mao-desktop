@@ -17,7 +17,7 @@ describe('AppMenu', () => {
     }).compileComponents();
   });
 
-  it('shows Mipd between Operações and Inclusões em Massa', () => {
+  it('shows Mipd between Operações and Dados básicos', () => {
     const fixture = TestBed.createComponent(AppMenu);
     fixture.detectChanges();
 
@@ -31,8 +31,9 @@ describe('AppMenu', () => {
       routerLink: ['/mipd'],
     });
     expect(items[operationsIndex + 2]).toMatchObject({
-      label: 'Inclusões em Massa',
-      routerLink: ['/inclusoes-em-massa'],
+      label: 'Dados básicos',
+      icon: 'pi pi-fw pi-receipt',
+      routerLink: ['/dados-basicos'],
     });
   });
 });

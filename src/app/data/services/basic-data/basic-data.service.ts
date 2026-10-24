@@ -6,12 +6,12 @@ import {
 } from '../supabase-request-cache/supabase-request-cache.service';
 import type {
   GeoJsonPolygon,
-  MassInclusionOccurrenceOption,
-  MassInclusionVarietyOption,
+  BasicDataOccurrenceOption,
+  BasicDataVarietyOption,
   PlantInsidePolygon,
   PolygonBulkUpdatePayload,
   PolygonBulkUpdateResult,
-} from '../../../domain/models/mass-inclusion';
+} from '../../../domain/models/basic-data';
 
 interface PlantInsidePolygonRow {
   plant_id: string;
@@ -35,7 +35,7 @@ interface PolygonBulkUpdateResultRow {
 @Injectable({
   providedIn: 'root',
 })
-export class MassInclusionService {
+export class BasicDataService {
   private supabase = injectSupabase();
   private requestCache = inject(SupabaseRequestCacheService);
 
@@ -45,7 +45,7 @@ export class MassInclusionService {
     return this.requestCache.read(
       {
         namespace: SUPABASE_CACHE_NAMESPACES.plants,
-        operation: 'massInclusion.findPlantsInsidePolygon',
+        operation: 'basicData.findPlantsInsidePolygon',
         params: polygonGeojson,
         policy: { mode: 'dedupe-only' },
       },
@@ -78,11 +78,11 @@ export class MassInclusionService {
     );
   }
 
-  public async findVarietyOptions(): Promise<{ data: MassInclusionVarietyOption[] | null; error: unknown }> {
+  public async findVarietyOptions(): Promise<{ data: BasicDataVarietyOption[] | null; error: unknown }> {
     return this.requestCache.read(
       {
         namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
-        operation: 'massInclusion.varietyOptions',
+        operation: 'basicData.varietyOptions',
         policy: { mode: 'until-invalidated' },
         cacheWhen: (response) => !response.error,
       },
@@ -93,18 +93,18 @@ export class MassInclusionService {
           .order('name');
 
         return {
-          data: error ? null : (data as MassInclusionVarietyOption[]),
+          data: error ? null : (data as BasicDataVarietyOption[]),
           error,
         };
       },
     );
   }
 
-  public async findOccurrenceTypeOptions(): Promise<{ data: MassInclusionOccurrenceOption[] | null; error: unknown }> {
+  public async findOccurrenceTypeOptions(): Promise<{ data: BasicDataOccurrenceOption[] | null; error: unknown }> {
     return this.requestCache.read(
       {
         namespace: SUPABASE_CACHE_NAMESPACES.referenceData,
-        operation: 'massInclusion.occurrenceTypeOptions',
+        operation: 'basicData.occurrenceTypeOptions',
         policy: { mode: 'until-invalidated' },
         cacheWhen: (response) => !response.error,
       },
@@ -115,7 +115,7 @@ export class MassInclusionService {
           .order('name');
 
         return {
-          data: error ? null : (data as MassInclusionOccurrenceOption[]),
+          data: error ? null : (data as BasicDataOccurrenceOption[]),
           error,
         };
       },
