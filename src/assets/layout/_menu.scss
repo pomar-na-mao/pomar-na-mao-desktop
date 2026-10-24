@@ -2,7 +2,7 @@
 
 .layout-sidebar {
   position: fixed;
-  width: 18rem;
+  width: 22rem;
   height: calc(100vh - 8rem);
   z-index: 999;
   overflow-y: auto;
@@ -13,8 +13,8 @@
     transform var(--layout-section-transition-duration),
     left var(--layout-section-transition-duration);
   background-color: var(--surface-overlay);
-  border-radius: var(--content-border-radius);
-  padding: 0.5rem 0.8rem;
+  border-radius: 1rem;
+  padding: 0.5rem;
 }
 
 .layout-menu {
@@ -27,7 +27,7 @@
       font-size: 1rem;
       font-weight: 700;
       color: var(--text-color);
-      margin: 0.75rem 0;
+      margin: 0.75rem 0 0.75rem 0.3rem;
     }
 
     > a {
@@ -65,7 +65,7 @@
       outline: 0 none;
       color: var(--text-color);
       cursor: pointer;
-      padding: 0.75rem 1rem;
+      padding: 0.75rem;
       margin: 0.5rem 0;
       border-left: 8px solid transparent;
       border-radius: var(--content-border-radius);
@@ -105,7 +105,7 @@
 
       li {
         a {
-          margin-left: 1rem;
+          margin-left: 0.75rem;
         }
 
         li {
