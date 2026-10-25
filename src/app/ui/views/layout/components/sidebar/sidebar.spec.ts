@@ -4,32 +4,61 @@ import { describe, expect, it, vi } from 'vitest';
 import { Sidebar } from './sidebar';
 
 describe('Sidebar', () => {
-  it('shows Mipd immediately below operations', () => {
+  it('shows overview as the first navigation item', () => {
     const sidebar = new Sidebar();
-    const operationsIndex = sidebar.menuItems.findIndex(
-      (item) => item.path === '/operacoes',
-    );
 
-    expect(sidebar.menuItems[operationsIndex + 1]).toEqual(
-      expect.objectContaining({ label: 'Mipd', path: '/mipd' }),
+    expect(sidebar.menuItems[0]).toEqual(
+      expect.objectContaining({ label: 'Visão geral', path: '/visao-geral' }),
     );
   });
 
-  it('should show zones navigation directly below mass inclusion without separate assignment entry', () => {
+  it('shows Cadastro as the second navigation item', () => {
     const sidebar = new Sidebar();
-    const massInclusionIndex = sidebar.menuItems.findIndex(
-      (item) => item.path === '/inclusoes-em-massa',
+
+    expect(sidebar.menuItems[1]).toEqual(
+      expect.objectContaining({ label: 'Cadastro', path: '/cadastro' }),
+    );
+  });
+
+  it('shows Caderno de campo immediately below Cadastro', () => {
+    const sidebar = new Sidebar();
+
+    expect(sidebar.menuItems[2]).toEqual(
+      expect.objectContaining({
+        label: 'Caderno de campo',
+        path: '/caderno-de-campo',
+      }),
+    );
+  });
+
+  it('shows Visão das operações as a single navigation item', () => {
+    const sidebar = new Sidebar();
+
+    expect(sidebar.menuItems).toContainEqual(
+      expect.objectContaining({
+        label: 'Visão das operações',
+        path: '/visao-das-operacoes',
+      }),
+    );
+    expect(sidebar.menuItems.find((item) => item.path === '/operacoes')).toBeUndefined();
+    expect(sidebar.menuItems.find((item) => item.path === '/mipd')).toBeUndefined();
+  });
+
+  it('should show zoning navigation directly below basic data', () => {
+    const sidebar = new Sidebar();
+    const basicDataIndex = sidebar.menuItems.findIndex(
+      (item) => item.path === '/dados-basicos',
     );
 
-    expect(massInclusionIndex).toBeGreaterThanOrEqual(0);
-    expect(sidebar.menuItems[massInclusionIndex + 1]).toEqual(
+    expect(basicDataIndex).toBeGreaterThanOrEqual(0);
+    expect(sidebar.menuItems[basicDataIndex + 1]).toEqual(
       expect.objectContaining({
-        label: 'Zonas',
-        path: '/zonas',
+        label: 'Zoneamento',
+        path: '/zoneamento',
       }),
     );
     expect(
-      sidebar.menuItems.find((item) => item.path === '/atribuicao-zonas'),
+      sidebar.menuItems.find((item) => item.path === '/zonas'),
     ).toBeUndefined();
   });
 

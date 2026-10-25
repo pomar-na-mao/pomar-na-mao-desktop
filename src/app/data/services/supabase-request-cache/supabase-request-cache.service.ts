@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 export const SUPABASE_CACHE_NAMESPACES = {
-  dashboard: 'dashboard',
+  overview: 'overview',
   operations: 'operations',
   occurrences: 'occurrences',
   plantCounters: 'plant-counters',

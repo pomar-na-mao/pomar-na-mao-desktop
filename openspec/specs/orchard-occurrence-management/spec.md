@@ -8,7 +8,7 @@ Permitir que usuários autenticados consultem e mantenham o catálogo de tipos d
 
 ### Requirement: Listagem de tipos de ocorrência
 
-O sistema SHALL carregar os registros de `occurrence_types` ao acessar `/pomar/ocorrencias` e SHALL exibi-los em uma tabela com seleção, `name`, `category`, `created_at`, `updated_at` e ações, sem apresentar os campos técnicos `id` e `code` como colunas.
+O sistema SHALL carregar os registros de `occurrence_types` ao acessar `/cadastro/ocorrencias` e SHALL exibi-los em uma tabela com seleção, `name`, `category`, `created_at`, `updated_at` e ações, sem apresentar os campos técnicos `id` e `code` como colunas.
 
 #### Scenario: Tipos de ocorrência disponíveis
 

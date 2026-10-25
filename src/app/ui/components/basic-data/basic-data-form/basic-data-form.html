@@ -1,0 +1,200 @@
+<div class="flex flex-col h-full min-h-0 bg-surface-0 dark:bg-surface-900">
+  <div class="px-3.5 pt-4 pb-2 border-b border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
+    <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Dados básicos</h4>
+    <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none">Atribuição de dados básicos das plantas</p>
+  </div>
+
+  <form
+    [formGroup]="basicDataViewModel.basicDataForm"
+    (ngSubmit)="onSaveBasicDataFormData()"
+    class="flex min-h-0 flex-1 flex-col"
+  >
+    <!-- Scrollable Body -->
+    <div class="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-4 space-y-3.5">
+      @if (!basicDataViewModel.canEditForm()) {
+        <div class="p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-950/20 text-xs text-emerald-800 dark:text-emerald-200 flex items-start gap-2">
+          <i class="pi pi-exclamation-triangle text-sm text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5"></i>
+          <span class="leading-relaxed">
+            Desenhe 3 pontos ou mais para delimitar a área. Clique duplo para finalizar.
+          </span>
+        </div>
+      }
+
+      <!-- Zona -->
+      <div>
+        <app-select
+          id="basic-data-zone-select"
+          label="Zona"
+          [placeholder]="basicDataViewModel.zoneOptions().length === 0 ? 'Nenhuma zona disponível' : 'Selecione uma zona'"
+          [value]="basicDataViewModel.selectedZoneId()"
+          [options]="basicDataViewModel.zoneOptions()"
+          [disabled]="basicDataViewModel.isLoadingZones() || basicDataViewModel.zoneOptions().length === 0"
+          (valueChange)="basicDataViewModel.onZoneChange($event)"
+        />
+      </div>
+
+      <!-- Ocorrências -->
+      <div>
+        <app-select
+          id="basic-data-occurrences"
+          label="Ocorrências"
+          [options]="basicDataViewModel.occurrenceOptions()"
+          [multiple]="true"
+          [disabled]="!basicDataViewModel.canEditForm() || basicDataViewModel.isLoadingOptions()"
+          [value]="basicDataViewModel.basicDataForm.controls.occurrences.value"
+          (valueChange)="basicDataViewModel.onOccurrencesChange($event)"
+        />
+      </div>
+
+      <!-- Ação da ocorrência -->
+      <div>
+        <label class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1">
+          Ação da Ocorrência
+        </label>
+        <div class="grid grid-cols-2 gap-2">
+          <p-button
+            type="button"
+            [disabled]="!basicDataViewModel.canEditForm() || basicDataViewModel.isLoadingOptions()"
+            (onClick)="basicDataViewModel.onOccurrenceActionChange('add')"
+            label="Adicionar"
+            icon="pi pi-plus"
+            [severity]="basicDataViewModel.basicDataForm.controls.occurrenceAction.value === 'add' ? 'primary' : 'secondary'"
+            [outlined]="basicDataViewModel.basicDataForm.controls.occurrenceAction.value !== 'add'"
+            size="small"
+            styleClass="w-full"
+          />
+          <p-button
+            type="button"
+            [disabled]="!basicDataViewModel.canEditForm() || basicDataViewModel.isLoadingOptions()"
+            (onClick)="basicDataViewModel.onOccurrenceActionChange('remove')"
+            label="Remover"
+            icon="pi pi-trash"
+            [severity]="basicDataViewModel.basicDataForm.controls.occurrenceAction.value === 'remove' ? 'danger' : 'secondary'"
+            [outlined]="basicDataViewModel.basicDataForm.controls.occurrenceAction.value !== 'remove'"
+            size="small"
+            styleClass="w-full"
+          />
+        </div>
+      </div>
+
+      <!-- Variedade -->
+      <div>
+        <app-select
+          id="basic-data-variety"
+          label="Variedade"
+          placeholder="Selecione a variedade"
+          [options]="basicDataViewModel.varietyOptions()"
+          [disabled]="!basicDataViewModel.canEditForm() || basicDataViewModel.isLoadingOptions()"
+          [value]="basicDataViewModel.basicDataForm.controls.variety.value"
+          (valueChange)="basicDataViewModel.onVarietyChange($event)"
+        />
+      </div>
+
+      <!-- Vida da árvore -->
+      <div>
+        <label
+          for="basic-data-life-of-tree"
+          class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1"
+        >
+          Vida da Árvore
+        </label>
+        <input
+          pInputText
+          id="basic-data-life-of-tree"
+          type="text"
+          formControlName="lifeOfTree"
+          placeholder="Ex: Primeira (1)"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Data de plantio -->
+      <div>
+        <label
+          for="basic-data-planting-date"
+          class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1"
+        >
+          Data de Plantio
+        </label>
+        <p-datepicker
+          id="basic-data-planting-date"
+          appendTo="body"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          dataType="string"
+          formControlName="plantingDate"
+          placeholder="Selecione a data de plantio"
+          [fluid]="true"
+        />
+      </div>
+
+      <!-- Observações -->
+      <div>
+        <label
+          for="basic-data-description"
+          class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1"
+        >
+          Observações
+        </label>
+        <textarea
+          pTextarea
+          id="basic-data-description"
+          formControlName="description"
+          rows="3"
+          placeholder="Adicione observações relevantes..."
+          class="w-full resize-y"
+        ></textarea>
+      </div>
+
+      <!-- Preview summary card -->
+      @if (basicDataViewModel.previewLoaded()) {
+        <div class="p-3 rounded-xl border border-primary-200 dark:border-primary-900/40 bg-primary-50/50 dark:bg-primary-950/20 text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-surface-900 dark:text-surface-100">Plantas na área:</span>
+            <span class="font-bold px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300">
+              {{ basicDataViewModel.plantsFoundCount() }} encontradas
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pinned Footer Actions -->
+    <div class="p-3 sm:p-3.5 border-t border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
+      <div class="grid grid-cols-3 gap-2">
+        <p-button
+          type="button"
+          label="Limpar"
+          severity="secondary"
+          [outlined]="true"
+          [disabled]="!basicDataViewModel.canEditForm() || basicDataViewModel.isSaving() || basicDataViewModel.isPreviewing()"
+          (onClick)="onClearBasicDataFormData()"
+          styleClass="w-full !py-2.5 !px-3 text-xs sm:text-sm font-medium"
+        />
+
+        <p-button
+          type="button"
+          label="Prévia"
+          icon="pi pi-eye"
+          loadingIcon="pi pi-spin pi-spinner"
+          [loading]="basicDataViewModel.isPreviewing()"
+          severity="secondary"
+          [disabled]="!basicDataViewModel.canEditForm() || basicDataViewModel.isSaving() || basicDataViewModel.isPreviewing()"
+          (onClick)="onPreviewPlantsInsidePolygon()"
+          styleClass="w-full !py-2.5 !px-3 text-xs sm:text-sm font-medium"
+        />
+
+        <p-button
+          type="submit"
+          label="Salvar"
+          icon="pi pi-check"
+          loadingIcon="pi pi-spin pi-spinner"
+          [loading]="basicDataViewModel.isSaving()"
+          severity="primary"
+          [disabled]="!basicDataViewModel.canConfirm()"
+          styleClass="w-full !py-2.5 !px-3 text-xs sm:text-sm font-medium"
+        />
+      </div>
+    </div>
+  </form>
+</div>

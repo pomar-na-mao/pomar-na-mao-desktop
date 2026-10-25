@@ -87,7 +87,7 @@ describe('OccurrenceTypesService', () => {
     expect(result).toBe(response);
     expect(invalidate).toHaveBeenCalledWith([
       'reference-data',
-      'dashboard',
+      'overview',
       'occurrences',
       'operations',
     ]);

@@ -103,7 +103,7 @@ export class VarietiesService implements IVarietiesService {
 
     this.requestCache.invalidate([
       SUPABASE_CACHE_NAMESPACES.referenceData,
-      SUPABASE_CACHE_NAMESPACES.dashboard,
+      SUPABASE_CACHE_NAMESPACES.overview,
       SUPABASE_CACHE_NAMESPACES.plants,
     ]);
   }

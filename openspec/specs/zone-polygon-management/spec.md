@@ -8,9 +8,9 @@ Define the authenticated desktop workflow for creating and updating orchard zone
 The system SHALL provide an authenticated screen for creating or updating zones from a drawn polygon.
 
 #### Scenario: User opens the zone polygon screen
-- **WHEN** an authenticated user selects the sidebar entry below `Inclusoes em Massa`
+- **WHEN** an authenticated user selects the sidebar entry below `Dados básicos`
 - **THEN** the application MUST load the zone polygon management screen.
-- **THEN** the screen MUST display a left-side data panel and a full-height map area consistent with `/inclusoes-em-massa`.
+- **THEN** the screen MUST display a left-side data panel and a full-height map area consistent with `/dados-basicos`.
 
 ### Requirement: Existing zones are plotted before saving
 The zone polygon management screen SHALL load existing zones and plot every zone with a valid polygon on the map before the user saves a new polygon.
@@ -49,7 +49,7 @@ The screen SHALL require a zone name and code before saving and MAY collect an o
 - **THEN** the save operation MUST update that zone's polygon points instead of creating a second zone record.
 
 ### Requirement: User draws one closed polygon for the zone
-The screen SHALL allow the user to draw one polygon on the map using the same interaction pattern as mass inclusion.
+The screen SHALL allow the user to draw one polygon on the map using the same interaction pattern as basic data.
 
 #### Scenario: Polygon is completed
 - **WHEN** the user adds at least 3 vertices and completes the polygon

@@ -4,7 +4,7 @@ import {
   SUPABASE_CACHE_NAMESPACES,
   SupabaseRequestCacheService,
 } from '../supabase-request-cache/supabase-request-cache.service';
-import type { GeoJsonPolygon } from '../../../domain/models/mass-inclusion';
+import type { GeoJsonPolygon } from '../../../domain/models/basic-data';
 import type {
   AssignZonePayload,
   AssignZoneResult,
@@ -113,7 +113,7 @@ export class ZoneAssignmentService {
     this.requestCache.invalidate([
       SUPABASE_CACHE_NAMESPACES.plants,
       SUPABASE_CACHE_NAMESPACES.plantCounters,
-      SUPABASE_CACHE_NAMESPACES.dashboard,
+      SUPABASE_CACHE_NAMESPACES.overview,
       SUPABASE_CACHE_NAMESPACES.operations,
     ]);
 

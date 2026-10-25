@@ -1,0 +1,43 @@
+<div
+  [class]="
+    basicDataViewModel.isMapFullscreen()
+      ? 'fixed inset-0 z-[1100] flex h-screen w-screen overflow-hidden bg-surface-0 dark:bg-surface-900'
+      : 'h-[calc(100vh-8rem)] w-full overflow-hidden flex flex-col md:flex-row rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm bg-surface-0 dark:bg-surface-900 !mb-0'
+  "
+>
+
+  <!-- Left Sidebar (Form) -->
+  <aside class="w-full md:w-80 lg:w-[22rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 overflow-hidden">
+    <app-basic-data-form class="flex h-full min-h-0 flex-1 flex-col" />
+  </aside>
+
+  <!-- Map Area -->
+  <div class="relative min-w-0 flex-1 h-full overflow-hidden bg-surface-100 dark:bg-surface-950">
+    <app-map-polygon-selector
+      class="absolute inset-0 w-full h-full"
+      [center]="[-23.398772, -49.148646]"
+      [zoom]="16"
+      [backgroundPolygons]="basicDataViewModel.backgroundPolygons()"
+      [focusedPolygon]="basicDataViewModel.focusedBackgroundPolygon()"
+      [backgroundPolygonColors]="basicDataViewModel.backgroundPolygonColors()"
+      [backgroundPolygonDashArrays]="basicDataViewModel.backgroundPolygonDashArrays()"
+      [plants]="[]"
+      [allowDrawingWithoutPlants]="true"
+      [clearSignal]="basicDataViewModel.clearMapSignal()"
+      (polygonSelected)="onPolygonSelected($event)"
+      (polygonCleared)="onPolygonCleared()"
+    />
+
+    <!-- Fullscreen button floating over map (below toolbar) -->
+    <p-button
+      type="button"
+      (onClick)="toggleFullscreen()"
+      [icon]="basicDataViewModel.isMapFullscreen() ? 'pi pi-window-minimize' : 'pi pi-window-maximize'"
+      [rounded]="true"
+      severity="secondary"
+      styleClass="!absolute right-3 top-14 z-[400] shadow-md"
+      [title]="basicDataViewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+      [attr.aria-label]="basicDataViewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+    />
+  </div>
+</div>
