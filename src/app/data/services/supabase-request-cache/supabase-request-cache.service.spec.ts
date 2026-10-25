@@ -57,8 +57,8 @@ describe('SupabaseRequestCacheService', () => {
     const loader = vi.fn().mockResolvedValue('value');
     const onCacheMiss = vi.fn();
     const options = {
-      namespace: 'dashboard',
-      operation: 'dashboard.snapshot',
+      namespace: 'overview',
+      operation: 'overview.snapshot',
       policy: { mode: 'ttl', ttlMs: 1_000 } as const,
       onCacheMiss,
     };

@@ -3,13 +3,8 @@ import { Routes } from '@angular/router';
 export default [
   {
     path: '',
-    redirectTo: 'visao-geral',
+    redirectTo: '/visao-geral',
     pathMatch: 'full',
-  },
-  {
-    path: 'visao-geral',
-    loadComponent: () =>
-      import('../dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
     path: 'variedades',
@@ -20,5 +15,28 @@ export default [
     path: 'ocorrencias',
     loadComponent: () =>
       import('../occurrences/occurrences').then((m) => m.Occurrences),
+  },
+  {
+    path: 'zonas',
+    loadComponent: () =>
+      import('../zone-map-management/zone-map-management').then(
+        (m) => m.ZoneMapManagement,
+      ),
+  },
+  {
+    path: 'infraestrutura',
+    loadComponent: () =>
+      import('../infrastructure/infrastructure').then(
+        (m) => m.Infrastructure,
+      ),
+  },
+  {
+    path: 'maquinas',
+    loadComponent: () =>
+      import('../machines/machines').then((m) => m.Machines),
+  },
+  {
+    path: 'insumos',
+    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
   },
 ] as Routes;

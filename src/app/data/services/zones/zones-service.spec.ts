@@ -106,6 +106,6 @@ describe('ZonesService', () => {
         { latitude: 5, longitude: 6, order: 3 },
       ],
     });
-    expect(invalidate).toHaveBeenCalledWith(['reference-data', 'dashboard']);
+    expect(invalidate).toHaveBeenCalledWith(['reference-data', 'overview']);
   });
 });

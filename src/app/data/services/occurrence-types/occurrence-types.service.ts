@@ -105,7 +105,7 @@ export class OccurrenceTypesService implements IOccurrenceTypesService {
 
     this.requestCache.invalidate([
       SUPABASE_CACHE_NAMESPACES.referenceData,
-      SUPABASE_CACHE_NAMESPACES.dashboard,
+      SUPABASE_CACHE_NAMESPACES.overview,
       SUPABASE_CACHE_NAMESPACES.occurrences,
       SUPABASE_CACHE_NAMESPACES.operations,
     ]);

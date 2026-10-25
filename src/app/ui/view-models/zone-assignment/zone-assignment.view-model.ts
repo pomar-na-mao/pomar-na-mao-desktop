@@ -3,7 +3,7 @@ import { RegionsRepository } from '../../../data/repositories/regions/regions-re
 import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { MessageService } from '../../../data/services/message/message.service';
-import type { PolygonCoordinate } from '../../../domain/models/mass-inclusion';
+import type { PolygonCoordinate } from '../../../domain/models/basic-data';
 import type { Region } from '../../../domain/models/regions.model';
 import type { SelectOption } from '../../../shared/components/select/select';
 import { LoadingService } from '../../../shared/services/loading.service';

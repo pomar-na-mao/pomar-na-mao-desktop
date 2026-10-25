@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { ZoneAssignmentService } from './zone-assignment.service';
-import type { GeoJsonPolygon } from '../../../domain/models/mass-inclusion';
+import type { GeoJsonPolygon } from '../../../domain/models/basic-data';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase';
 import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';

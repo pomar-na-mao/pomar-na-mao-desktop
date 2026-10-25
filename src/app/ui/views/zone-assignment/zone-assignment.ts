@@ -9,10 +9,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { MapPolygonSelector } from '../../components/mass-inclusion/map-polygon-selector/map-polygon-selector';
+import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
 import { ZoneAssignmentForm } from '../../components/zone-assignment/zone-assignment-form/zone-assignment-form';
 import { ZoneAssignmentViewModel } from '../../view-models/zone-assignment/zone-assignment.view-model';
-import type { PolygonSelection } from '../../../domain/models/mass-inclusion';
+import type { PolygonSelection } from '../../../domain/models/basic-data';
 
 @Component({
   selector: 'app-zone-assignment',

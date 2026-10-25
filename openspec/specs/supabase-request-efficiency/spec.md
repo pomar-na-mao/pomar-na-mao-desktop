@@ -27,7 +27,7 @@ The system SHALL invalidate cached Supabase reads affected by successful mutatio
 
 #### Scenario: Plant mutation invalidates dependent reads
 - **WHEN** a plant is inserted, updated, deleted, or changed by a bulk synchronization RPC
-- **THEN** the system MUST invalidate cached plant lists, dashboard snapshots, plant counters, and related operation or occurrence reads that can be affected by that change
+- **THEN** the system MUST invalidate cached plant lists, overview snapshots, plant counters, and related operation or occurrence reads that can be affected by that change
 
 #### Scenario: Failed mutation keeps existing cache
 - **WHEN** a Supabase mutation or synchronization RPC fails

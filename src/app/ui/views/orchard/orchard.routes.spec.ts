@@ -2,23 +2,33 @@ import { describe, expect, it } from 'vitest';
 import routes from './orchard.routes';
 
 describe('Orchard routes', () => {
-  it('should redirect /pomar to the overview route', () => {
+  it('should redirect /cadastro to the overview route', () => {
     const defaultRoute = routes.find((route) => route.path === '');
 
-    expect(defaultRoute?.redirectTo).toBe('visao-geral');
+    expect(defaultRoute?.redirectTo).toBe('/visao-geral');
     expect(defaultRoute?.pathMatch).toBe('full');
   });
 
-  it('should expose overview, varieties and occurrences child routes', () => {
+  it('should expose all registration child routes', () => {
     expect(routes.map((route) => route.path)).toEqual([
       '',
-      'visao-geral',
       'variedades',
       'ocorrencias',
+      'zonas',
+      'infraestrutura',
+      'maquinas',
+      'insumos',
     ]);
   });
 
-  it.each(['visao-geral', 'variedades', 'ocorrencias'])(
+  it.each([
+    'variedades',
+    'ocorrencias',
+    'zonas',
+    'infraestrutura',
+    'maquinas',
+    'insumos',
+  ])(
     'should lazy-load the %s component',
     async (path) => {
       const route = routes.find((candidate) => candidate.path === path);

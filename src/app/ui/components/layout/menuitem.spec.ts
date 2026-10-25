@@ -23,22 +23,25 @@ class MenuHost {
     label: 'Menu',
     items: [
       {
-        label: 'Pomar',
+        label: 'Visão geral',
+        routerLink: ['/visao-geral'],
+      },
+      {
+        label: 'Cadastro',
         items: [
           {
-            label: 'Visão geral',
-            routerLink: ['/pomar/visao-geral'],
+            label: 'Variedades',
+            routerLink: ['/cadastro/variedades'],
+          },
+          {
+            label: 'Zonas',
+            routerLink: ['/cadastro/zonas'],
           },
         ],
       },
       {
-        label: 'Zonas',
-        items: [
-          {
-            label: 'Cadastro de Zonas',
-            routerLink: ['/zonas/cadastro'],
-          },
-        ],
+        label: 'Zoneamento',
+        routerLink: ['/zoneamento'],
       },
     ],
   };
@@ -52,8 +55,10 @@ describe('AppMenuitem', () => {
       imports: [MenuHost],
       providers: [
         provideRouter([
-          { path: 'pomar/visao-geral', component: EmptyRoute },
-          { path: 'zonas/cadastro', component: EmptyRoute },
+          { path: 'visao-geral', component: EmptyRoute },
+          { path: 'cadastro/variedades', component: EmptyRoute },
+          { path: 'cadastro/zonas', component: EmptyRoute },
+          { path: 'zoneamento', component: EmptyRoute },
         ]),
       ],
     }).compileComponents();
@@ -61,45 +66,31 @@ describe('AppMenuitem', () => {
     router = TestBed.inject(Router);
   });
 
-  it('opens the parent submenu when the current route is one of its children', async () => {
-    await router.navigateByUrl('/zonas/cadastro');
-
-    const fixture = TestBed.createComponent(MenuHost);
-    fixture.detectChanges();
-
-    const root = fixture.nativeElement as HTMLElement;
-    const rootItems = Array.from(root.querySelector('.layout-submenu')?.children ?? []) as HTMLElement[];
-    const zonesItem = rootItems[1];
-
-    expect(zonesItem.classList.contains('active-menuitem')).toBe(true);
-    expect(zonesItem.querySelector('.layout-submenu')?.classList.contains('expanded')).toBe(true);
-  });
-
   it('keeps sibling submenus closed when the current route belongs to another parent', async () => {
-    await router.navigateByUrl('/pomar/visao-geral');
+    await router.navigateByUrl('/visao-geral');
 
     const fixture = TestBed.createComponent(MenuHost);
     fixture.detectChanges();
 
     const root = fixture.nativeElement as HTMLElement;
     const rootItems = Array.from(root.querySelector('.layout-submenu')?.children ?? []) as HTMLElement[];
-    const zonesItem = rootItems[1];
+    const registrationItem = rootItems[1];
 
-    expect(zonesItem.classList.contains('active-menuitem')).toBe(false);
-    expect(zonesItem.querySelector('.layout-submenu')?.classList.contains('collapsed')).toBe(true);
+    expect(registrationItem.classList.contains('active-menuitem')).toBe(false);
+    expect(registrationItem.querySelector('.layout-submenu')?.classList.contains('collapsed')).toBe(true);
   });
 
-  it('opens the Pomar submenu when the current route is one of its children', async () => {
-    await router.navigateByUrl('/pomar/visao-geral');
+  it('opens the Cadastro submenu when the current route is one of its children', async () => {
+    await router.navigateByUrl('/cadastro/zonas');
 
     const fixture = TestBed.createComponent(MenuHost);
     fixture.detectChanges();
 
     const root = fixture.nativeElement as HTMLElement;
     const rootItems = Array.from(root.querySelector('.layout-submenu')?.children ?? []) as HTMLElement[];
-    const orchardItem = rootItems[0];
+    const registrationItem = rootItems[1];
 
-    expect(orchardItem.classList.contains('active-menuitem')).toBe(true);
-    expect(orchardItem.querySelector('.layout-submenu')?.classList.contains('expanded')).toBe(true);
+    expect(registrationItem.classList.contains('active-menuitem')).toBe(true);
+    expect(registrationItem.querySelector('.layout-submenu')?.classList.contains('expanded')).toBe(true);
   });
 });

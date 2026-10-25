@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import type { GeoJsonPolygon, MassInclusionCoordinate } from '../../../domain/models/mass-inclusion';
+import type { GeoJsonPolygon, BasicDataCoordinate } from '../../../domain/models/basic-data';
 import type {
   AssignZonePayload,
   AssignZoneResult,
@@ -16,7 +16,7 @@ export class ZoneAssignmentRepository {
 
   private _allPlants = signal<ZoneAssignmentPlant[]>([]);
   private _previewPlants = signal<ZoneAssignmentPreviewPlant[]>([]);
-  private _selectedPolygonCoordinates = signal<MassInclusionCoordinate[]>([]);
+  private _selectedPolygonCoordinates = signal<BasicDataCoordinate[]>([]);
 
   public allPlants = this._allPlants.asReadonly();
   public previewPlants = this._previewPlants.asReadonly();
@@ -39,7 +39,7 @@ export class ZoneAssignmentRepository {
     return result;
   }
 
-  public savePolygonCoordinates(coordinates: MassInclusionCoordinate[]): void {
+  public savePolygonCoordinates(coordinates: BasicDataCoordinate[]): void {
     this._selectedPolygonCoordinates.set(
       coordinates.map((c) => ({
         lat: c.lat,

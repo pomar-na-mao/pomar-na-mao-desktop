@@ -82,7 +82,7 @@ describe('VarietiesService', () => {
     expect(result).toBe(response);
     expect(invalidate).toHaveBeenCalledWith([
       'reference-data',
-      'dashboard',
+      'overview',
       'plants',
     ]);
   });
