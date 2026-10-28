@@ -11,7 +11,7 @@ describe('ROUTES', () => {
       expect.arrayContaining([
         'visao-geral',
         'cadastro',
-        'caderno-de-campo',
+        'atividades-de-campo',
         'visao-das-operacoes',
         'dados-basicos',
         'zoneamento',
@@ -32,24 +32,14 @@ describe('ROUTES', () => {
     await expect(loadFn()).resolves.toBeDefined();
   });
 
-  it('should expose completed operations under /caderno-de-campo', async () => {
+  it('should expose completed operations under /atividades-de-campo', async () => {
     const mainRoute = ROUTES.find((route) => route.path === '');
-    const fieldNotebookRoute = mainRoute?.children?.find(
-      (route) => route.path === 'caderno-de-campo',
+    const fieldActivitiesRoute = mainRoute?.children?.find(
+      (route) => route.path === 'atividades-de-campo',
     );
 
-    expect(fieldNotebookRoute?.children?.map((route) => route.path)).toEqual([
-      '',
-      'operacoes-realizadas',
-    ]);
-    expect(fieldNotebookRoute?.children?.[0]?.redirectTo).toBe(
-      'operacoes-realizadas',
-    );
-
-    const completedOperationsRoute = fieldNotebookRoute?.children?.find(
-      (route) => route.path === 'operacoes-realizadas',
-    );
-    const loadFn = completedOperationsRoute?.loadComponent as () => Promise<unknown>;
+    expect(fieldActivitiesRoute?.loadComponent).toBeDefined();
+    const loadFn = fieldActivitiesRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
   });
 

@@ -23,6 +23,10 @@ export default [
         (m) => m.ZoneMapManagement,
       ),
   },
+   {
+    path: 'insumos',
+    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
+  },
   {
     path: 'infraestrutura',
     loadComponent: () =>
@@ -34,9 +38,5 @@ export default [
     path: 'maquinas',
     loadComponent: () =>
       import('../machines/machines').then((m) => m.Machines),
-  },
-  {
-    path: 'insumos',
-    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
   },
 ] as Routes;

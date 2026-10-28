@@ -61,6 +61,12 @@ export class AppMenu implements OnInit {
                 icon: 'pi pi-fw pi-map',
                 routerLink: ['/cadastro/zonas'],
               },
+               {
+                label: 'Insumos',
+                visible: true,
+                icon: 'pi pi-fw pi-box',
+                routerLink: ['/cadastro/insumos'],
+              },
               {
                 label: 'Infraestrutura',
                 visible: true,
@@ -73,26 +79,13 @@ export class AppMenu implements OnInit {
                 icon: 'pi pi-fw pi-cog',
                 routerLink: ['/cadastro/maquinas'],
               },
-              {
-                label: 'Insumos',
-                visible: true,
-                icon: 'pi pi-fw pi-box',
-                routerLink: ['/cadastro/insumos'],
-              },
             ],
           },
           {
-            label: 'Caderno de campo',
+            label: 'Atividades de campo',
             visible: true,
             icon: 'pi pi-fw pi-book',
-            items: [
-              {
-                label: 'Operações realizadas',
-                visible: true,
-                icon: 'pi pi-fw pi-check-circle',
-                routerLink: ['/caderno-de-campo/operacoes-realizadas'],
-              },
-            ],
+            routerLink: ['/atividades-de-campo'],
           },
           {
             label: 'Visão das operações',

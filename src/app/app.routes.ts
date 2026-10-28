@@ -30,18 +30,8 @@ export const ROUTES: Routes = [
         redirectTo: 'visao-geral',
       },
       {
-        path: 'caderno-de-campo',
-        children: [
-          {
-            path: '',
-            redirectTo: 'operacoes-realizadas',
-            pathMatch: 'full'
-          },
-          {
-            path: 'operacoes-realizadas',
-            loadComponent: () => import('./ui/views/completed-operations/completed-operations').then(m => m.CompletedOperations)
-          }
-        ]
+        path: 'atividades-de-campo',
+        loadComponent: () => import('./ui/views/completed-operations/completed-operations').then(m => m.CompletedOperations)
       },
       {
         path: 'visao-das-operacoes',

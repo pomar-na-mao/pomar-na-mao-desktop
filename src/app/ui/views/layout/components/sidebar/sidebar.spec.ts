@@ -20,13 +20,13 @@ describe('Sidebar', () => {
     );
   });
 
-  it('shows Caderno de campo immediately below Cadastro', () => {
+  it('shows Atividades de campo immediately below Cadastro', () => {
     const sidebar = new Sidebar();
 
     expect(sidebar.menuItems[2]).toEqual(
       expect.objectContaining({
-        label: 'Caderno de campo',
-        path: '/caderno-de-campo',
+        label: 'Atividades de campo',
+        path: '/atividades-de-campo',
       }),
     );
   });

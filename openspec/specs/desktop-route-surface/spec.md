@@ -13,11 +13,11 @@ The desktop app SHALL keep the `login` route available outside the authenticated
 - **THEN** the login screen MUST be loaded without requiring the authenticated layout child route list.
 
 ### Requirement: Authenticated route surface is limited
-The desktop app SHALL expose `visao-geral`, `cadastro`, `caderno-de-campo`, `inicio`, `visao-das-operacoes`, `dados-basicos`, `zoneamento`, `configuracoes`, and `usuarios` as active authenticated child routes, while redirecting legacy `/inicio` to `/visao-geral` and `/atribuicao-zonas` to `/zoneamento`.
+The desktop app SHALL expose `visao-geral`, `cadastro`, `atividades-de-campo`, `inicio`, `visao-das-operacoes`, `dados-basicos`, `zoneamento`, `configuracoes`, and `usuarios` as active authenticated child routes, while redirecting legacy `/inicio` to `/visao-geral` and `/atribuicao-zonas` to `/zoneamento`.
 
 #### Scenario: Main layout child routes are evaluated
 - **WHEN** the authenticated main layout route is configured
-- **THEN** the child route paths MUST include `visao-geral`, `cadastro`, `caderno-de-campo`, `inicio`, `visao-das-operacoes`, `dados-basicos`, `zoneamento`, `configuracoes`, and `usuarios`.
+- **THEN** the child route paths MUST include `visao-geral`, `cadastro`, `atividades-de-campo`, `inicio`, `visao-das-operacoes`, `dados-basicos`, `zoneamento`, `configuracoes`, and `usuarios`.
 - **THEN** `/visao-das-operacoes` MUST provide only the `operacoes` and `mipd` child screens and MUST redirect its empty path to `operacoes`.
 - **THEN** navigating to `/inicio` MUST redirect to `/visao-geral`.
 - **THEN** navigating to `/atribuicao-zonas` MUST redirect to `/zoneamento`.
@@ -46,7 +46,7 @@ The desktop app SHALL show `Visão geral` as the first navigation entry, followe
 - **THEN** the `Cadastro` submenu MUST use the `pi-file-import` icon
 - **THEN** the submenu MUST provide `/cadastro/variedades`, `/cadastro/ocorrencias`, `/cadastro/zonas`, `/cadastro/infraestrutura`, `/cadastro/maquinas`, and `/cadastro/insumos` in that order
 - **THEN** the `/cadastro/zonas` entry MUST use the `pi-map` icon
-- **THEN** a `Caderno de campo` submenu MUST appear immediately below `Cadastro` and provide only `/caderno-de-campo/operacoes-realizadas`.
+- **THEN** a `Atividades de campo` entry MUST appear immediately below `Cadastro` and provide `/atividades-de-campo`.
 - **THEN** the menu MUST provide navigation to `dados-basicos`, `zoneamento`, `configuracoes`, and `usuarios`.
 - **THEN** one submenu labelled `Visão das operações` MUST use the `pi-hammer` icon.
 - **THEN** the submenu MUST provide `/visao-das-operacoes/operacoes` and `/visao-das-operacoes/mipd` in that order.

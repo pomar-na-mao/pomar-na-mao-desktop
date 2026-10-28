@@ -96,9 +96,9 @@ export class Sidebar {
       path: '/cadastro',
     },
     {
-      label: 'Caderno de campo',
+      label: 'Atividades de campo',
       icon: 'M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V4H6.5A2.5 2.5 0 004 6.5v13z',
-      path: '/caderno-de-campo',
+      path: '/atividades-de-campo',
     },
     {
       label: 'Visão das operações',
