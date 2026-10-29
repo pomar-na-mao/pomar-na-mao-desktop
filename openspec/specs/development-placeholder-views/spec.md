@@ -12,9 +12,9 @@ The `Cadastro` submenu SHALL expose placeholder screens for infrastructure, mach
 - **WHEN** the user navigates to `/cadastro/infraestrutura`, `/cadastro/maquinas`, or `/cadastro/insumos`
 - **THEN** the corresponding view component MUST render `Em desenvolvimento`.
 
-### Requirement: Field notebook exposes completed operations
-The sidebar SHALL expose `Caderno de campo` immediately below `Cadastro` with one child route.
+### Requirement: Field activities exposes completed operations
+The sidebar SHALL expose `Atividades de campo` immediately below `Cadastro`.
 
 #### Scenario: User opens completed operations
-- **WHEN** the user navigates to `/caderno-de-campo/operacoes-realizadas`
+- **WHEN** the user navigates to `/atividades-de-campo`
 - **THEN** the corresponding view component MUST render `Em desenvolvimento`.

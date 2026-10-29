@@ -37,9 +37,10 @@ describe('AppMenu', () => {
       '/cadastro/variedades',
       '/cadastro/ocorrencias',
       '/cadastro/zonas',
+      '/cadastro/insumos',
+      '/cadastro/caldas',
       '/cadastro/infraestrutura',
       '/cadastro/maquinas',
-      '/cadastro/insumos',
     ]);
     expect(registrationItems[2]).toMatchObject({
       label: 'Zonas',
@@ -56,13 +57,9 @@ describe('AppMenu', () => {
       (item) => item.label === 'Cadastro',
     );
     expect(items[registrationIndex + 1]).toMatchObject({
-      label: 'Caderno de campo',
-      items: [
-        expect.objectContaining({
-          label: 'Operações realizadas',
-          routerLink: ['/caderno-de-campo/operacoes-realizadas'],
-        }),
-      ],
+      label: 'Atividades de campo',
+      icon: 'pi pi-fw pi-book',
+      routerLink: ['/atividades-de-campo'],
     });
   });
 

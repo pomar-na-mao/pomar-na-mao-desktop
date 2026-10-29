@@ -24,6 +24,15 @@ export default [
       ),
   },
   {
+    path: 'insumos',
+    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
+  },
+  {
+    path: 'caldas',
+    loadComponent: () =>
+      import('../mixtures/mixtures').then((m) => m.Mixtures),
+  },
+  {
     path: 'infraestrutura',
     loadComponent: () =>
       import('../infrastructure/infrastructure').then(
@@ -34,9 +43,5 @@ export default [
     path: 'maquinas',
     loadComponent: () =>
       import('../machines/machines').then((m) => m.Machines),
-  },
-  {
-    path: 'insumos',
-    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
   },
 ] as Routes;
