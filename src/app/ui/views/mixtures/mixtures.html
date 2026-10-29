@@ -587,7 +587,7 @@
                       </div>
                       @if (item.input?.active_ingredient) {
                         <p class="text-[11px] text-surface-500 dark:text-surface-400 truncate">
-                          Princípio Ativo: <span class="text-surface-700 dark:text-surface-300">{{ item.input?.active_ingredient }}</span>
+                          Princípio Ativo: <span class="text-surface-700 dark:text-surface-300">{{ item.input.active_ingredient }}</span>
                         </p>
                       }
                     </div>
@@ -601,9 +601,9 @@
                       >
                         {{ item.dose }} {{ item.dose_unit || '' }}
                       </span>
-                      @if (item.input?.label_dose && item.input?.label_dose !== item.dose) {
+                      @if (item.input?.label_dose && item.input.label_dose !== item.dose) {
                         <span class="text-[9px] text-amber-600 dark:text-amber-400 mt-0.5 font-medium">
-                          Bula: {{ item.input?.label_dose }} {{ item.input?.dose_unit || '' }} (Ajustada)
+                          Bula: {{ item.input.label_dose }} {{ item.input.dose_unit || '' }} (Ajustada)
                         </span>
                       } @else if (item.input?.label_dose) {
                         <span class="text-[9px] text-surface-400 dark:text-surface-500 mt-0.5">

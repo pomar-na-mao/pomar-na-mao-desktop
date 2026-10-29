@@ -1,0 +1,400 @@
+<div
+  class="flex h-[calc(100vh-8rem)] w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-surface-0 shadow-sm dark:border-surface-800 dark:bg-surface-900"
+>
+  <!-- Barra Superior / Header -->
+  <div
+    class="flex shrink-0 flex-col gap-3.5 border-b border-surface-200 bg-surface-50/50 px-4 py-3 dark:border-surface-800 dark:bg-surface-800/20"
+  >
+    <!-- Linha 1: Título/Subtítulo e Botões de Ação -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="shrink-0">
+        <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Máquinas</h4>
+        <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none mt-1">
+          Gerenciamento do catálogo de máquinas e implementos da fazenda
+        </p>
+      </div>
+
+      <div class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+        <p-button
+          label="Excluir selecionadas"
+          icon="pi pi-trash"
+          severity="danger"
+          size="small"
+          [outlined]="true"
+          [disabled]="viewModel.selectedMachines().length === 0 || viewModel.isSaving()"
+          (onClick)="confirmDeleteSelected()"
+        />
+        <p-button
+          label="Download Excel"
+          icon="pi pi-file-excel"
+          severity="secondary"
+          size="small"
+          [outlined]="true"
+          [disabled]="viewModel.isLoading()"
+          (onClick)="exportExcel()"
+        />
+        <p-button
+          label="Adicionar Máquina"
+          icon="pi pi-plus"
+          size="small"
+          [disabled]="viewModel.isSaving()"
+          (onClick)="viewModel.openCreate()"
+        />
+      </div>
+    </div>
+
+    <!-- Linha 2: Campo de Pesquisa Global -->
+    <div class="mt-2.5 w-full md:w-1/2">
+      <p-iconfield class="w-full">
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          type="search"
+          (input)="onGlobalFilter($event)"
+          placeholder="Buscar por nome, marca ou observações..."
+          aria-label="Buscar máquinas"
+          class="w-full p-inputtext-sm"
+        />
+      </p-iconfield>
+    </div>
+  </div>
+
+  @if (viewModel.loadFailed()) {
+    <div
+      class="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-surface-600 dark:text-surface-300"
+      role="alert"
+    >
+      <i class="pi pi-exclamation-circle text-3xl text-red-500"></i>
+      <p>Não foi possível carregar as máquinas.</p>
+      <p-button
+        label="Tentar novamente"
+        icon="pi pi-refresh"
+        size="small"
+        [outlined]="true"
+        (onClick)="viewModel.loadInitialData()"
+      />
+    </div>
+  } @else {
+    <div class="min-h-0 flex-1 overflow-y-auto">
+      <p-table
+        #dt
+        [value]="viewModel.machines()"
+        [selection]="viewModel.selectedMachines()"
+        (selectionChange)="viewModel.selectedMachines.set($event)"
+        dataKey="id"
+        [rows]="10"
+        [paginator]="true"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} máquinas"
+        [globalFilterFields]="['name', 'brand', 'observations']"
+        [rowHover]="true"
+        [loading]="viewModel.isLoading()"
+        responsiveLayout="stack"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template #header>
+          <tr
+            class="bg-surface-50 text-xs uppercase tracking-wider text-surface-500 dark:bg-surface-800/50 dark:text-surface-400"
+          >
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="name" style="min-width: 14rem">
+              <div class="flex items-center gap-2">
+                Nome
+                <p-sortIcon field="name" />
+              </div>
+            </th>
+            <th pSortableColumn="brand" style="min-width: 10rem">
+              <div class="flex items-center gap-2">
+                Marca
+                <p-sortIcon field="brand" />
+              </div>
+            </th>
+            <th pSortableColumn="acquisition_date" style="min-width: 10rem">
+              <div class="flex items-center gap-2">
+                Aquisição
+                <p-sortIcon field="acquisition_date" />
+              </div>
+            </th>
+            <th pSortableColumn="manufacturing_year" style="min-width: 8rem; text-align: center">
+              <div class="flex items-center justify-center gap-2">
+                Ano Fab.
+                <p-sortIcon field="manufacturing_year" />
+              </div>
+            </th>
+            <th pSortableColumn="quantity" style="min-width: 7rem; text-align: center">
+              <div class="flex items-center justify-center gap-2">
+                Qtd
+                <p-sortIcon field="quantity" />
+              </div>
+            </th>
+            <th pSortableColumn="created_at" style="min-width: 10rem">
+              <div class="flex items-center gap-2">
+                Criado em
+                <p-sortIcon field="created_at" />
+              </div>
+            </th>
+            <th pSortableColumn="updated_at" style="min-width: 10rem">
+              <div class="flex items-center gap-2">
+                Atualizado em
+                <p-sortIcon field="updated_at" />
+              </div>
+            </th>
+            <th style="width: 7rem; text-align: center">Ações</th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-machine>
+          <tr class="transition-colors hover:bg-surface-50 dark:hover:bg-surface-800/40">
+            <td>
+              <p-tableCheckbox [value]="machine" />
+            </td>
+            <td>
+              <div class="flex flex-col">
+                <span class="text-sm font-semibold text-surface-900 dark:text-surface-0">
+                  {{ machine.name }}
+                </span>
+                @if (machine.observations) {
+                  <span class="text-[11px] text-surface-500 dark:text-surface-400 line-clamp-1" [title]="machine.observations">
+                    {{ machine.observations }}
+                  </span>
+                }
+              </div>
+            </td>
+            <td>
+              <span class="text-sm text-surface-700 dark:text-surface-300">
+                {{ machine.brand || '—' }}
+              </span>
+            </td>
+            <td>
+              <span class="text-sm text-surface-600 dark:text-surface-300">
+                {{ (machine.acquisition_date | date: 'dd/MM/yyyy') || '—' }}
+              </span>
+            </td>
+            <td style="text-align: center">
+              <span class="text-sm text-surface-700 dark:text-surface-300">
+                {{ machine.manufacturing_year || '—' }}
+              </span>
+            </td>
+            <td style="text-align: center">
+              <span
+                class="inline-flex items-center justify-center min-w-6 px-2 py-0.5 rounded-full text-xs font-bold bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300 border border-primary-200 dark:border-primary-800/50"
+              >
+                {{ machine.quantity }}
+              </span>
+            </td>
+            <td>
+              <time class="text-xs text-surface-600 dark:text-surface-400">
+                {{ machine.created_at | date: 'dd/MM/yyyy HH:mm' }}
+              </time>
+            </td>
+            <td>
+              <time class="text-xs text-surface-600 dark:text-surface-400">
+                {{ machine.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+              </time>
+            </td>
+            <td style="text-align: center">
+              <div class="flex items-center justify-center gap-1">
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="info"
+                  size="small"
+                  pTooltip="Editar máquina"
+                  tooltipPosition="top"
+                  ariaLabel="Editar máquina"
+                  [disabled]="viewModel.isSaving()"
+                  (onClick)="viewModel.openEdit(machine)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="danger"
+                  size="small"
+                  pTooltip="Excluir máquina"
+                  tooltipPosition="top"
+                  ariaLabel="Excluir máquina"
+                  [disabled]="viewModel.isSaving()"
+                  (onClick)="confirmDelete(machine)"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template #emptymessage>
+          <tr>
+            <td
+              colspan="9"
+              class="py-8 text-center text-sm text-surface-500 dark:text-surface-400"
+            >
+              <div class="flex flex-col items-center justify-center gap-2">
+                <i class="pi pi-truck text-3xl text-surface-400"></i>
+                <span>Nenhuma máquina encontrada.</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</div>
+
+<!-- Modal de Cadastro / Edição de Máquina -->
+<p-dialog
+  [visible]="viewModel.dialogVisible()"
+  (visibleChange)="viewModel.dialogVisible.set($event)"
+  (onHide)="viewModel.closeDialog()"
+  [header]="viewModel.editingMachine() ? 'Editar Máquina' : 'Adicionar Máquina'"
+  [modal]="true"
+  [closable]="!viewModel.isSaving()"
+  [dismissableMask]="!viewModel.isSaving()"
+  [style]="{ width: 'min(36rem, calc(100vw - 2rem))' }"
+  styleClass="machines-dialog"
+>
+  <form
+    [formGroup]="viewModel.form"
+    (ngSubmit)="viewModel.save()"
+    class="machines-form flex flex-col gap-4 pt-2"
+  >
+    <!-- Nome (Obrigatório) -->
+    <div class="flex flex-col gap-1.5">
+      <label for="machine-name" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
+        Nome da Máquina <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+      <input
+        id="machine-name"
+        pInputText
+        formControlName="name"
+        placeholder="Ex: Trator Valtra A950, Pulverizador Jacto 2000L"
+        maxlength="150"
+        autocomplete="off"
+        class="w-full text-sm"
+        [attr.aria-invalid]="!!viewModel.nameError()"
+      />
+      @if (viewModel.nameError(); as error) {
+        <small class="text-xs text-red-600" role="alert">{{ error }}</small>
+      }
+    </div>
+
+    <!-- Linha com Marca e Quantidade -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="flex flex-col gap-1.5">
+        <label for="machine-brand" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
+          Marca / Fabricante
+        </label>
+        <input
+          id="machine-brand"
+          pInputText
+          formControlName="brand"
+          placeholder="Ex: Valtra, Jacto, Stara"
+          maxlength="100"
+          autocomplete="off"
+          class="w-full text-sm"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="machine-quantity" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
+          Quantidade de Unidades
+        </label>
+        <p-inputnumber
+          inputId="machine-quantity"
+          formControlName="quantity"
+          [min]="1"
+          placeholder="Ex: 1"
+          [fluid]="true"
+          class="w-full"
+          styleClass="w-full"
+          inputStyleClass="w-full text-sm"
+        />
+        @if (viewModel.quantityError(); as error) {
+          <small class="text-xs text-red-600" role="alert">{{ error }}</small>
+        }
+      </div>
+    </div>
+
+    <!-- Linha com Data de Aquisição e Ano de Fabricação -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="flex flex-col gap-1.5">
+        <label for="machine-acquisition-date" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
+          Data de Aquisição
+        </label>
+        <p-datepicker
+          inputId="machine-acquisition-date"
+          formControlName="acquisition_date"
+          dateFormat="yy-mm-dd"
+          dataType="string"
+          [showIcon]="true"
+          appendTo="body"
+          placeholder="yyyy-mm-dd"
+          [fluid]="true"
+          class="w-full"
+          styleClass="w-full"
+          inputStyleClass="w-full text-sm"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="machine-year" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
+          Ano de Fabricação
+        </label>
+        <p-inputnumber
+          inputId="machine-year"
+          formControlName="manufacturing_year"
+          [useGrouping]="false"
+          placeholder="Ex: 2022"
+          [min]="1900"
+          [max]="2100"
+          [fluid]="true"
+          class="w-full"
+          styleClass="w-full"
+          inputStyleClass="w-full text-sm"
+        />
+        @if (viewModel.yearError(); as error) {
+          <small class="text-xs text-red-600" role="alert">{{ error }}</small>
+        }
+      </div>
+    </div>
+
+    <!-- Observações Gerais -->
+    <div class="flex flex-col gap-1.5">
+      <label for="machine-observations" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
+        Observações Gerais
+      </label>
+      <textarea
+        id="machine-observations"
+        pTextarea
+        formControlName="observations"
+        placeholder="Notas de manutenção, potência, implemento ou recomendações de operação..."
+        maxlength="1000"
+        rows="4"
+        class="w-full resize-y text-sm"
+      ></textarea>
+    </div>
+
+    <!-- Botões de Ação do Modal -->
+    <div class="flex justify-end gap-2 pt-2">
+      <p-button
+        type="button"
+        label="Cancelar"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="viewModel.isSaving()"
+        (onClick)="viewModel.closeDialog()"
+      />
+      <p-button
+        type="submit"
+        [label]="viewModel.editingMachine() ? 'Salvar alterações' : 'Adicionar'"
+        icon="pi pi-check"
+        [disabled]="!viewModel.canSubmit()"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-confirmDialog />
