@@ -23,9 +23,14 @@ export default [
         (m) => m.ZoneMapManagement,
       ),
   },
-   {
+  {
     path: 'insumos',
     loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
+  },
+  {
+    path: 'caldas',
+    loadComponent: () =>
+      import('../mixtures/mixtures').then((m) => m.Mixtures),
   },
   {
     path: 'infraestrutura',

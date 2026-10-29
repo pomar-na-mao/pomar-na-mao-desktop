@@ -50,13 +50,13 @@ export type InputUpdate = InputDraft & {
   updated_at: string;
 };
 
-export const INPUT_TYPE_LABELS: Record<string, string> = {
+export const INPUT_TYPE_TRANSLATION_MAP: Record<string, string> = {
   INSECTICIDE: 'Inseticida',
   ACARICIDE: 'Acaricida',
   FUNGICIDE: 'Fungicida',
   BACTERICIDE: 'Bactericida',
-  CUPRIC: 'Cúprico / Cobre',
-  BIOLOGICAL: 'Biológico / MIP',
+  CUPRIC: 'Cúprico',
+  BIOLOGICAL: 'Biológico',
   FOLIAR_FERTILIZER: 'Adubo Foliar',
   MICRONUTRIENT: 'Micronutriente',
   NUTRITION: 'Nutrição',
@@ -66,10 +66,16 @@ export const INPUT_TYPE_LABELS: Record<string, string> = {
   GROWTH_REGULATOR: 'Regulador de Crescimento',
 };
 
+export const INPUT_TYPE_LABELS: Record<string, string> = {
+  ...INPUT_TYPE_TRANSLATION_MAP,
+  CUPRIC: 'Cúprico / Cobre',
+  BIOLOGICAL: 'Biológico',
+};
+
 export function inputTypeLabel(type: string | null | undefined): string {
   if (!type) return 'Não especificado';
   const upper = type.toUpperCase().trim();
-  return INPUT_TYPE_LABELS[upper] ?? type;
+  return INPUT_TYPE_TRANSLATION_MAP[upper] ?? INPUT_TYPE_LABELS[upper] ?? type;
 }
 
 export function inputTypeBadgeStyle(type: string | null | undefined): {

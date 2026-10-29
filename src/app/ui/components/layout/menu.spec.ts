@@ -37,9 +37,10 @@ describe('AppMenu', () => {
       '/cadastro/variedades',
       '/cadastro/ocorrencias',
       '/cadastro/zonas',
+      '/cadastro/insumos',
+      '/cadastro/caldas',
       '/cadastro/infraestrutura',
       '/cadastro/maquinas',
-      '/cadastro/insumos',
     ]);
     expect(registrationItems[2]).toMatchObject({
       label: 'Zonas',

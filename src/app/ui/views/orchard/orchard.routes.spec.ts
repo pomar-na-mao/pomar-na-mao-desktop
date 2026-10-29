@@ -15,9 +15,10 @@ describe('Orchard routes', () => {
       'variedades',
       'ocorrencias',
       'zonas',
+      'insumos',
+      'caldas',
       'infraestrutura',
       'maquinas',
-      'insumos',
     ]);
   });
 
@@ -25,9 +26,10 @@ describe('Orchard routes', () => {
     'variedades',
     'ocorrencias',
     'zonas',
+    'insumos',
+    'caldas',
     'infraestrutura',
     'maquinas',
-    'insumos',
   ])(
     'should lazy-load the %s component',
     async (path) => {

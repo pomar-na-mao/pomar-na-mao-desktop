@@ -68,6 +68,12 @@ export class AppMenu implements OnInit {
                 routerLink: ['/cadastro/insumos'],
               },
               {
+                label: 'Caldas',
+                visible: true,
+                icon: 'pi pi-fw pi-filter',
+                routerLink: ['/cadastro/caldas'],
+              },
+              {
                 label: 'Infraestrutura',
                 visible: true,
                 icon: 'pi pi-fw pi-building',
