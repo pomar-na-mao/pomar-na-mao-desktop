@@ -32,16 +32,16 @@ export default [
     loadComponent: () =>
       import('../mixtures/mixtures').then((m) => m.Mixtures),
   },
+   {
+    path: 'maquinas',
+    loadComponent: () =>
+      import('../machines/machines').then((m) => m.Machines),
+  },
   {
     path: 'infraestrutura',
     loadComponent: () =>
       import('../infrastructure/infrastructure').then(
         (m) => m.Infrastructure,
       ),
-  },
-  {
-    path: 'maquinas',
-    loadComponent: () =>
-      import('../machines/machines').then((m) => m.Machines),
   },
 ] as Routes;

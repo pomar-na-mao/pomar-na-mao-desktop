@@ -18,6 +18,8 @@ export interface FieldActivityItem {
   geometry_geojson: GeoJSON.GeometryObject | null;
   mixture_id: string | null;
   mixture_name: string | null;
+  machine_id: string | null;
+  machine_name: string | null;
   device_id: string;
   local_id: string;
   created_at: string;

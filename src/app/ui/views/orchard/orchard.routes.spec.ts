@@ -17,8 +17,8 @@ describe('Orchard routes', () => {
       'zonas',
       'insumos',
       'caldas',
-      'infraestrutura',
       'maquinas',
+      'infraestrutura',
     ]);
   });
 
@@ -28,16 +28,15 @@ describe('Orchard routes', () => {
     'zonas',
     'insumos',
     'caldas',
-    'infraestrutura',
     'maquinas',
-  ])(
-    'should lazy-load the %s component',
-    async (path) => {
-      const route = routes.find((candidate) => candidate.path === path);
+    'infraestrutura',
+  ])('should lazy-load the %s component', async (path) => {
+    const route = routes.find((entry) => entry.path === path);
 
-      expect(route?.loadComponent).toBeDefined();
-      const component = await route?.loadComponent?.();
-      expect(component).toBeDefined();
-    },
-  );
+    expect(route).toBeDefined();
+    expect(route?.loadComponent).toBeTypeOf('function');
+
+    const component = await route?.loadComponent?.();
+    expect(component).toBeDefined();
+  });
 });
