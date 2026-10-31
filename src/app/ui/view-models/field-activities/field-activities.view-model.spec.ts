@@ -23,6 +23,8 @@ describe('FieldActivitiesViewModel', () => {
       geometry_geojson: { type: 'LineString', coordinates: [[-47.79, -21.23], [-47.791, -21.235]] },
       mixture_id: null,
       mixture_name: null,
+      machine_id: 'mac-1',
+      machine_name: 'Trator Valtra A950',
       device_id: 'dev-1',
       local_id: 'loc-1',
       created_at: '2026-10-28T23:38:33.000Z',
@@ -42,6 +44,8 @@ describe('FieldActivitiesViewModel', () => {
       },
       mixture_id: 'mix-1',
       mixture_name: 'Calda bordolesa 1%',
+      machine_id: null,
+      machine_name: null,
       device_id: 'dev-2',
       local_id: 'loc-2',
       created_at: '2026-10-29T01:08:14.000Z',
@@ -83,6 +87,7 @@ describe('FieldActivitiesViewModel', () => {
     expect(viewModel.routeCount()).toBe(1);
     expect(viewModel.areaCount()).toBe(1);
     expect(viewModel.withMixtureCount()).toBe(1);
+    expect(viewModel.withMachineCount()).toBe(1);
   });
 
   it('should filter activities by geometry type', () => {
@@ -100,10 +105,14 @@ describe('FieldActivitiesViewModel', () => {
     expect(viewModel.filteredActivities().length).toBe(2);
   });
 
-  it('should filter activities by search query in activity, responsible, mixture and inputs', () => {
+  it('should filter activities by search query in activity, responsible, machine, mixture and inputs', () => {
     repository.activities.set(sampleActivities);
 
     viewModel.globalFilter.set('roçagem');
+    expect(viewModel.filteredActivities().length).toBe(1);
+    expect(viewModel.filteredActivities()[0].id).toBe('act-1');
+
+    viewModel.globalFilter.set('valtra');
     expect(viewModel.filteredActivities().length).toBe(1);
     expect(viewModel.filteredActivities()[0].id).toBe('act-1');
 

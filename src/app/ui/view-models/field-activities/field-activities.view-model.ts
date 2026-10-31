@@ -58,6 +58,9 @@ export class FieldActivitiesViewModel {
   public withMixtureCount = computed(
     () => this.activities().filter((a) => !!a.mixture_name).length,
   );
+  public withMachineCount = computed(
+    () => this.activities().filter((a) => !!a.machine_name).length,
+  );
 
   public hasActiveFilters = computed(() => {
     const hasQuery = this.globalFilter().trim().length > 0;
@@ -82,13 +85,14 @@ export class FieldActivitiesViewModel {
       const matchActivity = item.activity.toLowerCase().includes(query);
       const matchResponsible = item.responsible.toLowerCase().includes(query);
       const matchMixture = item.mixture_name?.toLowerCase().includes(query) ?? false;
+      const matchMachine = item.machine_name?.toLowerCase().includes(query) ?? false;
       const matchInputs = item.inputs.some(
         (i) =>
           i.name.toLowerCase().includes(query) ||
           (i.active_ingredient?.toLowerCase().includes(query) ?? false),
       );
 
-      return matchActivity || matchResponsible || matchMixture || matchInputs;
+      return matchActivity || matchResponsible || matchMixture || matchMachine || matchInputs;
     });
   });
 
@@ -323,8 +327,12 @@ export class FieldActivitiesViewModel {
         }),
       });
 
+      const machineInfo = act.machine_name
+        ? `<div style="font-size: 11px; margin-top: 2px; color: #b45309;"><strong>Máquina:</strong> ${act.machine_name}</div>`
+        : '';
+
       const mixtureInfo = act.mixture_name
-        ? `<div style="font-size: 11px; margin-top: 4px; color: #475569;"><strong>Calda:</strong> ${act.mixture_name}</div>`
+        ? `<div style="font-size: 11px; margin-top: 2px; color: #475569;"><strong>Calda:</strong> ${act.mixture_name}</div>`
         : '';
 
       const popupContent = `
@@ -332,6 +340,7 @@ export class FieldActivitiesViewModel {
           <strong style="color: #0f172a; font-size: 13px;">${act.activity}</strong>
           <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Resp: ${act.responsible}</div>
           <div style="font-size: 11px; color: #64748b;">Data: ${new Date(act.performed_at).toLocaleDateString('pt-BR')} ${new Date(act.performed_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+          ${machineInfo}
           ${mixtureInfo}
         </div>
       `;
