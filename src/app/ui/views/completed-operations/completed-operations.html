@@ -1,0 +1,693 @@
+<div
+  [class]="
+    viewModel.isMapFullscreen()
+      ? 'fixed inset-0 z-[1100] flex h-screen w-screen overflow-hidden bg-surface-0 dark:bg-surface-900'
+      : 'flex h-[calc(100vh-8rem)] w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-surface-0 shadow-sm dark:border-surface-800 dark:bg-surface-900 !mb-0'
+  "
+>
+  <!-- Barra Superior / Header Padronizado -->
+  <div
+    class="flex shrink-0 flex-col gap-3 border-b border-surface-200 bg-surface-50/50 px-4 py-3 dark:border-surface-800 dark:bg-surface-800/20"
+  >
+    <!-- Linha 1: Título/Subtítulo e Ações -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="shrink-0">
+        <div class="flex items-center gap-2">
+          <h4 class="font-bold leading-none text-surface-900 dark:text-surface-0">
+            Atividades de campo
+          </h4>
+          <span class="text-[10px] mb-[0.5rem] font-semibold px-2 py-0.5 rounded-full bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60">
+            {{ viewModel.totalCount() }} registros
+          </span>
+        </div>
+        <p class="text-[10px] leading-none text-surface-500 dark:text-surface-400 mt-1">
+          Acompanhamento georreferenciado e histórico de intervenções executadas no pomar
+        </p>
+      </div>
+
+      <!-- Alternador Tabela / Mapa e Ações -->
+      <div class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+        <!-- Switcher de Visualização -->
+        <div class="inline-flex rounded-lg border border-surface-200 dark:border-surface-700 p-0.5 bg-surface-0 dark:bg-surface-900">
+          <button
+            type="button"
+            (click)="setViewMode('table')"
+            [class]="
+              viewModel.viewMode() === 'table'
+                ? 'bg-surface-100 dark:bg-surface-800 text-primary-600 dark:text-primary-400 shadow-xs'
+                : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+            "
+            class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer"
+          >
+            <i class="pi pi-table text-xs"></i>
+            <span>Tabela</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="setViewMode('map')"
+            [class]="
+              viewModel.viewMode() === 'map'
+                ? 'bg-surface-100 dark:bg-surface-800 text-primary-600 dark:text-primary-400 shadow-xs'
+                : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+            "
+            class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer"
+          >
+            <i class="pi pi-map text-xs"></i>
+            <span>Mapa</span>
+          </button>
+        </div>
+
+        <p-button
+          icon="pi pi-refresh"
+          [outlined]="true"
+          severity="secondary"
+          size="small"
+          [loading]="viewModel.isLoading()"
+          (onClick)="viewModel.loadInitialData()"
+          ariaLabel="Atualizar lista de atividades"
+          pTooltip="Atualizar dados"
+          tooltipPosition="bottom"
+        />
+      </div>
+    </div>
+
+    <!-- Linha 2: Busca e Filtros Combinados -->
+    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5">
+      <!-- Campo de Pesquisa -->
+      <div class="filter-search-box shrink-0">
+        <p-iconfield class="w-full">
+          <p-inputicon class="pi pi-search" />
+          <input
+            pInputText
+            type="search"
+            [ngModel]="viewModel.globalFilter()"
+            (ngModelChange)="viewModel.globalFilter.set($event)"
+            placeholder="Buscar por atividade, responsável, máquina, calda, insumos..."
+            aria-label="Buscar atividades"
+            class="w-full p-inputtext-sm text-xs"
+          />
+        </p-iconfield>
+      </div>
+
+      <!-- Filtros de Geometria e Datas -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Tipo de Geometria -->
+        <p-select
+          [options]="geometryOptions"
+          [ngModel]="viewModel.selectedGeometryType()"
+          (ngModelChange)="viewModel.selectedGeometryType.set($event)"
+          optionLabel="label"
+          optionValue="value"
+          size="small"
+          class="filter-select-geometry shrink-0 text-xs"
+        />
+
+        <!-- Período Datas -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <p-datepicker
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            dataType="string"
+            placeholder="Início"
+            [ngModel]="viewModel.startDate()"
+            (ngModelChange)="viewModel.startDate.set($event || '')"
+            size="small"
+            class="filter-datepicker shrink-0 text-xs"
+          />
+          <span class="text-surface-400 text-xs shrink-0">até</span>
+          <p-datepicker
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            dataType="string"
+            placeholder="Fim"
+            [ngModel]="viewModel.endDate()"
+            (ngModelChange)="viewModel.endDate.set($event || '')"
+            size="small"
+            class="filter-datepicker shrink-0 text-xs"
+          />
+          <p-button
+            icon="pi pi-filter"
+            size="small"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="viewModel.filterByDates()"
+            pTooltip="Filtrar por data"
+            ariaLabel="Filtrar por data"
+            class="shrink-0"
+          />
+        </div>
+
+        <p-button
+          icon="pi pi-filter-slash"
+          label="Limpar"
+          size="small"
+          [text]="true"
+          severity="secondary"
+          [disabled]="!viewModel.hasActiveFilters()"
+          (onClick)="viewModel.clearFilters()"
+          pTooltip="Limpar filtros"
+          class="shrink-0"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Erro de Carga -->
+  @if (viewModel.loadFailed()) {
+    <div
+      class="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-surface-600 dark:text-surface-300"
+      role="alert"
+    >
+      <i class="pi pi-exclamation-circle text-3xl text-red-500"></i>
+      <p>Não foi possível carregar as atividades de campo.</p>
+      <p-button
+        label="Tentar novamente"
+        icon="pi pi-refresh"
+        size="small"
+        [outlined]="true"
+        (onClick)="viewModel.loadInitialData()"
+      />
+    </div>
+  } @else {
+    <!-- CONTEÚDO PRINCIPAL (DENTRO DO CARD) -->
+
+    <!-- Visão 1: Tabela Padronizada -->
+    @if (viewModel.viewMode() === 'table') {
+      <div class="min-h-0 flex-1 overflow-y-auto">
+        <!-- Barra sutil de métricas rápidas -->
+        <div class="flex items-center gap-3 px-4 py-2 border-b border-surface-200/60 dark:border-surface-800/60 bg-surface-50/30 dark:bg-surface-900 text-[11px] text-surface-500">
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-directions text-sky-500"></i>
+            <span>Rotas: <strong class="text-surface-700 dark:text-surface-300">{{ viewModel.routeCount() }}</strong></span>
+          </div>
+          <span class="text-surface-300 dark:text-surface-700">•</span>
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-map text-emerald-500"></i>
+            <span>Áreas: <strong class="text-surface-700 dark:text-surface-300">{{ viewModel.areaCount() }}</strong></span>
+          </div>
+          <span class="text-surface-300 dark:text-surface-700">•</span>
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-truck text-amber-500"></i>
+            <span>Com Máquina: <strong class="text-surface-700 dark:text-surface-300">{{ viewModel.withMachineCount() }}</strong></span>
+          </div>
+          <span class="text-surface-300 dark:text-surface-700">•</span>
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-box text-violet-500"></i>
+            <span>Com Calda: <strong class="text-surface-700 dark:text-surface-300">{{ viewModel.withMixtureCount() }}</strong></span>
+          </div>
+        </div>
+
+        <p-table
+          #dt
+          [value]="viewModel.filteredActivities()"
+          dataKey="id"
+          [rows]="10"
+          [paginator]="true"
+          [rowsPerPageOptions]="[5, 10, 20, 50]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} atividades"
+          [rowHover]="true"
+          [loading]="viewModel.isLoading()"
+          responsiveLayout="stack"
+          styleClass="p-datatable-sm"
+        >
+          <ng-template #header>
+            <tr class="bg-surface-50 text-xs uppercase tracking-wider text-surface-500 dark:bg-surface-800/50 dark:text-surface-400">
+              <th pSortableColumn="performed_at" style="min-width: 11rem">
+                <div class="flex items-center gap-2">
+                  Data / Hora
+                  <p-sortIcon field="performed_at" />
+                </div>
+              </th>
+              <th pSortableColumn="activity" style="min-width: 14rem">
+                <div class="flex items-center gap-2">
+                  Atividade
+                  <p-sortIcon field="activity" />
+                </div>
+              </th>
+              <th style="min-width: 7rem" class="text-center">Tipo</th>
+              <th pSortableColumn="responsible" style="min-width: 12rem">
+                <div class="flex items-center gap-2">
+                  Responsável
+                  <p-sortIcon field="responsible" />
+                </div>
+              </th>
+              <th style="min-width: 12rem">Máquina</th>
+              <th style="min-width: 14rem">Calda Utilizada</th>
+              <th style="min-width: 13rem">Insumos Aplicados</th>
+              <th style="width: 7rem; text-align: center">Ações</th>
+            </tr>
+          </ng-template>
+
+          <ng-template #body let-activity>
+            @let geoStyle = viewModel.geometryBadgeStyle(activity.geometry_type);
+            <tr class="text-xs hover:bg-surface-50 dark:hover:bg-surface-800/40 transition-colors">
+              <!-- Data / Hora -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Data / Hora: </span>
+                <div class="flex flex-col">
+                  <span class="font-semibold text-surface-900 dark:text-surface-100">
+                    {{ activity.performed_at | date: 'dd/MM/yyyy' }}
+                  </span>
+                  <span class="text-[10px] text-surface-400">
+                    {{ activity.performed_at | date: 'HH:mm' }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Atividade -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Atividade: </span>
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-md bg-surface-100 dark:bg-surface-800 flex items-center justify-center text-surface-600 dark:text-surface-300 shrink-0">
+                    <i [class]="geoStyle.icon + ' text-xs'"></i>
+                  </div>
+                  <span class="font-bold text-surface-900 dark:text-surface-0">
+                    {{ activity.activity }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Tipo Geometria -->
+              <td class="text-center">
+                <span class="p-column-title font-semibold md:hidden">Tipo: </span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border {{ geoStyle.bg }} {{ geoStyle.text }} {{ geoStyle.border }}"
+                >
+                  <i [class]="geoStyle.icon + ' text-[9px]'"></i>
+                  {{ geoStyle.label }}
+                </span>
+              </td>
+
+              <!-- Responsável -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Responsável: </span>
+                <div class="flex items-center gap-1.5 text-surface-700 dark:text-surface-300">
+                  <i class="pi pi-user text-[11px] text-surface-400"></i>
+                  <span class="font-medium">{{ activity.responsible }}</span>
+                </div>
+              </td>
+
+              <!-- Máquina -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Máquina: </span>
+                @if (activity.machine_name) {
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                    <i class="pi pi-truck text-[9px]"></i>
+                    {{ activity.machine_name }}
+                  </span>
+                } @else {
+                  <span class="text-surface-400 dark:text-surface-500 text-[11px] italic">
+                    Sem máquina
+                  </span>
+                }
+              </td>
+
+              <!-- Calda Utilizada -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Calda: </span>
+                @if (activity.mixture_name) {
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800/60">
+                    <i class="pi pi-box text-[9px]"></i>
+                    {{ activity.mixture_name }}
+                  </span>
+                } @else {
+                  <span class="text-surface-400 dark:text-surface-500 text-[11px] italic">
+                    Sem calda
+                  </span>
+                }
+              </td>
+
+              <!-- Insumos -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Insumos: </span>
+                @if (activity.inputs && activity.inputs.length > 0) {
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 border border-surface-200 dark:border-surface-700">
+                      {{ activity.inputs.length }} {{ activity.inputs.length === 1 ? 'insumo' : 'insumos' }}
+                    </span>
+                    <span class="text-[11px] text-surface-500 truncate max-w-[140px]" [title]="activity.inputs[0]?.name">
+                      {{ activity.inputs[0]?.name }}
+                    </span>
+                  </div>
+                } @else {
+                  <span class="text-surface-400 text-[11px]">—</span>
+                }
+              </td>
+
+              <!-- Ações -->
+              <td style="text-align: center">
+                <span class="p-column-title font-semibold md:hidden">Ações: </span>
+                <div class="flex items-center justify-center gap-1">
+                  <p-button
+                    icon="pi pi-eye"
+                    size="small"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="secondary"
+                    (onClick)="viewModel.openDetails(activity)"
+                    pTooltip="Ver detalhes e traçado"
+                    ariaLabel="Ver detalhes"
+                  />
+                  <p-button
+                    icon="pi pi-map-marker"
+                    size="small"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="primary"
+                    (onClick)="viewModel.focusActivityOnMap(activity); initFullMapIfNeeded()"
+                    pTooltip="Visualizar no mapa"
+                    ariaLabel="Ver no mapa"
+                  />
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="8" class="text-center py-10 text-surface-400 dark:text-surface-500">
+                <div class="flex flex-col items-center justify-center gap-2">
+                  <i class="pi pi-inbox text-3xl text-surface-300 dark:text-surface-600"></i>
+                  <p class="text-sm font-medium">Nenhuma atividade de campo encontrada.</p>
+                  <p class="text-xs text-surface-400">Verifique os filtros ou sincronize novas atividades pelo app mobile.</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+
+    <!-- Visão 2: Mapa Interativo Integrado ao Card -->
+    @if (viewModel.viewMode() === 'map') {
+      <div class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
+        <!-- Lista Lateral de Atividades -->
+        <aside class="w-full md:w-80 lg:w-[22rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 bg-surface-50/40 dark:bg-surface-900">
+          <div class="px-3.5 py-2.5 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between shrink-0">
+            <div>
+              <span class="text-xs font-bold text-surface-900 dark:text-surface-0 uppercase tracking-wider block">
+                Atividades no Mapa
+              </span>
+              <span class="text-[10px] text-surface-500">
+                {{ viewModel.filteredActivities().length }} itens filtrados
+              </span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-surface-200/60 dark:bg-surface-800 font-semibold text-surface-600 dark:text-surface-300">
+              Clique p/ focar
+            </span>
+          </div>
+
+          <div class="flex-1 min-h-0 overflow-y-auto p-2 space-y-1.5">
+            @for (act of viewModel.filteredActivities(); track act.id) {
+              @let isSelected = viewModel.selectedActivity()?.id === act.id;
+              @let geoStyle = viewModel.geometryBadgeStyle(act.geometry_type);
+              <div
+                (click)="viewModel.focusActivityOnMap(act)"
+                [class]="
+                  isSelected
+                    ? 'border-primary-500 bg-primary-50/40 dark:bg-primary-950/20 shadow-xs'
+                    : 'border-surface-200/70 dark:border-surface-800/70 bg-surface-0 dark:bg-surface-900 hover:border-surface-300 dark:hover:border-surface-700'
+                "
+                class="rounded-lg border p-2.5 cursor-pointer transition-all space-y-1"
+              >
+                <div class="flex items-start justify-between gap-2">
+                  <span class="text-xs font-bold text-surface-900 dark:text-surface-0 truncate">
+                    {{ act.activity }}
+                  </span>
+                  <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold border {{ geoStyle.bg }} {{ geoStyle.text }} {{ geoStyle.border }}">
+                    {{ geoStyle.label }}
+                  </span>
+                </div>
+
+                <div class="flex items-center justify-between text-[10px] text-surface-500">
+                  <span>Resp: {{ act.responsible }}</span>
+                  <span>{{ act.performed_at | date: 'dd/MM HH:mm' }}</span>
+                </div>
+
+                @if (act.machine_name) {
+                  <div class="text-[10px] text-amber-600 dark:text-amber-400 font-medium truncate">
+                    <i class="pi pi-truck text-[9px]"></i> {{ act.machine_name }}
+                  </div>
+                }
+
+                @if (act.mixture_name) {
+                  <div class="text-[10px] text-violet-600 dark:text-violet-400 font-medium truncate">
+                    <i class="pi pi-box text-[9px]"></i> {{ act.mixture_name }}
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </aside>
+
+        <!-- Container do Mapa -->
+        <div class="relative min-w-0 flex-1 h-full overflow-hidden bg-surface-100 dark:bg-surface-950">
+          <div
+            id="activities-main-map"
+            class="activities-full-map bg-slate-100 dark:bg-slate-900 dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)] transition-[filter]"
+          ></div>
+
+          <!-- Botão de Tela Cheia -->
+          <p-button
+            (onClick)="viewModel.toggleFullscreen()"
+            [icon]="viewModel.isMapFullscreen() ? 'pi pi-window-minimize' : 'pi pi-window-maximize'"
+            [rounded]="true"
+            severity="secondary"
+            styleClass="absolute right-3 top-3 z-[400] shadow-md"
+            [ariaLabel]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+          />
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<!-- Modal de Detalhes da Atividade Padronizado -->
+<p-dialog
+  [visible]="viewModel.detailsDialogVisible()"
+  (visibleChange)="viewModel.detailsDialogVisible.set($event)"
+  (onHide)="viewModel.closeDetails()"
+  (onShow)="onDetailsShown()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(44rem, calc(100vw - 2rem))' }"
+  styleClass="activity-details-dialog !rounded-2xl overflow-hidden border border-surface-200 dark:border-surface-800"
+  appendTo="body"
+>
+  <ng-template #header>
+    <div class="w-full flex items-center justify-between">
+      <div>
+        <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">
+          Detalhes da Atividade de Campo
+        </h4>
+        <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none mt-1">
+          Ficha cadastral, máquina, geometria desenhada e receita aplicada
+        </p>
+      </div>
+      <p-button
+        (onClick)="viewModel.closeDetails()"
+        icon="pi pi-times"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
+        size="small"
+        ariaLabel="Fechar detalhes da atividade"
+      />
+    </div>
+  </ng-template>
+
+  @if (viewModel.selectedActivity(); as activity) {
+    @let geoStyle = viewModel.geometryBadgeStyle(activity.geometry_type);
+    <div class="space-y-4 py-2">
+      <!-- Mini Mapa da Geometria -->
+      <section class="space-y-1.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5 text-xs text-surface-700 dark:text-surface-300 font-medium">
+            <i class="pi pi-map text-xs text-primary-500"></i>
+            <span>Traçado Georreferenciado</span>
+          </div>
+          <span class="text-[10px] text-surface-400">
+            Coordenadas GPS no pomar
+          </span>
+        </div>
+        <div
+          id="activity-mini-map"
+          class="activity-mini-map border border-surface-200 dark:border-surface-800 shadow-2xs bg-slate-100 dark:bg-slate-900 dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)] transition-[filter]"
+        ></div>
+      </section>
+
+      <!-- Seção 1: Identificação da Atividade -->
+      <section class="rounded-xl border border-surface-200/80 dark:border-surface-800/80 bg-surface-50/50 dark:bg-surface-800/20 p-3.5 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-info-circle text-surface-400 text-xs"></i>
+            <span class="text-xs font-medium text-surface-700 dark:text-surface-200">
+              Dados da Execução
+            </span>
+          </div>
+          <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border {{ geoStyle.bg }} {{ geoStyle.text }} {{ geoStyle.border }}">
+            <i [class]="geoStyle.icon + ' text-[9px]'"></i>
+            {{ geoStyle.label }}
+          </span>
+        </div>
+
+        <div class="rounded-lg bg-surface-0 dark:bg-surface-900 border border-surface-200/70 dark:border-surface-800/70 px-3 py-2 shadow-xs">
+          <span class="text-[9px] text-surface-400 dark:text-surface-500 font-medium block">
+            Atividade Realizada
+          </span>
+          <span class="text-sm font-bold text-surface-900 dark:text-surface-0">
+            {{ activity.activity }}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+          <div class="rounded-lg bg-surface-0/60 dark:bg-surface-900/40 border border-surface-200/50 dark:border-surface-800/50 p-2.5 flex flex-col gap-1">
+            <div class="flex items-center gap-1.5 text-surface-400">
+              <i class="pi pi-user text-[11px] text-blue-500"></i>
+              <span class="text-[10px]">Responsável</span>
+            </div>
+            <span class="font-medium text-surface-900 dark:text-surface-100 truncate">
+              {{ activity.responsible }}
+            </span>
+          </div>
+
+          <div class="rounded-lg bg-surface-0/60 dark:bg-surface-900/40 border border-surface-200/50 dark:border-surface-800/50 p-2.5 flex flex-col gap-1">
+            <div class="flex items-center gap-1.5 text-surface-400">
+              <i class="pi pi-truck text-[11px] text-amber-500"></i>
+              <span class="text-[10px]">Máquina Utilizada</span>
+            </div>
+            @if (activity.machine_name) {
+              <span class="font-medium text-surface-900 dark:text-surface-100 truncate">
+                {{ activity.machine_name }}
+              </span>
+            } @else {
+              <span class="text-surface-400 text-[11px] italic">
+                Sem máquina
+              </span>
+            }
+          </div>
+
+          <div class="rounded-lg bg-surface-0/60 dark:bg-surface-900/40 border border-surface-200/50 dark:border-surface-800/50 p-2.5 flex flex-col gap-1">
+            <div class="flex items-center gap-1.5 text-surface-400">
+              <i class="pi pi-calendar text-[11px] text-emerald-500"></i>
+              <span class="text-[10px]">Data & Hora da Execução</span>
+            </div>
+            <span class="font-medium text-surface-900 dark:text-surface-100">
+              {{ activity.performed_at | date: 'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seção 2: Calda & Insumos Utilizados -->
+      <section class="rounded-xl border border-surface-200/80 dark:border-surface-800/80 bg-surface-50/50 dark:bg-surface-800/20 p-3.5 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-box text-surface-400 text-xs"></i>
+            <span class="text-xs font-medium text-surface-700 dark:text-surface-200">
+              Receita de Calda & Insumos
+            </span>
+          </div>
+          @if (activity.mixture_name) {
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800/60">
+              {{ activity.mixture_name }}
+            </span>
+          } @else {
+            <span class="text-[10px] text-surface-400">Sem calda vinculada</span>
+          }
+        </div>
+
+        @if (activity.inputs && activity.inputs.length > 0) {
+          <div class="space-y-2">
+            @for (item of activity.inputs; track item.id; let idx = $index) {
+              <div class="rounded-lg bg-surface-0 dark:bg-surface-900 border border-surface-200/70 dark:border-surface-800/70 p-2.5 shadow-2xs">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex items-start gap-2.5 min-w-0">
+                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-surface-100 dark:bg-surface-800 text-[10px] font-bold text-surface-600 dark:text-surface-300 shrink-0 mt-0.5">
+                      {{ idx + 1 }}
+                    </span>
+                    <div class="min-w-0 space-y-0.5">
+                      <span class="text-xs font-bold text-surface-900 dark:text-surface-0 block truncate">
+                        {{ item.name }}
+                      </span>
+                      @if (item.active_ingredient) {
+                        <p class="text-[11px] text-surface-500 dark:text-surface-400 truncate">
+                          Princípio Ativo: <span class="text-surface-700 dark:text-surface-300">{{ item.active_ingredient }}</span>
+                        </p>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Dose -->
+                  <div class="text-right shrink-0">
+                    <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/50">
+                      {{ item.applied_dose }}
+                    </span>
+                    @if (item.label_dose && item.label_dose !== item.applied_dose) {
+                      <div class="text-[9px] text-surface-400 mt-0.5">
+                        Bula: {{ item.label_dose }} {{ item.dose_unit || '' }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="rounded-lg border border-dashed border-surface-200 dark:border-surface-800 p-3 text-center text-xs text-surface-400 italic">
+            Nenhum insumo ou produto químico aplicado nesta atividade.
+          </div>
+        }
+      </section>
+
+      <!-- Seção 3: Rastreabilidade Técnica -->
+      <section class="rounded-xl border border-surface-200/80 dark:border-surface-800/80 bg-surface-50/50 dark:bg-surface-800/20 p-3 space-y-2 text-xs">
+        <div class="grid grid-cols-2 gap-2 text-surface-500">
+          <div>
+            <span class="text-[10px] text-surface-400 block">Sincronizado em</span>
+            <span class="text-surface-600 dark:text-surface-400">
+              {{ activity.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+          <div>
+            <span class="text-[10px] text-surface-400 block">Dispositivo / Origem</span>
+            <span class="text-surface-600 dark:text-surface-400 font-mono text-[11px] truncate block" [title]="activity.device_id">
+              {{ activity.device_id }}
+            </span>
+          </div>
+        </div>
+      </section>
+    </div>
+  }
+
+  <ng-template #footer>
+    <div class="flex items-center justify-between w-full pt-2">
+      @if (viewModel.selectedActivity(); as activity) {
+        <p-button
+          label="Ver no Mapa Principal"
+          icon="pi pi-map"
+          size="small"
+          severity="primary"
+          [outlined]="true"
+          (onClick)="viewModel.closeDetails(); viewModel.focusActivityOnMap(activity); initFullMapIfNeeded()"
+        />
+      } @else {
+        <div></div>
+      }
+      <p-button
+        label="Fechar"
+        severity="secondary"
+        size="small"
+        [outlined]="true"
+        (onClick)="viewModel.closeDetails()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

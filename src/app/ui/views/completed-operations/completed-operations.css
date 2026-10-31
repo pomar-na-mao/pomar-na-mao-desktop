@@ -1,0 +1,105 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Modal Detalhes da Atividade */
+.activity-details-dialog .p-dialog-header {
+  padding: 1rem 1.25rem 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+}
+
+:host-context(.dark) .activity-details-dialog .p-dialog-header {
+  border-bottom-color: var(--p-surface-800);
+  background: var(--p-surface-800);
+}
+
+.activity-details-dialog .p-dialog-content {
+  padding: 1rem 1.25rem;
+  overflow-x: hidden !important;
+}
+
+.activity-details-dialog .p-dialog-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+}
+
+:host-context(.dark) .activity-details-dialog .p-dialog-footer {
+  border-top-color: var(--p-surface-800);
+  background: var(--p-surface-800);
+}
+
+/* Mini mapa dentro do diálogo */
+.activity-mini-map {
+  width: 100%;
+  height: 200px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Mapa em tela cheia */
+.activities-full-map {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  z-index: 1;
+}
+
+:host-context(.dark) .activities-full-map,
+:host-context(.app-dark) .activities-full-map,
+:host-context(.dark) .activity-mini-map,
+:host-context(.app-dark) .activity-mini-map {
+  filter: invert(0.9) hue-rotate(180deg) brightness(0.9) contrast(1.1);
+  transition: filter 0.2s ease-in-out;
+}
+
+/* Filtros com larguras fixas e padronizadas */
+.filter-search-box {
+  width: 22rem;
+  min-width: 22rem;
+  max-width: 22rem;
+}
+
+@media (max-width: 1024px) {
+  .filter-search-box {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+.filter-select-geometry {
+  width: 11.5rem !important;
+  min-width: 11.5rem !important;
+  max-width: 11.5rem !important;
+  box-sizing: border-box;
+}
+
+.filter-select-geometry .p-select {
+  width: 100% !important;
+}
+
+.filter-datepicker {
+  display: inline-flex !important;
+  width: 11.5rem !important;
+  min-width: 11.5rem !important;
+  max-width: 11.5rem !important;
+  box-sizing: border-box;
+}
+
+.filter-datepicker .p-datepicker {
+  display: inline-flex !important;
+  align-items: center;
+  width: 100% !important;
+}
+
+.filter-datepicker input.p-inputtext,
+.filter-datepicker .p-datepicker-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}

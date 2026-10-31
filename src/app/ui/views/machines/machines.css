@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.machines-dialog .p-dialog-content {
+  overflow-x: hidden !important;
+}
+
+.machines-form .p-inputnumber,
+.machines-form .p-inputnumber-input,
+.machines-form .p-datepicker,
+.machines-form .p-datepicker-input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}

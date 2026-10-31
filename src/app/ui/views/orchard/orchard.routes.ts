@@ -24,19 +24,24 @@ export default [
       ),
   },
   {
-    path: 'infraestrutura',
-    loadComponent: () =>
-      import('../infrastructure/infrastructure').then(
-        (m) => m.Infrastructure,
-      ),
+    path: 'insumos',
+    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
   },
   {
+    path: 'caldas',
+    loadComponent: () =>
+      import('../mixtures/mixtures').then((m) => m.Mixtures),
+  },
+   {
     path: 'maquinas',
     loadComponent: () =>
       import('../machines/machines').then((m) => m.Machines),
   },
   {
-    path: 'insumos',
-    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
+    path: 'infraestrutura',
+    loadComponent: () =>
+      import('../infrastructure/infrastructure').then(
+        (m) => m.Infrastructure,
+      ),
   },
 ] as Routes;
