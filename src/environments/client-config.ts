@@ -17,6 +17,11 @@ export const CLIENT_CONFIGS = {
     supabasePublishableKey: 'sb_publishable_idzivuZYu4ScWTOb14EtQA_VToCjySh',
     googleMapsApiKey: 'AIzaSyAwXpNXIj4cVFbk7Bcpaqxd4tNG_nIbz5w',
   },
+  ricardoAbacate: {
+    supabaseUrl: 'https://hopjwluxjyhfovwylmok.supabase.co',
+    supabasePublishableKey: 'sb_publishable_pM5zJfWa1h7p-uirrnh3rQ_dsNqJ6W3',
+    googleMapsApiKey: 'AIzaSyAwXpNXIj4cVFbk7Bcpaqxd4tNG_nIbz5w',
+  },
 } satisfies Record<string, ClientConfig>;
 
 type EnvironmentConfig = {
