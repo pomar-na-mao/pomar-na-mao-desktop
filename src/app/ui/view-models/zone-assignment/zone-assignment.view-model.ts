@@ -306,8 +306,9 @@ export class ZoneAssignmentViewModel {
       }
 
       const zoneName = data.zoneName || this.selectedZone()?.name || 'Zona';
+      const updatedCount = data.plantsUpdatedCount ?? plantIds.length;
       this.messageService.success(
-        `Sucesso: ${data.plantsUpdatedCount} plantas foram atribuídas à ${zoneName}!`,
+        `Sucesso: ${updatedCount} plantas foram atribuídas à ${zoneName}!`,
       );
 
       this.clear();
