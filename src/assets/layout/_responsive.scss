@@ -1,3 +1,42 @@
+:root {
+  --layout-sidebar-width: 18rem;
+  --layout-main-margin-left: 19rem;
+}
+
+@media (max-width: 576px) {
+  :root {
+    --layout-sidebar-width: 16.5rem;
+  }
+}
+
+@media (min-width: 992px) {
+  :root {
+    --layout-sidebar-width: 17.5rem;
+    --layout-main-margin-left: 18.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --layout-sidebar-width: 18.5rem;
+    --layout-main-margin-left: 19.5rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --layout-sidebar-width: 19.5rem;
+    --layout-main-margin-left: 20.5rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --layout-sidebar-width: 20.5rem;
+    --layout-main-margin-left: 21.5rem;
+  }
+}
+
 @media screen and (min-width: 1960px) {
   .layout-main,
   .landing-wrapper {
@@ -41,7 +80,7 @@
 
     &.layout-static {
       .layout-main-container {
-        margin-left: 23rem;
+        margin-left: var(--layout-main-margin-left, 16.5rem);
       }
 
       &.layout-static-inactive {

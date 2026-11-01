@@ -17,13 +17,13 @@ import {
 } from '../../../shared/utils/ordered-map-boundary';
 
 const DEFAULT_CENTER: L.LatLngTuple = [-23.403, -49.149];
-const LIVING_PLANT_COLOR = '#10b981';
-const LIVING_PLANT_STROKE_COLOR = '#047857';
-const DEAD_PLANT_COLOR = '#ef4444';
-const DEAD_PLANT_STROKE_COLOR = '#b91c1c';
+export const LIVING_PLANT_COLOR = '#10b981';
+export const LIVING_PLANT_STROKE_COLOR = '#047857';
+export const NON_EXISTENT_PLANT_COLOR = '#ef4444';
+export const NON_EXISTENT_PLANT_STROKE_COLOR = '#b91c1c';
 
 export interface OverviewPlantStatusPresentation {
-  label: 'Viva' | 'Morta';
+  label: 'Viva' | 'Não existente';
   color: string;
   strokeColor: string;
 }
@@ -87,12 +87,12 @@ export class OverviewViewModel {
       );
     }
 
-    // 2. Filter by Plant Status (Planta viva vs morta)
+    // 2. Filter by Plant Status (Planta viva vs não existente)
     const plantStatus = this.filterPlantStatus();
     if (plantStatus === 'alive') {
-      plants = plants.filter((plant) => !plant.isDead);
-    } else if (plantStatus === 'dead') {
-      plants = plants.filter((plant) => plant.isDead);
+      plants = plants.filter((plant) => !plant.nonExistent);
+    } else if (plantStatus === 'non_existent' || plantStatus === 'nonExistent') {
+      plants = plants.filter((plant) => plant.nonExistent);
     }
 
     // 2. Filter by Zone
@@ -223,11 +223,11 @@ export class OverviewViewModel {
   public getPlantStatusPresentation(
     plant: OverviewPlant,
   ): OverviewPlantStatusPresentation {
-    return plant.isDead
+    return plant.nonExistent
       ? {
-          label: 'Morta',
-          color: DEAD_PLANT_COLOR,
-          strokeColor: DEAD_PLANT_STROKE_COLOR,
+          label: 'Não existente',
+          color: NON_EXISTENT_PLANT_COLOR,
+          strokeColor: NON_EXISTENT_PLANT_STROKE_COLOR,
         }
       : {
           label: 'Viva',

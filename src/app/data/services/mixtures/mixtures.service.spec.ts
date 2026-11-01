@@ -98,6 +98,83 @@ describe('MixturesService', () => {
     expect(result.data).toBeTruthy();
     expect(mockFrom).toHaveBeenCalledWith('mixtures');
     expect(mockFrom).toHaveBeenCalledWith('mixture_inputs');
+    expect(insertInputs).toHaveBeenCalledWith([
+      {
+        mixture_id: 'mixture-1',
+        input_id: 'input-1',
+        dose: '100',
+        dose_unit: 'ml/100L',
+        volume_or_mass: null,
+        unit: null,
+      },
+    ]);
+  });
+
+  it('update should update mixture and re-insert inputs with volume_or_mass and unit', async () => {
+    const payload: MixtureDraft = {
+      name: 'Calda Atualizada',
+      registered_by_name: 'Admin',
+      registered_by_email: 'admin@test.com',
+      is_active: true,
+      observations: null,
+      inputs: [
+        {
+          input_id: 'input-1',
+          dose: '250',
+          dose_unit: 'g/100L',
+          volume_or_mass: 2.5,
+          unit: 'kg',
+        },
+      ],
+    };
+
+    const singleUpdate = vi.fn().mockResolvedValue({
+      data: { id: 'mixture-1', ...payload },
+      error: null,
+    });
+    const selectUpdate = vi.fn().mockReturnValue({ single: singleUpdate });
+    const eqUpdate = vi.fn().mockReturnValue({ select: selectUpdate });
+    const updateMixture = vi.fn().mockReturnValue({ eq: eqUpdate });
+    const deleteInputs = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: null }),
+    });
+    const insertInputs = vi.fn().mockResolvedValue({ data: null, error: null });
+    const singleFetch = vi.fn().mockResolvedValue({
+      data: { id: 'mixture-1', ...payload, inputs: [] },
+      error: null,
+    });
+    const eqFetch = vi.fn().mockReturnValue({ single: singleFetch });
+    const selectFetch = vi.fn().mockReturnValue({ eq: eqFetch });
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'mixtures') {
+        return {
+          update: updateMixture,
+          select: selectFetch,
+        };
+      }
+      if (table === 'mixture_inputs') {
+        return {
+          delete: deleteInputs,
+          insert: insertInputs,
+        };
+      }
+      return {};
+    });
+
+    const result = await service.update('mixture-1', payload);
+
+    expect(result.error).toBeNull();
+    expect(insertInputs).toHaveBeenCalledWith([
+      {
+        mixture_id: 'mixture-1',
+        input_id: 'input-1',
+        dose: '250',
+        dose_unit: 'g/100L',
+        volume_or_mass: 2.5,
+        unit: 'kg',
+      },
+    ]);
   });
 
   it('deleteMany should delete mixtures by id list', async () => {

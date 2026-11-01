@@ -2,11 +2,16 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
 import type { PolygonCoordinate } from '../../../domain/models/basic-data';
 import type { Region } from '../../../domain/models/regions.model';
 import type { SelectOption } from '../../../shared/components/select/select';
 import { LoadingService } from '../../../shared/services/loading.service';
+import {
+  buildOrderedMapBoundary,
+  normalizeOrderedBoundaryPoints,
+} from '../../../shared/utils/ordered-map-boundary';
 import { toClosedGeoJsonPolygon } from '../../../shared/utils/polygon-geojson';
 
 @Injectable({
@@ -16,9 +21,13 @@ export class ZoneAssignmentViewModel {
   private zonesRepository = inject(ZonesRepository);
   private regionsRepository = inject(RegionsRepository);
   private zoneAssignmentRepository = inject(ZoneAssignmentRepository);
+  private farmBoundaryService = inject(FarmBoundaryService);
   private loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
 
+  public farmPolygonCoords = signal<[number, number][] | null>(null);
+  public farmInitialCenter = signal<[number, number]>([-23.398772, -49.148646]);
+  public farmInitialZoom = signal<number>(16);
   public selectedZoneId = signal<string>('');
   public selectedZonePoints = signal<Region[]>([]);
   public isLoadingInitialData = signal(false);
@@ -61,6 +70,63 @@ export class ZoneAssignmentViewModel {
     return points.map((p) => [p.latitude, p.longitude]);
   });
 
+  public mapBackgroundPolygons = computed<[number, number][][]>(() => {
+    const polygons: [number, number][][] = [];
+    const farm = this.farmPolygonCoords();
+    if (farm) {
+      polygons.push(farm);
+    }
+    const zonePolygon = this.selectedZonePolygon();
+    if (zonePolygon) {
+      polygons.push(zonePolygon);
+    }
+    return polygons;
+  });
+
+  public mapBackgroundPolygonLabels = computed<string[]>(() => {
+    const labels: string[] = [];
+    if (this.farmPolygonCoords()) {
+      labels.push('');
+    }
+    if (this.selectedZonePolygon()) {
+      labels.push(this.selectedZone()?.name ?? '');
+    }
+    return labels;
+  });
+
+  public mapBackgroundPolygonColors = computed<string[]>(() => {
+    const colors: string[] = [];
+    if (this.farmPolygonCoords()) {
+      colors.push('#0f3b8f');
+    }
+    if (this.selectedZonePolygon()) {
+      colors.push('#f97316');
+    }
+    return colors;
+  });
+
+  public mapBackgroundPolygonDashArrays = computed<Array<string | null>>(() => {
+    const dashes: Array<string | null> = [];
+    if (this.farmPolygonCoords()) {
+      dashes.push(null);
+    }
+    if (this.selectedZonePolygon()) {
+      dashes.push('6, 6');
+    }
+    return dashes;
+  });
+
+  public mapBackgroundPolygonFillOpacities = computed<number[]>(() => {
+    const opacities: number[] = [];
+    if (this.farmPolygonCoords()) {
+      opacities.push(0);
+    }
+    if (this.selectedZonePolygon()) {
+      opacities.push(0.24);
+    }
+    return opacities;
+  });
+
   public hasPolygon = computed(() => this.selectedPolygonCoordinates().length >= 3);
 
   public canConfirm = computed(
@@ -77,11 +143,35 @@ export class ZoneAssignmentViewModel {
       await Promise.all([
         this.zonesRepository.findAll(),
         this.zoneAssignmentRepository.loadAllPlants(),
+        this.loadFarmBoundary(),
       ]);
     } catch {
       this.messageService.error('Erro ao carregar dados iniciais.');
     } finally {
       this.isLoadingInitialData.set(false);
+    }
+  }
+
+  private async loadFarmBoundary(): Promise<void> {
+    try {
+      const points = await this.farmBoundaryService.getBoundary();
+      this.farmPolygonCoords.set(buildOrderedMapBoundary(points)?.latLngs ?? null);
+
+      const normalizedPoints = normalizeOrderedBoundaryPoints(points);
+      if (normalizedPoints.length > 0) {
+        const lowestPoint =
+          normalizedPoints.find((p) => p.order === 1) ?? normalizedPoints[0];
+        if (
+          lowestPoint &&
+          Number.isFinite(lowestPoint.latitude) &&
+          Number.isFinite(lowestPoint.longitude)
+        ) {
+          this.farmInitialCenter.set([lowestPoint.latitude, lowestPoint.longitude]);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load farm boundary for zone assignment', error);
+      this.farmPolygonCoords.set(null);
     }
   }
 

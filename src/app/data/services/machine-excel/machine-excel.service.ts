@@ -4,6 +4,7 @@ import type { MachineItem } from '../../../domain/models/machine.model';
 export interface MachineExcelRow {
   Nome: string;
   Marca: string;
+  'Volume do Tanque (L)': string;
   'Data de Aquisição': string;
   'Ano de Fabricação': string;
   Quantidade: number;
@@ -18,6 +19,8 @@ export class MachineExcelService {
     return machines.map((machine) => ({
       Nome: machine.name,
       Marca: machine.brand ?? '',
+      'Volume do Tanque (L)':
+        machine.tank_volume_liters != null ? String(machine.tank_volume_liters) : '',
       'Data de Aquisição': this.formatDate(machine.acquisition_date),
       'Ano de Fabricação': machine.manufacturing_year ? String(machine.manufacturing_year) : '',
       Quantidade: machine.quantity ?? 1,
@@ -48,6 +51,11 @@ export class MachineExcelService {
       {
         header: { value: 'Marca', fontWeight: 'bold' as const },
         cell: (row: MachineExcelRow) => ({ value: row.Marca }),
+        width: 22,
+      },
+      {
+        header: { value: 'Volume do Tanque (L)', fontWeight: 'bold' as const },
+        cell: (row: MachineExcelRow) => ({ value: row['Volume do Tanque (L)'] }),
         width: 22,
       },
       {

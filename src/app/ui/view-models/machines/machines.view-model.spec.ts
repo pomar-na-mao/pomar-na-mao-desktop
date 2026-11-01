@@ -77,6 +77,7 @@ describe('MachinesViewModel', () => {
       id: 'm-1',
       name: 'Trator A950',
       brand: 'Valtra',
+      tank_volume_liters: 2000,
       acquisition_date: '2024-05-10',
       manufacturing_year: 2023,
       quantity: 3,
@@ -91,6 +92,7 @@ describe('MachinesViewModel', () => {
     expect(viewModel.editingMachine()).toBe(item);
     expect(viewModel.form.controls.name.value).toBe('Trator A950');
     expect(viewModel.form.controls.brand.value).toBe('Valtra');
+    expect(viewModel.form.controls.tank_volume_liters.value).toBe(2000);
     expect(viewModel.form.controls.quantity.value).toBe(3);
     expect(viewModel.form.controls.manufacturing_year.value).toBe(2023);
   });
@@ -107,6 +109,16 @@ describe('MachinesViewModel', () => {
     expect(viewModel.canSubmit()).toBe(true);
   });
 
+  it('validates non-negative tank volume', () => {
+    viewModel.openCreate();
+    viewModel.form.controls.tank_volume_liters.setValue(-10);
+    expect(viewModel.tankVolumeError()).toBe('O volume do tanque não pode ser negativo.');
+    expect(viewModel.form.valid).toBe(false);
+
+    viewModel.form.controls.tank_volume_liters.setValue(500);
+    expect(viewModel.tankVolumeError()).toBeNull();
+  });
+
   it('saves new machine with minimal required data', async () => {
     mockRepository.create.mockResolvedValue({
       data: { id: 'm-1', name: 'Roçadeira', quantity: 1 },
@@ -121,6 +133,7 @@ describe('MachinesViewModel', () => {
     expect(mockRepository.create).toHaveBeenCalledWith({
       name: 'Roçadeira',
       brand: null,
+      tank_volume_liters: null,
       acquisition_date: null,
       manufacturing_year: null,
       quantity: 1,

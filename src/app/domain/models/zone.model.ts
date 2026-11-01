@@ -1,3 +1,5 @@
+import type { GeoJsonPolygon } from './basic-data';
+
 export interface Zone {
   id: string;
   name: string;
@@ -22,7 +24,7 @@ export interface CreateZoneWithRegionsPayload {
   name: string;
   code?: string | null;
   description?: string | null;
-  polygonGeojson: GeoJSON.Polygon;
+  polygonGeojson: GeoJsonPolygon;
   points: ZoneRegionPointPayload[];
 }
 
@@ -30,5 +32,5 @@ export interface CreateZoneWithRegionsResult {
   zone_id: string;
   zone_name: string;
   region_points_count: number;
-  polygon: GeoJSON.Polygon;
+  polygon: GeoJsonPolygon;
 }

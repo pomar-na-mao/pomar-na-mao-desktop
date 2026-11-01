@@ -7,6 +7,7 @@ describe('Machine Model Types', () => {
       id: 'uuid-1',
       name: 'Trator Valtra A950',
       brand: 'Valtra',
+      tank_volume_liters: 2000,
       acquisition_date: '2024-05-10',
       manufacturing_year: 2023,
       quantity: 2,
@@ -18,6 +19,7 @@ describe('Machine Model Types', () => {
     expect(item.id).toBe('uuid-1');
     expect(item.quantity).toBe(2);
     expect(item.brand).toBe('Valtra');
+    expect(item.tank_volume_liters).toBe(2000);
   });
 
   it('should accept a machine draft with only name and quantity', () => {

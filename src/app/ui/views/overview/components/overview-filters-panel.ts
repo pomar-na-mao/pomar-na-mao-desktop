@@ -4,10 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { Select, SelectOption } from '../../../../shared/components/select/select';
-import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
+import {
+  LIVING_PLANT_COLOR,
+  NON_EXISTENT_PLANT_COLOR,
+  OverviewViewModel,
+} from '../../../view-models/overview/overview.view-model';
 
-const LIVING_PLANT_COLOR = '#10b981';
-const DEAD_PLANT_COLOR = '#ef4444';
+
+
 
 @Component({
   selector: 'app-overview-filters-panel',
@@ -144,7 +148,7 @@ export class OverviewFiltersPanel {
     return [
       { label: 'Todos os Status', value: '' },
       { label: 'Vivas', value: 'alive', color: LIVING_PLANT_COLOR },
-      { label: 'Mortas', value: 'dead', color: DEAD_PLANT_COLOR },
+      { label: 'Não existentes', value: 'non_existent', color: NON_EXISTENT_PLANT_COLOR },
     ];
   }
 

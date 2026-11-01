@@ -31,6 +31,9 @@ export class MachinesViewModel {
     brand: this.formBuilder.control<string | null>(null, [
       Validators.maxLength(100),
     ]),
+    tank_volume_liters: this.formBuilder.control<number | null>(null, [
+      Validators.min(0),
+    ]),
     acquisition_date: this.formBuilder.control<string | null>(null),
     manufacturing_year: this.formBuilder.control<number | null>(null, [
       Validators.min(1900),
@@ -75,6 +78,15 @@ export class MachinesViewModel {
     return null;
   });
 
+  public tankVolumeError = computed(() => {
+    this.formVersion();
+    const control = this.form.controls.tank_volume_liters;
+    if (control.hasError('min')) {
+      return 'O volume do tanque não pode ser negativo.';
+    }
+    return null;
+  });
+
   public canSubmit = computed(() => {
     this.formVersion();
     return (
@@ -113,6 +125,7 @@ export class MachinesViewModel {
     this.resetForm({
       name: '',
       brand: null,
+      tank_volume_liters: null,
       acquisition_date: null,
       manufacturing_year: null,
       quantity: 1,
@@ -126,6 +139,7 @@ export class MachinesViewModel {
     this.resetForm({
       name: machine.name,
       brand: machine.brand ?? null,
+      tank_volume_liters: machine.tank_volume_liters ?? null,
       acquisition_date: machine.acquisition_date ?? null,
       manufacturing_year: machine.manufacturing_year ?? null,
       quantity: machine.quantity ?? 1,
@@ -141,6 +155,7 @@ export class MachinesViewModel {
     this.resetForm({
       name: '',
       brand: null,
+      tank_volume_liters: null,
       acquisition_date: null,
       manufacturing_year: null,
       quantity: 1,
@@ -160,6 +175,10 @@ export class MachinesViewModel {
     const payload: MachineDraft = {
       name: raw.name.trim(),
       brand: raw.brand && raw.brand.trim() !== '' ? raw.brand.trim() : null,
+      tank_volume_liters:
+        raw.tank_volume_liters != null && !isNaN(Number(raw.tank_volume_liters))
+          ? Number(raw.tank_volume_liters)
+          : null,
       acquisition_date: raw.acquisition_date ? String(raw.acquisition_date).trim() : null,
       manufacturing_year: raw.manufacturing_year ? Number(raw.manufacturing_year) : null,
       quantity: raw.quantity && raw.quantity >= 1 ? Number(raw.quantity) : 1,
@@ -179,6 +198,7 @@ export class MachinesViewModel {
           this.resetForm({
             name: '',
             brand: null,
+            tank_volume_liters: null,
             acquisition_date: null,
             manufacturing_year: null,
             quantity: 1,
@@ -196,6 +216,7 @@ export class MachinesViewModel {
           this.resetForm({
             name: '',
             brand: null,
+            tank_volume_liters: null,
             acquisition_date: null,
             manufacturing_year: null,
             quantity: 1,
@@ -275,6 +296,7 @@ export class MachinesViewModel {
   private resetForm(values: {
     name: string;
     brand: string | null;
+    tank_volume_liters?: number | null;
     acquisition_date: string | null;
     manufacturing_year: number | null;
     quantity: number;
