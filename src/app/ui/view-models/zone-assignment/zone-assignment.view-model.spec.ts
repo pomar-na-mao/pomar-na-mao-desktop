@@ -5,6 +5,7 @@ import { ZoneAssignmentViewModel } from './zone-assignment.view-model';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { MessageService } from '../../../data/services/message/message.service';
 import type { Zone } from '../../../domain/models/zone.model';
@@ -132,12 +133,21 @@ describe('ZoneAssignmentViewModel', () => {
       hide: vi.fn(),
     };
 
+    const mockFarmBoundaryService = {
+      getBoundary: vi.fn().mockResolvedValue([
+        { latitude: 1, longitude: 2, order: 2 },
+        { latitude: 3, longitude: 4, order: 1 },
+        { latitude: 5, longitude: 6, order: 3 },
+      ]),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         ZoneAssignmentViewModel,
         { provide: ZonesRepository, useValue: mockZonesRepository },
         { provide: RegionsRepository, useValue: mockRegionsRepository },
         { provide: ZoneAssignmentRepository, useValue: mockZoneAssignmentRepository },
+        { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
         { provide: MessageService, useValue: mockMessageService },
         { provide: LoadingService, useValue: mockLoadingService },
       ],
@@ -156,9 +166,26 @@ describe('ZoneAssignmentViewModel', () => {
     await viewModel.loadInitialData();
     expect(mockZonesRepository.findAll).toHaveBeenCalled();
     expect(mockZoneAssignmentRepository.loadAllPlants).toHaveBeenCalled();
+    expect(viewModel.farmInitialCenter()).toEqual([3, 4]);
+    expect(viewModel.farmInitialZoom()).toBe(16);
+    expect(viewModel.farmPolygonCoords()).toEqual([
+      [3, 4],
+      [1, 2],
+      [5, 6],
+    ]);
+    expect(viewModel.mapBackgroundPolygons()).toEqual([
+      [
+        [3, 4],
+        [1, 2],
+        [5, 6],
+      ],
+    ]);
+    expect(viewModel.mapBackgroundPolygonColors()).toEqual(['#0f3b8f']);
+    expect(viewModel.mapBackgroundPolygonFillOpacities()).toEqual([0]);
   });
 
-  it('loads zone points when a zone is selected', async () => {
+  it('loads zone points when a zone is selected and plots both farm and zone polygons', async () => {
+    await viewModel.loadInitialData();
     await viewModel.onZoneChange('z1');
     expect(mockRegionsRepository.findByZoneId).toHaveBeenCalledWith('z1');
     expect(viewModel.selectedZonePoints().length).toBe(3);
@@ -167,6 +194,22 @@ describe('ZoneAssignmentViewModel', () => {
       [-23.2, -49.2],
       [-23.3, -49.3],
     ]);
+    expect(viewModel.mapBackgroundPolygons()).toEqual([
+      [
+        [3, 4],
+        [1, 2],
+        [5, 6],
+      ],
+      [
+        [-23.1, -49.1],
+        [-23.2, -49.2],
+        [-23.3, -49.3],
+      ],
+    ]);
+    expect(viewModel.mapBackgroundPolygonColors()).toEqual(['#0f3b8f', '#f97316']);
+    expect(viewModel.mapBackgroundPolygonLabels()).toEqual(['', 'Zona A']);
+    expect(viewModel.mapBackgroundPolygonDashArrays()).toEqual([null, '6, 6']);
+    expect(viewModel.mapBackgroundPolygonFillOpacities()).toEqual([0, 0.24]);
   });
 
   it('triggers useZonePolygonAsSelection when zone points are available', async () => {

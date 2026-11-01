@@ -10,6 +10,7 @@ describe('MachineExcelService', () => {
       id: 'm-1',
       name: 'Trator A950',
       brand: 'Valtra',
+      tank_volume_liters: 2000,
       acquisition_date: '2024-03-15',
       manufacturing_year: 2023,
       quantity: 2,
@@ -24,6 +25,7 @@ describe('MachineExcelService', () => {
     expect(rows.length).toBe(1);
     expect(rows[0].Nome).toBe('Trator A950');
     expect(rows[0].Marca).toBe('Valtra');
+    expect(rows[0]['Volume do Tanque (L)']).toBe('2000');
     expect(rows[0]['Data de Aquisição']).toBe('15/03/2024');
     expect(rows[0]['Ano de Fabricação']).toBe('2023');
     expect(rows[0].Quantidade).toBe(2);

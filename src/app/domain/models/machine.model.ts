@@ -2,6 +2,7 @@ export interface MachineItem {
   id: string;
   name: string;
   brand: string | null;
+  tank_volume_liters?: number | null;
   acquisition_date: string | null;
   manufacturing_year: number | null;
   quantity: number;

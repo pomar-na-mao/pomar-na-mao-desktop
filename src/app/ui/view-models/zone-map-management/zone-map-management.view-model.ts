@@ -4,14 +4,20 @@ import { RegionsRepository } from '../../../data/repositories/regions/regions-re
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { MessageService } from '../../../data/services/message/message.service';
-import type { PolygonCoordinate } from '../../../domain/models/basic-data';
+import type {
+  GeoJsonPolygon,
+  PolygonCoordinate,
+} from '../../../domain/models/basic-data';
 import type {
   CreateZoneWithRegionsPayload,
   Zone,
 } from '../../../domain/models/zone.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { toClosedGeoJsonPolygon } from '../../../shared/utils/polygon-geojson';
-import { buildOrderedMapBoundary } from '../../../shared/utils/ordered-map-boundary';
+import {
+  buildOrderedMapBoundary,
+  normalizeOrderedBoundaryPoints,
+} from '../../../shared/utils/ordered-map-boundary';
 
 const ZONE_POLYGON_COLORS = [
   '#0ea5e9',
@@ -63,6 +69,8 @@ export class ZoneMapManagementViewModel {
   public formVersion = signal(0);
   public saveError = signal<string | null>(null);
   public farmPolygonCoords = signal<[number, number][] | null>(null);
+  public farmInitialCenter = signal<[number, number]>([-23.398772, -49.148646]);
+  public farmInitialZoom = signal<number>(16);
 
   public zones = this.zonesRepository.zones;
   private existingZonePolygonEntries = computed(() => {
@@ -253,6 +261,19 @@ export class ZoneMapManagementViewModel {
     try {
       const points = await this.farmBoundaryService.getBoundary();
       this.farmPolygonCoords.set(buildOrderedMapBoundary(points)?.latLngs ?? null);
+
+      const normalizedPoints = normalizeOrderedBoundaryPoints(points);
+      if (normalizedPoints.length > 0) {
+        const lowestPoint =
+          normalizedPoints.find((p) => p.order === 1) ?? normalizedPoints[0];
+        if (
+          lowestPoint &&
+          Number.isFinite(lowestPoint.latitude) &&
+          Number.isFinite(lowestPoint.longitude)
+        ) {
+          this.farmInitialCenter.set([lowestPoint.latitude, lowestPoint.longitude]);
+        }
+      }
     } catch (error) {
       console.error('Failed to load farm boundary for zone map', error);
       this.farmPolygonCoords.set(null);
@@ -398,7 +419,7 @@ export class ZoneMapManagementViewModel {
   }
 
   private toPolygonCoordinates(
-    polygon: Record<string, unknown> | GeoJSON.Polygon | null | undefined,
+    polygon: Record<string, unknown> | GeoJsonPolygon | null | undefined,
   ): [number, number][] | null {
     if (!polygon || polygon['type'] !== 'Polygon') return null;
 

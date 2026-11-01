@@ -116,4 +116,24 @@ describe('MapPolygonSelector', () => {
     expect(addLayer).toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
+
+  it('should update map view when center input changes via ngOnChanges', () => {
+    const component = TestBed.runInInjectionContext(
+      () => new MapPolygonSelector(),
+    );
+    const setView = vi.fn();
+    component['map'] = { setView } as never;
+    component.zoom = 17;
+
+    component.ngOnChanges({
+      center: {
+        currentValue: [-23.456, -49.789],
+        previousValue: [-23.0, -49.0],
+        firstChange: false,
+        isFirstChange: () => false,
+      },
+    });
+
+    expect(setView).toHaveBeenCalledWith([-23.456, -49.789], 17);
+  });
 });

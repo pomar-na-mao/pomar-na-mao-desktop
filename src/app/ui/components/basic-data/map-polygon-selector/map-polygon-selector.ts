@@ -196,6 +196,17 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       this.clearAll(false);
     }
 
+    if (changes['center'] && !changes['center'].firstChange && this.map) {
+      const newCenter = changes['center'].currentValue as
+        | [number, number]
+        | undefined;
+      if (newCenter && Array.isArray(newCenter) && newCenter.length >= 2) {
+        this.map.setView(newCenter, this.zoom);
+      }
+    } else if (changes['zoom'] && !changes['zoom'].firstChange && this.map) {
+      this.map.setZoom(this.zoom);
+    }
+
     const backgroundStyleChanged = [
       'backgroundPolygonColor',
       'backgroundPolygonColors',

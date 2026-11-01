@@ -6,6 +6,8 @@ export interface MixtureInputItem {
   input_id: string;
   dose: string;
   dose_unit: string | null;
+  volume_or_mass?: number | null;
+  unit?: 'kg' | 'L' | string | null;
   created_at?: string;
   input?: InputItem | null;
 }
@@ -14,6 +16,8 @@ export interface MixtureInputDraft {
   input_id: string;
   dose: string;
   dose_unit: string | null;
+  volume_or_mass?: number | null;
+  unit?: 'kg' | 'L' | string | null;
   input_name?: string;
 }
 

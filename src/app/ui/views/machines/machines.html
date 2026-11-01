@@ -112,6 +112,12 @@
                 <p-sortIcon field="brand" />
               </div>
             </th>
+            <th pSortableColumn="tank_volume_liters" style="min-width: 9rem; text-align: center">
+              <div class="flex items-center justify-center gap-2">
+                Tanque (L)
+                <p-sortIcon field="tank_volume_liters" />
+              </div>
+            </th>
             <th pSortableColumn="acquisition_date" style="min-width: 10rem">
               <div class="flex items-center gap-2">
                 Aquisição
@@ -166,6 +172,11 @@
             <td>
               <span class="text-sm text-surface-700 dark:text-surface-300">
                 {{ machine.brand || '—' }}
+              </span>
+            </td>
+            <td style="text-align: center">
+              <span class="text-sm text-surface-700 dark:text-surface-300">
+                {{ machine.tank_volume_liters !== null ? (machine.tank_volume_liters + ' L') : '—' }}
               </span>
             </td>
             <td>
@@ -229,7 +240,7 @@
         <ng-template #emptymessage>
           <tr>
             <td
-              colspan="9"
+              colspan="10"
               class="py-8 text-center text-sm text-surface-500 dark:text-surface-400"
             >
               <div class="flex flex-col items-center justify-center gap-2">
@@ -299,8 +310,31 @@
       </div>
 
       <div class="flex flex-col gap-1.5">
+        <label for="machine-tank-volume" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
+          Volume do Tanque (Litros)
+        </label>
+        <p-inputnumber
+          inputId="machine-tank-volume"
+          formControlName="tank_volume_liters"
+          [min]="0"
+          placeholder="Ex: 2000"
+          suffix=" L"
+          [fluid]="true"
+          class="w-full"
+          styleClass="w-full"
+          inputStyleClass="w-full text-sm"
+        />
+        @if (viewModel.tankVolumeError(); as error) {
+          <small class="text-xs text-red-600" role="alert">{{ error }}</small>
+        }
+      </div>
+    </div>
+
+    <!-- Linha com Data de Aquisição, Ano de Fabricação e Quantidade -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="flex flex-col gap-1.5">
         <label for="machine-quantity" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
-          Quantidade de Unidades
+          Quantidade <span class="text-red-500" aria-hidden="true">*</span>
         </label>
         <p-inputnumber
           inputId="machine-quantity"
@@ -316,10 +350,7 @@
           <small class="text-xs text-red-600" role="alert">{{ error }}</small>
         }
       </div>
-    </div>
 
-    <!-- Linha com Data de Aquisição e Ano de Fabricação -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div class="flex flex-col gap-1.5">
         <label for="machine-acquisition-date" class="text-xs font-semibold text-surface-700 dark:text-surface-200">
           Data de Aquisição

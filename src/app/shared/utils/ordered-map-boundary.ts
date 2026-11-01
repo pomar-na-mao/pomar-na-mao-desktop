@@ -1,3 +1,5 @@
+import type { GeoJsonPolygon } from '../../domain/models/basic-data';
+
 export interface OrderedMapBoundaryPoint {
   id?: string | null;
   latitude: number | null;
@@ -15,7 +17,7 @@ export interface NormalizedOrderedMapBoundaryPoint {
 export interface OrderedMapBoundary {
   points: NormalizedOrderedMapBoundaryPoint[];
   latLngs: [number, number][];
-  geoJson: GeoJSON.Polygon;
+  geoJson: GeoJsonPolygon;
 }
 
 export function normalizeOrderedBoundaryPoints(

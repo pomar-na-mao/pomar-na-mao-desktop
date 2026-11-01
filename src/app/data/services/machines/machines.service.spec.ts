@@ -50,7 +50,7 @@ describe('MachinesService', () => {
     expect(from).toHaveBeenCalledWith('machines');
     expect(from).toHaveBeenCalledTimes(1);
     expect(select).toHaveBeenCalledWith(
-      'id, name, brand, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
+      'id, name, brand, tank_volume_liters, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
       { count: 'exact' },
     );
     expect(order).toHaveBeenCalledWith('name', { ascending: true });

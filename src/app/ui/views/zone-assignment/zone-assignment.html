@@ -7,7 +7,7 @@
 >
 
   <!-- Left Sidebar (Form) -->
-  <aside class="w-full md:w-80 lg:w-[22rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 overflow-hidden">
+  <aside class="w-full md:w-96 lg:w-[25rem] xl:w-[26rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 overflow-hidden">
     <app-zone-assignment-form class="flex h-full min-h-0 flex-1 flex-col" />
   </aside>
 
@@ -15,16 +15,19 @@
   <div class="relative min-w-0 flex-1 h-full overflow-hidden bg-surface-100 dark:bg-surface-950">
     <app-map-polygon-selector
       class="absolute inset-0 w-full h-full"
-      [center]="[-23.398772, -49.148646]"
-      [zoom]="16"
-      [locateUserOnInit]="true"
-      [userLocationZoom]="18"
+      [center]="viewModel.farmInitialCenter()"
+      [zoom]="viewModel.farmInitialZoom()"
+      [locateUserOnInit]="false"
+      [userLocationZoom]="16"
       [plants]="viewModel.allPlants()"
       [plantColor]="'#047857'"
       [plantFillColor]="'#10b981'"
-      [backgroundPolygon]="viewModel.selectedZonePolygon()"
+      [backgroundPolygons]="viewModel.mapBackgroundPolygons()"
+      [backgroundPolygonLabels]="viewModel.mapBackgroundPolygonLabels()"
+      [backgroundPolygonColors]="viewModel.mapBackgroundPolygonColors()"
+      [backgroundPolygonDashArrays]="viewModel.mapBackgroundPolygonDashArrays()"
+      [backgroundPolygonFillOpacities]="viewModel.mapBackgroundPolygonFillOpacities()"
       [focusedPolygon]="viewModel.selectedZonePolygon()"
-      [backgroundPolygonColor]="'#f97316'"
       [clearSignal]="viewModel.clearMapSignal()"
       [allowDrawingWithoutPlants]="true"
       (polygonSelected)="onPolygonSelected($event)"

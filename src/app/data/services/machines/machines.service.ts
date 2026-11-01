@@ -42,7 +42,7 @@ export class MachinesService implements IMachinesService {
         this.supabase
           .from('machines')
           .select(
-            'id, name, brand, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
+            'id, name, brand, tank_volume_liters, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
             { count: 'exact' },
           )
           .order('name', { ascending: true }),
@@ -64,7 +64,7 @@ export class MachinesService implements IMachinesService {
       .from('machines')
       .insert(persistedPayload)
       .select(
-        'id, name, brand, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
+        'id, name, brand, tank_volume_liters, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
       )
       .single()) as PostgrestSingleResponse<MachineItem>;
 
@@ -91,7 +91,7 @@ export class MachinesService implements IMachinesService {
       .update(persistedPayload)
       .eq('id', id)
       .select(
-        'id, name, brand, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
+        'id, name, brand, tank_volume_liters, acquisition_date, manufacturing_year, quantity, observations, created_at, updated_at',
       )
       .single()) as PostgrestSingleResponse<MachineItem>;
 
