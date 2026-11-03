@@ -30,6 +30,13 @@ The desktop app SHALL remove files, components, view-models, services, repositor
 - **WHEN** the codebase is searched for removed route paths and route-exclusive symbols
 - **THEN** no retained source file MUST import or navigate to `sincronizacoes`, `fluxo-pulverizacao`, `administracao`, or `reports`.
 
+### Requirement: Property demarcation route is available under registration
+The desktop app SHALL expose the authenticated property demarcation screen at `/cadastro/propriedade`.
+
+#### Scenario: Authenticated user navigates to property demarcation
+- **WHEN** the router matches `/cadastro/propriedade`
+- **THEN** the property demarcation screen MUST be loaded within the authenticated main layout and Cadastro container.
+
 ### Requirement: Retained screens keep their dependencies
 The desktop app SHALL preserve files required by the retained `overview`, `orchard`, `basic-data`, `settings`, `users`, and `login` screens.
 
@@ -43,9 +50,10 @@ The desktop app SHALL show `Visão geral` as the first navigation entry, followe
 #### Scenario: Sidebar menu is rendered
 - **WHEN** the authenticated layout sidebar is displayed
 - **THEN** the first menu item MUST be labelled `Visão geral` and point to `/visao-geral`.
-- **THEN** the `Cadastro` submenu MUST use the `pi-file-import` icon
-- **THEN** the submenu MUST provide `/cadastro/variedades`, `/cadastro/ocorrencias`, `/cadastro/zonas`, `/cadastro/infraestrutura`, `/cadastro/maquinas`, and `/cadastro/insumos` in that order
-- **THEN** the `/cadastro/zonas` entry MUST use the `pi-map` icon
+- **THEN** the `Cadastro` submenu MUST use the `pi-file-import` icon.
+- **THEN** the submenu MUST provide `/cadastro/propriedade`, `/cadastro/variedades`, `/cadastro/ocorrencias`, `/cadastro/zonas`, `/cadastro/insumos`, `/cadastro/caldas`, and `/cadastro/maquinas` in that order.
+- **THEN** the `/cadastro/propriedade` entry MUST be labelled `Demarcação propriedade` and use a map-related icon.
+- **THEN** the `/cadastro/zonas` entry MUST use the `pi-map` icon.
 - **THEN** a `Atividades de campo` entry MUST appear immediately below `Cadastro` and provide `/atividades-de-campo`.
 - **THEN** the menu MUST provide navigation to `dados-basicos`, `zoneamento`, `configuracoes`, and `usuarios`.
 - **THEN** one submenu labelled `Visão das operações` MUST use the `pi-hammer` icon.

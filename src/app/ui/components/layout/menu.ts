@@ -44,6 +44,12 @@ export class AppMenu implements OnInit {
             icon: 'pi pi-fw pi-file-import',
             items: [
               {
+                label: 'Demarcação propriedade',
+                visible: true,
+                icon: 'pi pi-fw pi-map-marker',
+                routerLink: ['/cadastro/propriedade'],
+              },
+              {
                 label: 'Variedades',
                 visible: true,
                 icon: 'pi pi-fw pi-list',

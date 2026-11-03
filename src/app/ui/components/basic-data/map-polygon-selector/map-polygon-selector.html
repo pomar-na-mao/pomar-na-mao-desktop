@@ -53,7 +53,7 @@
         label="Finalizar"
         size="small"
         severity="primary"
-        [disabled]="!drawingMode || pointsCount < 3"
+        [disabled]="!drawingMode || distinctPointsCount < 3"
         (onClick)="completePolygon()"
         aria-label="Finalizar área"
         pTooltip="Finalizar área"

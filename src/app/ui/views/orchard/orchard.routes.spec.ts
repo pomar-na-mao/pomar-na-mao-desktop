@@ -12,6 +12,7 @@ describe('Orchard routes', () => {
   it('should expose all registration child routes', () => {
     expect(routes.map((route) => route.path)).toEqual([
       '',
+      'propriedade',
       'variedades',
       'ocorrencias',
       'zonas',
@@ -23,6 +24,7 @@ describe('Orchard routes', () => {
   });
 
   it.each([
+    'propriedade',
     'variedades',
     'ocorrencias',
     'zonas',

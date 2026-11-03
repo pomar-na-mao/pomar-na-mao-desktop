@@ -1,4 +1,8 @@
 import type { GeoJsonPolygon } from '../../domain/models/basic-data';
+import type {
+  FarmBoundaryCoordinate,
+  FarmBoundaryDraftCoordinate,
+} from '../../domain/models/farm-boundary.model';
 
 export interface OrderedMapBoundaryPoint {
   id?: string | null;
@@ -74,6 +78,48 @@ export function buildOrderedMapBoundary(
       coordinates: [closedCoordinates],
     },
   };
+}
+
+export function isValidMapCoordinate(
+  latitude: number,
+  longitude: number,
+): boolean {
+  return (
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180
+  );
+}
+
+export function normalizeFarmBoundaryCandidate(
+  points: FarmBoundaryDraftCoordinate[] | null | undefined,
+): FarmBoundaryCoordinate[] | null {
+  if (!Array.isArray(points)) {
+    return null;
+  }
+
+  const normalized = points.map((point) => ({
+    latitude: Number(point.lat),
+    longitude: Number(point.lng),
+  }));
+
+  if (
+    normalized.length < 3 ||
+    normalized.some(
+      (point) => !isValidMapCoordinate(point.latitude, point.longitude),
+    )
+  ) {
+    return null;
+  }
+
+  const distinctCoordinates = new Set(
+    normalized.map((point) => `${point.latitude},${point.longitude}`),
+  );
+
+  return distinctCoordinates.size >= 3 ? normalized : null;
 }
 
 function toFiniteNumber(value: number | null | undefined): number {

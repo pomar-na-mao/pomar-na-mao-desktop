@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import * as L from 'leaflet';
 import { describe, expect, it, vi } from 'vitest';
 import { MapPolygonSelector } from './map-polygon-selector';
 
@@ -135,5 +136,23 @@ describe('MapPolygonSelector', () => {
     });
 
     expect(setView).toHaveBeenCalledWith([-23.456, -49.789], 17);
+  });
+
+  it('should not finalize a polygon with fewer than three distinct points', () => {
+    const component = TestBed.runInInjectionContext(
+      () => new MapPolygonSelector(),
+    );
+    const emit = vi.spyOn(component.polygonSelected, 'emit');
+    component['tempPoints'] = [
+      L.latLng(-23.1, -49.1),
+      L.latLng(-23.1, -49.1),
+      L.latLng(-23.2, -49.2),
+    ];
+
+    component.completePolygon();
+
+    expect(component.distinctPointsCount).toBe(2);
+    expect(component.hasPolygon).toBe(false);
+    expect(emit).not.toHaveBeenCalled();
   });
 });
