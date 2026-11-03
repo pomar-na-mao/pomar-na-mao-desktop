@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ZoneAssignmentService } from './zone-assignment.service';
-import type { GeoJsonPolygon } from '../../../domain/models/basic-data';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../supabase';
 import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-request-cache.service';
@@ -9,12 +8,10 @@ import { SupabaseRequestCacheService } from '../supabase-request-cache/supabase-
 describe('ZoneAssignmentService', () => {
   let service: ZoneAssignmentService;
   let mockRpc: ReturnType<typeof vi.fn>;
-  let mockCacheRead: ReturnType<typeof vi.fn>;
   let mockCacheInvalidate: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     mockRpc = vi.fn();
-    mockCacheRead = vi.fn().mockImplementation((_opts: unknown, fn: () => unknown) => fn());
     mockCacheInvalidate = vi.fn();
 
     const mockSupabase = {
@@ -33,7 +30,7 @@ describe('ZoneAssignmentService', () => {
         {
           provide: SupabaseRequestCacheService,
           useValue: {
-            read: mockCacheRead,
+            read: vi.fn().mockImplementation((_, fetcher) => fetcher()),
             invalidate: mockCacheInvalidate,
           },
         },
@@ -44,65 +41,77 @@ describe('ZoneAssignmentService', () => {
   });
 
   it('calls get_all_plants_for_map rpc and returns plants', async () => {
-    const mockPlants = [
-      { id: '1', latitude: -23.1, longitude: -49.1, zoneId: null, varietyName: 'Hass' },
-    ];
-    mockRpc.mockResolvedValue({ data: mockPlants, error: null });
+    mockRpc.mockResolvedValue({
+      data: [
+        {
+          id: 'p1',
+          latitude: -21.1,
+          longitude: -47.1,
+          zoneId: 'z1',
+          varietyName: 'Pera',
+        },
+      ],
+      error: null,
+    });
 
     const result = await service.getAllPlantsForMap();
 
     expect(mockRpc).toHaveBeenCalledWith('get_all_plants_for_map');
-    expect(result.data).toEqual(mockPlants);
-    expect(result.error).toBeNull();
+    expect(result.data).toEqual([
+      {
+        id: 'p1',
+        latitude: -21.1,
+        longitude: -47.1,
+        zoneId: 'z1',
+        varietyName: 'Pera',
+      },
+    ]);
   });
 
-  it('calls find_plants_inside_polygon rpc and maps result', async () => {
-    const mockRows = [
-      {
-        plant_id: 'p1',
-        latitude: -23.1,
-        longitude: -49.1,
-        zone_id: null,
-        zone_name: null,
-        variety_id: 1,
-        variety_name: 'Hass',
-        planting_date: '2026-01-01',
-      },
-    ];
-    mockRpc.mockResolvedValue({ data: mockRows, error: null });
-
-    const polygon: GeoJsonPolygon = {
-      type: 'Polygon',
-      coordinates: [
-        [
-          [-49.1, -23.1],
-          [-49.2, -23.2],
-          [-49.1, -23.1],
-        ],
+  it('calls find_plants_inside_polygon rpc and maps result rows', async () => {
+    mockRpc.mockResolvedValue({
+      data: [
+        {
+          plant_id: 'p1',
+          latitude: -21.1,
+          longitude: -47.1,
+          zone_id: null,
+          zone_name: null,
+          variety_id: 1,
+          variety_name: 'Pera',
+          planting_date: '2020-01-01',
+        },
       ],
-    };
+      error: null,
+    });
 
-    const result = await service.findPlantsInsidePolygon(polygon);
+    const result = await service.findPlantsInsidePolygon({
+      type: 'Polygon',
+      coordinates: [[[-47.1, -21.1], [-47.2, -21.2], [-47.1, -21.1]]],
+    });
 
     expect(mockRpc).toHaveBeenCalledWith('find_plants_inside_polygon', {
-      p_polygon_geojson: polygon,
+      p_polygon_geojson: {
+        type: 'Polygon',
+        coordinates: [[[-47.1, -21.1], [-47.2, -21.2], [-47.1, -21.1]]],
+      },
     });
     expect(result.data).toEqual([
       {
         plantId: 'p1',
-        latitude: -23.1,
-        longitude: -49.1,
+        latitude: -21.1,
+        longitude: -47.1,
         zoneId: null,
         zoneName: null,
         varietyId: 1,
-        varietyName: 'Hass',
-        plantingDate: '2026-01-01',
+        varietyName: 'Pera',
+        plantingDate: '2020-01-01',
         selected: true,
       },
     ]);
   });
 
-  it('calls assign_plants_to_zone rpc, invalidates cache and returns summary', async () => {
+  it('calls assign_plants_to_zone rpc, invalidates cache and returns summary when rpc returns json object', async () => {
     mockRpc.mockResolvedValue({
       data: {
         zone_id: 'z1',
@@ -126,6 +135,24 @@ describe('ZoneAssignmentService', () => {
       zoneId: 'z1',
       zoneName: 'Zona A',
       plantsUpdatedCount: 5,
+    });
+  });
+
+  it('calls assign_plants_to_zone rpc and handles scalar integer return from legacy database rpc', async () => {
+    mockRpc.mockResolvedValue({
+      data: 112,
+      error: null,
+    });
+
+    const result = await service.assignPlantsToZone({
+      zoneId: 'z1',
+      plantIds: ['p1', 'p2'],
+    });
+
+    expect(result.data).toEqual({
+      zoneId: 'z1',
+      zoneName: '',
+      plantsUpdatedCount: 112,
     });
   });
 });

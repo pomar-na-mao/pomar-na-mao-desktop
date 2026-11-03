@@ -180,7 +180,7 @@ describe('OverviewViewModel', () => {
       summary: null,
       plants: [
         { id: 'p-alive', latitude: -21.1, longitude: -47.1, varietyId: 1, varietyName: 'Gala', isDead: false, nonExistent: false },
-        { id: 'p-dead', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, isDead: true, nonExistent: false },
+        { id: 'p-non-existent', latitude: -21.2, longitude: -47.2, varietyId: null, varietyName: null, isDead: false, nonExistent: true },
       ],
       farmBoundary: [],
     });
@@ -191,8 +191,8 @@ describe('OverviewViewModel', () => {
     viewModel.filterPlantStatus.set('alive');
     expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-alive']);
 
-    viewModel.filterPlantStatus.set('dead');
-    expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-dead']);
+    viewModel.filterPlantStatus.set('non_existent');
+    expect(viewModel.filteredPlants().map((p) => p.id)).toEqual(['p-non-existent']);
 
     viewModel.filterPlantStatus.set('');
     expect(viewModel.filteredPlants().length).toBe(2);
@@ -321,7 +321,7 @@ describe('OverviewViewModel', () => {
     consoleError.mockRestore();
   });
 
-  it('should use green for living plants and red for dead plants', async () => {
+  it('should use green for living plants and red for nonExistent plants', async () => {
     await viewModel.loadOverview();
 
     expect(viewModel.getPlantStatusPresentation(viewModel.mapPlants()[0])).toEqual({
@@ -332,10 +332,10 @@ describe('OverviewViewModel', () => {
     expect(
       viewModel.getPlantStatusPresentation({
         ...viewModel.mapPlants()[0],
-        isDead: true,
+        nonExistent: true,
       }),
     ).toEqual({
-      label: 'Morta',
+      label: 'Não existente',
       color: '#ef4444',
       strokeColor: '#b91c1c',
     });

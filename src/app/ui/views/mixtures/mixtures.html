@@ -166,11 +166,14 @@
               @if (mixture.inputs && mixture.inputs.length > 0) {
                 <div class="flex flex-col gap-1 py-1">
                   @for (item of mixture.inputs; track item.id || item.input_id) {
-                    <div class="text-xs text-surface-700 dark:text-surface-300 flex items-center gap-1.5">
+                    <div class="text-xs text-surface-700 dark:text-surface-300 flex items-center gap-1.5 flex-wrap">
                       <span class="font-semibold text-primary-600 dark:text-primary-400">
                         {{ item.input?.name || 'Insumo' }}:
                       </span>
                       <span>{{ item.dose }} {{ item.dose_unit || '' }}</span>
+                      @if (item.volume_or_mass !== null && item.volume_or_mass !== undefined) {
+                        <span class="text-surface-500 font-medium">({{ item.volume_or_mass }} {{ item.unit || '' }})</span>
+                      }
                     </div>
                   }
                 </div>
@@ -197,6 +200,7 @@
                 <p-button
                   icon="pi pi-eye"
                   [text]="true"
+                  [rounded]="true"
                   severity="secondary"
                   size="small"
                   pTooltip="Ver detalhes"
@@ -206,7 +210,8 @@
                 <p-button
                   icon="pi pi-pencil"
                   [text]="true"
-                  severity="secondary"
+                  [rounded]="true"
+                  severity="info"
                   size="small"
                   pTooltip="Editar calda"
                   tooltipPosition="bottom"
@@ -215,6 +220,7 @@
                 <p-button
                   icon="pi pi-trash"
                   [text]="true"
+                  [rounded]="true"
                   severity="danger"
                   size="small"
                   pTooltip="Excluir calda"
@@ -244,9 +250,9 @@
   [visible]="viewModel.dialogVisible()"
   (visibleChange)="viewModel.dialogVisible.set($event)"
   [modal]="true"
-  [draggable]="false"
-  [resizable]="false"
-  [style]="{ width: '680px', maxWidth: '95vw' }"
+  [draggable]="true"
+  [resizable]="true"
+  [style]="{ width: '800px', maxWidth: '95vw' }"
   styleClass="mixtures-dialog"
   (onHide)="viewModel.closeDialog()"
 >
@@ -283,7 +289,7 @@
     <!-- Seção de Insumos da Calda -->
     <div class="rounded-xl border border-surface-200 p-3.5 dark:border-surface-700 bg-surface-50/50 dark:bg-surface-800/30">
       <div class="flex items-center justify-between pb-2 border-b border-surface-200 dark:border-surface-700 mb-3">
-        <div>
+        <div class="mr-0.5">
           <span class="text-xs font-bold text-surface-800 dark:text-surface-200">
             Insumos da Calda <span class="text-red-500">*</span>
           </span>
@@ -308,7 +314,7 @@
             class="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-2 rounded-lg bg-surface-0 dark:bg-surface-800 border border-surface-200 dark:border-surface-700"
           >
             <!-- Seletor do Insumo -->
-            <div class="flex-1 w-full sm:w-auto">
+            <div class="w-full sm:w-72 md:w-80 shrink-0">
               <label class="block text-[10px] font-semibold text-surface-500 mb-0.5">Insumo</label>
               <p-select
                 formControlName="input_id"
@@ -319,26 +325,35 @@
                 [filter]="true"
                 filterBy="label"
                 class="w-full text-xs"
+                [panelStyle]="{ minWidth: '18rem' }"
                 (onChange)="viewModel.onInputChange(i, $event.value)"
               >
                 <ng-template #selectedItem let-selectedOption>
                   @if (selectedOption) {
-                    <div class="flex items-center justify-between w-full gap-2">
+                    @let badge = selectedOption.typeStyle || viewModel.inputTypeBadgeStyle(selectedOption.input?.type);
+                    <div class="flex items-center justify-between w-full gap-2 overflow-hidden">
                       <span class="font-medium text-surface-900 dark:text-surface-100 truncate">
                         {{ selectedOption.input?.name }}
                       </span>
-                      <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 font-semibold shrink-0">
+                      <span
+                        class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold border shrink-0 {{ badge.bg }} {{ badge.text }} {{ badge.border }}"
+                      >
+                        <span class="w-1.5 h-1.5 rounded-full {{ badge.dot }}"></span>
                         {{ selectedOption.typeLabel }}
                       </span>
                     </div>
                   }
                 </ng-template>
                 <ng-template #item let-option>
+                  @let badge = option.typeStyle || viewModel.inputTypeBadgeStyle(option.input?.type);
                   <div class="flex items-center justify-between w-full gap-2 py-0.5">
                     <span class="font-medium text-surface-900 dark:text-surface-100 truncate">
                       {{ option.input?.name }}
                     </span>
-                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 font-semibold shrink-0">
+                    <span
+                      class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold border shrink-0 {{ badge.bg }} {{ badge.text }} {{ badge.border }}"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full {{ badge.dot }}"></span>
                       {{ option.typeLabel }}
                     </span>
                   </div>
@@ -347,8 +362,8 @@
             </div>
 
             <!-- Dose Customizada -->
-            <div class="w-full sm:w-28">
-              <label class="block text-[10px] font-semibold text-surface-500 mb-0.5">Dose</label>
+            <div class="w-full sm:flex-1 sm:min-w-0">
+              <label class="block text-[10px] font-semibold text-surface-500 mb-0.5 truncate">Dose</label>
               <input
                 pInputText
                 formControlName="dose"
@@ -358,8 +373,8 @@
             </div>
 
             <!-- Unidade da Dose -->
-            <div class="w-full sm:w-28">
-              <label class="block text-[10px] font-semibold text-surface-500 mb-0.5">Unidade</label>
+            <div class="w-full sm:flex-1 sm:min-w-0">
+              <label class="block text-[10px] font-semibold text-surface-500 mb-0.5 truncate">Unidade Dose</label>
               <input
                 pInputText
                 formControlName="dose_unit"
@@ -368,8 +383,33 @@
               />
             </div>
 
+            <!-- Volume ou Massa -->
+            <div class="w-full sm:flex-1 sm:min-w-0">
+              <label class="block text-[10px] font-semibold text-surface-500 mb-0.5 truncate">Volume / Massa</label>
+              <p-inputnumber
+                formControlName="volume_or_mass"
+                placeholder="Ex: 2.5"
+                class="w-full"
+                inputStyleClass="w-full text-xs"
+              />
+            </div>
+
+            <!-- Unidade (kg, L) -->
+            <div class="w-full sm:flex-1 sm:min-w-0">
+              <label class="block text-[10px] font-semibold text-surface-500 mb-0.5 truncate">Unidade</label>
+              <p-select
+                formControlName="unit"
+                [options]="viewModel.unitOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="kg / L"
+                [showClear]="true"
+                class="w-full text-xs"
+              />
+            </div>
+
             <!-- Botão Remover -->
-            <div class="pt-4 sm:pt-4">
+            <div class="pt-4 sm:pt-4 shrink-0">
               <p-button
                 icon="pi pi-trash"
                 [text]="true"
@@ -558,22 +598,27 @@
         </div>
 
         @if (details.inputs && details.inputs.length > 0) {
-          <div class="space-y-2">
-            @for (item of details.inputs; track item.id || item.input_id; let idx = $index) {
-              @let typeStyle = viewModel.inputTypeBadgeStyle(item.input?.type);
-              <div
-                class="rounded-lg bg-surface-0 dark:bg-surface-900 border border-surface-200/70 dark:border-surface-800/70 p-2.5 shadow-2xs hover:border-surface-300 dark:hover:border-surface-700 transition-colors"
-              >
-                <div class="flex items-start justify-between gap-3">
-                  <div class="flex items-start gap-2.5 min-w-0">
-                    <span
-                      class="flex items-center justify-center w-5 h-5 rounded-full bg-surface-100 dark:bg-surface-800 text-[10px] font-bold text-surface-600 dark:text-surface-300 shrink-0 mt-0.5"
-                    >
+          <div class="overflow-x-auto rounded-lg border border-surface-200/80 dark:border-surface-800/80">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-surface-100/70 dark:bg-surface-800 text-[11px] font-semibold text-surface-600 dark:text-surface-300 border-b border-surface-200 dark:border-surface-800">
+                <tr>
+                  <th class="py-2.5 px-3 w-8 text-center">#</th>
+                  <th class="py-2.5 px-3">Insumo</th>
+                  <th class="py-2.5 px-3">Dose</th>
+                  <th class="py-2.5 px-3">Volume / Massa</th>
+                  <th class="py-2.5 px-3">Unidade</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-200 dark:divide-surface-800 bg-surface-0 dark:bg-surface-900">
+                @for (item of details.inputs; track item.id || item.input_id; let idx = $index) {
+                  @let typeStyle = viewModel.inputTypeBadgeStyle(item.input?.type);
+                  <tr class="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                    <td class="py-2.5 px-3 text-center text-surface-400 font-bold text-[11px]">
                       {{ idx + 1 }}
-                    </span>
-                    <div class="min-w-0 space-y-0.5">
+                    </td>
+                    <td class="py-2.5 px-3">
                       <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="text-xs font-bold text-surface-900 dark:text-surface-0 truncate">
+                        <span class="font-bold text-surface-900 dark:text-surface-0">
                           {{ item.input?.name || 'Insumo' }}
                         </span>
                         @if (item.input?.type) {
@@ -586,35 +631,31 @@
                         }
                       </div>
                       @if (item.input?.active_ingredient) {
-                        <p class="text-[11px] text-surface-500 dark:text-surface-400 truncate">
+                        <p class="text-[10px] text-surface-500 dark:text-surface-400 mt-0.5">
                           Princípio Ativo: <span class="text-surface-700 dark:text-surface-300">{{ item.input.active_ingredient }}</span>
                         </p>
                       }
-                    </div>
-                  </div>
-
-                  <!-- Dose Badge -->
-                  <div class="text-right shrink-0">
-                    <div class="inline-flex flex-col items-end">
-                      <span
-                        class="px-2 py-0.5 rounded-md text-xs font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/50"
-                      >
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/50 inline-block">
                         {{ item.dose }} {{ item.dose_unit || '' }}
                       </span>
                       @if (item.input?.label_dose && item.input.label_dose !== item.dose) {
-                        <span class="text-[9px] text-amber-600 dark:text-amber-400 mt-0.5 font-medium">
-                          Bula: {{ item.input.label_dose }} {{ item.input.dose_unit || '' }} (Ajustada)
-                        </span>
-                      } @else if (item.input?.label_dose) {
-                        <span class="text-[9px] text-surface-400 dark:text-surface-500 mt-0.5">
-                          Dose padrão de bula
+                        <span class="text-[9px] text-amber-600 dark:text-amber-400 block font-medium mt-0.5">
+                          Bula: {{ item.input.label_dose }} {{ item.input.dose_unit || '' }}
                         </span>
                       }
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
+                    </td>
+                    <td class="py-2.5 px-3 font-semibold text-surface-800 dark:text-surface-200">
+                      {{ item.volume_or_mass !== null && item.volume_or_mass !== undefined ? item.volume_or_mass : '—' }}
+                    </td>
+                    <td class="py-2.5 px-3 font-semibold text-surface-800 dark:text-surface-200">
+                      {{ item.unit || '—' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
         } @else {
           <p class="text-xs text-surface-400 italic">Nenhum insumo associado.</p>
@@ -669,8 +710,6 @@
           [outlined]="true"
           (onClick)="viewModel.closeDetails(); viewModel.openEdit(details)"
         />
-      } @else {
-        <div></div>
       }
       <p-button
         label="Fechar"

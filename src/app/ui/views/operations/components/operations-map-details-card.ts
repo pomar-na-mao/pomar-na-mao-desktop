@@ -635,13 +635,24 @@ export class OperationsMapDetailsCard {
   public get addedOccurrences() {
     const plant = this.inspectionPlant();
     if (!plant || !plant.occurrences) return [];
-    return plant.occurrences.filter((o) => o.status === 'open');
+    return plant.occurrences.filter(
+      (o) =>
+        o.status === 'open' ||
+        o.action === 'added' ||
+        o.action === 'updated' ||
+        o.action === 'reopened'
+    );
   }
 
   public get removedOccurrences() {
     const plant = this.inspectionPlant();
     if (!plant || !plant.occurrences) return [];
-    return plant.occurrences.filter((o) => o.status === 'removed');
+    return plant.occurrences.filter(
+      (o) =>
+        o.status === 'removed' ||
+        o.status === 'resolved' ||
+        o.action === 'removed'
+    );
   }
 
   public getSeverityClass(severity: string | null): string {

@@ -72,6 +72,11 @@ export class MixturesService implements IMixturesService {
         input_id: item.input_id,
         dose: item.dose.trim(),
         dose_unit: item.dose_unit?.trim() || null,
+        volume_or_mass:
+          item.volume_or_mass != null && !isNaN(Number(item.volume_or_mass))
+            ? Number(item.volume_or_mass)
+            : null,
+        unit: item.unit?.trim() || null,
       }));
 
       const { error: itemsError } = await this.supabase
@@ -136,6 +141,11 @@ export class MixturesService implements IMixturesService {
         input_id: item.input_id,
         dose: item.dose.trim(),
         dose_unit: item.dose_unit?.trim() || null,
+        volume_or_mass:
+          item.volume_or_mass != null && !isNaN(Number(item.volume_or_mass))
+            ? Number(item.volume_or_mass)
+            : null,
+        unit: item.unit?.trim() || null,
       }));
 
       const { error: insertItemsError } = await this.supabase

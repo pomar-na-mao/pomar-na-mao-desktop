@@ -78,7 +78,7 @@ describe('OverviewFiltersPanel', () => {
     expect(component.plantStatusOptions).toEqual([
       { label: 'Todos os Status', value: '' },
       { label: 'Vivas', value: 'alive', color: '#10b981' },
-      { label: 'Mortas', value: 'dead', color: '#ef4444' },
+      { label: 'Não existentes', value: 'non_existent', color: '#ef4444' },
     ]);
 
     expect(component.varietyOptions).toEqual([

@@ -7,7 +7,7 @@
 >
 
   <!-- Left Sidebar (Form) -->
-  <aside class="w-full md:w-80 lg:w-[22rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 overflow-hidden">
+  <aside class="w-full md:w-96 lg:w-[25rem] xl:w-[26rem] shrink-0 h-full flex flex-col border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 overflow-hidden">
     <div class="px-3.5 pt-4 pb-2 border-b border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
       <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Cadastro de Zonas</h4>
       <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none">Delimitação e registro de áreas no mapa</p>
@@ -154,10 +154,10 @@
   <div class="relative min-w-0 flex-1 h-full overflow-hidden bg-surface-100 dark:bg-surface-950">
     <app-map-polygon-selector
       class="absolute inset-0 h-full w-full"
-      [center]="[-23.398772, -49.148646]"
-      [zoom]="16"
-      [locateUserOnInit]="true"
-      [userLocationZoom]="18"
+      [center]="viewModel.farmInitialCenter()"
+      [zoom]="viewModel.farmInitialZoom()"
+      [locateUserOnInit]="false"
+      [userLocationZoom]="16"
       [backgroundPolygons]="viewModel.mapBackgroundPolygons()"
       [backgroundPolygonLabels]="viewModel.mapBackgroundPolygonLabels()"
       [backgroundPolygonColors]="viewModel.mapBackgroundPolygonColors()"
