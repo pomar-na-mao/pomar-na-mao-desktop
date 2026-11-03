@@ -22,11 +22,17 @@ export interface MixtureInputFormGroup {
   input_id: string;
   dose: string;
   dose_unit: string | null;
+  volume_or_mass?: number | null;
+  unit?: string | null;
   input_name?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class MixturesViewModel {
+  public unitOptions = [
+    { label: 'kg', value: 'kg' },
+    { label: 'L', value: 'L' },
+  ];
   private formBuilder = inject(FormBuilder);
   private mixturesRepository = inject(MixturesRepository);
   private inputsRepository = inject(InputsRepository);
@@ -68,6 +74,7 @@ export class MixturesViewModel {
         label: `${input.name} (${typeLabel})`,
         value: input.id,
         typeLabel,
+        typeStyle: this.inputTypeBadgeStyle(input.type),
         input,
       };
     });
@@ -177,6 +184,8 @@ export class MixturesViewModel {
       input_id: this.formBuilder.nonNullable.control(preselectedInputId ?? '', [Validators.required]),
       dose: this.formBuilder.nonNullable.control(defaultDose, [Validators.required]),
       dose_unit: this.formBuilder.control<string | null>(defaultUnit),
+      volume_or_mass: this.formBuilder.control<number | null>(null, [Validators.min(0)]),
+      unit: this.formBuilder.control<string | null>(null),
       input_name: this.formBuilder.control<string>(inputName),
     });
 
@@ -236,6 +245,8 @@ export class MixturesViewModel {
           input_id: this.formBuilder.nonNullable.control(item.input_id, [Validators.required]),
           dose: this.formBuilder.nonNullable.control(item.dose ?? '', [Validators.required]),
           dose_unit: this.formBuilder.control<string | null>(item.dose_unit ?? item.input?.dose_unit ?? ''),
+          volume_or_mass: this.formBuilder.control<number | null>(item.volume_or_mass ?? null, [Validators.min(0)]),
+          unit: this.formBuilder.control<string | null>(item.unit ?? null),
           input_name: this.formBuilder.control<string>(item.input?.name ?? ''),
         });
         this.inputsArray.push(group);
@@ -283,6 +294,11 @@ export class MixturesViewModel {
       input_id: i.input_id,
       dose: i.dose.trim(),
       dose_unit: i.dose_unit?.trim() || null,
+      volume_or_mass:
+        i.volume_or_mass != null && !isNaN(Number(i.volume_or_mass))
+          ? Number(i.volume_or_mass)
+          : null,
+      unit: i.unit?.trim() || null,
     }));
 
     const authorName = this.getAuthorName();

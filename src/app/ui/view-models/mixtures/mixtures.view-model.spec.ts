@@ -211,6 +211,8 @@ describe('MixturesViewModel', () => {
           input_id: 'input-1',
           dose: '180',
           dose_unit: 'ml/100L',
+          volume_or_mass: null,
+          unit: null,
         },
       ],
     });
@@ -219,7 +221,41 @@ describe('MixturesViewModel', () => {
     expect(viewModel.dialogVisible()).toBe(false);
   });
 
-  it('openEdit should populate form with existing mixture and inputs', () => {
+  it('submit in create mode should send optional volume_or_mass and unit when filled', async () => {
+    mockMixturesRepo.create.mockResolvedValue({
+      data: { id: 'mix-2' } as unknown as MixtureItem,
+      error: null,
+    });
+
+    viewModel.openCreate();
+    viewModel.form.controls.name.setValue('Calda Com Volume');
+    viewModel.onInputChange(0, 'input-1');
+    viewModel.inputsArray.at(0).get('dose')?.setValue('200');
+    viewModel.inputsArray.at(0).get('volume_or_mass')?.setValue(5.5);
+    viewModel.inputsArray.at(0).get('unit')?.setValue('L');
+
+    await viewModel.submit();
+
+    expect(mockMixturesRepo.create).toHaveBeenCalledWith({
+      name: 'Calda Com Volume',
+      registered_by_name: 'Carlos Agrônomo',
+      registered_by_email: 'carlos@pomar.com',
+      is_active: true,
+      observations: null,
+      inputs: [
+        {
+          input_id: 'input-1',
+          dose: '200',
+          dose_unit: 'ml/100L',
+          volume_or_mass: 5.5,
+          unit: 'L',
+        },
+      ],
+    });
+    expect(mockMessageService.success).toHaveBeenCalledWith('Calda cadastrada com sucesso!');
+  });
+
+  it('openEdit should populate form with existing mixture and inputs including volume_or_mass and unit', () => {
     const existing: MixtureItem = {
       id: 'mix-1',
       name: 'Calda Fungicida',
@@ -236,6 +272,8 @@ describe('MixturesViewModel', () => {
           input_id: 'input-2',
           dose: '300',
           dose_unit: 'g/100L',
+          volume_or_mass: 3.2,
+          unit: 'kg',
           input: mockInputs()[1],
         },
       ],
@@ -250,6 +288,8 @@ describe('MixturesViewModel', () => {
     expect(viewModel.inputsArray.length).toBe(1);
     expect(viewModel.inputsArray.at(0).get('input_id')?.value).toBe('input-2');
     expect(viewModel.inputsArray.at(0).get('dose')?.value).toBe('300');
+    expect(viewModel.inputsArray.at(0).get('volume_or_mass')?.value).toBe(3.2);
+    expect(viewModel.inputsArray.at(0).get('unit')?.value).toBe('kg');
   });
 
   it('should map and translate input types in inputOptions to Portuguese', () => {
@@ -262,8 +302,12 @@ describe('MixturesViewModel', () => {
     expect(options.length).toBe(2);
     expect(options[0].label).toBe('Inseticida Alpha (Inseticida)');
     expect(options[0].typeLabel).toBe('Inseticida');
+    expect(options[0].typeStyle).toBeDefined();
+    expect(options[0].typeStyle.bg).toContain('red');
     expect(options[1].label).toBe('Fungicida Beta (Fungicida)');
     expect(options[1].typeLabel).toBe('Fungicida');
+    expect(options[1].typeStyle).toBeDefined();
+    expect(options[1].typeStyle.bg).toContain('amber');
   });
 
   it('deleteSingle should call repository and show success message', async () => {

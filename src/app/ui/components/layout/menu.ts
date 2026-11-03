@@ -79,12 +79,12 @@ export class AppMenu implements OnInit {
                 icon: 'pi pi-fw pi-cog',
                 routerLink: ['/cadastro/maquinas'],
               },
-              {
+              /* {
                 label: 'Infraestrutura',
                 visible: true,
                 icon: 'pi pi-fw pi-building',
                 routerLink: ['/cadastro/infraestrutura'],
-              },
+              }, */
             ],
           },
           {
@@ -124,7 +124,7 @@ export class AppMenu implements OnInit {
             icon: 'pi pi-fw pi-share-alt',
             routerLink: ['/zoneamento'],
           },
-          {
+          /* {
             label: 'Configurações',
             visible: true,
             icon: 'pi pi-fw pi-cog',
@@ -135,7 +135,7 @@ export class AppMenu implements OnInit {
             visible: true,
             icon: 'pi pi-fw pi-users',
             routerLink: ['/usuarios'],
-          },
+          }, */
         ],
       },
     ];

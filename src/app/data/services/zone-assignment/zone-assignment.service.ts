@@ -23,12 +23,6 @@ interface PlantInsidePolygonRow {
   planting_date: string | null;
 }
 
-interface AssignZoneResultRow {
-  zone_id: string;
-  zone_name: string;
-  plants_updated_count: number;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -117,15 +111,32 @@ export class ZoneAssignmentService {
       SUPABASE_CACHE_NAMESPACES.operations,
     ]);
 
-    const result = data as AssignZoneResultRow | null | undefined;
+    let plantsUpdatedCount = payload.plantIds.length;
+    let zoneId = payload.zoneId;
+    let zoneName = '';
+
+    if (typeof data === 'number') {
+      plantsUpdatedCount = data;
+    } else if (typeof data === 'string' && !isNaN(Number(data))) {
+      plantsUpdatedCount = Number(data);
+    } else if (data && typeof data === 'object') {
+      const row = (Array.isArray(data) ? data[0] : data) as Record<string, unknown>;
+      const parsedCount = Number(
+        row['plants_updated_count'] ?? row['plantsUpdatedCount']
+      );
+      if (!isNaN(parsedCount)) {
+        plantsUpdatedCount = parsedCount;
+      }
+      zoneId = (row['zone_id'] ?? row['zoneId'] ?? payload.zoneId) as string;
+      zoneName = (row['zone_name'] ?? row['zoneName'] ?? '') as string;
+    }
+
     return {
-      data: result
-        ? {
-            zoneId: result.zone_id,
-            zoneName: result.zone_name,
-            plantsUpdatedCount: result.plants_updated_count,
-          }
-        : null,
+      data: {
+        zoneId,
+        zoneName,
+        plantsUpdatedCount,
+      },
       error: null,
     };
   }

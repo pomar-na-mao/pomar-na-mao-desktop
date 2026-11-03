@@ -108,6 +108,8 @@ describe('ZoneMapManagementViewModel', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(viewModel.mapBackgroundPolygons()[0]).toEqual([[3, 4], [1, 2], [5, 6]]);
+    expect(viewModel.farmInitialCenter()).toEqual([3, 4]);
+    expect(viewModel.farmInitialZoom()).toBe(16);
     expect(viewModel.mapBackgroundPolygonLabels()[0]).toBe('');
     expect(viewModel.mapBackgroundPolygonColors()[0]).toBe('#0f3b8f');
     expect(viewModel.mapBackgroundPolygonDashArrays()[0]).toBeNull();

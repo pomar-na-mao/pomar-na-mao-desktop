@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { OperationsViewModel } from '../../../view-models/operations/operations.view-model';
 import { OperationsFiltersPanel } from './operations-filters-panel';
 
@@ -11,6 +11,10 @@ describe('OperationsFiltersPanel', () => {
     startDate: ReturnType<typeof signal<string>>;
     endDate: ReturnType<typeof signal<string>>;
     selectedOperation: ReturnType<typeof signal<string>>;
+    selectedZoneId: ReturnType<typeof signal<string>>;
+    zoneOptions: ReturnType<typeof signal<Array<{ label: string; value: string }>>>;
+    onZoneChange: ReturnType<typeof vi.fn>;
+    clearFilters: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
@@ -18,6 +22,18 @@ describe('OperationsFiltersPanel', () => {
       startDate: signal('2026-01-01'),
       endDate: signal('2026-01-31'),
       selectedOperation: signal('pulverizacao'),
+      selectedZoneId: signal('zone-1'),
+      zoneOptions: signal([
+        { label: 'Todas as Zonas', value: '' },
+        { label: 'Talhão 01', value: 'zone-1' },
+      ]),
+      onZoneChange: vi.fn(),
+      clearFilters: vi.fn().mockImplementation(() => {
+        mockViewModel.startDate.set('');
+        mockViewModel.endDate.set('');
+        mockViewModel.selectedOperation.set('');
+        mockViewModel.selectedZoneId.set('');
+      }),
     };
 
     await TestBed.configureTestingModule({
@@ -34,19 +50,21 @@ describe('OperationsFiltersPanel', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders title, date pickers and operation select', () => {
+  it('renders title, date pickers, operation select and zone select', () => {
     const root = fixture.nativeElement as HTMLElement;
     expect(root.textContent).toContain('Operações');
     expect(root.textContent).toContain('Período');
     expect(root.querySelectorAll('p-datepicker')).toHaveLength(2);
-    expect(root.querySelector('app-select')).toBeTruthy();
+    expect(root.querySelectorAll('app-select')).toHaveLength(2);
     expect(component.operationOptions.map((o) => o.value)).toEqual(['', 'pulverizacao', 'inspecao']);
   });
 
   it('clears filters when clearFilters is called', () => {
     component.clearFilters();
+    expect(mockViewModel.clearFilters).toHaveBeenCalled();
     expect(mockViewModel.startDate()).toBe('');
     expect(mockViewModel.endDate()).toBe('');
     expect(mockViewModel.selectedOperation()).toBe('');
+    expect(mockViewModel.selectedZoneId()).toBe('');
   });
 });

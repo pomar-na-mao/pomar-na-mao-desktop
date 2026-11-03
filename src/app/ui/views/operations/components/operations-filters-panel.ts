@@ -58,6 +58,16 @@ import { OperationsViewModel } from '../../../view-models/operations/operations.
             [options]="operationOptions"
           ></app-select>
         </div>
+
+        <!-- Zona -->
+        <div>
+          <app-select
+            label="Zona"
+            [ngModel]="operationsViewModel.selectedZoneId()"
+            (ngModelChange)="operationsViewModel.onZoneChange($event)"
+            [options]="operationsViewModel.zoneOptions()"
+          ></app-select>
+        </div>
       </div>
 
       <!-- Pinned Footer -->
@@ -85,8 +95,6 @@ export class OperationsFiltersPanel {
   ];
 
   public clearFilters(): void {
-    this.operationsViewModel.startDate.set('');
-    this.operationsViewModel.endDate.set('');
-    this.operationsViewModel.selectedOperation.set('');
+    this.operationsViewModel.clearFilters();
   }
 }

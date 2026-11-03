@@ -14,6 +14,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { Table, TableModule } from 'primeng/table';
@@ -34,6 +35,7 @@ import { MixturesViewModel } from '../../view-models/mixtures/mixtures.view-mode
     DialogModule,
     IconFieldModule,
     InputIconModule,
+    InputNumberModule,
     InputTextModule,
     SelectModule,
     TableModule,

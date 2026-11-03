@@ -1,8 +1,8 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import * as L from 'leaflet';
 import { MessageService } from 'primeng/api';
-import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { FieldActivitiesRepository } from '../../../data/repositories/field-activities/field-activities.repository';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import type { FieldActivityItem } from '../../../domain/models/field-activity.model';
 import {
   buildOrderedMapBoundary,
@@ -338,7 +338,7 @@ export class FieldActivitiesViewModel {
       const popupContent = `
         <div style="font-family: inherit; font-size: 12px; min-width: 160px;">
           <strong style="color: #0f172a; font-size: 13px;">${act.activity}</strong>
-          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Resp: ${act.responsible}</div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Responsável: ${act.responsible}</div>
           <div style="font-size: 11px; color: #64748b;">Data: ${new Date(act.performed_at).toLocaleDateString('pt-BR')} ${new Date(act.performed_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
           ${machineInfo}
           ${mixtureInfo}

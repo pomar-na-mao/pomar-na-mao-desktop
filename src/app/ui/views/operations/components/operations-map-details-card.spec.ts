@@ -211,5 +211,31 @@ describe('OperationsMapDetailsCard', () => {
     expect(compiled.textContent).toContain('Anotações da Planta');
     expect(compiled.textContent).toContain('Observações da Anotação');
   });
+
+  it('should categorize occurrences correctly when status or action variants are returned', () => {
+    mockViewModel.selectedInspectionDetails.set({
+      operation_id: '2',
+      started_at: '2023-01-01T00:00:00Z',
+      finished_at: '2023-01-01T01:00:00Z',
+      notes: null,
+      zone_name: 'Zone A',
+      plants: []
+    });
+    mockViewModel.selectedInspectionPlant.set({
+      plant_id: 'plant-uuid-12345678',
+      latitude: 10,
+      longitude: 20,
+      occurrences: [
+        { occurrence_id: 'o1', occurrence_type_name: 'Praga A', status: 'open', action: 'added', severity: 'medium', notes: 'Nova', resolved_at: null },
+        { occurrence_id: 'o2', occurrence_type_name: 'Praga B', status: '', action: 'updated', severity: 'alta', notes: 'Atualizada', resolved_at: null },
+        { occurrence_id: 'o3', occurrence_type_name: 'Praga C', status: 'resolved', severity: null, notes: null, resolved_at: '2023-01-01T01:00:00Z' },
+        { occurrence_id: 'o4', occurrence_type_name: 'Praga D', status: '', action: 'removed', severity: null, notes: null, resolved_at: null }
+      ]
+    });
+    fixture.detectChanges();
+
+    expect(component.addedOccurrences.length).toBe(2);
+    expect(component.removedOccurrences.length).toBe(2);
+  });
 });
 
