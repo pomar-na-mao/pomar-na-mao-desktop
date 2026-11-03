@@ -34,6 +34,7 @@ describe('AppMenu', () => {
       icon: 'pi pi-fw pi-file-import',
     });
     expect(registrationItems.map((item) => item.routerLink?.[0])).toEqual([
+      '/cadastro/propriedade',
       '/cadastro/variedades',
       '/cadastro/ocorrencias',
       '/cadastro/zonas',
@@ -41,7 +42,11 @@ describe('AppMenu', () => {
       '/cadastro/caldas',
       '/cadastro/maquinas',
     ]);
-    expect(registrationItems[2]).toMatchObject({
+    expect(registrationItems[0]).toMatchObject({
+      label: 'Demarcação propriedade',
+      icon: 'pi pi-fw pi-map-marker',
+    });
+    expect(registrationItems[3]).toMatchObject({
       label: 'Zonas',
       icon: 'pi pi-fw pi-map',
     });

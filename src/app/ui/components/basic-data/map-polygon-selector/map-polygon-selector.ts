@@ -516,7 +516,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   public completePolygon(): void {
-    if (this.tempPoints.length < 3) return;
+    if (this.distinctPointsCount < 3) return;
 
     this.clearTempLayers();
 
@@ -637,6 +637,14 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
   get pointsCount(): number {
     return this.tempPoints.length;
+  }
+
+  get distinctPointsCount(): number {
+    return new Set(
+      this.tempPoints.map(
+        (point) => `${point.lat.toFixed(8)},${point.lng.toFixed(8)}`,
+      ),
+    ).size;
   }
 
   get hasPolygon(): boolean {

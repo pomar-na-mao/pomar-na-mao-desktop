@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildOrderedMapBoundary,
+  isValidMapCoordinate,
+  normalizeFarmBoundaryCandidate,
   normalizeOrderedBoundaryPoints,
 } from './ordered-map-boundary';
 
@@ -56,5 +58,44 @@ describe('ordered map boundary helpers', () => {
     ]);
 
     expect(boundary).toBeNull();
+  });
+
+  it('should validate coordinate ranges and finite values', () => {
+    expect(isValidMapCoordinate(-90, -180)).toBe(true);
+    expect(isValidMapCoordinate(90, 180)).toBe(true);
+    expect(isValidMapCoordinate(91, 0)).toBe(false);
+    expect(isValidMapCoordinate(0, -181)).toBe(false);
+    expect(isValidMapCoordinate(Number.NaN, 0)).toBe(false);
+  });
+
+  it('should normalize a candidate without changing its marking order', () => {
+    const result = normalizeFarmBoundaryCandidate([
+      { lat: -23.3, lng: -49.3 },
+      { lat: -23.1, lng: -49.1 },
+      { lat: -23.2, lng: -49.2 },
+    ]);
+
+    expect(result).toEqual([
+      { latitude: -23.3, longitude: -49.3 },
+      { latitude: -23.1, longitude: -49.1 },
+      { latitude: -23.2, longitude: -49.2 },
+    ]);
+  });
+
+  it('should reject candidates with fewer than three distinct valid points', () => {
+    expect(
+      normalizeFarmBoundaryCandidate([
+        { lat: -23.1, lng: -49.1 },
+        { lat: -23.1, lng: -49.1 },
+        { lat: -23.2, lng: -49.2 },
+      ]),
+    ).toBeNull();
+    expect(
+      normalizeFarmBoundaryCandidate([
+        { lat: -91, lng: -49.1 },
+        { lat: -23.2, lng: -49.2 },
+        { lat: -23.3, lng: -49.3 },
+      ]),
+    ).toBeNull();
   });
 });

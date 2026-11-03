@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import type { PostgrestResponse } from '@supabase/supabase-js';
+import type { FarmBoundaryCoordinate } from '../../../domain/models/farm-boundary.model';
 import type { OrderedMapBoundaryPoint } from '../../../shared/utils/ordered-map-boundary';
 import { normalizeOrderedBoundaryPoints } from '../../../shared/utils/ordered-map-boundary';
 import { injectSupabase } from '../supabase';
@@ -44,5 +45,24 @@ export class FarmBoundaryService {
     }
 
     return normalizeOrderedBoundaryPoints(response.data ?? []);
+  }
+
+  public async replaceBoundary(
+    points: FarmBoundaryCoordinate[],
+  ): Promise<number> {
+    const response = await this.supabase.rpc('replace_farm_boundary', {
+      p_points: points,
+    });
+
+    if (response.error) {
+      throw response.error;
+    }
+
+    this.requestCache.invalidate([
+      SUPABASE_CACHE_NAMESPACES.referenceData,
+      SUPABASE_CACHE_NAMESPACES.overview,
+    ]);
+
+    return Number(response.data ?? 0);
   }
 }

@@ -7,6 +7,13 @@ export default [
     pathMatch: 'full',
   },
   {
+    path: 'propriedade',
+    loadComponent: () =>
+      import('../property-demarcation/property-demarcation').then(
+        (m) => m.PropertyDemarcation,
+      ),
+  },
+  {
     path: 'variedades',
     loadComponent: () =>
       import('../varieties/varieties').then((m) => m.Varieties),
@@ -32,7 +39,7 @@ export default [
     loadComponent: () =>
       import('../mixtures/mixtures').then((m) => m.Mixtures),
   },
-   {
+  {
     path: 'maquinas',
     loadComponent: () =>
       import('../machines/machines').then((m) => m.Machines),
