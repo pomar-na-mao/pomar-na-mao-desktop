@@ -171,7 +171,7 @@
                         {{ item.input?.name || 'Insumo' }}:
                       </span>
                       <span>{{ item.dose }} {{ item.dose_unit || '' }}</span>
-                      @if (item.volume_or_mass != null) {
+                      @if (item.volume_or_mass !== null && item.volume_or_mass !== undefined) {
                         <span class="text-surface-500 font-medium">({{ item.volume_or_mass }} {{ item.unit || '' }})</span>
                       }
                     </div>
@@ -647,7 +647,7 @@
                       }
                     </td>
                     <td class="py-2.5 px-3 font-semibold text-surface-800 dark:text-surface-200">
-                      {{ item.volume_or_mass != null ? item.volume_or_mass : '—' }}
+                      {{ item.volume_or_mass !== null && item.volume_or_mass !== undefined ? item.volume_or_mass : '—' }}
                     </td>
                     <td class="py-2.5 px-3 font-semibold text-surface-800 dark:text-surface-200">
                       {{ item.unit || '—' }}

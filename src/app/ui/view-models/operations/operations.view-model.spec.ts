@@ -6,14 +6,33 @@ import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-b
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { signal } from '@angular/core';
+import type { Zone } from '../../../domain/models/zone.model';
+import type { Region } from '../../../domain/models/regions.model';
+import type {
+  InspectionOperationResponse,
+  InspectionPlant,
+} from '../../../domain/models/operations.model';
+
+interface OperationsViewModelTestScope {
+  map: {
+    fitBounds: ReturnType<typeof vi.fn>;
+    setView: ReturnType<typeof vi.fn>;
+    remove?: ReturnType<typeof vi.fn>;
+  } | null;
+  farmPolygonLayer: unknown;
+  zonePolygonLayers: unknown;
+  inspectionPlantLayers: unknown;
+  geoJsonLayer: unknown;
+  farmBoundary: ReturnType<typeof signal>;
+}
 
 describe('OperationsViewModel', () => {
   let viewModel: OperationsViewModel;
   const mockSprayingOperationsSignal = signal([]);
   const mockInspectionOperationsSignal = signal([]);
   const mockAnnotationOperationsSignal = signal([]);
-  const mockZonesSignal = signal<any[]>([]);
-  const mockRegionsSignal = signal<any[]>([]);
+  const mockZonesSignal = signal<Zone[]>([]);
+  const mockRegionsSignal = signal<Region[]>([]);
 
   const mockGetSprayingOperations = vi.fn();
   const mockGetInspectionOperations = vi.fn();
@@ -28,13 +47,37 @@ describe('OperationsViewModel', () => {
     mockInspectionOperationsSignal.set([]);
     mockAnnotationOperationsSignal.set([]);
     mockZonesSignal.set([
-      { id: 'zone-1', name: 'Zona Norte', polygon: { coordinates: [[[-49.1, -23.4], [-49.1, -23.5], [-49.2, -23.5], [-49.1, -23.4]]] } },
-      { id: 'zone-2', name: 'Zona Sul', polygon: null }
+      {
+        id: 'zone-1',
+        name: 'Zona Norte',
+        code: null,
+        description: null,
+        polygon: { coordinates: [[[-49.1, -23.4], [-49.1, -23.5], [-49.2, -23.5], [-49.1, -23.4]]] },
+        created_at: '',
+        updated_at: '',
+        local_id: null,
+        device_id: null,
+        sync_status: '',
+        synced_at: null,
+      },
+      {
+        id: 'zone-2',
+        name: 'Zona Sul',
+        code: null,
+        description: null,
+        polygon: null,
+        created_at: '',
+        updated_at: '',
+        local_id: null,
+        device_id: null,
+        sync_status: '',
+        synced_at: null,
+      }
     ]);
     mockRegionsSignal.set([
-      { zone_id: 'zone-1', latitude: -23.4, longitude: -49.1, order: 1 },
-      { zone_id: 'zone-1', latitude: -23.5, longitude: -49.1, order: 2 },
-      { zone_id: 'zone-1', latitude: -23.5, longitude: -49.2, order: 3 },
+      { id: 'r1', created_at: '', region: 'R1', zone_id: 'zone-1', latitude: -23.4, longitude: -49.1, order: 1 },
+      { id: 'r2', created_at: '', region: 'R2', zone_id: 'zone-1', latitude: -23.5, longitude: -49.1, order: 2 },
+      { id: 'r3', created_at: '', region: 'R3', zone_id: 'zone-1', latitude: -23.5, longitude: -49.2, order: 3 },
     ]);
     mockGetBoundary.mockResolvedValue([]);
     mockZonesFindAll.mockResolvedValue({ error: null });
@@ -158,11 +201,15 @@ describe('OperationsViewModel', () => {
     expect(mockSprayingOperationsSignal()).toEqual([]);
   });
 
+  function internalScope(vm: OperationsViewModel): OperationsViewModelTestScope {
+    return vm as unknown as OperationsViewModelTestScope;
+  }
+
   it('should zoom to zone when onZoneChange is called', () => {
     const mockFitBounds = vi.fn();
-    (viewModel as any).map = {
+    internalScope(viewModel).map = {
       fitBounds: mockFitBounds,
-      setView: vi.fn()
+      setView: vi.fn(),
     };
 
     viewModel.onZoneChange('zone-1');
@@ -173,11 +220,11 @@ describe('OperationsViewModel', () => {
 
   it('should reset map view to boundary when onZoneChange is cleared', () => {
     const mockFitBounds = vi.fn();
-    (viewModel as any).map = {
+    internalScope(viewModel).map = {
       fitBounds: mockFitBounds,
-      setView: vi.fn()
+      setView: vi.fn(),
     };
-    (viewModel as any).farmBoundary.set({
+    internalScope(viewModel).farmBoundary.set({
       latLngs: [[-23.4, -49.1], [-23.5, -49.2], [-23.6, -49.3]],
       center: [-23.5, -49.2]
     });
@@ -190,27 +237,49 @@ describe('OperationsViewModel', () => {
 
   it('should destroy map and clear layer references on destroyMap', () => {
     const mockRemove = vi.fn();
-    (viewModel as any).map = { remove: mockRemove };
-    (viewModel as any).farmPolygonLayer = {};
-    (viewModel as any).zonePolygonLayers = {};
-    (viewModel as any).inspectionPlantLayers = {};
-    (viewModel as any).geoJsonLayer = {};
+    const scope = internalScope(viewModel);
+    scope.map = { fitBounds: vi.fn(), setView: vi.fn(), remove: mockRemove };
+    scope.farmPolygonLayer = {};
+    scope.zonePolygonLayers = {};
+    scope.inspectionPlantLayers = {};
+    scope.geoJsonLayer = {};
 
     viewModel.destroyMap();
 
     expect(mockRemove).toHaveBeenCalled();
-    expect((viewModel as any).map).toBeNull();
-    expect((viewModel as any).farmPolygonLayer).toBeNull();
-    expect((viewModel as any).zonePolygonLayers).toBeNull();
-    expect((viewModel as any).inspectionPlantLayers).toBeNull();
-    expect((viewModel as any).geoJsonLayer).toBeNull();
+    expect(scope.map).toBeNull();
+    expect(scope.farmPolygonLayer).toBeNull();
+    expect(scope.zonePolygonLayers).toBeNull();
+    expect(scope.inspectionPlantLayers).toBeNull();
+    expect(scope.geoJsonLayer).toBeNull();
   });
 
   it('should navigate inspections and clear inspection selection', () => {
-    const mockOp1 = { operation_id: 'op-1', started_at: '2023-01-01' } as any;
-    const mockOp2 = { operation_id: 'op-2', started_at: '2023-01-02' } as any;
-    const mockPlant1 = { plant_id: 'p-1', latitude: -23.4, longitude: -49.1 } as any;
-    const mockPlant2 = { plant_id: 'p-1', latitude: -23.4, longitude: -49.1 } as any;
+    const mockOp1: InspectionOperationResponse = {
+      operation_id: 'op-1',
+      started_at: '2023-01-01',
+      finished_at: null,
+      notes: null,
+      zone_name: 'Zone 1',
+      plants: [],
+    };
+    const mockOp2: InspectionOperationResponse = {
+      ...mockOp1,
+      operation_id: 'op-2',
+      started_at: '2023-01-02',
+    };
+    const mockPlant1: InspectionPlant = {
+      plant_id: 'p-1',
+      latitude: -23.4,
+      longitude: -49.1,
+      occurrences: [],
+    };
+    const mockPlant2: InspectionPlant = {
+      plant_id: 'p-1',
+      latitude: -23.4,
+      longitude: -49.1,
+      occurrences: [],
+    };
 
     viewModel.inspectionEntriesForPlant.set([
       { operation: mockOp1, plant: mockPlant1 },
