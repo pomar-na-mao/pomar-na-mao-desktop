@@ -52,6 +52,7 @@ export class OperationsMap implements AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     document.body.style.overflow = '';
+    this.operationsViewModel.destroyMap();
   }
 
   public toggleFullscreen(): void {

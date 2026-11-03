@@ -13,6 +13,7 @@ describe('OperationsMap', () => {
     selectedInspectionDetails: ReturnType<typeof signal<Record<string, unknown> | null>>;
     selectedInspectionPlant: ReturnType<typeof signal<Record<string, unknown> | null>>;
     initMap: ReturnType<typeof vi.fn>;
+    destroyMap: ReturnType<typeof vi.fn>;
     setMapFullscreen: ReturnType<typeof vi.fn>;
     invalidateMapSize: ReturnType<typeof vi.fn>;
   };
@@ -24,6 +25,7 @@ describe('OperationsMap', () => {
       selectedInspectionDetails: signal(null),
       selectedInspectionPlant: signal(null),
       initMap: vi.fn(),
+      destroyMap: vi.fn(),
       setMapFullscreen: vi.fn(),
       invalidateMapSize: vi.fn()
     };
@@ -52,5 +54,10 @@ describe('OperationsMap', () => {
     button?.click();
     expect(mockViewModel.setMapFullscreen).toHaveBeenCalledWith(true);
     expect(mockViewModel.invalidateMapSize).toHaveBeenCalledOnce();
+  });
+
+  it('calls destroyMap on component destruction', () => {
+    fixture.destroy();
+    expect(mockViewModel.destroyMap).toHaveBeenCalledOnce();
   });
 });
