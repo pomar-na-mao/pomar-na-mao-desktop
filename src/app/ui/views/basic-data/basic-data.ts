@@ -37,6 +37,7 @@ export class BasicData implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     document.body.style.overflow = '';
+    document.body.classList.remove('map-fullscreen-active');
   }
 
   public onPolygonSelected(event: PolygonSelection): void {
@@ -51,6 +52,7 @@ export class BasicData implements OnInit, OnDestroy {
     const nextValue = !this.basicDataViewModel.isMapFullscreen();
     this.basicDataViewModel.isMapFullscreen.set(nextValue);
     document.body.style.overflow = nextValue ? 'hidden' : '';
+    document.body.classList.toggle('map-fullscreen-active', nextValue);
     setTimeout(() => {
       this.mapSelector.invalidateSize();
     }, 0);

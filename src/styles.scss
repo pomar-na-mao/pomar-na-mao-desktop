@@ -3,3 +3,11 @@
 @use 'primeicons/primeicons.css';
 @use './assets/overrides/primeng.scss';
 @use 'leaflet/dist/leaflet.css';
+
+/* PrimeNG overlays are appended to body. Keep them above the fixed map while
+   the overview, zoning, or basic-data screen is in fullscreen mode. */
+body.map-fullscreen-active > .p-select-overlay,
+body.map-fullscreen-active > .p-multiselect-overlay,
+body.map-fullscreen-active > .p-datepicker-panel {
+  z-index: 1200 !important;
+}

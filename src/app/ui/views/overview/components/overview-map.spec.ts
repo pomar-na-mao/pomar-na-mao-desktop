@@ -15,6 +15,7 @@ describe('OverviewMap', () => {
 
   beforeEach(async () => {
     viewModel.isMapFullscreen.set(false);
+    document.body.classList.remove('map-fullscreen-active');
     vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [OverviewMap],
@@ -35,5 +36,6 @@ describe('OverviewMap', () => {
     fixture.componentInstance.toggleFullscreen();
     expect(viewModel.setMapFullscreen).toHaveBeenCalledWith(true);
     expect(viewModel.invalidateMapSize).toHaveBeenCalledOnce();
+    expect(document.body.classList.contains('map-fullscreen-active')).toBe(true);
   });
 });
