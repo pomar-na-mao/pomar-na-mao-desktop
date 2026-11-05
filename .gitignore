@@ -56,3 +56,4 @@ design_system.md
 database.md
 migration*.sql
 /supabase
+tenant_config.md
