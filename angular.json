@@ -60,6 +60,21 @@
                 }
               ]
             },
+            "ricardoLichia": {
+              "define": {
+                "NG_CLIENT_ID": "'ricardoLichia'"
+              }
+            },
+            "hassAvocado": {
+              "define": {
+                "NG_CLIENT_ID": "'hassAvocado'"
+              }
+            },
+            "ricardoAbacate": {
+              "define": {
+                "NG_CLIENT_ID": "'ricardoAbacate'"
+              }
+            },
             "testing": {}
           },
           "defaultConfiguration": "production"
@@ -72,6 +87,15 @@
             },
             "development": {
               "buildTarget": "pomar-na-mao:build:development"
+            },
+            "ricardoLichia": {
+              "buildTarget": "pomar-na-mao:build:development,ricardoLichia"
+            },
+            "hassAvocado": {
+              "buildTarget": "pomar-na-mao:build:development,hassAvocado"
+            },
+            "ricardoAbacate": {
+              "buildTarget": "pomar-na-mao:build:development,ricardoAbacate"
             }
           },
           "defaultConfiguration": "development"

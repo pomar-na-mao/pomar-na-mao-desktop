@@ -324,6 +324,7 @@
                 placeholder="Selecione um insumo"
                 [filter]="true"
                 filterBy="label"
+                appendTo="body"
                 class="w-full text-xs"
                 [panelStyle]="{ minWidth: '18rem' }"
                 (onChange)="viewModel.onInputChange(i, $event.value)"

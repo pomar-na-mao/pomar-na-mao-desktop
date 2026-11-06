@@ -52,6 +52,7 @@ export class ZoneAssignment implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     document.body.style.overflow = '';
+    document.body.classList.remove('map-fullscreen-active');
   }
 
   public onPolygonSelected(event: PolygonSelection): void {
@@ -66,6 +67,7 @@ export class ZoneAssignment implements OnInit, OnDestroy {
     const nextValue = !this.viewModel.isMapFullscreen();
     this.viewModel.isMapFullscreen.set(nextValue);
     document.body.style.overflow = nextValue ? 'hidden' : '';
+    document.body.classList.toggle('map-fullscreen-active', nextValue);
     setTimeout(() => {
       this.mapSelector?.invalidateSize();
     }, 0);
