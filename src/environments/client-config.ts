@@ -1,5 +1,9 @@
 export type ClientId = keyof typeof CLIENT_CONFIGS;
 
+declare const NG_CLIENT_ID: ClientId | undefined;
+
+export const DEFAULT_CLIENT_ID: ClientId = 'ricardoAbacate';
+
 type ClientConfig = {
   supabaseUrl: string;
   supabasePublishableKey: string;
@@ -27,12 +31,21 @@ export const CLIENT_CONFIGS = {
 type EnvironmentConfig = {
   production: boolean;
   environment: 'LOCAL' | 'DEV' | 'PROD';
-  clientId: ClientId;
+  clientId?: ClientId;
 };
 
-export const buildAppConfig = (config: EnvironmentConfig) => ({
-  production: config.production,
-  environment: config.environment,
-  clientId: config.clientId,
-  ...CLIENT_CONFIGS[config.clientId],
-});
+export const resolveClientId = (fallback: ClientId = DEFAULT_CLIENT_ID): ClientId => {
+  const definedClientId = typeof NG_CLIENT_ID !== 'undefined' ? NG_CLIENT_ID : undefined;
+  return definedClientId && definedClientId in CLIENT_CONFIGS ? definedClientId : fallback;
+};
+
+export const buildAppConfig = (config: EnvironmentConfig) => {
+  const clientId = resolveClientId(config.clientId);
+
+  return {
+    production: config.production,
+    environment: config.environment,
+    clientId,
+    ...CLIENT_CONFIGS[clientId],
+  };
+};

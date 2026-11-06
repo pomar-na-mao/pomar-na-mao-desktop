@@ -166,6 +166,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private tempMarkers: L.CircleMarker[] = [];
   private tempPolyline: L.Polyline | null = null;
   private previewLine: L.Polyline | null = null;
+  private restoreDoubleClickZoom = false;
+  private readonly freehandMinimumDistanceMeters = 1;
   private _backgroundPolygonCoords: [number, number][][] = [];
   private _focusedPolygonCoords: [number, number][] | null = null;
   private _plants: Array<{
@@ -451,6 +453,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.map.getContainer().style.cursor = this.drawingMode ? 'crosshair' : '';
 
     if (this.drawingMode) {
+      this.restoreDoubleClickZoom = this.map.doubleClickZoom?.enabled() ?? false;
+      this.map.doubleClickZoom?.disable();
       this.drawingStarted.emit();
       this.centerOnCurrentDeviceLocation();
     }
@@ -464,18 +468,59 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     if (!this.drawingMode) return;
 
     L.DomEvent.stopPropagation(e);
-    this.tempPoints.push(e.latlng);
+    this.addDrawingPoint(e.latlng, true);
+  }
 
-    const marker = L.circleMarker(e.latlng, {
-      radius: 10,
-      fillColor: '#3b82f6', // blue-500
-      color: '#fff',
-      weight: 2,
-      opacity: 1,
-      fillOpacity: 1,
-    }).addTo(this.map);
+  private onMouseMove(e: L.LeafletMouseEvent): void {
+    if (!this.drawingMode || this.tempPoints.length === 0) return;
 
-    this.tempMarkers.push(marker);
+    this.addDrawingPoint(e.latlng, false);
+    const lastPoint = this.tempPoints[this.tempPoints.length - 1];
+    const previewPoints = [lastPoint, e.latlng];
+
+    if (this.previewLine) {
+      this.previewLine.setLatLngs(previewPoints);
+    } else {
+      this.previewLine = L.polyline(previewPoints, {
+        color: '#2563eb', // blue-600
+        weight: 1.5,
+        dashArray: '3, 5',
+        opacity: 0.5,
+      }).addTo(this.map);
+    }
+  }
+
+  private finishPolygon(e: L.LeafletMouseEvent): void {
+    if (!this.drawingMode) return;
+
+    L.DomEvent.stopPropagation(e);
+    this.addDrawingPoint(e.latlng, false);
+    if (this.distinctPointsCount < 3) return;
+    this.completePolygon();
+  }
+
+  private addDrawingPoint(point: L.LatLng, showMarker: boolean): boolean {
+    const lastPoint = this.tempPoints[this.tempPoints.length - 1];
+    if (
+      lastPoint &&
+      lastPoint.distanceTo(point) < this.freehandMinimumDistanceMeters
+    ) {
+      return false;
+    }
+
+    this.tempPoints.push(point);
+
+    if (showMarker) {
+      const marker = L.circleMarker(point, {
+        radius: 10,
+        fillColor: '#3b82f6', // blue-500
+        color: '#fff',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 1,
+      }).addTo(this.map);
+      this.tempMarkers.push(marker);
+    }
 
     if (this.tempPoints.length > 1) {
       if (this.tempPolyline) {
@@ -489,30 +534,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
         }).addTo(this.map);
       }
     }
-  }
 
-  private onMouseMove(e: L.LeafletMouseEvent): void {
-    if (!this.drawingMode || this.tempPoints.length === 0) return;
-
-    const points = [...this.tempPoints, e.latlng];
-
-    if (this.previewLine) {
-      this.previewLine.setLatLngs(points);
-    } else {
-      this.previewLine = L.polyline(points, {
-        color: '#2563eb', // blue-600
-        weight: 1.5,
-        dashArray: '3, 5',
-        opacity: 0.5,
-      }).addTo(this.map);
-    }
-  }
-
-  private finishPolygon(e: L.LeafletMouseEvent): void {
-    if (!this.drawingMode || this.tempPoints.length < 3) return;
-
-    L.DomEvent.stopPropagation(e);
-    this.completePolygon();
+    return true;
   }
 
   public completePolygon(): void {
@@ -563,11 +586,20 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.tempPoints = [];
     this.drawingMode = false;
     this.map.getContainer().style.cursor = '';
+    this.restoreMapDoubleClickZoom();
   }
 
   public cancelDrawing(): void {
     this.clearTempLayers();
     this.tempPoints = [];
+    this.restoreMapDoubleClickZoom();
+  }
+
+  private restoreMapDoubleClickZoom(): void {
+    if (this.restoreDoubleClickZoom) {
+      this.map.doubleClickZoom?.enable();
+    }
+    this.restoreDoubleClickZoom = false;
   }
 
   private clearTempLayers(): void {

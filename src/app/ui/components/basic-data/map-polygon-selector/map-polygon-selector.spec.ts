@@ -155,4 +155,19 @@ describe('MapPolygonSelector', () => {
     expect(component.hasPolygon).toBe(false);
     expect(emit).not.toHaveBeenCalled();
   });
+
+  it('should add polygon points continuously while the pointer moves', () => {
+    const component = TestBed.runInInjectionContext(
+      () => new MapPolygonSelector(),
+    );
+    component['drawingMode'] = true;
+    component['tempPoints'] = [L.latLng(-23.1, -49.1)];
+    component['map'] = { addLayer: vi.fn() } as never;
+
+    component['onMouseMove']({
+      latlng: L.latLng(-23.10002, -49.10002),
+    } as L.LeafletMouseEvent);
+
+    expect(component.activePoints).toHaveLength(2);
+  });
 });

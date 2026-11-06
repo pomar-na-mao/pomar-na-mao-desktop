@@ -50,12 +50,14 @@ export class OverviewMap implements AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     document.body.style.overflow = '';
+    document.body.classList.remove('map-fullscreen-active');
   }
 
   public toggleFullscreen(): void {
     const nextValue = !this.overviewViewModel.isMapFullscreen();
     this.overviewViewModel.setMapFullscreen(nextValue);
     document.body.style.overflow = nextValue ? 'hidden' : '';
+    document.body.classList.toggle('map-fullscreen-active', nextValue);
     this.overviewViewModel.invalidateMapSize();
   }
 }
