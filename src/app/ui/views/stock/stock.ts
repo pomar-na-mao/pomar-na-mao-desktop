@@ -20,13 +20,13 @@ import { SelectModule } from 'primeng/select';
 import { Table, TableModule } from 'primeng/table';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
-import { InputExcelService } from '../../../data/services/input-excel/input-excel.service';
+import { StockExcelService } from '../../../data/services/stock-excel/stock-excel.service';
 import { MessageService } from '../../../data/services/message/message.service';
-import type { InputItem } from '../../../domain/models/input.model';
-import { InputsViewModel } from '../../view-models/inputs/inputs.view-model';
+import type { StockItem } from '../../../domain/models/stock.model';
+import { StockViewModel } from '../../view-models/stock/stock.view-model';
 
 @Component({
-  selector: 'app-inputs',
+  selector: 'app-stock',
   standalone: true,
   imports: [
     CommonModule,
@@ -45,16 +45,16 @@ import { InputsViewModel } from '../../view-models/inputs/inputs.view-model';
     TooltipModule,
   ],
   providers: [ConfirmationService],
-  templateUrl: './inputs.html',
-  styleUrl: './inputs.css',
+  templateUrl: './stock.html',
+  styleUrl: './stock.css',
   changeDetection: ChangeDetectionStrategy.Eager,
 })
-export class Inputs implements OnInit {
+export class Stock implements OnInit {
   @ViewChild('dt') public table?: Table;
 
-  public viewModel = inject(InputsViewModel);
+  public viewModel = inject(StockViewModel);
   public confirmationService = inject(ConfirmationService);
-  private excelService = inject(InputExcelService);
+  private excelService = inject(StockExcelService);
   private messageService = inject(MessageService);
 
   public ngOnInit(): void {
@@ -68,39 +68,45 @@ export class Inputs implements OnInit {
     );
   }
 
-  public confirmDelete(input: InputItem): void {
+  public onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.viewModel.selectPhoto(input.files?.[0] ?? null);
+    input.value = '';
+  }
+
+  public confirmDelete(stockItem: StockItem): void {
     this.confirmationService.confirm({
-      header: 'Excluir insumo',
-      message: `Deseja realmente excluir o insumo “${input.name}”?`,
+      header: 'Excluir item do estoque',
+      message: `Deseja realmente excluir “${stockItem.name}” do estoque?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Excluir',
       rejectLabel: 'Cancelar',
       acceptButtonProps: { severity: 'danger', outlined: true },
       rejectButtonProps: { outlined: true },
-      accept: () => void this.viewModel.deleteInputs([input]),
+      accept: () => void this.viewModel.deleteStockItems([stockItem]),
     });
   }
 
   public confirmDeleteSelected(): void {
-    const selected = this.viewModel.selectedInputs();
+    const selected = this.viewModel.selectedStockItems();
     if (selected.length === 0) return;
 
     this.confirmationService.confirm({
-      header: 'Excluir insumos selecionados',
-      message: `Deseja realmente excluir ${selected.length} insumo(s)?`,
+      header: 'Excluir itens selecionados',
+      message: `Deseja realmente excluir ${selected.length} item(ns) do estoque?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Excluir',
       rejectLabel: 'Cancelar',
       acceptButtonProps: { severity: 'danger', outlined: true },
       rejectButtonProps: { outlined: true },
-      accept: () => void this.viewModel.deleteInputs(selected),
+      accept: () => void this.viewModel.deleteStockItems(selected),
     });
   }
 
   public async exportExcel(): Promise<void> {
-    const filtered = this.table?.filteredValue as InputItem[] | null | undefined;
+    const filtered = this.table?.filteredValue as StockItem[] | null | undefined;
     try {
-      await this.excelService.export(filtered ?? this.viewModel.inputs());
+      await this.excelService.export(filtered ?? this.viewModel.stockItems());
     } catch {
       this.messageService.error('Erro ao gerar o arquivo Excel.');
     }

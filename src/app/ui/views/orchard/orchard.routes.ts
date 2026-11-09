@@ -31,8 +31,8 @@ export default [
       ),
   },
   {
-    path: 'insumos',
-    loadComponent: () => import('../inputs/inputs').then((m) => m.Inputs),
+    path: 'estoque',
+    loadComponent: () => import('../stock/stock').then((m) => m.Stock),
   },
   {
     path: 'caldas',

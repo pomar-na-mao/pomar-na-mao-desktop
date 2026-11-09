@@ -2,11 +2,11 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthenticationRepository } from '../../../data/repositories/authentication/authentication-repository';
-import { InputsRepository } from '../../../data/repositories/inputs/inputs.repository';
+import { StockRepository } from '../../../data/repositories/stock/stock.repository';
 import { MixturesRepository } from '../../../data/repositories/mixtures/mixtures.repository';
 import { UsersRepository } from '../../../data/repositories/users/users-repository';
 import { MessageService } from '../../../data/services/message/message.service';
-import type { InputItem } from '../../../domain/models/input.model';
+import type { StockItem } from '../../../domain/models/stock.model';
 import type { MixtureItem } from '../../../domain/models/mixture.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { Mixtures } from './mixtures';
@@ -15,7 +15,7 @@ describe('Mixtures', () => {
   let fixture: ComponentFixture<Mixtures>;
   let component: Mixtures;
 
-  const sampleInput: InputItem = {
+  const sampleInput: StockItem = {
     id: 'input-1',
     name: 'Sivanto Prime',
     type: 'INSECTICIDE',
@@ -32,6 +32,9 @@ describe('Mixtures', () => {
     safety_interval_days: 7,
     label_dose: '75',
     dose_unit: 'ml/100L',
+    quantity: 10,
+    unit: 'L',
+    photo_object_path: null,
     observations: null,
     created_at: '2026-10-01T00:00:00Z',
     updated_at: '2026-10-01T00:00:00Z',
@@ -59,7 +62,7 @@ describe('Mixtures', () => {
   };
 
   const mockMixtures = signal<MixtureItem[]>([sampleMixture]);
-  const mockInputs = signal<InputItem[]>([sampleInput]);
+  const mockInputs = signal<StockItem[]>([sampleInput]);
 
   const mockMixturesRepo = {
     mixtures: mockMixtures,
@@ -70,7 +73,7 @@ describe('Mixtures', () => {
   };
 
   const mockInputsRepo = {
-    inputs: mockInputs,
+    stockItems: mockInputs,
     findAll: vi.fn().mockResolvedValue({ error: null }),
   };
 
@@ -106,7 +109,7 @@ describe('Mixtures', () => {
       imports: [Mixtures],
       providers: [
         { provide: MixturesRepository, useValue: mockMixturesRepo },
-        { provide: InputsRepository, useValue: mockInputsRepo },
+        { provide: StockRepository, useValue: mockInputsRepo },
         { provide: UsersRepository, useValue: mockUsersRepo },
         { provide: AuthenticationRepository, useValue: mockAuthRepo },
         { provide: MessageService, useValue: messages },

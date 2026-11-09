@@ -1,18 +1,18 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { InputsRepository } from '../../../data/repositories/inputs/inputs.repository';
-import { InputExcelService } from '../../../data/services/input-excel/input-excel.service';
+import { StockRepository } from '../../../data/repositories/stock/stock.repository';
+import { StockExcelService } from '../../../data/services/stock-excel/stock-excel.service';
 import { MessageService } from '../../../data/services/message/message.service';
-import type { InputItem } from '../../../domain/models/input.model';
+import type { StockItem } from '../../../domain/models/stock.model';
 import { LoadingService } from '../../../shared/services/loading.service';
-import { Inputs } from './inputs';
+import { Stock } from './stock';
 
-describe('Inputs', () => {
-  let fixture: ComponentFixture<Inputs>;
-  let component: Inputs;
+describe('Stock', () => {
+  let fixture: ComponentFixture<Stock>;
+  let component: Stock;
 
-  const sampleInput: InputItem = {
+  const sampleInput: StockItem = {
     id: '123e4567-e89b-12d3-a456-426614174000',
     name: 'Sivanto Prime 200 SL',
     type: 'INSECTICIDE',
@@ -29,16 +29,19 @@ describe('Inputs', () => {
     safety_interval_days: 7,
     label_dose: '50 - 100',
     dose_unit: 'mL/100L',
+    quantity: 12.5,
+    unit: 'L',
+    photo_object_path: null,
     observations: 'Ação sistêmica.',
     created_at: '2026-10-20T10:00:00Z',
     updated_at: '2026-10-20T11:00:00Z',
   };
 
-  const inputs = signal<InputItem[]>([sampleInput]);
+  const stockItems = signal<StockItem[]>([sampleInput]);
   const availableTypes = signal<string[]>(['INSECTICIDE', 'FUNGICIDE']);
 
   const repository = {
-    inputs,
+    stockItems,
     availableTypes,
     findAll: vi.fn().mockResolvedValue({ error: null }),
     loadEnumValues: vi.fn().mockResolvedValue(undefined),
@@ -46,6 +49,9 @@ describe('Inputs', () => {
     update: vi.fn(),
     deleteMany: vi.fn().mockResolvedValue({ error: null }),
     addEnumValue: vi.fn().mockResolvedValue({ error: null }),
+    createSignedPhotoUrl: vi
+      .fn()
+      .mockResolvedValue({ signedUrl: null, error: null }),
   };
 
   const messages = { success: vi.fn(), error: vi.fn() };
@@ -54,29 +60,29 @@ describe('Inputs', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    inputs.set([sampleInput]);
+    stockItems.set([sampleInput]);
     repository.findAll.mockResolvedValue({ error: null });
     repository.loadEnumValues.mockResolvedValue(undefined);
     repository.deleteMany.mockResolvedValue({ error: null });
 
     await TestBed.configureTestingModule({
-      imports: [Inputs],
+      imports: [Stock],
       providers: [
-        { provide: InputsRepository, useValue: repository },
+        { provide: StockRepository, useValue: repository },
         { provide: MessageService, useValue: messages },
         { provide: LoadingService, useValue: loading },
-        { provide: InputExcelService, useValue: excel },
+        { provide: StockExcelService, useValue: excel },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Inputs);
+    fixture = TestBed.createComponent(Stock);
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
   });
 
-  it('creates and loads inputs on initialization', () => {
+  it('creates and loads stock on initialization', () => {
     expect(component).toBeTruthy();
     expect(repository.findAll).toHaveBeenCalled();
     expect(repository.loadEnumValues).toHaveBeenCalled();
@@ -85,10 +91,38 @@ describe('Inputs', () => {
   it('opens details dialog when openDetails is called', () => {
     component.viewModel.openDetails(sampleInput);
     expect(component.viewModel.detailsDialogVisible()).toBe(true);
-    expect(component.viewModel.selectedInputForDetails()).toEqual(sampleInput);
+    expect(component.viewModel.selectedStockItemForDetails()).toEqual(sampleInput);
 
     component.viewModel.closeDetails();
     expect(component.viewModel.detailsDialogVisible()).toBe(false);
+  });
+
+  it('requires name, type, quantity and unit while keeping other fields optional', () => {
+    component.viewModel.openCreate();
+    const form = component.viewModel.form;
+
+    expect(form.valid).toBe(false);
+
+    form.patchValue({
+      name: 'Adubo líquido',
+      type: 'FERTILIZER',
+      quantity: 10.5,
+      unit: 'L',
+    });
+
+    expect(form.valid).toBe(true);
+    expect(component.viewModel.canSubmit()).toBe(true);
+
+    form.controls.quantity.setValue(null);
+    form.controls.quantity.markAsTouched();
+    expect(component.viewModel.quantityError()).toBe('Informe a quantidade.');
+
+    form.controls.quantity.setValue(10.5);
+    form.controls.unit.setValue(null);
+    form.controls.unit.markAsTouched();
+    expect(component.viewModel.unitError()).toBe(
+      'Selecione a unidade da quantidade.',
+    );
   });
 
   it('opens create type dialog and adds new type', async () => {
