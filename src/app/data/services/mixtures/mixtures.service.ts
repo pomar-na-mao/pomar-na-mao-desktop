@@ -37,7 +37,7 @@ export class MixturesService implements IMixturesService {
       () =>
         this.supabase
           .from('mixtures')
-          .select('*, inputs:mixture_inputs(*, input:inputs(*))', { count: 'exact' })
+          .select('*, inputs:mixture_inputs(*, input:stocks(*))', { count: 'exact' })
           .order('updated_at', { ascending: false }),
     ) as Promise<PostgrestResponse<MixtureItem>>;
   }
@@ -95,7 +95,7 @@ export class MixturesService implements IMixturesService {
     // Busca o registro completo com os relacionamentos
     const { data: fullMixture, error: fetchError } = await this.supabase
       .from('mixtures')
-      .select('*, inputs:mixture_inputs(*, input:inputs(*))')
+      .select('*, inputs:mixture_inputs(*, input:stocks(*))')
       .eq('id', createdMixture.id)
       .single();
 
@@ -161,7 +161,7 @@ export class MixturesService implements IMixturesService {
 
     const { data: fullMixture, error: fetchError } = await this.supabase
       .from('mixtures')
-      .select('*, inputs:mixture_inputs(*, input:inputs(*))')
+      .select('*, inputs:mixture_inputs(*, input:stocks(*))')
       .eq('id', id)
       .single();
 

@@ -51,7 +51,7 @@ The desktop app SHALL show `Visão geral` as the first navigation entry, followe
 - **WHEN** the authenticated layout sidebar is displayed
 - **THEN** the first menu item MUST be labelled `Visão geral` and point to `/visao-geral`.
 - **THEN** the `Cadastro` submenu MUST use the `pi-file-import` icon.
-- **THEN** the submenu MUST provide `/cadastro/propriedade`, `/cadastro/variedades`, `/cadastro/ocorrencias`, `/cadastro/zonas`, `/cadastro/insumos`, `/cadastro/caldas`, and `/cadastro/maquinas` in that order.
+- **THEN** the submenu MUST provide `/cadastro/propriedade`, `/cadastro/variedades`, `/cadastro/ocorrencias`, `/cadastro/zonas`, `/cadastro/estoque`, `/cadastro/caldas`, and `/cadastro/maquinas` in that order.
 - **THEN** the `/cadastro/propriedade` entry MUST be labelled `Demarcação propriedade` and use a map-related icon.
 - **THEN** the `/cadastro/zonas` entry MUST use the `pi-map` icon.
 - **THEN** a `Atividades de campo` entry MUST appear immediately below `Cadastro` and provide `/atividades-de-campo`.
