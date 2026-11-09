@@ -87,6 +87,29 @@ describe('CompletedOperations Component', () => {
     expect(mockViewModel.loadInitialData).toHaveBeenCalled();
   });
 
+  it('should open activity details from the inputs column action', async () => {
+    await TestBed.configureTestingModule({
+      imports: [CompletedOperations],
+    })
+      .overrideComponent(CompletedOperations, {
+        set: {
+          providers: [{ provide: FieldActivitiesViewModel, useValue: mockViewModel }],
+        },
+      })
+      .compileComponents();
+
+    const fixture = TestBed.createComponent(CompletedOperations);
+    fixture.detectChanges();
+
+    const inputsButton = fixture.nativeElement.querySelector(
+      `button[aria-label="Ver detalhes e insumos utilizados em ${sampleActivity.activity}"]`,
+    ) as HTMLButtonElement | null;
+
+    expect(inputsButton).not.toBeNull();
+    inputsButton?.click();
+    expect(mockViewModel.openDetails).toHaveBeenCalledWith(sampleActivity);
+  });
+
   it('should switch view mode between table and map', async () => {
     await TestBed.configureTestingModule({
       imports: [CompletedOperations],
