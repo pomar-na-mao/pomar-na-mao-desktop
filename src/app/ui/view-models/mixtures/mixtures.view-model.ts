@@ -1,15 +1,15 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationRepository } from '../../../data/repositories/authentication/authentication-repository';
-import { InputsRepository } from '../../../data/repositories/inputs/inputs.repository';
+import { StockRepository } from '../../../data/repositories/stock/stock.repository';
 import { MixturesRepository } from '../../../data/repositories/mixtures/mixtures.repository';
 import { UsersRepository } from '../../../data/repositories/users/users-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import {
-  INPUT_TYPE_TRANSLATION_MAP,
-  inputTypeBadgeStyle,
-  inputTypeLabel,
-} from '../../../domain/models/input.model';
+  STOCK_TYPE_TRANSLATION_MAP,
+  stockTypeBadgeStyle,
+  stockTypeLabel,
+} from '../../../domain/models/stock.model';
 import {
   type MixtureDraft,
   type MixtureInputDraft,
@@ -32,17 +32,18 @@ export class MixturesViewModel {
   public unitOptions = [
     { label: 'kg', value: 'kg' },
     { label: 'L', value: 'L' },
+    { label: 'm³', value: 'm³' },
   ];
   private formBuilder = inject(FormBuilder);
   private mixturesRepository = inject(MixturesRepository);
-  private inputsRepository = inject(InputsRepository);
+  private stockRepository = inject(StockRepository);
   private usersRepository = inject(UsersRepository);
   private authenticationRepository = inject(AuthenticationRepository);
   private messageService = inject(MessageService);
   private loadingService = inject(LoadingService);
 
   public mixtures = this.mixturesRepository.mixtures;
-  public availableInputs = this.inputsRepository.inputs;
+  public availableInputs = this.stockRepository.stockItems;
 
   public isLoading = signal(false);
   public loadFailed = signal(false);
@@ -57,14 +58,14 @@ export class MixturesViewModel {
 
   public formVersion = signal(0);
   public statusBadgeStyle = mixtureStatusBadgeStyle;
-  public inputTypeTranslationMap = INPUT_TYPE_TRANSLATION_MAP;
-  public inputTypeLabel = inputTypeLabel;
-  public inputTypeBadgeStyle = inputTypeBadgeStyle;
+  public inputTypeTranslationMap = STOCK_TYPE_TRANSLATION_MAP;
+  public inputTypeLabel = stockTypeLabel;
+  public inputTypeBadgeStyle = stockTypeBadgeStyle;
 
   public translateInputType(type: string | null | undefined): string {
     if (!type) return 'Não especificado';
     const upper = type.toUpperCase().trim();
-    return this.inputTypeTranslationMap[upper] ?? inputTypeLabel(type);
+    return this.inputTypeTranslationMap[upper] ?? stockTypeLabel(type);
   }
 
   public inputOptions = computed(() => {
@@ -156,7 +157,7 @@ export class MixturesViewModel {
     try {
       await Promise.all([
         this.mixturesRepository.findAll(),
-        this.inputsRepository.findAll(),
+        this.stockRepository.findAll(),
       ]);
     } catch {
       this.loadFailed.set(true);
@@ -172,7 +173,9 @@ export class MixturesViewModel {
     let inputName = '';
 
     if (preselectedInputId) {
-      const found = this.availableInputs().find((i) => i.id === preselectedInputId);
+      const found = this.availableInputs().find(
+        (i) => i.id === preselectedInputId,
+      );
       if (found) {
         defaultDose = found.label_dose ?? '';
         defaultUnit = found.dose_unit ?? '';
@@ -181,10 +184,16 @@ export class MixturesViewModel {
     }
 
     const group = this.formBuilder.group({
-      input_id: this.formBuilder.nonNullable.control(preselectedInputId ?? '', [Validators.required]),
-      dose: this.formBuilder.nonNullable.control(defaultDose, [Validators.required]),
+      input_id: this.formBuilder.nonNullable.control(preselectedInputId ?? '', [
+        Validators.required,
+      ]),
+      dose: this.formBuilder.nonNullable.control(defaultDose, [
+        Validators.required,
+      ]),
       dose_unit: this.formBuilder.control<string | null>(defaultUnit),
-      volume_or_mass: this.formBuilder.control<number | null>(null, [Validators.min(0)]),
+      volume_or_mass: this.formBuilder.control<number | null>(null, [
+        Validators.min(0),
+      ]),
       unit: this.formBuilder.control<string | null>(null),
       input_name: this.formBuilder.control<string>(inputName),
     });
@@ -242,10 +251,19 @@ export class MixturesViewModel {
     if (mixture.inputs && mixture.inputs.length > 0) {
       for (const item of mixture.inputs) {
         const group = this.formBuilder.group({
-          input_id: this.formBuilder.nonNullable.control(item.input_id, [Validators.required]),
-          dose: this.formBuilder.nonNullable.control(item.dose ?? '', [Validators.required]),
-          dose_unit: this.formBuilder.control<string | null>(item.dose_unit ?? item.input?.dose_unit ?? ''),
-          volume_or_mass: this.formBuilder.control<number | null>(item.volume_or_mass ?? null, [Validators.min(0)]),
+          input_id: this.formBuilder.nonNullable.control(item.input_id, [
+            Validators.required,
+          ]),
+          dose: this.formBuilder.nonNullable.control(item.dose ?? '', [
+            Validators.required,
+          ]),
+          dose_unit: this.formBuilder.control<string | null>(
+            item.dose_unit ?? item.input?.dose_unit ?? '',
+          ),
+          volume_or_mass: this.formBuilder.control<number | null>(
+            item.volume_or_mass ?? null,
+            [Validators.min(0)],
+          ),
           unit: this.formBuilder.control<string | null>(item.unit ?? null),
           input_name: this.formBuilder.control<string>(item.input?.name ?? ''),
         });
@@ -290,7 +308,9 @@ export class MixturesViewModel {
     );
 
     const raw = this.form.getRawValue();
-    const inputsDraft: MixtureInputDraft[] = (raw.inputs as MixtureInputFormGroup[]).map((i) => ({
+    const inputsDraft: MixtureInputDraft[] = (
+      raw.inputs as MixtureInputFormGroup[]
+    ).map((i) => ({
       input_id: i.input_id,
       dose: i.dose.trim(),
       dose_unit: i.dose_unit?.trim() || null,
@@ -315,7 +335,10 @@ export class MixturesViewModel {
 
     try {
       if (editing) {
-        const { error } = await this.mixturesRepository.update(editing.id, draft);
+        const { error } = await this.mixturesRepository.update(
+          editing.id,
+          draft,
+        );
         if (error) {
           this.handleSaveError(error);
           return;
@@ -388,7 +411,8 @@ export class MixturesViewModel {
       return currentUser.full_name.trim();
     }
     const authUser = this.authenticationRepository.user();
-    const metaName = authUser?.user_metadata?.['full_name'] as string | undefined;
+    const metaName = authUser?.user_metadata?.['full_name'] as
+      string | undefined;
     if (metaName?.trim()) {
       return metaName.trim();
     }
@@ -424,7 +448,9 @@ export class MixturesViewModel {
 
   private handleSaveError(error: { code?: string; message?: string }): void {
     if (error.code === '23505') {
-      this.messageService.error('Já existe uma calda cadastrada com este nome.');
+      this.messageService.error(
+        'Já existe uma calda cadastrada com este nome.',
+      );
       return;
     }
     this.messageService.error(error.message || 'Erro ao salvar a calda.');

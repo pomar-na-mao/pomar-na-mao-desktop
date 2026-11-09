@@ -38,7 +38,7 @@ describe('AppMenu', () => {
       '/cadastro/variedades',
       '/cadastro/ocorrencias',
       '/cadastro/zonas',
-      '/cadastro/insumos',
+      '/cadastro/estoque',
       '/cadastro/caldas',
       '/cadastro/maquinas',
     ]);

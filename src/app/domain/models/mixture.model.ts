@@ -1,4 +1,4 @@
-import type { InputItem } from './input.model';
+import type { StockItem } from './stock.model';
 
 export interface MixtureInputItem {
   id: string;
@@ -9,7 +9,7 @@ export interface MixtureInputItem {
   volume_or_mass?: number | null;
   unit?: 'kg' | 'L' | string | null;
   created_at?: string;
-  input?: InputItem | null;
+  input?: StockItem | null;
 }
 
 export interface MixtureInputDraft {

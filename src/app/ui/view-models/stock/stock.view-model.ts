@@ -1,24 +1,27 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { InputsRepository } from '../../../data/repositories/inputs/inputs.repository';
+import { StockRepository } from '../../../data/repositories/stock/stock.repository';
 import { MessageService } from '../../../data/services/message/message.service';
+import { STOCK_PHOTO_MAX_SIZE_BYTES } from '../../../data/services/stock/stock.service';
 import {
-  type InputDraft,
-  type InputItem,
-  inputTypeBadgeStyle,
-  inputTypeLabel,
-} from '../../../domain/models/input.model';
+  STOCK_UNIT_OPTIONS,
+  type StockDraft,
+  type StockItem,
+  type StockUnit,
+  stockTypeBadgeStyle,
+  stockTypeLabel,
+} from '../../../domain/models/stock.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 
 @Injectable({ providedIn: 'root' })
-export class InputsViewModel {
+export class StockViewModel {
   private formBuilder = inject(FormBuilder);
-  private inputsRepository = inject(InputsRepository);
+  private stockRepository = inject(StockRepository);
   private messageService = inject(MessageService);
   private loadingService = inject(LoadingService);
 
-  public inputs = this.inputsRepository.inputs;
-  public availableTypes = this.inputsRepository.availableTypes;
+  public stockItems = this.stockRepository.stockItems;
+  public availableTypes = this.stockRepository.availableTypes;
 
   public isLoading = signal(false);
   public loadFailed = signal(false);
@@ -29,19 +32,26 @@ export class InputsViewModel {
   public typeDialogVisible = signal(false);
   public detailsDialogVisible = signal(false);
 
-  public editingInput = signal<InputItem | null>(null);
-  public selectedInputForDetails = signal<InputItem | null>(null);
-  public selectedInputs = signal<InputItem[]>([]);
+  public editingStockItem = signal<StockItem | null>(null);
+  public selectedStockItemForDetails = signal<StockItem | null>(null);
+  public selectedStockItems = signal<StockItem[]>([]);
+  public selectedPhotoFile = signal<File | null>(null);
+  public photoPreviewUrl = signal<string | null>(null);
+  public detailsPhotoUrl = signal<string | null>(null);
+  public photoError = signal<string | null>(null);
+  public isPhotoLoading = signal(false);
+
+  public unitOptions = STOCK_UNIT_OPTIONS;
 
   public formVersion = signal(0);
   public typeFormVersion = signal(0);
 
-  public typeLabel = inputTypeLabel;
-  public typeBadgeStyle = inputTypeBadgeStyle;
+  public typeLabel = stockTypeLabel;
+  public typeBadgeStyle = stockTypeBadgeStyle;
 
   public typeOptions = computed(() => {
     return this.availableTypes().map((type) => ({
-      label: inputTypeLabel(type),
+      label: stockTypeLabel(type),
       value: type,
     }));
   });
@@ -67,6 +77,11 @@ export class InputsViewModel {
     ]),
     label_dose: this.formBuilder.control<string | null>(null),
     dose_unit: this.formBuilder.control<string | null>(null),
+    quantity: this.formBuilder.control<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+    ]),
+    unit: this.formBuilder.control<StockUnit | null>(null, [Validators.required]),
     observations: this.formBuilder.control<string | null>(null),
   });
 
@@ -82,7 +97,7 @@ export class InputsViewModel {
     this.formVersion();
     const control = this.form.controls.name;
     if ((control.touched || control.dirty) && control.value.trim() === '') {
-      return 'Informe o nome do insumo.';
+      return 'Informe o nome do item do estoque.';
     }
     if (control.hasError('maxlength')) {
       return 'O nome deve ter no máximo 150 caracteres.';
@@ -94,7 +109,7 @@ export class InputsViewModel {
     this.formVersion();
     const control = this.form.controls.type;
     if ((control.touched || control.dirty) && control.value.trim() === '') {
-      return 'Selecione o tipo do insumo.';
+      return 'Selecione o tipo do item do estoque.';
     }
     return null;
   });
@@ -116,9 +131,33 @@ export class InputsViewModel {
     return (
       !this.isSaving() &&
       this.form.valid &&
+      !this.quantityError() &&
+      !this.unitError() &&
+      !this.photoError() &&
       this.form.controls.name.value.trim().length > 0 &&
       this.form.controls.type.value.trim().length > 0
     );
+  });
+
+  public quantityError = computed(() => {
+    this.formVersion();
+    const control = this.form.controls.quantity;
+    if ((control.touched || control.dirty) && control.hasError('required')) {
+      return 'Informe a quantidade.';
+    }
+    if (control.hasError('min')) {
+      return 'A quantidade não pode ser negativa.';
+    }
+    return null;
+  });
+
+  public unitError = computed(() => {
+    this.formVersion();
+    const control = this.form.controls.unit;
+    if ((control.touched || control.dirty) && control.hasError('required')) {
+      return 'Selecione a unidade da quantidade.';
+    }
+    return null;
   });
 
   public canSubmitType = computed(() => {
@@ -144,56 +183,62 @@ export class InputsViewModel {
     this.loadFailed.set(false);
     try {
       await Promise.all([
-        this.inputsRepository.findAll(),
-        this.inputsRepository.loadEnumValues(),
+        this.stockRepository.findAll(),
+        this.stockRepository.loadEnumValues(),
       ]);
     } catch {
       this.loadFailed.set(true);
-      this.messageService.error('Erro ao carregar os insumos.');
+      this.messageService.error('Erro ao carregar o estoque.');
     } finally {
       this.isLoading.set(false);
     }
   }
 
   public openCreate(): void {
-    this.editingInput.set(null);
+    this.editingStockItem.set(null);
     this.resetForm();
     this.dialogVisible.set(true);
   }
 
-  public openEdit(input: InputItem): void {
-    this.editingInput.set(input);
+  public openEdit(stockItem: StockItem): void {
+    this.editingStockItem.set(stockItem);
     this.form.setValue({
-      name: input.name,
-      type: input.type,
-      active_ingredient: input.active_ingredient ?? '',
-      formulation: input.formulation ?? '',
-      concentration: input.concentration ?? '',
-      chemical_group: input.chemical_group ?? '',
-      manufacturer: input.manufacturer ?? '',
-      mapa_registration: input.mapa_registration ?? '',
-      expiration_date: input.expiration_date ?? '',
-      registered_for_crop: input.registered_for_crop ?? true,
-      target_1: input.target_1 ?? '',
-      target_2: input.target_2 ?? '',
-      safety_interval_days: input.safety_interval_days ?? null,
-      label_dose: input.label_dose ?? '',
-      dose_unit: input.dose_unit ?? '',
-      observations: input.observations ?? '',
+      name: stockItem.name,
+      type: stockItem.type,
+      active_ingredient: stockItem.active_ingredient ?? '',
+      formulation: stockItem.formulation ?? '',
+      concentration: stockItem.concentration ?? '',
+      chemical_group: stockItem.chemical_group ?? '',
+      manufacturer: stockItem.manufacturer ?? '',
+      mapa_registration: stockItem.mapa_registration ?? '',
+      expiration_date: stockItem.expiration_date ?? '',
+      registered_for_crop: stockItem.registered_for_crop ?? true,
+      target_1: stockItem.target_1 ?? '',
+      target_2: stockItem.target_2 ?? '',
+      safety_interval_days: stockItem.safety_interval_days ?? null,
+      label_dose: stockItem.label_dose ?? '',
+      dose_unit: stockItem.dose_unit ?? '',
+      quantity: stockItem.quantity,
+      unit: stockItem.unit,
+      observations: stockItem.observations ?? '',
     });
     this.form.markAsPristine();
     this.form.markAsUntouched();
+    void this.loadFormPhoto(stockItem.photo_object_path);
     this.dialogVisible.set(true);
   }
 
-  public openDetails(input: InputItem): void {
-    this.selectedInputForDetails.set(input);
+  public openDetails(stockItem: StockItem): void {
+    this.selectedStockItemForDetails.set(stockItem);
+    this.detailsPhotoUrl.set(null);
+    void this.loadDetailsPhoto(stockItem.photo_object_path);
     this.detailsDialogVisible.set(true);
   }
 
   public closeDetails(): void {
     this.detailsDialogVisible.set(false);
-    this.selectedInputForDetails.set(null);
+    this.selectedStockItemForDetails.set(null);
+    this.detailsPhotoUrl.set(null);
   }
 
   public openCreateType(): void {
@@ -209,8 +254,37 @@ export class InputsViewModel {
 
   public closeDialog(): void {
     this.dialogVisible.set(false);
-    this.editingInput.set(null);
+    this.editingStockItem.set(null);
     this.resetForm();
+  }
+
+  public selectPhoto(file: File | null): void {
+    this.photoError.set(null);
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.photoError.set('Selecione um arquivo de imagem válido.');
+      return;
+    }
+    if (file.size > STOCK_PHOTO_MAX_SIZE_BYTES) {
+      this.photoError.set('A imagem deve ter no máximo 5 MB.');
+      return;
+    }
+
+    this.selectedPhotoFile.set(file);
+    const reader = new FileReader();
+    reader.onload = () => this.photoPreviewUrl.set(String(reader.result));
+    reader.onerror = () => {
+      this.selectedPhotoFile.set(null);
+      this.photoError.set('Não foi possível carregar a pré-visualização.');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  public clearSelectedPhoto(): void {
+    this.selectedPhotoFile.set(null);
+    this.photoError.set(null);
+    const currentPath = this.editingStockItem()?.photo_object_path ?? null;
+    void this.loadFormPhoto(currentPath);
   }
 
   public async submit(): Promise<void> {
@@ -218,11 +292,13 @@ export class InputsViewModel {
 
     this.isSaving.set(true);
     this.loadingService.show(
-      this.editingInput() ? 'Atualizando insumo...' : 'Cadastrando insumo...',
+      this.editingStockItem()
+        ? 'Atualizando item do estoque...'
+        : 'Cadastrando item no estoque...',
     );
 
     const raw = this.form.getRawValue();
-    const draft: InputDraft = {
+    const draft: StockDraft = {
       name: raw.name.trim(),
       type: raw.type.trim(),
       active_ingredient: raw.active_ingredient?.trim() || null,
@@ -241,29 +317,43 @@ export class InputsViewModel {
           : null,
       label_dose: raw.label_dose?.trim() || null,
       dose_unit: raw.dose_unit?.trim() || null,
+      quantity:
+        raw.quantity !== null && raw.quantity !== undefined
+          ? Number(raw.quantity)
+          : null,
+      unit: raw.unit,
+      photo_object_path: this.editingStockItem()?.photo_object_path ?? null,
       observations: raw.observations?.trim() || null,
     };
 
     try {
-      const editing = this.editingInput();
+      const editing = this.editingStockItem();
       if (editing) {
-        const { error } = await this.inputsRepository.update(editing.id, draft);
+        const { error } = await this.stockRepository.update(
+          editing.id,
+          draft,
+          this.selectedPhotoFile(),
+          editing.photo_object_path,
+        );
         if (error) {
-          this.messageService.error('Erro ao atualizar insumo.');
+          this.messageService.error('Erro ao atualizar item do estoque.');
           return;
         }
-        this.messageService.success('Insumo atualizado com sucesso.');
+        this.messageService.success('Item do estoque atualizado com sucesso.');
       } else {
-        const { error } = await this.inputsRepository.create(draft);
+        const { error } = await this.stockRepository.create(
+          draft,
+          this.selectedPhotoFile(),
+        );
         if (error) {
-          this.messageService.error('Erro ao cadastrar insumo.');
+          this.messageService.error('Erro ao cadastrar item no estoque.');
           return;
         }
-        this.messageService.success('Insumo cadastrado com sucesso.');
+        this.messageService.success('Item cadastrado no estoque com sucesso.');
       }
       this.closeDialog();
     } catch {
-      this.messageService.error('Erro ao salvar insumo.');
+      this.messageService.error('Erro ao salvar item do estoque.');
     } finally {
       this.isSaving.set(false);
       this.loadingService.hide();
@@ -280,7 +370,7 @@ export class InputsViewModel {
       .replace(/\s+/g, '_');
 
     try {
-      const { error } = await this.inputsRepository.addEnumValue(newTypeName);
+      const { error } = await this.stockRepository.addEnumValue(newTypeName);
       if (error) {
         this.messageService.error(
           `Erro ao adicionar tipo no enum: ${error.message}`,
@@ -299,27 +389,29 @@ export class InputsViewModel {
     }
   }
 
-  public async deleteInputs(items: InputItem[]): Promise<void> {
+  public async deleteStockItems(items: StockItem[]): Promise<void> {
     if (items.length === 0) return;
 
     this.isSaving.set(true);
     this.loadingService.show(
-      items.length === 1 ? 'Excluindo insumo...' : 'Excluindo insumos...',
+      items.length === 1
+        ? 'Excluindo item do estoque...'
+        : 'Excluindo itens do estoque...',
     );
 
     try {
       const ids = items.map((i) => i.id);
-      const { error } = await this.inputsRepository.deleteMany(ids);
+      const { error } = await this.stockRepository.deleteMany(ids);
       if (error) {
-        this.messageService.error('Erro ao excluir insumo(s).');
+        this.messageService.error('Erro ao excluir item(ns) do estoque.');
         return;
       }
-      this.selectedInputs.update((selected) =>
+      this.selectedStockItems.update((selected) =>
         selected.filter((item) => !ids.includes(item.id)),
       );
-      this.messageService.success('Insumo(s) excluído(s) com sucesso.');
+      this.messageService.success('Item(ns) do estoque excluído(s) com sucesso.');
     } catch {
-      this.messageService.error('Erro ao excluir insumo(s).');
+      this.messageService.error('Erro ao excluir item(ns) do estoque.');
     } finally {
       this.isSaving.set(false);
       this.loadingService.hide();
@@ -343,9 +435,44 @@ export class InputsViewModel {
       safety_interval_days: null,
       label_dose: '',
       dose_unit: '',
+      quantity: null,
+      unit: null,
       observations: '',
     });
+    this.selectedPhotoFile.set(null);
+    this.photoPreviewUrl.set(null);
+    this.photoError.set(null);
     this.form.markAsPristine();
     this.form.markAsUntouched();
+  }
+
+  private async loadFormPhoto(objectPath: string | null): Promise<void> {
+    this.selectedPhotoFile.set(null);
+    this.photoPreviewUrl.set(null);
+    if (!objectPath) return;
+    this.isPhotoLoading.set(true);
+    try {
+      const { signedUrl } = await this.stockRepository.createSignedPhotoUrl(
+        objectPath,
+      );
+      if (!this.selectedPhotoFile()) {
+        this.photoPreviewUrl.set(signedUrl);
+      }
+    } finally {
+      this.isPhotoLoading.set(false);
+    }
+  }
+
+  private async loadDetailsPhoto(objectPath: string | null): Promise<void> {
+    if (!objectPath) return;
+    this.isPhotoLoading.set(true);
+    try {
+      const { signedUrl } = await this.stockRepository.createSignedPhotoUrl(
+        objectPath,
+      );
+      this.detailsPhotoUrl.set(signedUrl);
+    } finally {
+      this.isPhotoLoading.set(false);
+    }
   }
 }

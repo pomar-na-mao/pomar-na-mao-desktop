@@ -7,14 +7,14 @@ Permite que os operadores e agrônomos cadastrem, gerenciem, visualizem e config
 ## Requirements
 
 ### Requirement: Navegação e Acesso ao Módulo de Caldas
-O sistema DEVE disponibilizar o acesso ao módulo de Caldas por meio da rota `/cadastro/caldas` e exibir um item no menu de navegação lateral dentro do grupo "Cadastro", posicionado imediatamente abaixo do item "Insumos".
+O sistema DEVE disponibilizar o acesso ao módulo de Caldas por meio da rota `/cadastro/caldas` e exibir um item no menu de navegação lateral dentro do grupo "Cadastro", posicionado imediatamente abaixo do item "Estoque".
 
 #### Scenario: Acesso pelo menu lateral
 - **WHEN** o usuário autenticado navega pelo menu lateral e clica no item "Caldas" sob "Cadastro"
-- **THEN** o sistema SHALL navegar para a URL `/cadastro/caldas` e renderizar a tela de gerenciamento de caldas com a mesma estrutura visual da tela de Insumos.
+- **THEN** o sistema SHALL navegar para a URL `/cadastro/caldas` e renderizar a tela de gerenciamento de caldas com a mesma estrutura visual da tela de Estoque.
 
 ### Requirement: Listagem e Estrutura Tabular de Caldas
-A tela de Caldas DEVE exibir uma listagem tabular contendo todas as caldas cadastradas, espelhando os padrões de layout, filtros, busca e ações em lote presentes na tela de Insumos.
+A tela de Caldas DEVE exibir uma listagem tabular contendo todas as caldas cadastradas, espelhando os padrões de layout, filtros, busca e ações em lote presentes na tela de Estoque.
 
 #### Scenario: Visualização da lista de caldas
 - **WHEN** a tela `/cadastro/caldas` for carregada com sucesso

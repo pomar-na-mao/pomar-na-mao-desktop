@@ -1,4 +1,4 @@
-export const DEFAULT_INPUT_TYPES = [
+export const DEFAULT_STOCK_TYPES = [
   'INSECTICIDE',
   'ACARICIDE',
   'FUNGICIDE',
@@ -14,13 +14,23 @@ export const DEFAULT_INPUT_TYPES = [
   'GROWTH_REGULATOR',
 ] as const;
 
-export type DefaultInputType = (typeof DEFAULT_INPUT_TYPES)[number];
-export type InputType = DefaultInputType | string;
+export type DefaultStockType = (typeof DEFAULT_STOCK_TYPES)[number];
+export type StockType = DefaultStockType | string;
+export type StockUnit = 'Kg' | 'L' | 'm³';
 
-export interface InputItem {
+export const STOCK_UNIT_OPTIONS: Array<{
+  label: StockUnit;
+  value: StockUnit;
+}> = [
+  { label: 'Kg', value: 'Kg' },
+  { label: 'L', value: 'L' },
+  { label: 'm³', value: 'm³' },
+];
+
+export interface StockItem {
   id: string;
   name: string;
-  type: InputType;
+  type: StockType;
   active_ingredient: string | null;
   formulation: string | null;
   concentration: string | null;
@@ -34,23 +44,26 @@ export interface InputItem {
   safety_interval_days: number | null;
   label_dose: string | null;
   dose_unit: string | null;
+  quantity: number | null;
+  unit: StockUnit | null;
+  photo_object_path: string | null;
   observations: string | null;
   created_at: string;
   updated_at: string;
 }
 
-export type InputDraft = Omit<InputItem, 'id' | 'created_at' | 'updated_at'>;
+export type StockDraft = Omit<StockItem, 'id' | 'created_at' | 'updated_at'>;
 
-export type InputCreate = InputDraft & {
+export type StockCreate = StockDraft & {
   created_at: string;
   updated_at: string;
 };
 
-export type InputUpdate = InputDraft & {
+export type StockUpdate = StockDraft & {
   updated_at: string;
 };
 
-export const INPUT_TYPE_TRANSLATION_MAP: Record<string, string> = {
+export const STOCK_TYPE_TRANSLATION_MAP: Record<string, string> = {
   INSECTICIDE: 'Inseticida',
   ACARICIDE: 'Acaricida',
   FUNGICIDE: 'Fungicida',
@@ -66,19 +79,19 @@ export const INPUT_TYPE_TRANSLATION_MAP: Record<string, string> = {
   GROWTH_REGULATOR: 'Regulador de Crescimento',
 };
 
-export const INPUT_TYPE_LABELS: Record<string, string> = {
-  ...INPUT_TYPE_TRANSLATION_MAP,
+export const STOCK_TYPE_LABELS: Record<string, string> = {
+  ...STOCK_TYPE_TRANSLATION_MAP,
   CUPRIC: 'Cúprico / Cobre',
   BIOLOGICAL: 'Biológico',
 };
 
-export function inputTypeLabel(type: string | null | undefined): string {
+export function stockTypeLabel(type: string | null | undefined): string {
   if (!type) return 'Não especificado';
   const upper = type.toUpperCase().trim();
-  return INPUT_TYPE_TRANSLATION_MAP[upper] ?? INPUT_TYPE_LABELS[upper] ?? type;
+  return STOCK_TYPE_TRANSLATION_MAP[upper] ?? STOCK_TYPE_LABELS[upper] ?? type;
 }
 
-export function inputTypeBadgeStyle(type: string | null | undefined): {
+export function stockTypeBadgeStyle(type: string | null | undefined): {
   bg: string;
   text: string;
   border: string;

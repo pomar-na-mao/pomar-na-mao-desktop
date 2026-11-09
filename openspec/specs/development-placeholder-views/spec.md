@@ -9,7 +9,7 @@ Exposes planned registration and field notebook destinations before their comple
 The `Cadastro` submenu SHALL expose placeholder screens for infrastructure, machines, and inputs.
 
 #### Scenario: User opens a planned registration screen
-- **WHEN** the user navigates to `/cadastro/infraestrutura`, `/cadastro/maquinas`, or `/cadastro/insumos`
+- **WHEN** the user navigates to `/cadastro/infraestrutura`, `/cadastro/maquinas`, or `/cadastro/estoque`
 - **THEN** the corresponding view component MUST render `Em desenvolvimento`.
 
 ### Requirement: Field activities exposes completed operations

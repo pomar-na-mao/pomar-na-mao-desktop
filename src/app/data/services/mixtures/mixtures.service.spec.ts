@@ -41,7 +41,7 @@ describe('MixturesService', () => {
     const result = await service.findAll();
 
     expect(mockFrom).toHaveBeenCalledWith('mixtures');
-    expect(select).toHaveBeenCalledWith('*, inputs:mixture_inputs(*, input:inputs(*))', { count: 'exact' });
+    expect(select).toHaveBeenCalledWith('*, inputs:mixture_inputs(*, input:stocks(*))', { count: 'exact' });
     expect(order).toHaveBeenCalledWith('updated_at', { ascending: false });
     expect(result).toBe(mockResponse);
   });
