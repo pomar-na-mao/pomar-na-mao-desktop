@@ -66,15 +66,11 @@ describe('Sidebar', () => {
     );
   });
 
-  it('shows Visão das operações as a single navigation item', () => {
+  it('does not contain Visão das operações in navigation items', () => {
     const sidebar = new Sidebar();
 
-    expect(sidebar.menuItems).toContainEqual(
-      expect.objectContaining({
-        label: 'Visão das operações',
-        path: '/visao-das-operacoes',
-      }),
-    );
+    expect(sidebar.menuItems.find((item) => item.label === 'Visão das operações')).toBeUndefined();
+    expect(sidebar.menuItems.find((item) => item.path === '/visao-das-operacoes')).toBeUndefined();
     expect(sidebar.menuItems.find((item) => item.path === '/operacoes')).toBeUndefined();
     expect(sidebar.menuItems.find((item) => item.path === '/mipd')).toBeUndefined();
   });

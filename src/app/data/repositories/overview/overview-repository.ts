@@ -9,7 +9,6 @@ import type {
 } from '../../../domain/models/overview.model';
 import type { Region } from '../../../domain/models/regions.model';
 import { buildOrderedMapBoundary } from '../../../shared/utils/ordered-map-boundary';
-import { OperationsService } from '../../services/operations/operations-service';
 import { OverviewService } from '../../services/overview/overview-service';
 import { RegionsRepository } from '../regions/regions-repository';
 import { ZonesRepository } from '../zones/zones-repository';
@@ -38,7 +37,6 @@ export class OverviewRepository {
   private overviewService = inject(OverviewService);
   private regionsRepository = inject(RegionsRepository);
   private zonesRepository = inject(ZonesRepository);
-  private operationsService = inject(OperationsService);
 
   public async getOverviewData(
     filters: OverviewSnapshotFilters,
@@ -122,15 +120,11 @@ export class OverviewRepository {
     endDate?: string | null,
     zoneId?: string | null,
   ): Promise<InspectionOperationResponse[]> {
-    const res = await this.operationsService.getInspectionOperations(
+    return await this.overviewService.getInspectionOperations(
       startDate,
       endDate,
       zoneId,
     );
-    if (res.error) {
-      throw res.error;
-    }
-    return res.data ?? [];
   }
 
   public async getAnnotationOperations(
@@ -138,14 +132,10 @@ export class OverviewRepository {
     endDate?: string | null,
     zoneId?: string | null,
   ): Promise<InspectionOperationResponse[]> {
-    const res = await this.operationsService.getAnnotationOperations(
+    return await this.overviewService.getAnnotationOperations(
       startDate,
       endDate,
       zoneId,
     );
-    if (res.error) {
-      throw res.error;
-    }
-    return res.data ?? [];
   }
 }

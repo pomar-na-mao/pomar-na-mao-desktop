@@ -113,25 +113,6 @@ export class AppMenu implements OnInit {
             routerLink: ['/atividades-de-campo'],
           },
           {
-            label: 'Visão das operações',
-            visible: true,
-            icon: 'pi pi-fw pi-hammer',
-            items: [
-              {
-                label: 'Operações',
-                visible: true,
-                icon: 'pi pi-fw pi-briefcase',
-                routerLink: ['/visao-das-operacoes/operacoes'],
-              },
-              {
-                label: 'Mipd',
-                visible: true,
-                icon: 'pi pi-fw pi-shield',
-                routerLink: ['/visao-das-operacoes/mipd'],
-              },
-            ],
-          },
-          {
             label: 'Dados básicos',
             visible: true,
             icon: 'pi pi-fw pi-receipt',

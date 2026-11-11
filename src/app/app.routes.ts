@@ -43,24 +43,6 @@ export const ROUTES: Routes = [
         ]
       },
       {
-        path: 'visao-das-operacoes',
-        children: [
-          {
-            path: '',
-            redirectTo: 'operacoes',
-            pathMatch: 'full'
-          },
-          {
-            path: 'operacoes',
-            loadComponent: () => import('./ui/views/operations/operations').then(m => m.Operations)
-          },
-          {
-            path: 'mipd',
-            loadComponent: () => import('./ui/views/mipd/mipd').then(m => m.Mipd)
-          }
-        ]
-      },
-      {
         path: 'dados-basicos',
         loadComponent: () => import('./ui/views/basic-data/basic-data').then(m => m.BasicData)
       },

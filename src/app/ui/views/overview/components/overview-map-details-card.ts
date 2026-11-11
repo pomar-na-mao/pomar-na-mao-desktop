@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import type { InspectionPlantChange } from '../../../../domain/models/operations.model';
+import type { InspectionPlantChange } from '../../../../domain/models/overview.model';
 import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe';
 import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
 

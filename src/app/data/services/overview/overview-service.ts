@@ -1,6 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import type { PostgrestResponse } from '@supabase/supabase-js';
 import type {
+  InspectionOperationResponse,
+  MipdMarking,
   OverviewBoundaryPoint,
   OverviewDiseaseOption,
   OverviewFilterOptions,
@@ -11,7 +13,6 @@ import type {
   OverviewVariety,
   OverviewZone,
 } from '../../../domain/models/overview.model';
-import type { MipdMarking } from '../../../domain/models/mipd.model';
 import { normalizeOrderedBoundaryPoints } from '../../../shared/utils/ordered-map-boundary';
 import { injectSupabase } from '../supabase';
 import {
@@ -211,6 +212,72 @@ export class OverviewService {
           throw error;
         }
         return (data ?? []) as MipdMarking[];
+      },
+    );
+  }
+
+  public async getInspectionOperations(
+    startDate?: string | null,
+    endDate?: string | null,
+    zoneId?: string | null,
+  ): Promise<InspectionOperationResponse[]> {
+    const args: { p_start_date?: string; p_end_date?: string; p_zone_id?: string } = {};
+    if (startDate) args.p_start_date = startDate;
+    if (endDate) args.p_end_date = endDate;
+    if (zoneId) args.p_zone_id = zoneId;
+
+    return this.requestCache.read<InspectionOperationResponse[]>(
+      {
+        namespace: [
+          SUPABASE_CACHE_NAMESPACES.operations,
+          SUPABASE_CACHE_NAMESPACES.overview,
+        ],
+        operation: 'overview.getInspectionOperations',
+        params: args,
+        policy: { mode: 'ttl', ttlMs: 15_000 },
+      },
+      async () => {
+        const { data, error } = await this.supabase.rpc(
+          'get_inspection_operations',
+          args,
+        );
+        if (error) {
+          throw error;
+        }
+        return (data ?? []) as InspectionOperationResponse[];
+      },
+    );
+  }
+
+  public async getAnnotationOperations(
+    startDate?: string | null,
+    endDate?: string | null,
+    zoneId?: string | null,
+  ): Promise<InspectionOperationResponse[]> {
+    const args: { p_start_date?: string; p_end_date?: string; p_zone_id?: string } = {};
+    if (startDate) args.p_start_date = startDate;
+    if (endDate) args.p_end_date = endDate;
+    if (zoneId) args.p_zone_id = zoneId;
+
+    return this.requestCache.read<InspectionOperationResponse[]>(
+      {
+        namespace: [
+          SUPABASE_CACHE_NAMESPACES.operations,
+          SUPABASE_CACHE_NAMESPACES.overview,
+        ],
+        operation: 'overview.getAnnotationOperations',
+        params: args,
+        policy: { mode: 'ttl', ttlMs: 15_000 },
+      },
+      async () => {
+        const { data, error } = await this.supabase.rpc(
+          'get_annotation_operations',
+          args,
+        );
+        if (error) {
+          throw error;
+        }
+        return (data ?? []) as InspectionOperationResponse[];
       },
     );
   }

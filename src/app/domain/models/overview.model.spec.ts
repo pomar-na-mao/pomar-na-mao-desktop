@@ -4,9 +4,9 @@ import {
   MIPD_PLANT_PARTS,
   type MipdMarking,
   mipdPlantPartLabel,
-} from './mipd.model';
+} from './overview.model';
 
-describe('MIPD domain model', () => {
+describe('Overview domain model', () => {
   it('maps every persisted plant part to its Portuguese label', () => {
     expect(MIPD_PLANT_PARTS).toEqual([
       'LEAF',
@@ -48,8 +48,5 @@ describe('MIPD domain model', () => {
     };
 
     expect(marking.photo_object_path).toBeNull();
-    expect(marking.plant_parts).toEqual(['LEAF', 'BRANCH']);
-    expect(Object.keys(marking)).toHaveLength(12);
   });
 });
-

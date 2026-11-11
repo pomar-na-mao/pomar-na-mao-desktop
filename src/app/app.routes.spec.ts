@@ -13,7 +13,6 @@ describe('ROUTES', () => {
         'cadastro',
         'atividades-de-campo',
         'registrar',
-        'visao-das-operacoes',
         'dados-basicos',
         'zoneamento',
         'configuracoes',
@@ -57,34 +56,6 @@ describe('ROUTES', () => {
     expect(fieldActivitiesRoute?.loadComponent).toBeDefined();
     const loadFn = fieldActivitiesRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
-  });
-
-  it('should group operations and MIPD under /visao-das-operacoes', async () => {
-    const mainRoute = ROUTES.find((route) => route.path === '');
-    const operationsViewRoute = mainRoute?.children?.find(
-      (route) => route.path === 'visao-das-operacoes',
-    );
-    const childPaths = operationsViewRoute?.children?.map(
-      (route) => route.path,
-    );
-
-    expect(operationsViewRoute?.loadComponent).toBeUndefined();
-    expect(childPaths).toEqual(['', 'operacoes', 'mipd']);
-    expect(operationsViewRoute?.children?.[0]?.redirectTo).toBe('operacoes');
-
-    const mipdRoute = operationsViewRoute?.children?.find(
-      (route) => route.path === 'mipd',
-    );
-    expect(mipdRoute?.loadComponent).toBeDefined();
-    const loadFn = mipdRoute?.loadComponent as () => Promise<unknown>;
-    await expect(loadFn()).resolves.toBeDefined();
-
-    const operationsRoute = operationsViewRoute?.children?.find(
-      (route) => route.path === 'operacoes',
-    );
-    expect(operationsRoute?.loadComponent).toBeDefined();
-    const loadOperations = operationsRoute?.loadComponent as () => Promise<unknown>;
-    await expect(loadOperations()).resolves.toBeDefined();
   });
 
   it('should redirect legacy atribuicao-zonas to zoneamento', () => {

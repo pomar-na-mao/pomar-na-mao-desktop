@@ -78,7 +78,7 @@ describe('AppMenu', () => {
     });
   });
 
-  it('groups Operações and Mipd under Visão das operações', () => {
+  it('does not contain Visão das operações or its child routes', () => {
     const fixture = TestBed.createComponent(AppMenu);
     fixture.detectChanges();
 
@@ -87,13 +87,9 @@ describe('AppMenu', () => {
       (item) => item.label === 'Visão das operações',
     );
 
-    expect(operationsView).toMatchObject({
-      icon: 'pi pi-fw pi-hammer',
-    });
-    expect(operationsView?.items?.map((item) => item.routerLink?.[0])).toEqual([
-      '/visao-das-operacoes/operacoes',
-      '/visao-das-operacoes/mipd',
-    ]);
+    expect(operationsView).toBeUndefined();
+    expect(items.find((item) => item.routerLink?.[0] === '/visao-das-operacoes/operacoes')).toBeUndefined();
+    expect(items.find((item) => item.routerLink?.[0] === '/visao-das-operacoes/mipd')).toBeUndefined();
     expect(items.find((item) => item.routerLink?.[0] === '/operacoes')).toBeUndefined();
     expect(items.find((item) => item.routerLink?.[0] === '/mipd')).toBeUndefined();
   });
