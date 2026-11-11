@@ -60,7 +60,18 @@ describe('AppMenu', () => {
     const registrationIndex = items.findIndex(
       (item) => item.label === 'Cadastro',
     );
-    expect(items[registrationIndex + 1]).toMatchObject({
+    const registerItem = items[registrationIndex + 1];
+    expect(registerItem).toMatchObject({
+      label: 'Registrar',
+      icon: 'pi pi-fw pi-pencil',
+    });
+    expect(registerItem.items).toHaveLength(1);
+    expect(registerItem.items?.[0]).toMatchObject({
+      label: 'Ocorrências',
+      icon: 'pi pi-fw pi-exclamation-circle',
+      routerLink: ['/registrar/ocorrencias'],
+    });
+    expect(items[registrationIndex + 2]).toMatchObject({
       label: 'Atividades de campo',
       icon: 'pi pi-fw pi-book',
       routerLink: ['/atividades-de-campo'],

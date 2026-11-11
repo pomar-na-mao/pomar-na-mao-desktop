@@ -94,6 +94,19 @@ export class AppMenu implements OnInit {
             ],
           },
           {
+            label: 'Registrar',
+            visible: true,
+            icon: 'pi pi-fw pi-pencil',
+            items: [
+              {
+                label: 'Ocorrências',
+                visible: true,
+                icon: 'pi pi-fw pi-exclamation-circle',
+                routerLink: ['/registrar/ocorrencias'],
+              },
+            ],
+          },
+          {
             label: 'Atividades de campo',
             visible: true,
             icon: 'pi pi-fw pi-book',

@@ -12,6 +12,7 @@ describe('ROUTES', () => {
         'visao-geral',
         'cadastro',
         'atividades-de-campo',
+        'registrar',
         'visao-das-operacoes',
         'dados-basicos',
         'zoneamento',
@@ -19,6 +20,21 @@ describe('ROUTES', () => {
         'usuarios',
       ]),
     );
+  });
+
+  it('should lazy-load polygon occurrences under /registrar/ocorrencias', async () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const registerRoute = mainRoute?.children?.find((route) => route.path === 'registrar');
+    const occurrencesRoute = registerRoute?.children?.find(
+      (route) => route.path === 'ocorrencias',
+    );
+
+    expect(occurrencesRoute?.loadComponent).toBeDefined();
+    const loadFn = occurrencesRoute?.loadComponent as () => Promise<unknown>;
+    await expect(loadFn()).resolves.toBeDefined();
+
+    const basicDataRoute = mainRoute?.children?.find((route) => route.path === 'dados-basicos');
+    expect(basicDataRoute?.loadComponent).toBeDefined();
   });
 
   it('should lazy-load overview as a root authenticated route', async () => {

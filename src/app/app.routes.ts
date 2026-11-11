@@ -34,6 +34,15 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/completed-operations/completed-operations').then(m => m.CompletedOperations)
       },
       {
+        path: 'registrar',
+        children: [
+          {
+            path: 'ocorrencias',
+            loadComponent: () => import('./ui/views/polygon-occurrences/polygon-occurrences').then(m => m.PolygonOccurrences)
+          }
+        ]
+      },
+      {
         path: 'visao-das-operacoes',
         children: [
           {

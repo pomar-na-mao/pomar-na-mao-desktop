@@ -20,14 +20,49 @@ describe('Sidebar', () => {
     );
   });
 
-  it('shows Atividades de campo immediately below Cadastro', () => {
+  it('shows Registrar immediately below Cadastro with Ocorrências as a child', () => {
     const sidebar = new Sidebar();
 
     expect(sidebar.menuItems[2]).toEqual(
       expect.objectContaining({
+        label: 'Registrar',
+        items: [
+          expect.objectContaining({
+            label: 'Ocorrências',
+            path: '/registrar/ocorrencias',
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('shows Atividades de campo immediately below Registrar', () => {
+    const sidebar = new Sidebar();
+
+    expect(sidebar.menuItems[3]).toEqual(
+      expect.objectContaining({
         label: 'Atividades de campo',
         path: '/atividades-de-campo',
       }),
+    );
+  });
+
+  it('expands Registrar and renders the Ocorrências link', () => {
+    TestBed.configureTestingModule({ imports: [Sidebar], providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(Sidebar);
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const registerButton = Array.from(root.querySelectorAll('button')).find(
+      (button) => button.textContent?.includes('Registrar'),
+    );
+
+    expect(registerButton?.getAttribute('aria-expanded')).toBe('false');
+    registerButton?.click();
+    fixture.detectChanges();
+
+    expect(registerButton?.getAttribute('aria-expanded')).toBe('true');
+    expect(root.querySelector('a[href="/registrar/ocorrencias"]')?.textContent).toContain(
+      'Ocorrências',
     );
   });
 
