@@ -1,6 +1,12 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type {
+  InspectionEntry,
+  InspectionOperationResponse,
+  InspectionPlant,
+  OverviewOperationType,
+} from '../../../../domain/models/overview.model';
 import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
 import { OverviewMap } from './overview-map';
 
@@ -8,9 +14,16 @@ describe('OverviewMap', () => {
   let fixture: ComponentFixture<OverviewMap>;
   const viewModel = {
     isMapFullscreen: signal(false),
+    selectedInspectionDetails: signal<InspectionOperationResponse | null>(null),
+    selectedInspectionPlant: signal<InspectionPlant | null>(null),
+    inspectionEntriesForPlant: signal<InspectionEntry[]>([]),
+    currentInspectionIndex: signal(0),
+    selectedOperationType: signal<OverviewOperationType>(''),
     initMap: vi.fn(),
+    destroyMap: vi.fn(),
     setMapFullscreen: vi.fn(),
     invalidateMapSize: vi.fn(),
+    clearInspectionSelection: vi.fn(),
   };
 
   beforeEach(async () => {

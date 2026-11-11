@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import type { PostgrestResponse } from '@supabase/supabase-js';
 import type {
   OverviewBoundaryPoint,
+  OverviewDiseaseOption,
   OverviewFilterOptions,
   OverviewOccurrence,
   OverviewPlant,
@@ -10,6 +11,7 @@ import type {
   OverviewVariety,
   OverviewZone,
 } from '../../../domain/models/overview.model';
+import type { MipdMarking } from '../../../domain/models/mipd.model';
 import { normalizeOrderedBoundaryPoints } from '../../../shared/utils/ordered-map-boundary';
 import { injectSupabase } from '../supabase';
 import {
@@ -31,6 +33,7 @@ type ZoneOptionRow = {
 type OccurrenceOptionRow = {
   id: string;
   name: string;
+  category?: string | null;
 };
 
 type PlantMapRow = {
@@ -140,7 +143,7 @@ export class OverviewService {
         () =>
           this.supabase
             .from('occurrence_types')
-            .select('id,name')
+            .select('id,name,category')
             .order('name'),
       ),
     ]);
@@ -151,14 +154,65 @@ export class OverviewService {
       polygon: (row.polygon as GeoJSON.Geometry) ?? null,
     }));
 
-    const occurrences: OverviewOccurrence[] = (
-      occurrencesResult.data ?? []
-    ).map((row) => ({
-      id: row.id as string,
-      name: row.name as string,
-    }));
+    const allOccurrences = occurrencesResult.data ?? [];
+    const occurrences: OverviewOccurrence[] = allOccurrences
+      .filter((row) => row.category !== 'PEST_DISEASE')
+      .map((row) => ({
+        id: row.id as string,
+        name: row.name as string,
+      }));
 
-    return { zones, occurrences };
+    const diseases: OverviewDiseaseOption[] = allOccurrences
+      .filter((row) => row.category === 'PEST_DISEASE')
+      .map((row) => ({
+        id: row.id as string,
+        name: row.name as string,
+      }));
+
+    return { zones, occurrences, diseases };
+  }
+
+  public async getMipdMarkings(
+    occurrenceTypeIds?: string[] | null,
+    startDate?: string | null,
+    endDate?: string | null,
+    zoneId?: string | null,
+  ): Promise<MipdMarking[]> {
+    const args: {
+      p_start_date?: string;
+      p_end_date?: string;
+      p_occurrence_type_ids?: string[];
+      p_zone_id?: string;
+    } = {};
+
+    if (startDate) args.p_start_date = startDate;
+    if (endDate) args.p_end_date = endDate;
+    if (occurrenceTypeIds && occurrenceTypeIds.length > 0) {
+      args.p_occurrence_type_ids = occurrenceTypeIds;
+    }
+    if (zoneId) args.p_zone_id = zoneId;
+
+    return this.requestCache.read<MipdMarking[]>(
+      {
+        namespace: [
+          SUPABASE_CACHE_NAMESPACES.operations,
+          SUPABASE_CACHE_NAMESPACES.overview,
+        ],
+        operation: 'overview.getMipdMarkings',
+        params: args,
+        policy: { mode: 'ttl', ttlMs: 15_000 },
+      },
+      async () => {
+        const { data, error } = await this.supabase.rpc(
+          'get_mipd_operations',
+          args,
+        );
+        if (error) {
+          throw error;
+        }
+        return (data ?? []) as MipdMarking[];
+      },
+    );
   }
 
   public async getOpenOccurrences(): Promise<

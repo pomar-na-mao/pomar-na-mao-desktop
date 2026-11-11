@@ -12,6 +12,10 @@ describe('OverviewViewModel', () => {
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
   const getZoneRegions = vi.fn();
+  const loadAllColoredZones = vi.fn();
+  const getMipdMarkings = vi.fn();
+  const getInspectionOperations = vi.fn();
+  const getAnnotationOperations = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -83,6 +87,18 @@ describe('OverviewViewModel', () => {
       },
     ]);
 
+    loadAllColoredZones.mockResolvedValue([
+      {
+        id: 'z1',
+        name: 'Zona 1',
+        color: '#2563eb',
+        boundary: null,
+      },
+    ]);
+    getMipdMarkings.mockResolvedValue([]);
+    getInspectionOperations.mockResolvedValue([]);
+    getAnnotationOperations.mockResolvedValue([]);
+
     TestBed.configureTestingModule({
       providers: [
         OverviewViewModel,
@@ -93,6 +109,10 @@ describe('OverviewViewModel', () => {
             getFilterOptions,
             getOpenOccurrences,
             getZoneRegions,
+            loadAllColoredZones,
+            getMipdMarkings,
+            getInspectionOperations,
+            getAnnotationOperations,
           },
         },
       ],
@@ -381,6 +401,85 @@ describe('OverviewViewModel', () => {
       plantingStartDate: '2026-01-01',
       plantingEndDate: '2026-02-01',
     });
+  });
+
+  it('should keep all plants in filteredPlants and highlight matching ones in activeOccurrencePlantIds when selectedOccurrenceIds is set', async () => {
+    await viewModel.loadOverview();
+    expect(viewModel.filteredPlants().length).toBe(2);
+
+    viewModel.selectedOccurrenceIds.set(['o1']);
+    expect(viewModel.filteredPlants().length).toBe(2);
+    expect(viewModel.activeOccurrencePlantIds().has('p1')).toBe(true);
+    expect(viewModel.activeOccurrencePlantIds().has('p2')).toBe(false);
+  });
+
+  it('should fetch MIPD markings when selectedDiseaseIds is set', async () => {
+    getMipdMarkings.mockResolvedValueOnce([
+      {
+        operation_id: 'op1',
+        marking_id: 'm1',
+        started_at: '2026-05-01',
+        observed_at: '2026-05-01',
+        plant_id: 'p1',
+        latitude: -21.1,
+        longitude: -47.1,
+        zone_name: 'Zona 1',
+        occurrence_type_id: 'd1',
+        occurrence_type_name: 'Cancro Cítrico',
+        plant_parts: ['LEAF'],
+        photo_object_path: null,
+      },
+    ]);
+
+    viewModel.selectedDiseaseIds.set(['d1']);
+    await waitForAsyncEffects();
+
+    expect(getMipdMarkings).toHaveBeenCalledWith(['d1'], null, null, null);
+    expect(viewModel.mipdMarkings().length).toBe(1);
+    expect(viewModel.mipdMarkings()[0].occurrence_type_name).toBe('Cancro Cítrico');
+  });
+
+  it('should fetch inspection operations when selectedOperationType is inspecao', async () => {
+    getInspectionOperations.mockResolvedValueOnce([
+      {
+        operation_id: 'op-insp',
+        started_at: '2026-05-01',
+        finished_at: null,
+        notes: 'Inspecionado',
+        zone_name: 'Zona 1',
+        plants: [
+          {
+            plant_id: 'p1',
+            latitude: -21.1,
+            longitude: -47.1,
+            occurrences: [],
+          },
+        ],
+      },
+    ]);
+
+    viewModel.operationStartDate.set('2026-05-01');
+    viewModel.operationEndDate.set('2026-05-10');
+    viewModel.selectedOperationType.set('inspecao');
+    await waitForAsyncEffects();
+
+    expect(getInspectionOperations).toHaveBeenCalledWith('2026-05-01', '2026-05-10', null);
+    expect(viewModel.inspectionOperations().length).toBe(1);
+  });
+
+  it('should reset all filters and clear selections when clearFilters is called', () => {
+    viewModel.filterPlantingStartDate.set('2026-01-01');
+    viewModel.selectedOccurrenceIds.set(['o1']);
+    viewModel.selectedDiseaseIds.set(['d1']);
+    viewModel.selectedOperationType.set('inspecao');
+
+    viewModel.clearFilters();
+
+    expect(viewModel.filterPlantingStartDate()).toBe('');
+    expect(viewModel.selectedOccurrenceIds()).toEqual([]);
+    expect(viewModel.selectedDiseaseIds()).toEqual([]);
+    expect(viewModel.selectedOperationType()).toBe('');
+    expect(viewModel.selectedInspectionDetails()).toBeNull();
   });
 });
 

@@ -1,8 +1,10 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
+  OverviewDiseaseOption,
   OverviewOccurrence,
+  OverviewOperationType,
   OverviewVariety,
   OverviewZone,
 } from '../../../../domain/models/overview.model';
@@ -15,13 +17,20 @@ describe('OverviewFiltersPanel', () => {
   let mockViewModel: {
     filterPlantingStartDate: ReturnType<typeof signal<string>>;
     filterPlantingEndDate: ReturnType<typeof signal<string>>;
-    filterZoneId: ReturnType<typeof signal<string | number>>;
-    filterOccurrenceId: ReturnType<typeof signal<string | number>>;
+    filterZoneId: ReturnType<typeof signal<string>>;
+    filterOccurrenceId: ReturnType<typeof signal<string>>;
     filterPlantStatus: ReturnType<typeof signal<string>>;
     filterVarietyId: ReturnType<typeof signal<string | number>>;
+    selectedOccurrenceIds: ReturnType<typeof signal<string[]>>;
+    selectedDiseaseIds: ReturnType<typeof signal<string[]>>;
+    operationStartDate: ReturnType<typeof signal<string>>;
+    operationEndDate: ReturnType<typeof signal<string>>;
+    selectedOperationType: ReturnType<typeof signal<OverviewOperationType>>;
     availableZones: ReturnType<typeof signal<OverviewZone[]>>;
     availableOccurrences: ReturnType<typeof signal<OverviewOccurrence[]>>;
+    availableDiseases: ReturnType<typeof signal<OverviewDiseaseOption[]>>;
     availableVarieties: ReturnType<typeof signal<OverviewVariety[]>>;
+    clearFilters: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
@@ -32,9 +41,16 @@ describe('OverviewFiltersPanel', () => {
       filterOccurrenceId: signal('occ-1'),
       filterPlantStatus: signal('alive'),
       filterVarietyId: signal(1),
+      selectedOccurrenceIds: signal<string[]>(['occ-1']),
+      selectedDiseaseIds: signal<string[]>(['dis-1']),
+      operationStartDate: signal('2026-05-01'),
+      operationEndDate: signal('2026-05-30'),
+      selectedOperationType: signal<OverviewOperationType>('inspecao'),
       availableZones: signal<OverviewZone[]>([{ id: 'z1', name: 'Zona 1' } as unknown as OverviewZone]),
       availableOccurrences: signal<OverviewOccurrence[]>([{ id: 'o1', name: 'Praga 1' } as unknown as OverviewOccurrence]),
+      availableDiseases: signal<OverviewDiseaseOption[]>([{ id: 'd1', name: 'Doenca 1' }]),
       availableVarieties: signal<OverviewVariety[]>([{ id: 1, name: 'Gala' } as unknown as OverviewVariety]),
+      clearFilters: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -58,21 +74,30 @@ describe('OverviewFiltersPanel', () => {
 
   it('should render header, date pickers and select dropdowns', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Pomar');
-    expect(compiled.textContent).toContain('Data de Plantio');
-    expect(compiled.querySelectorAll('p-datepicker')).toHaveLength(2);
-    expect(compiled.querySelectorAll('app-select')).toHaveLength(4);
+    expect(compiled.textContent).toContain('Visão Geral');
+    expect(compiled.textContent).toContain('Período da Operação');
+    expect(compiled.querySelectorAll('p-datepicker')).toHaveLength(4);
+    expect(compiled.querySelectorAll('app-select')).toHaveLength(6);
   });
 
-  it('should provide options for zones, occurrences, status and varieties', () => {
+  it('should provide options for zones, occurrences, diseases, operations, status and varieties', () => {
     expect(component.zoneOptions).toEqual([
-      { label: 'Todas as Zonas', value: '' },
+      { label: 'Todos os Talhões', value: '' },
       { label: 'Zona 1', value: 'z1' },
     ]);
 
     expect(component.occurrenceOptions).toEqual([
-      { label: 'Todas as Ocorrências', value: '' },
       { label: 'Praga 1', value: 'o1' },
+    ]);
+
+    expect(component.diseaseOptions).toEqual([
+      { label: 'Doenca 1', value: 'd1' },
+    ]);
+
+    expect(component.operationOptions).toEqual([
+      { label: 'Nenhuma / Não filtrar', value: '' },
+      { label: 'Inspeção Manual', value: 'inspecao' },
+      { label: 'Anotação / Ocorrência', value: 'ocorrencia' },
     ]);
 
     expect(component.plantStatusOptions).toEqual([
@@ -83,18 +108,52 @@ describe('OverviewFiltersPanel', () => {
 
     expect(component.varietyOptions).toEqual([
       { label: 'Todas as Variedades', value: '' },
-      { label: 'Gala', value: 1 },
+      { label: 'Gala', value: '1' },
     ]);
   });
 
   it('should clear all filters when clearFilters is called', () => {
     component.clearFilters();
+    expect(mockViewModel.clearFilters).toHaveBeenCalled();
+  });
 
-    expect(mockViewModel.filterPlantingStartDate()).toBe('');
-    expect(mockViewModel.filterPlantingEndDate()).toBe('');
-    expect(mockViewModel.filterZoneId()).toBe('');
-    expect(mockViewModel.filterOccurrenceId()).toBe('');
-    expect(mockViewModel.filterPlantStatus()).toBe('');
-    expect(mockViewModel.filterVarietyId()).toBe('');
+  it('should focus end date picker when operation start date changes with value', () => {
+    const focusSpy = vi.spyOn(component, 'focusOperationEndDate');
+    component.onOperationStartDateChange('2026-06-15');
+
+    expect(mockViewModel.operationStartDate()).toBe('2026-06-15');
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('should not focus end date picker when operation start date is cleared', () => {
+    const focusSpy = vi.spyOn(component, 'focusOperationEndDate');
+    component.onOperationStartDateChange(null);
+
+    expect(mockViewModel.operationStartDate()).toBe('');
+    expect(focusSpy).not.toHaveBeenCalled();
+  });
+
+  it('should focus end date picker on select event', () => {
+    const focusSpy = vi.spyOn(component, 'focusOperationEndDate');
+    component.onOperationStartDateSelect();
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('should trigger focus on input nativeElement during focusOperationEndDate', async () => {
+    vi.useFakeTimers();
+    const mockFocus = vi.fn();
+    component.operationEndDatePicker = {
+      inputfieldViewChild: {
+        nativeElement: {
+          focus: mockFocus,
+        },
+      },
+    } as unknown as typeof component.operationEndDatePicker;
+
+    component.focusOperationEndDate();
+    vi.runAllTimers();
+
+    expect(mockFocus).toHaveBeenCalled();
+    vi.useRealTimers();
   });
 });

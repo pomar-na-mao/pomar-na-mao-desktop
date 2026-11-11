@@ -1,16 +1,17 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   inject,
   OnDestroy,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
+import { OverviewMapDetailsCard } from './overview-map-details-card';
 
 @Component({
   selector: 'app-overview-map',
-  imports: [ButtonModule],
+  imports: [ButtonModule, OverviewMapDetailsCard],
   styles: [
     `
       :host {
@@ -27,6 +28,9 @@ import { OverviewViewModel } from '../../../view-models/overview/overview.view-m
         id="overview-map"
         class="h-full w-full bg-slate-100 dark:bg-slate-900 dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)] transition-[filter]"
       ></div>
+
+      <!-- Floating Plant Inspection Details Card -->
+      <app-overview-map-details-card />
 
       <!-- Fullscreen button floating over map -->
       <p-button
@@ -51,6 +55,7 @@ export class OverviewMap implements AfterViewInit, OnDestroy {
   public ngOnDestroy(): void {
     document.body.style.overflow = '';
     document.body.classList.remove('map-fullscreen-active');
+    this.overviewViewModel.destroyMap();
   }
 
   public toggleFullscreen(): void {
