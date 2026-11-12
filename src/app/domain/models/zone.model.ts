@@ -33,4 +33,5 @@ export interface CreateZoneWithRegionsResult {
   zone_name: string;
   region_points_count: number;
   polygon: GeoJsonPolygon;
+  plants_updated_count?: number;
 }

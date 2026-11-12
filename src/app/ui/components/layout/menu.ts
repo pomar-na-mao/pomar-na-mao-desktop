@@ -50,6 +50,12 @@ export class AppMenu implements OnInit {
                 routerLink: ['/cadastro/propriedade'],
               },
               {
+                label: 'Demarcação zonas',
+                visible: true,
+                icon: 'pi pi-fw pi-map',
+                routerLink: ['/cadastro/zonas'],
+              },
+              {
                 label: 'Variedades',
                 visible: true,
                 icon: 'pi pi-fw pi-list',
@@ -61,13 +67,8 @@ export class AppMenu implements OnInit {
                 icon: 'pi pi-fw pi-exclamation-triangle',
                 routerLink: ['/cadastro/ocorrencias'],
               },
+
               {
-                label: 'Zonas',
-                visible: true,
-                icon: 'pi pi-fw pi-map',
-                routerLink: ['/cadastro/zonas'],
-              },
-               {
                 label: 'Estoque',
                 visible: true,
                 icon: 'pi pi-fw pi-box',

@@ -30,25 +30,22 @@ export default [
         (m) => m.ZoneMapManagement,
       ),
   },
+
   {
     path: 'estoque',
     loadComponent: () => import('../stock/stock').then((m) => m.Stock),
   },
   {
     path: 'caldas',
-    loadComponent: () =>
-      import('../mixtures/mixtures').then((m) => m.Mixtures),
+    loadComponent: () => import('../mixtures/mixtures').then((m) => m.Mixtures),
   },
   {
     path: 'maquinas',
-    loadComponent: () =>
-      import('../machines/machines').then((m) => m.Machines),
+    loadComponent: () => import('../machines/machines').then((m) => m.Machines),
   },
   {
     path: 'infraestrutura',
     loadComponent: () =>
-      import('../infrastructure/infrastructure').then(
-        (m) => m.Infrastructure,
-      ),
+      import('../infrastructure/infrastructure').then((m) => m.Infrastructure),
   },
 ] as Routes;

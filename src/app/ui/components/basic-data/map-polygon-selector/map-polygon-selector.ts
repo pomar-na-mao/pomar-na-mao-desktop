@@ -360,8 +360,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
     this._plants.forEach((plant) => {
       const hasZone = !!(plant.zone_id || plant.zoneId);
-      const strokeColor = this.plantColor ?? (hasZone ? '#047857' : '#059669');
-      const fillColor = this.plantFillColor ?? (hasZone ? '#10b981' : '#34d399');
+      const strokeColor = this.plantColor ?? (hasZone ? '#047857' : '#4b5563');
+      const fillColor = this.plantFillColor ?? (hasZone ? '#10b981' : '#9ca3af');
       const circle = L.circleMarker([plant.latitude, plant.longitude], {
         renderer: this.canvasRenderer,
         radius: 4,

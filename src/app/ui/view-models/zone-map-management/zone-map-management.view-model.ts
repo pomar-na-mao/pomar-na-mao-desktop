@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import type {
   GeoJsonPolygon,
@@ -54,8 +55,11 @@ export class ZoneMapManagementViewModel {
   private zonesRepository = inject(ZonesRepository);
   private regionsRepository = inject(RegionsRepository);
   private farmBoundaryService = inject(FarmBoundaryService);
+  private zoneAssignmentRepository = inject(ZoneAssignmentRepository);
   private loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
+
+  public plants = this.zoneAssignmentRepository.allPlants;
 
   public isLoading = signal(false);
   public zonesLoadFailed = signal(false);
@@ -209,6 +213,7 @@ export class ZoneMapManagementViewModel {
       const [zonesResult, regionsResult] = await Promise.all([
         this.zonesRepository.findAll(),
         this.regionsRepository.findAll(),
+        this.zoneAssignmentRepository.loadAllPlants(),
       ]);
 
       if (zonesResult.error) {
@@ -363,12 +368,20 @@ export class ZoneMapManagementViewModel {
       await Promise.all([
         this.zonesRepository.findAll(),
         this.regionsRepository.findAll(),
+        this.zoneAssignmentRepository.loadAllPlants(),
       ]);
 
       this.resetFormAndPolygon();
       this.showExistingZonePolygons.set(true);
       this.savedZoneFocusPolygon.set(this.toPolygonCoordinates(data.polygon));
-      this.messageService.success('Zona criada com sucesso');
+      const plantsCount = data.plants_updated_count ?? 0;
+      if (plantsCount > 0) {
+        this.messageService.success(
+          `Zona criada com sucesso! ${plantsCount} planta(s) vinculada(s).`,
+        );
+      } else {
+        this.messageService.success('Zona criada com sucesso');
+      }
     } finally {
       this.loadingService.hide();
       this.isSaving.set(false);
