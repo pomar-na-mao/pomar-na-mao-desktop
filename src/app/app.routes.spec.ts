@@ -55,7 +55,7 @@ describe('ROUTES', () => {
     await expect(loadFn()).resolves.toBeDefined();
   });
 
-  it('should lazy-load the Orchard shell with child routes for /cadastro', async () => {
+  it('should lazy-load the Registration shell with child routes for /cadastro', async () => {
     const mainRoute = ROUTES.find((route) => route.path === '');
     const registrationRoute = mainRoute?.children?.find(
       (route) => route.path === 'cadastro',

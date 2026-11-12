@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-orchard',
+  selector: 'app-registration',
   standalone: true,
   imports: [RouterModule],
   template: `
@@ -12,4 +12,4 @@ import { RouterModule } from '@angular/router';
   `,
   changeDetection: ChangeDetectionStrategy.Eager,
 })
-export class Orchard {}
+export class Registration {}

@@ -17,11 +17,11 @@ export const ROUTES: Routes = [
       },
       {
         path: 'cadastro',
-        loadComponent: () => import('./ui/views/orchard/orchard').then(m => m.Orchard),
+        loadComponent: () => import('./ui/views/registration/registration').then(m => m.Registration),
         children: [
           {
             path: '',
-            loadChildren: () => import('./ui/views/orchard/orchard.routes')
+            loadChildren: () => import('./ui/views/registration/registration.routes')
           }
         ]
       },

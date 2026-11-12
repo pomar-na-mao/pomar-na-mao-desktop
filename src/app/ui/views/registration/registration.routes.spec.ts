@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import routes from './orchard.routes';
+import routes from './registration.routes';
 
-describe('Orchard routes', () => {
+describe('Registration routes', () => {
   it('should redirect /cadastro to the overview route', () => {
     const defaultRoute = routes.find((route) => route.path === '');
 
@@ -13,9 +13,9 @@ describe('Orchard routes', () => {
     expect(routes.map((route) => route.path)).toEqual([
       '',
       'propriedade',
+      'zonas',
       'variedades',
       'ocorrencias',
-      'zonas',
       'estoque',
       'caldas',
       'maquinas',

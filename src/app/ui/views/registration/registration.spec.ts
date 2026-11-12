@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Orchard } from './orchard';
+import { Registration } from './registration';
 
-describe('Orchard Component', () => {
-  let fixture: ComponentFixture<Orchard>;
-  let component: Orchard;
+describe('Registration Component', () => {
+  let fixture: ComponentFixture<Registration>;
+  let component: Registration;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Orchard],
+      imports: [Registration],
       providers: [provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Orchard);
+    fixture = TestBed.createComponent(Registration);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
