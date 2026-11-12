@@ -4,6 +4,8 @@ import type {
   PostgrestSingleResponse,
 } from '@supabase/supabase-js';
 import type {
+  CreateVarietyWithPlantsPayload,
+  CreateVarietyWithPlantsResult,
   Variety,
   VarietyCreate,
   VarietyDraft,
@@ -18,6 +20,9 @@ import {
 export interface IVarietiesService {
   findAll(): Promise<PostgrestResponse<Variety>>;
   create(payload: VarietyDraft): Promise<PostgrestSingleResponse<Variety>>;
+  createWithPlants(
+    payload: CreateVarietyWithPlantsPayload,
+  ): Promise<{ data: CreateVarietyWithPlantsResult | null; error: unknown }>;
   update(
     id: number,
     payload: VarietyDraft,
@@ -65,6 +70,56 @@ export class VarietiesService implements IVarietiesService {
 
     this.invalidateReadsWhenSuccessful(response.error);
     return response;
+  }
+
+  public async createWithPlants(
+    payload: CreateVarietyWithPlantsPayload,
+  ): Promise<{ data: CreateVarietyWithPlantsResult | null; error: unknown }> {
+    const { data, error } = await this.supabase.rpc(
+      'create_variety_with_plants',
+      {
+        p_name: payload.name,
+        p_description: payload.description ?? null,
+        p_polygon_geojson: payload.polygonGeojson as unknown as never,
+      },
+    );
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    const row = (Array.isArray(data) ? data[0] : data) as
+      | {
+          variety_id: number | string;
+          variety_name: string;
+          variety_description: string | null;
+          created_at: string;
+          updated_at: string;
+          plants_updated_count: number;
+        }
+      | null
+      | undefined;
+
+    if (!row) {
+      return {
+        data: null,
+        error: new Error('Nenhum dado retornado ao criar variedade com plantas.'),
+      };
+    }
+
+    const result: CreateVarietyWithPlantsResult = {
+      variety: {
+        id: Number(row.variety_id),
+        name: String(row.variety_name),
+        description: (row.variety_description ?? null) as string | null,
+        created_at: String(row.created_at),
+        updated_at: String(row.updated_at),
+      },
+      plants_updated_count: Number(row.plants_updated_count ?? 0),
+    };
+
+    this.invalidateReadsWhenSuccessful(null);
+    return { data: result, error: null };
   }
 
   public async update(

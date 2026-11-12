@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -11,14 +12,12 @@ import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
-import { VarietyExcelService } from '../../../data/services/variety-excel/variety-excel.service';
-import { MessageService } from '../../../data/services/message/message.service';
+import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
+import type { PolygonSelection } from '../../../domain/models/basic-data';
 import type { Variety } from '../../../domain/models/variety.model';
 import { VarietiesViewModel } from '../../view-models/varieties/varieties.view-model';
 
@@ -31,34 +30,49 @@ import { VarietiesViewModel } from '../../view-models/varieties/varieties.view-m
     ButtonModule,
     ConfirmDialogModule,
     DialogModule,
-    IconFieldModule,
-    InputIconModule,
     InputTextModule,
     TableModule,
     TextareaModule,
     TooltipModule,
+    MapPolygonSelector,
   ],
   providers: [ConfirmationService],
   templateUrl: './varieties.html',
   changeDetection: ChangeDetectionStrategy.Eager,
+  styles: [
+    `
+      :host {
+        display: block;
+        height: 100%;
+        width: 100%;
+      }
+    `,
+  ],
 })
-export class Varieties implements OnInit {
-  @ViewChild('dt') public table?: Table;
-
+export class Varieties implements OnInit, OnDestroy {
   public viewModel = inject(VarietiesViewModel);
   public confirmationService = inject(ConfirmationService);
-  private excelService = inject(VarietyExcelService);
-  private messageService = inject(MessageService);
 
-  public ngOnInit(): void {
-    void this.viewModel.loadInitialData();
+  @ViewChild(MapPolygonSelector) public mapSelector?: MapPolygonSelector;
+
+  public async ngOnInit(): Promise<void> {
+    await this.viewModel.loadInitialData();
   }
 
-  public onGlobalFilter(event: Event): void {
-    this.table?.filterGlobal(
-      (event.target as HTMLInputElement).value,
-      'contains',
-    );
+  public ngOnDestroy(): void {
+    document.body.style.overflow = '';
+  }
+
+  public onPolygonSelected(event: PolygonSelection): void {
+    this.viewModel.onPolygonSelected(event.coordinates);
+  }
+
+  public onPolygonCleared(): void {
+    this.viewModel.onPolygonCleared();
+  }
+
+  public async onSubmitCreate(): Promise<void> {
+    await this.viewModel.saveNewVariety();
   }
 
   public confirmDelete(variety: Variety): void {
@@ -70,32 +84,16 @@ export class Varieties implements OnInit {
       rejectLabel: 'Cancelar',
       acceptButtonProps: { severity: 'danger', outlined: true },
       rejectButtonProps: { outlined: true },
-      accept: () => void this.viewModel.deleteVarieties([variety]),
+      accept: () => void this.viewModel.deleteVariety(variety),
     });
   }
 
-  public confirmDeleteSelected(): void {
-    const selected = this.viewModel.selectedVarieties();
-    if (selected.length === 0) return;
-
-    this.confirmationService.confirm({
-      header: 'Excluir variedades selecionadas',
-      message: `Deseja realmente excluir ${selected.length} variedade(s)? Plantas associadas ficarão sem variedade.`,
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Excluir',
-      rejectLabel: 'Cancelar',
-      acceptButtonProps: { severity: 'danger', outlined: true },
-      rejectButtonProps: { outlined: true },
-      accept: () => void this.viewModel.deleteVarieties(selected),
-    });
-  }
-
-  public async exportExcel(): Promise<void> {
-    const filtered = this.table?.filteredValue as Variety[] | null | undefined;
-    try {
-      await this.excelService.export(filtered ?? this.viewModel.varieties());
-    } catch {
-      this.messageService.error('Erro ao gerar o arquivo Excel.');
-    }
+  public toggleFullscreen(): void {
+    const nextValue = !this.viewModel.isMapFullscreen();
+    this.viewModel.isMapFullscreen.set(nextValue);
+    document.body.style.overflow = nextValue ? 'hidden' : '';
+    setTimeout(() => {
+      this.mapSelector?.invalidateSize();
+    }, 50);
   }
 }

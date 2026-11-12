@@ -114,6 +114,11 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       longitude: number;
       zone_id?: string | null;
       zoneId?: string | null;
+      strokeColor?: string;
+      fillColor?: string;
+      color?: string;
+      variety_id?: number | null;
+      varietyId?: number | null;
     }>,
   ) {
     this._plants = plants as Plant[];
@@ -360,8 +365,20 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
 
     this._plants.forEach((plant) => {
       const hasZone = !!(plant.zone_id || plant.zoneId);
-      const strokeColor = this.plantColor ?? (hasZone ? '#047857' : '#4b5563');
-      const fillColor = this.plantFillColor ?? (hasZone ? '#10b981' : '#9ca3af');
+      const customPlant = plant as unknown as {
+        strokeColor?: string;
+        fillColor?: string;
+        color?: string;
+      };
+      const strokeColor =
+        customPlant.strokeColor ??
+        customPlant.color ??
+        this.plantColor ??
+        (hasZone ? '#047857' : '#4b5563');
+      const fillColor =
+        customPlant.fillColor ??
+        this.plantFillColor ??
+        (hasZone ? '#10b981' : '#9ca3af');
       const circle = L.circleMarker([plant.latitude, plant.longitude], {
         renderer: this.canvasRenderer,
         radius: 4,

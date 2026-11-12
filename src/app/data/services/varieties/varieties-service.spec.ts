@@ -8,6 +8,7 @@ import { VarietiesService } from './varieties-service';
 describe('VarietiesService', () => {
   let service: VarietiesService;
   const from = vi.fn();
+  const rpc = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,7 +21,7 @@ describe('VarietiesService', () => {
           provide: SupabaseService,
           useValue: {
             getClient: () =>
-              ({ from }) as Partial<SupabaseClient> as SupabaseClient,
+              ({ from, rpc }) as Partial<SupabaseClient> as SupabaseClient,
           },
         },
       ],
@@ -135,5 +136,65 @@ describe('VarietiesService', () => {
     await service.create({ name: 'Falha', description: null });
 
     expect(invalidate).not.toHaveBeenCalled();
+  });
+
+  it('creates a variety with plants via RPC and invalidates cache', async () => {
+    const rpcResponse = {
+      data: [
+        {
+          variety_id: 10,
+          variety_name: 'Geada',
+          variety_description: 'Abacate Geada',
+          created_at: '2026-10-20T14:30:00.000Z',
+          updated_at: '2026-10-20T14:30:00.000Z',
+          plants_updated_count: 42,
+        },
+      ],
+      error: null,
+    };
+    rpc.mockResolvedValue(rpcResponse);
+    const invalidate = vi.spyOn(
+      TestBed.inject(SupabaseRequestCacheService),
+      'invalidate',
+    );
+
+    const result = await service.createWithPlants({
+      name: 'Geada',
+      description: 'Abacate Geada',
+      polygonGeojson: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-49.1, -23.1],
+            [-49.2, -23.1],
+            [-49.2, -23.2],
+            [-49.1, -23.1],
+          ],
+        ],
+      },
+    });
+
+    expect(rpc).toHaveBeenCalledWith('create_variety_with_plants', {
+      p_name: 'Geada',
+      p_description: 'Abacate Geada',
+      p_polygon_geojson: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-49.1, -23.1],
+            [-49.2, -23.1],
+            [-49.2, -23.2],
+            [-49.1, -23.1],
+          ],
+        ],
+      },
+    });
+    expect(result.data?.variety.name).toBe('Geada');
+    expect(result.data?.plants_updated_count).toBe(42);
+    expect(invalidate).toHaveBeenCalledWith([
+      'reference-data',
+      'overview',
+      'plants',
+    ]);
   });
 });

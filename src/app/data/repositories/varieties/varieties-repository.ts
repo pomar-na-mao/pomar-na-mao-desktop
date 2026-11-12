@@ -1,6 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import type { PostgrestError } from '@supabase/supabase-js';
 import type {
+  CreateVarietyWithPlantsPayload,
+  CreateVarietyWithPlantsResult,
   Variety,
   VarietyDraft,
 } from '../../../domain/models/variety.model';
@@ -33,6 +35,17 @@ export class VarietiesRepository {
     }
 
     return { data: data ?? null, error };
+  }
+
+  public async createWithPlants(
+    payload: CreateVarietyWithPlantsPayload,
+  ): Promise<{ data: CreateVarietyWithPlantsResult | null; error: unknown }> {
+    const result = await this.varietiesService.createWithPlants(payload);
+    if (!result.error && result.data?.variety) {
+      this.varieties.update((items) => this.sort([...items, result.data!.variety]));
+    }
+
+    return result;
   }
 
   public async update(

@@ -3,8 +3,15 @@ export interface ZoneAssignmentPlant {
   latitude: number;
   longitude: number;
   zoneId: string | null;
+  zone_id?: string | null;
   zoneName?: string | null;
+  varietyId?: number | null;
+  variety_id?: number | null;
   varietyName?: string | null;
+  variety_name?: string | null;
+  strokeColor?: string;
+  fillColor?: string;
+  color?: string;
 }
 
 export interface ZoneAssignmentPreviewPlant {

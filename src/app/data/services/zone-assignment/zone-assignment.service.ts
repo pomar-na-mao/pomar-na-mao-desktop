@@ -46,7 +46,40 @@ export class ZoneAssignmentService {
           return { data: null, error };
         }
 
-        const plants = (data ?? []) as ZoneAssignmentPlant[];
+        const rawPlants = (data ?? []) as Array<Record<string, unknown>>;
+        const plants: ZoneAssignmentPlant[] = rawPlants.map((row) => {
+          const zoneId = (row['zoneId'] ?? row['zone_id'] ?? null) as string | null;
+          const varietyName = (row['varietyName'] ?? row['variety_name'] ?? null) as string | null;
+          const varietyId =
+            row['varietyId'] != null
+              ? Number(row['varietyId'])
+              : row['variety_id'] != null
+                ? Number(row['variety_id'])
+                : null;
+
+          const plant: ZoneAssignmentPlant = {
+            id: String(row['id']),
+            latitude: Number(row['latitude']),
+            longitude: Number(row['longitude']),
+            zoneId,
+          };
+
+          if (varietyName) {
+            plant.varietyName = varietyName;
+          }
+          if (varietyId != null) {
+            plant.varietyId = varietyId;
+            plant.variety_id = varietyId;
+          }
+          if (row['zone_id']) {
+            plant.zone_id = String(row['zone_id']);
+          }
+          if (row['variety_name']) {
+            plant.variety_name = String(row['variety_name']);
+          }
+
+          return plant;
+        });
         return { data: plants, error: null };
       },
     );
