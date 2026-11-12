@@ -14,6 +14,13 @@ export default [
       ),
   },
   {
+    path: 'zonas',
+    loadComponent: () =>
+      import('../zone-map-management/zone-map-management').then(
+        (m) => m.ZoneMapManagement,
+      ),
+  },
+  {
     path: 'variedades',
     loadComponent: () =>
       import('../varieties/varieties').then((m) => m.Varieties),
@@ -23,14 +30,6 @@ export default [
     loadComponent: () =>
       import('../occurrences/occurrences').then((m) => m.Occurrences),
   },
-  {
-    path: 'zonas',
-    loadComponent: () =>
-      import('../zone-map-management/zone-map-management').then(
-        (m) => m.ZoneMapManagement,
-      ),
-  },
-
   {
     path: 'estoque',
     loadComponent: () => import('../stock/stock').then((m) => m.Stock),
