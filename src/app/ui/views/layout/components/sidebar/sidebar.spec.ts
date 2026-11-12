@@ -75,22 +75,13 @@ describe('Sidebar', () => {
     expect(sidebar.menuItems.find((item) => item.path === '/mipd')).toBeUndefined();
   });
 
-  it('should show zoning navigation directly below basic data', () => {
+  it('does not contain Dados básicos and Zoneamento in navigation items', () => {
     const sidebar = new Sidebar();
-    const basicDataIndex = sidebar.menuItems.findIndex(
-      (item) => item.path === '/dados-basicos',
-    );
 
-    expect(basicDataIndex).toBeGreaterThanOrEqual(0);
-    expect(sidebar.menuItems[basicDataIndex + 1]).toEqual(
-      expect.objectContaining({
-        label: 'Zoneamento',
-        path: '/zoneamento',
-      }),
-    );
-    expect(
-      sidebar.menuItems.find((item) => item.path === '/zonas'),
-    ).toBeUndefined();
+    expect(sidebar.menuItems.find((item) => item.label === 'Dados básicos')).toBeUndefined();
+    expect(sidebar.menuItems.find((item) => item.path === '/dados-basicos')).toBeUndefined();
+    expect(sidebar.menuItems.find((item) => item.label === 'Zoneamento')).toBeUndefined();
+    expect(sidebar.menuItems.find((item) => item.path === '/zoneamento')).toBeUndefined();
   });
 
   it('renders an accessible mobile drawer and emits close intent from its backdrop', () => {

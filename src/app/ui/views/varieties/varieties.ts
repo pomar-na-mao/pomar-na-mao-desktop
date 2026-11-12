@@ -16,8 +16,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
-import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
-import type { PolygonSelection } from '../../../domain/models/basic-data';
+import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
+import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
 import type { Variety } from '../../../domain/models/variety.model';
 import { VarietiesViewModel } from '../../view-models/varieties/varieties.view-model';
 

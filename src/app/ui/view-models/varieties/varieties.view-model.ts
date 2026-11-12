@@ -3,13 +3,13 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
-import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { VarietiesRepository } from '../../../data/repositories/varieties/varieties-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import type {
   GeoJsonPolygon,
   PolygonCoordinate,
-} from '../../../domain/models/basic-data';
+} from '../../../domain/models/map-polygon.model';
 import type { Variety } from '../../../domain/models/variety.model';
 import type { Zone } from '../../../domain/models/zone.model';
 import { LoadingService } from '../../../shared/services/loading.service';
@@ -65,12 +65,12 @@ export class VarietiesViewModel {
   private zonesRepository = inject(ZonesRepository);
   private regionsRepository = inject(RegionsRepository);
   private farmBoundaryService = inject(FarmBoundaryService);
-  private zoneAssignmentRepository = inject(ZoneAssignmentRepository);
+  private plantsRepository = inject(PlantsRepository);
   private loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
 
   public varieties = this.varietiesRepository.varieties;
-  public allPlants = this.zoneAssignmentRepository.allPlants;
+  public allPlants = this.plantsRepository.allPlants;
 
   public isLoading = signal(false);
   public loadFailed = signal(false);
@@ -303,7 +303,7 @@ export class VarietiesViewModel {
         this.varietiesRepository.findAll(),
         this.zonesRepository.findAll(),
         this.regionsRepository.findAll(),
-        this.zoneAssignmentRepository.loadAllPlants(),
+        this.plantsRepository.loadAllPlants(),
       ]);
 
       if (varietiesResult.error) {
@@ -393,7 +393,7 @@ export class VarietiesViewModel {
       this.clearNewVarietyForm();
 
       // Recarrega as plantas para atualizar as cores no mapa
-      await this.zoneAssignmentRepository.loadAllPlants();
+      await this.plantsRepository.loadAllPlants();
 
       if (count > 0) {
         this.messageService.success(
@@ -487,7 +487,7 @@ export class VarietiesViewModel {
       }
 
       // Recarrega as plantas para que as árvores sem variedade mudem de cor no mapa
-      await this.zoneAssignmentRepository.loadAllPlants();
+      await this.plantsRepository.loadAllPlants();
       this.messageService.success(
         `Variedade “${variety.name}” excluída com sucesso.`,
       );

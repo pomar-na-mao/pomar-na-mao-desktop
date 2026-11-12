@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import type { PolygonSelection } from '../../../domain/models/basic-data';
-import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
+import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
+import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
 import { PolygonOccurrencesForm } from '../../components/polygon-occurrences/polygon-occurrences-form/polygon-occurrences-form';
 import { PolygonOccurrencesViewModel } from '../../view-models/polygon-occurrences/polygon-occurrences.view-model';
 

@@ -125,3 +125,21 @@ export interface PlantRecentUpdate {
   is_dead: boolean;
   wasUpdated: boolean;
 }
+
+export interface PlantMapItem {
+  id: string;
+  latitude: number;
+  longitude: number;
+  zoneId: string | null;
+  zone_id?: string | null;
+  zoneName?: string | null;
+  varietyId?: number | null;
+  variety_id?: number | null;
+  varietyName?: string | null;
+  variety_name?: string | null;
+  strokeColor?: string;
+  fillColor?: string;
+  color?: string;
+}
+
+export type ZoneAssignmentPlant = PlantMapItem;

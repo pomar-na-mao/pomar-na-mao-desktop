@@ -5,11 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
-import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { VarietiesRepository } from '../../../data/repositories/varieties/varieties-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import type { Variety } from '../../../domain/models/variety.model';
-import type { ZoneAssignmentPlant } from '../../../domain/models/zone-assignment.model';
+import type { PlantMapItem } from '../../../domain/models/plant-data.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { VarietiesViewModel } from './varieties.view-model';
 
@@ -26,7 +26,7 @@ function mockVariety(id = 1, name = 'Hass'): Variety {
 describe('VarietiesViewModel', () => {
   let viewModel: VarietiesViewModel;
   const varieties = signal<Variety[]>([]);
-  const allPlants = signal<ZoneAssignmentPlant[]>([]);
+  const allPlants = signal<PlantMapItem[]>([]);
   const zones = signal<any[]>([]);
   const regions = signal<any[]>([]);
 
@@ -53,7 +53,7 @@ describe('VarietiesViewModel', () => {
     getBoundary: vi.fn().mockResolvedValue([]),
   };
 
-  const zoneAssignmentRepo = {
+  const plantsRepo = {
     allPlants,
     loadAllPlants: vi.fn().mockResolvedValue({ data: [], error: null }),
   };
@@ -78,7 +78,7 @@ describe('VarietiesViewModel', () => {
     varietiesRepo.findAll.mockResolvedValue({ error: null });
     zonesRepo.findAll.mockResolvedValue({ data: [], error: null });
     regionsRepo.findAll.mockResolvedValue({ data: [], error: null });
-    zoneAssignmentRepo.loadAllPlants.mockResolvedValue({ data: [], error: null });
+    plantsRepo.loadAllPlants.mockResolvedValue({ data: [], error: null });
     farmBoundaryService.getBoundary.mockResolvedValue([]);
 
     TestBed.configureTestingModule({
@@ -89,7 +89,7 @@ describe('VarietiesViewModel', () => {
         { provide: ZonesRepository, useValue: zonesRepo },
         { provide: RegionsRepository, useValue: regionsRepo },
         { provide: FarmBoundaryService, useValue: farmBoundaryService },
-        { provide: ZoneAssignmentRepository, useValue: zoneAssignmentRepo },
+        { provide: PlantsRepository, useValue: plantsRepo },
         { provide: MessageService, useValue: messages },
         { provide: LoadingService, useValue: loading },
       ],
@@ -208,7 +208,7 @@ describe('VarietiesViewModel', () => {
         polygonGeojson: expect.any(Object),
       }),
     );
-    expect(zoneAssignmentRepo.loadAllPlants).toHaveBeenCalled();
+    expect(plantsRepo.loadAllPlants).toHaveBeenCalled();
     expect(messages.success).toHaveBeenCalledWith(
       'Variedade “Margarida” criada com sucesso e atribuída a 28 planta(s)!',
     );
@@ -245,7 +245,7 @@ describe('VarietiesViewModel', () => {
     await viewModel.deleteVariety(item);
 
     expect(varietiesRepo.deleteMany).toHaveBeenCalledWith([1]);
-    expect(zoneAssignmentRepo.loadAllPlants).toHaveBeenCalled();
+    expect(plantsRepo.loadAllPlants).toHaveBeenCalled();
     expect(messages.success).toHaveBeenCalledWith(
       'Variedade “Hass” excluída com sucesso.',
     );

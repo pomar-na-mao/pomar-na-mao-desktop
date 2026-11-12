@@ -4,12 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
-import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import type { Region } from '../../../domain/models/regions.model';
 import type { Zone } from '../../../domain/models/zone.model';
-import type { ZoneAssignmentPlant } from '../../../domain/models/zone-assignment.model';
+import type { PlantMapItem } from '../../../domain/models/plant-data.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { ZoneMapManagementViewModel } from './zone-map-management.view-model';
 
@@ -62,8 +62,8 @@ describe('ZoneMapManagementViewModel', () => {
     getBoundary: vi.fn().mockResolvedValue([]),
   };
 
-  const plantsSignal = signal<ZoneAssignmentPlant[]>([]);
-  const mockZoneAssignmentRepository = {
+  const plantsSignal = signal<PlantMapItem[]>([]);
+  const mockPlantsRepository = {
     allPlants: plantsSignal,
     loadAllPlants: vi.fn().mockResolvedValue({ data: [], error: null }),
   };
@@ -76,7 +76,7 @@ describe('ZoneMapManagementViewModel', () => {
     plantsSignal.set([]);
     mockZonesRepository.findAll.mockResolvedValue({ error: null });
     mockRegionsRepository.findAll.mockResolvedValue({ error: null });
-    mockZoneAssignmentRepository.loadAllPlants.mockResolvedValue({ data: [], error: null });
+    mockPlantsRepository.loadAllPlants.mockResolvedValue({ data: [], error: null });
     mockFarmBoundaryService.getBoundary.mockResolvedValue([]);
 
     TestBed.configureTestingModule({
@@ -85,7 +85,7 @@ describe('ZoneMapManagementViewModel', () => {
         ZoneMapManagementViewModel,
         { provide: ZonesRepository, useValue: mockZonesRepository },
         { provide: RegionsRepository, useValue: mockRegionsRepository },
-        { provide: ZoneAssignmentRepository, useValue: mockZoneAssignmentRepository },
+        { provide: PlantsRepository, useValue: mockPlantsRepository },
         { provide: MessageService, useValue: mockMessageService },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
@@ -109,7 +109,7 @@ describe('ZoneMapManagementViewModel', () => {
         ZoneMapManagementViewModel,
         { provide: ZonesRepository, useValue: mockZonesRepository },
         { provide: RegionsRepository, useValue: mockRegionsRepository },
-        { provide: ZoneAssignmentRepository, useValue: mockZoneAssignmentRepository },
+        { provide: PlantsRepository, useValue: mockPlantsRepository },
         { provide: MessageService, useValue: mockMessageService },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
@@ -529,11 +529,11 @@ describe('ZoneMapManagementViewModel', () => {
   });
 
   it('should load plants on loadInitialData', async () => {
-    mockZoneAssignmentRepository.loadAllPlants.mockClear();
+    mockPlantsRepository.loadAllPlants.mockClear();
 
     await viewModel.loadInitialData();
 
-    expect(mockZoneAssignmentRepository.loadAllPlants).toHaveBeenCalled();
+    expect(mockPlantsRepository.loadAllPlants).toHaveBeenCalled();
   });
 
   it('should reload plants and announce plant count after saving zone', async () => {
@@ -557,11 +557,11 @@ describe('ZoneMapManagementViewModel', () => {
       message: null,
     });
 
-    mockZoneAssignmentRepository.loadAllPlants.mockClear();
+    mockPlantsRepository.loadAllPlants.mockClear();
 
     await viewModel.save();
 
-    expect(mockZoneAssignmentRepository.loadAllPlants).toHaveBeenCalled();
+    expect(mockPlantsRepository.loadAllPlants).toHaveBeenCalled();
     expect(mockMessageService.success).toHaveBeenCalledWith(
       'Zona criada com sucesso! 42 planta(s) vinculada(s).',
     );

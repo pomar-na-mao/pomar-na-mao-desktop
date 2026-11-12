@@ -2,19 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { ROUTES } from './app.routes';
 
 describe('ROUTES', () => {
-  it('should expose zoning as an authenticated child route', () => {
+  it('should expose authenticated child routes without basic data and zoning', () => {
     const mainRoute = ROUTES.find((route) => route.path === '');
     const childPaths = mainRoute?.children?.map((route) => route.path);
 
-    expect(childPaths).toContain('zoneamento');
+    expect(childPaths).not.toContain('zoneamento');
+    expect(childPaths).not.toContain('dados-basicos');
+    expect(childPaths).not.toContain('atribuicao-zonas');
     expect(childPaths).toEqual(
       expect.arrayContaining([
         'visao-geral',
         'cadastro',
         'atividades-de-campo',
         'registrar',
-        'dados-basicos',
-        'zoneamento',
         'configuracoes',
         'usuarios',
       ]),
@@ -31,9 +31,6 @@ describe('ROUTES', () => {
     expect(occurrencesRoute?.loadComponent).toBeDefined();
     const loadFn = occurrencesRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
-
-    const basicDataRoute = mainRoute?.children?.find((route) => route.path === 'dados-basicos');
-    expect(basicDataRoute?.loadComponent).toBeDefined();
   });
 
   it('should lazy-load overview as a root authenticated route', async () => {
@@ -56,29 +53,6 @@ describe('ROUTES', () => {
     expect(fieldActivitiesRoute?.loadComponent).toBeDefined();
     const loadFn = fieldActivitiesRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
-  });
-
-  it('should redirect legacy atribuicao-zonas to zoneamento', () => {
-    const mainRoute = ROUTES.find((route) => route.path === '');
-    const atribuicaoRoute = mainRoute?.children?.find(
-      (route) => route.path === 'atribuicao-zonas',
-    );
-
-    expect(atribuicaoRoute).toBeDefined();
-    expect(atribuicaoRoute?.redirectTo).toBe('zoneamento');
-  });
-
-  it('should lazy-load ZoneAssignment directly for /zoneamento', async () => {
-    const mainRoute = ROUTES.find((route) => route.path === '');
-    const zoningRoute = mainRoute?.children?.find(
-      (route) => route.path === 'zoneamento',
-    );
-
-    expect(zoningRoute?.loadComponent).toBeDefined();
-    expect(zoningRoute?.children).toBeUndefined();
-    const loadFn = zoningRoute?.loadComponent as () => Promise<unknown>;
-    const component = await loadFn();
-    expect(component).toBeDefined();
   });
 
   it('should lazy-load the Orchard shell with child routes for /cadastro', async () => {

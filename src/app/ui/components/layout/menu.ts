@@ -113,18 +113,6 @@ export class AppMenu implements OnInit {
             icon: 'pi pi-fw pi-book',
             routerLink: ['/atividades-de-campo'],
           },
-          {
-            label: 'Dados básicos',
-            visible: true,
-            icon: 'pi pi-fw pi-receipt',
-            routerLink: ['/dados-basicos'],
-          },
-          {
-            label: 'Zoneamento',
-            visible: true,
-            icon: 'pi pi-fw pi-share-alt',
-            routerLink: ['/zoneamento'],
-          },
           /* {
             label: 'Configurações',
             visible: true,

@@ -1,4 +1,4 @@
-import type { GeoJsonPolygon, BasicDataCoordinate } from '../../domain/models/basic-data';
+import type { GeoJsonPolygon, MapCoordinate as BasicDataCoordinate } from '../../domain/models/map-polygon.model';
 
 export function toClosedGeoJsonPolygon(coordinates: BasicDataCoordinate[]): GeoJsonPolygon {
   if (coordinates.length < 3) {

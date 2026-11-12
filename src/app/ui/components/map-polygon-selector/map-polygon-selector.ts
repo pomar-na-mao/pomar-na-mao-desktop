@@ -18,11 +18,11 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import * as L from 'leaflet';
-import type { Plant } from '../../../../domain/models/plant-data.model';
+import type { Plant } from '../../../domain/models/plant-data.model';
 import type {
   PolygonSelection,
   PolygonCoordinate,
-} from '../../../../domain/models/basic-data';
+} from '../../../domain/models/map-polygon.model';
 
 const BACKGROUND_POLYGON_COLORS = [
   '#f97316', // Laranja vibrante

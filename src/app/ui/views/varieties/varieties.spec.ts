@@ -2,16 +2,16 @@ import { Component, input, output, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ConfirmationService } from 'primeng/api';
-import type { PolygonSelection } from '../../../domain/models/basic-data';
+import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
-import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { VarietiesRepository } from '../../../data/repositories/varieties/varieties-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import { LoadingService } from '../../../shared/services/loading.service';
 import type { Variety } from '../../../domain/models/variety.model';
-import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
+import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
 import { Varieties } from './varieties';
 
 @Component({
@@ -76,7 +76,7 @@ describe('Varieties', () => {
     getBoundary: vi.fn().mockResolvedValue([]),
   };
 
-  const zoneAssignmentRepo = {
+  const plantsRepo = {
     allPlants,
     loadAllPlants: vi.fn().mockResolvedValue({ data: [], error: null }),
   };
@@ -95,7 +95,7 @@ describe('Varieties', () => {
     repository.deleteMany.mockResolvedValue({ error: null });
     zonesRepo.findAll.mockResolvedValue({ data: [], error: null });
     regionsRepo.findAll.mockResolvedValue({ data: [], error: null });
-    zoneAssignmentRepo.loadAllPlants.mockResolvedValue({ data: [], error: null });
+    plantsRepo.loadAllPlants.mockResolvedValue({ data: [], error: null });
     farmBoundaryService.getBoundary.mockResolvedValue([]);
 
     await TestBed.configureTestingModule({
@@ -105,7 +105,7 @@ describe('Varieties', () => {
         { provide: ZonesRepository, useValue: zonesRepo },
         { provide: RegionsRepository, useValue: regionsRepo },
         { provide: FarmBoundaryService, useValue: farmBoundaryService },
-        { provide: ZoneAssignmentRepository, useValue: zoneAssignmentRepo },
+        { provide: PlantsRepository, useValue: plantsRepo },
         { provide: MessageService, useValue: messages },
         { provide: LoadingService, useValue: loading },
       ],
@@ -126,7 +126,7 @@ describe('Varieties', () => {
   it('creates and loads varieties, zones and plants on initialization', () => {
     expect(component).toBeTruthy();
     expect(repository.findAll).toHaveBeenCalled();
-    expect(zoneAssignmentRepo.loadAllPlants).toHaveBeenCalled();
+    expect(plantsRepo.loadAllPlants).toHaveBeenCalled();
   });
 
   it('renders sidebar layout with new variety form and mini table', () => {

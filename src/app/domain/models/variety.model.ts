@@ -1,4 +1,4 @@
-import type { GeoJsonPolygon } from './basic-data';
+import type { GeoJsonPolygon } from './map-polygon.model';
 
 export interface Variety {
   id: number;

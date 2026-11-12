@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import type { FarmBoundaryCoordinate } from '../../../domain/models/farm-boundary.model';
-import type { PolygonCoordinate } from '../../../domain/models/basic-data';
+import type { PolygonCoordinate } from '../../../domain/models/map-polygon.model';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
 import {

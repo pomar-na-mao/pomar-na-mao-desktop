@@ -51,10 +51,8 @@ describe('AppMenu', () => {
       icon: 'pi pi-fw pi-map',
     });
 
-    expect(items.find((item) => item.label === 'Zoneamento')).toMatchObject({
-      icon: 'pi pi-fw pi-share-alt',
-      routerLink: ['/zoneamento'],
-    });
+    expect(items.find((item) => item.label === 'Zoneamento')).toBeUndefined();
+    expect(items.find((item) => item.label === 'Dados básicos')).toBeUndefined();
     expect(items.find((item) => item.label === 'Zonas')).toBeUndefined();
 
     const registrationIndex = items.findIndex(

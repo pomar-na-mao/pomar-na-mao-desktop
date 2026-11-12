@@ -1,9 +1,24 @@
 import type {
-  BasicDataCoordinate,
-  BasicDataOccurrenceOption,
   GeoJsonPolygon,
-  PlantInsidePolygon,
-} from './basic-data';
+  MapCoordinate,
+} from './map-polygon.model';
+
+export interface PolygonOccurrenceOption {
+  id: string;
+  code: string;
+  name: string;
+}
+
+export interface PolygonOccurrencePreviewPlant {
+  plantId: string;
+  latitude: number;
+  longitude: number;
+  zoneId: string | null;
+  zoneName: string | null;
+  varietyId: number | null;
+  varietyName: string | null;
+  plantingDate: string | null;
+}
 
 export type PolygonOccurrenceAction = 'add' | 'remove';
 
@@ -31,8 +46,6 @@ export interface PolygonOccurrenceResult {
   occurrencesUnchangedCount: number;
 }
 
-export type PolygonOccurrenceCoordinate = BasicDataCoordinate;
-export type PolygonOccurrenceOption = BasicDataOccurrenceOption;
-export type PolygonOccurrencePreviewPlant = PlantInsidePolygon;
+export type PolygonOccurrenceCoordinate = MapCoordinate;
 export type PolygonOccurrenceGeoJson = GeoJsonPolygon;
 

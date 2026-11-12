@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
+import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
 import { PropertyDemarcationViewModel } from '../../view-models/property-demarcation/property-demarcation.view-model';
 
 @Component({

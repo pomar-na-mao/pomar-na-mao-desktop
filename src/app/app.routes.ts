@@ -43,18 +43,6 @@ export const ROUTES: Routes = [
         ]
       },
       {
-        path: 'dados-basicos',
-        loadComponent: () => import('./ui/views/basic-data/basic-data').then(m => m.BasicData)
-      },
-      {
-        path: 'zoneamento',
-        loadComponent: () => import('./ui/views/zone-assignment/zone-assignment').then(m => m.ZoneAssignment)
-      },
-      {
-        path: 'atribuicao-zonas',
-        redirectTo: 'zoneamento'
-      },
-      {
         path: 'configuracoes',
         loadComponent: () => import('./ui/views/settings/settings').then(m => m.Settings)
       },

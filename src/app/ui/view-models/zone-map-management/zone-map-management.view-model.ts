@@ -3,12 +3,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
-import { ZoneAssignmentRepository } from '../../../data/repositories/zone-assignment/zone-assignment.repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import type {
   GeoJsonPolygon,
   PolygonCoordinate,
-} from '../../../domain/models/basic-data';
+} from '../../../domain/models/map-polygon.model';
 import type {
   CreateZoneWithRegionsPayload,
   Zone,
@@ -55,11 +55,11 @@ export class ZoneMapManagementViewModel {
   private zonesRepository = inject(ZonesRepository);
   private regionsRepository = inject(RegionsRepository);
   private farmBoundaryService = inject(FarmBoundaryService);
-  private zoneAssignmentRepository = inject(ZoneAssignmentRepository);
+  private plantsRepository = inject(PlantsRepository);
   private loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
 
-  public plants = this.zoneAssignmentRepository.allPlants;
+  public plants = this.plantsRepository.allPlants;
 
   public isLoading = signal(false);
   public zonesLoadFailed = signal(false);
@@ -213,7 +213,7 @@ export class ZoneMapManagementViewModel {
       const [zonesResult, regionsResult] = await Promise.all([
         this.zonesRepository.findAll(),
         this.regionsRepository.findAll(),
-        this.zoneAssignmentRepository.loadAllPlants(),
+        this.plantsRepository.loadAllPlants(),
       ]);
 
       if (zonesResult.error) {
@@ -368,7 +368,7 @@ export class ZoneMapManagementViewModel {
       await Promise.all([
         this.zonesRepository.findAll(),
         this.regionsRepository.findAll(),
-        this.zoneAssignmentRepository.loadAllPlants(),
+        this.plantsRepository.loadAllPlants(),
       ]);
 
       this.resetFormAndPolygon();
