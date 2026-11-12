@@ -108,10 +108,17 @@ export class AppMenu implements OnInit {
             ],
           },
           {
-            label: 'Atividades de campo',
+            label: 'Atividade de campo',
             visible: true,
             icon: 'pi pi-fw pi-book',
-            routerLink: ['/atividades-de-campo'],
+            items: [
+              {
+                label: 'Realizadas',
+                visible: true,
+                icon: 'pi pi-fw pi-check-circle',
+                routerLink: ['/atividades-de-campo/realizadas'],
+              },
+            ],
           },
           /* {
             label: 'Configurações',

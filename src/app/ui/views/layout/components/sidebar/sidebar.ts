@@ -193,9 +193,15 @@ export class Sidebar {
       ],
     },
     {
-      label: 'Atividades de campo',
+      label: 'Atividade de campo',
       icon: 'M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V4H6.5A2.5 2.5 0 004 6.5v13z',
-      path: '/atividades-de-campo',
+      items: [
+        {
+          label: 'Realizadas',
+          icon: 'M5 13l4 4L19 7',
+          path: '/atividades-de-campo/realizadas',
+        },
+      ],
     },
     /* {
       label: 'Configurações',

@@ -44,14 +44,24 @@ describe('ROUTES', () => {
     await expect(loadFn()).resolves.toBeDefined();
   });
 
-  it('should expose completed operations under /atividades-de-campo', async () => {
+  it('should expose completed operations under /atividades-de-campo/realizadas', async () => {
     const mainRoute = ROUTES.find((route) => route.path === '');
     const fieldActivitiesRoute = mainRoute?.children?.find(
       (route) => route.path === 'atividades-de-campo',
     );
+    const defaultRoute = fieldActivitiesRoute?.children?.find(
+      (route) => route.path === '',
+    );
+    const completedRoute = fieldActivitiesRoute?.children?.find(
+      (route) => route.path === 'realizadas',
+    );
 
-    expect(fieldActivitiesRoute?.loadComponent).toBeDefined();
-    const loadFn = fieldActivitiesRoute?.loadComponent as () => Promise<unknown>;
+    expect(defaultRoute).toMatchObject({
+      redirectTo: 'realizadas',
+      pathMatch: 'full',
+    });
+    expect(completedRoute?.loadComponent).toBeDefined();
+    const loadFn = completedRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
   });
 

@@ -36,13 +36,18 @@ describe('Sidebar', () => {
     );
   });
 
-  it('shows Atividades de campo immediately below Registrar', () => {
+  it('shows Atividade de campo immediately below Registrar with Realizadas as a child', () => {
     const sidebar = new Sidebar();
 
     expect(sidebar.menuItems[3]).toEqual(
       expect.objectContaining({
-        label: 'Atividades de campo',
-        path: '/atividades-de-campo',
+        label: 'Atividade de campo',
+        items: [
+          expect.objectContaining({
+            label: 'Realizadas',
+            path: '/atividades-de-campo/realizadas',
+          }),
+        ],
       }),
     );
   });

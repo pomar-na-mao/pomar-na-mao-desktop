@@ -70,9 +70,15 @@ describe('AppMenu', () => {
       routerLink: ['/registrar/ocorrencias'],
     });
     expect(items[registrationIndex + 2]).toMatchObject({
-      label: 'Atividades de campo',
+      label: 'Atividade de campo',
       icon: 'pi pi-fw pi-book',
-      routerLink: ['/atividades-de-campo'],
+      items: [
+        expect.objectContaining({
+          label: 'Realizadas',
+          icon: 'pi pi-fw pi-check-circle',
+          routerLink: ['/atividades-de-campo/realizadas'],
+        }),
+      ],
     });
   });
 
