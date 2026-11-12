@@ -12,8 +12,8 @@ export const ROUTES: Routes = [
     canActivate: [isLoggedGuard],
     children: [
       {
-        path: 'visao-geral',
-        loadComponent: () => import('./ui/views/overview/overview').then(m => m.Overview)
+        path: 'meu-pomar',
+        loadComponent: () => import('./ui/views/my-orchard/my-orchard').then(m => m.MyOrchard)
       },
       {
         path: 'cadastro',
@@ -27,7 +27,7 @@ export const ROUTES: Routes = [
       },
       {
         path: 'inicio',
-        redirectTo: 'visao-geral',
+        redirectTo: 'meu-pomar',
       },
       {
         path: 'atividades-de-campo',
@@ -52,7 +52,7 @@ export const ROUTES: Routes = [
       },
       {
         path: '',
-        redirectTo: 'visao-geral',
+        redirectTo: 'meu-pomar',
         pathMatch: 'full'
       },
     ]

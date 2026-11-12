@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import type { InspectionPlantChange } from '../../../../domain/models/overview.model';
 import { SeverityLabelPipe } from '../../../../shared/pipes/severity-label.pipe';
-import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
+import { MyOrchardViewModel } from '../../../view-models/my-orchard/my-orchard.view-model';
 
 @Component({
-  selector: 'app-overview-map-details-card',
+  selector: 'app-my-orchard-map-details-card',
   imports: [CommonModule, SeverityLabelPipe, ButtonModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
@@ -30,7 +30,7 @@ import { OverviewViewModel } from '../../../view-models/overview/overview.view-m
               Detalhes da Planta
             </h4>
             <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none">
-              {{ overviewViewModel.selectedOperationType() === 'ocorrencia' ? 'Anotação / Ocorrência' : 'Inspeção Manual' }}
+              {{ myOrchardViewModel.selectedOperationType() === 'ocorrencia' ? 'Anotação / Ocorrência' : 'Inspeção Manual' }}
             </p>
           </div>
           <p-button
@@ -45,13 +45,13 @@ import { OverviewViewModel } from '../../../view-models/overview/overview.view-m
         </div>
 
         <!-- Carousel / History Navigation -->
-        @if (overviewViewModel.inspectionEntriesForPlant().length > 1) {
+        @if (myOrchardViewModel.inspectionEntriesForPlant().length > 1) {
           <div
             class="shrink-0 flex items-center justify-between px-3.5 py-1.5 border-b border-surface-200 dark:border-surface-800 bg-surface-100/50 dark:bg-surface-800/40"
           >
             <p-button
-              (onClick)="overviewViewModel.navigateInspection('prev')"
-              [disabled]="overviewViewModel.currentInspectionIndex() === 0"
+              (onClick)="myOrchardViewModel.navigateInspection('prev')"
+              [disabled]="myOrchardViewModel.currentInspectionIndex() === 0"
               icon="pi pi-chevron-left"
               [text]="true"
               [rounded]="true"
@@ -64,18 +64,18 @@ import { OverviewViewModel } from '../../../view-models/overview/overview.view-m
               </span>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-xs font-semibold text-surface-900 dark:text-surface-100">
-                  {{ overviewViewModel.currentInspectionIndex() + 1 }} de {{ overviewViewModel.inspectionEntriesForPlant().length }}
+                  {{ myOrchardViewModel.currentInspectionIndex() + 1 }} de {{ myOrchardViewModel.inspectionEntriesForPlant().length }}
                 </span>
                 <span
                   class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium bg-surface-200/80 dark:bg-surface-700 text-surface-700 dark:text-surface-300"
                 >
-                  {{ overviewViewModel.currentInspectionIndex() === 0 ? 'Mais recente' : overviewViewModel.currentInspectionIndex() === overviewViewModel.inspectionEntriesForPlant().length - 1 ? 'Mais antiga' : 'Anterior' }}
+                  {{ myOrchardViewModel.currentInspectionIndex() === 0 ? 'Mais recente' : myOrchardViewModel.currentInspectionIndex() === myOrchardViewModel.inspectionEntriesForPlant().length - 1 ? 'Mais antiga' : 'Anterior' }}
                 </span>
               </div>
             </div>
             <p-button
-              (onClick)="overviewViewModel.navigateInspection('next')"
-              [disabled]="overviewViewModel.currentInspectionIndex() === overviewViewModel.inspectionEntriesForPlant().length - 1"
+              (onClick)="myOrchardViewModel.navigateInspection('next')"
+              [disabled]="myOrchardViewModel.currentInspectionIndex() === myOrchardViewModel.inspectionEntriesForPlant().length - 1"
               icon="pi pi-chevron-right"
               [text]="true"
               [rounded]="true"
@@ -347,14 +347,14 @@ import { OverviewViewModel } from '../../../view-models/overview/overview.view-m
     }
   `,
 })
-export class OverviewMapDetailsCard {
-  public overviewViewModel = inject(OverviewViewModel);
+export class MyOrchardMapDetailsCard {
+  public myOrchardViewModel = inject(MyOrchardViewModel);
 
-  public inspectionDetails = this.overviewViewModel.selectedInspectionDetails;
-  public inspectionPlant = this.overviewViewModel.selectedInspectionPlant;
+  public inspectionDetails = this.myOrchardViewModel.selectedInspectionDetails;
+  public inspectionPlant = this.myOrchardViewModel.selectedInspectionPlant;
 
   public close(): void {
-    this.overviewViewModel.clearInspectionSelection();
+    this.myOrchardViewModel.clearInspectionSelection();
   }
 
   public get addedOccurrences(): InspectionPlantChange[] {

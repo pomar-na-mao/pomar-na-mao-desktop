@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export default [
   {
     path: '',
-    redirectTo: '/visao-geral',
+    redirectTo: '/meu-pomar',
     pathMatch: 'full',
   },
   {

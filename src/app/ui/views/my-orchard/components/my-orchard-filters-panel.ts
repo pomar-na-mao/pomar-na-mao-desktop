@@ -7,18 +7,18 @@ import { Select, SelectOption } from '../../../../shared/components/select/selec
 import {
   LIVING_PLANT_COLOR,
   NON_EXISTENT_PLANT_COLOR,
-  OverviewViewModel,
-} from '../../../view-models/overview/overview.view-model';
+  MyOrchardViewModel,
+} from '../../../view-models/my-orchard/my-orchard.view-model';
 
 @Component({
-  selector: 'app-overview-filters-panel',
+  selector: 'app-my-orchard-filters-panel',
   imports: [CommonModule, FormsModule, DatePickerModule, Select, ButtonModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <aside class="flex flex-col h-full min-h-0 bg-surface-0 dark:bg-surface-900">
       <!-- Title above form on the left -->
       <div class="px-3.5 pt-4 pb-2 border-b border-surface-200 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/20 shrink-0">
-        <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Visão Geral</h4>
+        <h4 class="font-bold text-surface-900 dark:text-surface-0 leading-none">Meu Pomar</h4>
         <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none mt-1">
           Monitoramento cartográfico, ocorrências e operações
         </p>
@@ -32,7 +32,7 @@ import {
             label="Visualizar Ocorrências"
             [multiple]="true"
             placeholder="Selecione ocorrências..."
-            [ngModel]="overviewViewModel.selectedOccurrenceIds()"
+            [ngModel]="myOrchardViewModel.selectedOccurrenceIds()"
             (ngModelChange)="onOccurrencesChange($event)"
             [options]="occurrenceOptions"
           ></app-select>
@@ -47,8 +47,8 @@ import {
             label="Plantas com Doença (MIPD)"
             [multiple]="true"
             placeholder="Selecione doenças/pragas..."
-            [ngModel]="overviewViewModel.selectedDiseaseIds()"
-            (ngModelChange)="overviewViewModel.selectedDiseaseIds.set($event)"
+            [ngModel]="myOrchardViewModel.selectedDiseaseIds()"
+            (ngModelChange)="myOrchardViewModel.selectedDiseaseIds.set($event)"
             [options]="diseaseOptions"
           ></app-select>
           <span class="text-[10px] text-surface-400 dark:text-surface-500 block mt-0.5">
@@ -66,8 +66,8 @@ import {
           <div>
             <app-select
               label="Tipo de Operação"
-              [ngModel]="overviewViewModel.selectedOperationType()"
-              (ngModelChange)="overviewViewModel.selectedOperationType.set($event)"
+              [ngModel]="myOrchardViewModel.selectedOperationType()"
+              (ngModelChange)="myOrchardViewModel.selectedOperationType.set($event)"
               [options]="operationOptions"
             ></app-select>
           </div>
@@ -84,7 +84,7 @@ import {
                 dateFormat="yy-mm-dd"
                 dataType="string"
                 placeholder="Início"
-                [ngModel]="overviewViewModel.operationStartDate()"
+                [ngModel]="myOrchardViewModel.operationStartDate()"
                 (ngModelChange)="onOperationStartDateChange($event)"
                 (onSelect)="onOperationStartDateSelect()"
                 [fluid]="true"
@@ -96,8 +96,8 @@ import {
                 dateFormat="yy-mm-dd"
                 dataType="string"
                 placeholder="Fim"
-                [ngModel]="overviewViewModel.operationEndDate()"
-                (ngModelChange)="overviewViewModel.operationEndDate.set($event || '')"
+                [ngModel]="myOrchardViewModel.operationEndDate()"
+                (ngModelChange)="myOrchardViewModel.operationEndDate.set($event || '')"
                 [fluid]="true"
               />
             </div>
@@ -114,8 +114,8 @@ import {
           <div>
             <app-select
               label="Filtrar por Zona"
-              [ngModel]="overviewViewModel.filterZoneId()"
-              (ngModelChange)="overviewViewModel.filterZoneId.set($event)"
+              [ngModel]="myOrchardViewModel.filterZoneId()"
+              (ngModelChange)="myOrchardViewModel.filterZoneId.set($event)"
               [options]="zoneOptions"
             ></app-select>
           </div>
@@ -124,8 +124,8 @@ import {
           <div>
             <app-select
               label="Status da Planta"
-              [ngModel]="overviewViewModel.filterPlantStatus()"
-              (ngModelChange)="overviewViewModel.filterPlantStatus.set($event)"
+              [ngModel]="myOrchardViewModel.filterPlantStatus()"
+              (ngModelChange)="myOrchardViewModel.filterPlantStatus.set($event)"
               [options]="plantStatusOptions"
             ></app-select>
           </div>
@@ -134,8 +134,8 @@ import {
           <div>
             <app-select
               label="Variedade"
-              [ngModel]="overviewViewModel.filterVarietyId()"
-              (ngModelChange)="overviewViewModel.filterVarietyId.set($event)"
+              [ngModel]="myOrchardViewModel.filterVarietyId()"
+              (ngModelChange)="myOrchardViewModel.filterVarietyId.set($event)"
               [options]="varietyOptions"
             ></app-select>
           </div>
@@ -152,8 +152,8 @@ import {
                 dateFormat="yy-mm-dd"
                 dataType="string"
                 placeholder="Início"
-                [ngModel]="overviewViewModel.filterPlantingStartDate()"
-                (ngModelChange)="overviewViewModel.filterPlantingStartDate.set($event || '')"
+                [ngModel]="myOrchardViewModel.filterPlantingStartDate()"
+                (ngModelChange)="myOrchardViewModel.filterPlantingStartDate.set($event || '')"
                 [fluid]="true"
               />
               <p-datepicker
@@ -162,8 +162,8 @@ import {
                 dateFormat="yy-mm-dd"
                 dataType="string"
                 placeholder="Fim"
-                [ngModel]="overviewViewModel.filterPlantingEndDate()"
-                (ngModelChange)="overviewViewModel.filterPlantingEndDate.set($event || '')"
+                [ngModel]="myOrchardViewModel.filterPlantingEndDate()"
+                (ngModelChange)="myOrchardViewModel.filterPlantingEndDate.set($event || '')"
                 [fluid]="true"
               />
             </div>
@@ -186,17 +186,17 @@ import {
     </aside>
   `,
 })
-export class OverviewFiltersPanel {
+export class MyOrchardFiltersPanel {
   @ViewChild('operationEndDatePicker') public operationEndDatePicker?: DatePicker;
 
-  public overviewViewModel = inject(OverviewViewModel);
+  public myOrchardViewModel = inject(MyOrchardViewModel);
 
   public clearFilters(): void {
-    this.overviewViewModel.clearFilters();
+    this.myOrchardViewModel.clearFilters();
   }
 
   public onOperationStartDateChange(value: string | null): void {
-    this.overviewViewModel.operationStartDate.set(value || '');
+    this.myOrchardViewModel.operationStartDate.set(value || '');
     if (value) {
       this.focusOperationEndDate();
     }
@@ -217,13 +217,13 @@ export class OverviewFiltersPanel {
 
   public onOccurrencesChange(value: string | string[]): void {
     const arr = Array.isArray(value) ? value : value ? [value] : [];
-    this.overviewViewModel.selectedOccurrenceIds.set(arr);
+    this.myOrchardViewModel.selectedOccurrenceIds.set(arr);
   }
 
   public get zoneOptions(): SelectOption[] {
     return [
       { label: 'Todos os Talhões', value: '' },
-      ...this.overviewViewModel.availableZones().map((z) => ({
+      ...this.myOrchardViewModel.availableZones().map((z) => ({
         label: z.name,
         value: z.id,
       })),
@@ -231,14 +231,14 @@ export class OverviewFiltersPanel {
   }
 
   public get occurrenceOptions(): SelectOption[] {
-    return this.overviewViewModel.availableOccurrences().map((o) => ({
+    return this.myOrchardViewModel.availableOccurrences().map((o) => ({
       label: o.name,
       value: o.id,
     }));
   }
 
   public get diseaseOptions(): SelectOption[] {
-    return this.overviewViewModel.availableDiseases().map((d) => ({
+    return this.myOrchardViewModel.availableDiseases().map((d) => ({
       label: d.name,
       value: d.id,
     }));
@@ -263,7 +263,7 @@ export class OverviewFiltersPanel {
   public get varietyOptions(): SelectOption[] {
     return [
       { label: 'Todas as Variedades', value: '' },
-      ...this.overviewViewModel.availableVarieties().map((v) => ({
+      ...this.myOrchardViewModel.availableVarieties().map((v) => ({
         label: v.name,
         value: String(v.id),
       })),

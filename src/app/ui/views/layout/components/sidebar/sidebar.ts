@@ -172,9 +172,9 @@ export class Sidebar {
 
   public menuItems: MenuItem[] = [
     {
-      label: 'Visão geral',
+      label: 'Meu Pomar',
       icon: 'M3 3v18h18M7 15l4-4 3 3 5-6',
-      path: '/visao-geral',
+      path: '/meu-pomar',
     },
     {
       label: 'Cadastro',

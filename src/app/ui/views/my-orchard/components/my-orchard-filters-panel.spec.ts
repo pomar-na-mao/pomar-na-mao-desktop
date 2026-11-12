@@ -8,12 +8,12 @@ import type {
   OverviewVariety,
   OverviewZone,
 } from '../../../../domain/models/overview.model';
-import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
-import { OverviewFiltersPanel } from './overview-filters-panel';
+import { MyOrchardViewModel } from '../../../view-models/my-orchard/my-orchard.view-model';
+import { MyOrchardFiltersPanel } from './my-orchard-filters-panel';
 
-describe('OverviewFiltersPanel', () => {
-  let fixture: ComponentFixture<OverviewFiltersPanel>;
-  let component: OverviewFiltersPanel;
+describe('MyOrchardFiltersPanel', () => {
+  let fixture: ComponentFixture<MyOrchardFiltersPanel>;
+  let component: MyOrchardFiltersPanel;
   let mockViewModel: {
     filterPlantingStartDate: ReturnType<typeof signal<string>>;
     filterPlantingEndDate: ReturnType<typeof signal<string>>;
@@ -54,16 +54,16 @@ describe('OverviewFiltersPanel', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [OverviewFiltersPanel],
+      imports: [MyOrchardFiltersPanel],
       providers: [
         {
-          provide: OverviewViewModel,
+          provide: MyOrchardViewModel,
           useValue: mockViewModel,
         },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(OverviewFiltersPanel);
+    fixture = TestBed.createComponent(MyOrchardFiltersPanel);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -74,7 +74,7 @@ describe('OverviewFiltersPanel', () => {
 
   it('should render header, date pickers and select dropdowns', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Visão Geral');
+    expect(compiled.textContent).toContain('Meu Pomar');
     expect(compiled.textContent).toContain('Período da Operação');
     expect(compiled.querySelectorAll('p-datepicker')).toHaveLength(4);
     expect(compiled.querySelectorAll('app-select')).toHaveLength(6);

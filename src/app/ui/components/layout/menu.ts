@@ -33,10 +33,10 @@ export class AppMenu implements OnInit {
         visible: true,
         items: [
           {
-            label: 'Visão geral',
+            label: 'Meu Pomar',
             visible: true,
-            icon: 'pi pi-fw pi-chart-bar',
-            routerLink: ['/visao-geral'],
+            icon: 'pi pi-fw pi-apple',
+            routerLink: ['/meu-pomar'],
           },
           {
             label: 'Cadastro',

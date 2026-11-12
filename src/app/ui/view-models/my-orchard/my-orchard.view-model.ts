@@ -33,14 +33,14 @@ export const OCCURRENCE_HIGHLIGHT_STROKE_COLOR = '#ffffff';
 export const MIPD_PLANT_COLOR = '#a855f7';
 export const MIPD_PLANT_STROKE_COLOR = '#ffffff';
 
-export interface OverviewPlantStatusPresentation {
+export interface MyOrchardPlantStatusPresentation {
   label: 'Viva' | 'Não existente';
   color: string;
   strokeColor: string;
 }
 
 @Injectable()
-export class OverviewViewModel {
+export class MyOrchardViewModel {
   private overviewRepository = inject(OverviewRepository);
   private loadingService = inject(LoadingService);
   private supportDataLoaded = signal(false);
@@ -266,7 +266,7 @@ export class OverviewViewModel {
     return single ? [single] : [];
   }
 
-  public async loadOverview(): Promise<void> {
+  public async loadMyOrchard(): Promise<void> {
     await this.loadSupportData();
     await this.loadSnapshot(this.snapshotFilters());
   }
@@ -347,7 +347,7 @@ export class OverviewViewModel {
 
   public getPlantStatusPresentation(
     plant: OverviewPlant,
-  ): OverviewPlantStatusPresentation {
+  ): MyOrchardPlantStatusPresentation {
     return plant.nonExistent
       ? {
           label: 'Não existente',
@@ -668,7 +668,7 @@ export class OverviewViewModel {
       this.openOccurrences.set(openOccs);
       this.allColoredZones.set(coloredZones);
     } catch (error) {
-      console.error('Failed to load overview support data', error);
+      console.error('Failed to load My Orchard support data', error);
       this.availableZones.set([]);
       this.availableOccurrences.set([]);
       this.availableDiseases.set([]);
@@ -740,7 +740,7 @@ export class OverviewViewModel {
         return;
       }
 
-      console.error('Failed to load overview snapshot', error);
+      console.error('Failed to load My Orchard snapshot', error);
       this.summary.set({
         totalPlants: 0,
         totalZones: 0,

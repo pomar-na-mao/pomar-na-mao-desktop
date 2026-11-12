@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { OverviewRepository } from '../../../data/repositories/overview/overview-repository';
 import { LoadingService } from '../../../shared/services/loading.service';
-import { OverviewViewModel } from './overview.view-model';
+import { MyOrchardViewModel } from './my-orchard.view-model';
 
-describe('OverviewViewModel', () => {
-  let viewModel: OverviewViewModel;
+describe('MyOrchardViewModel', () => {
+  let viewModel: MyOrchardViewModel;
   let loadingService: LoadingService;
 
   const getOverviewData = vi.fn();
@@ -101,7 +101,7 @@ describe('OverviewViewModel', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        OverviewViewModel,
+        MyOrchardViewModel,
         {
           provide: OverviewRepository,
           useValue: {
@@ -118,12 +118,12 @@ describe('OverviewViewModel', () => {
       ],
     });
 
-    viewModel = TestBed.inject(OverviewViewModel);
+    viewModel = TestBed.inject(MyOrchardViewModel);
     loadingService = TestBed.inject(LoadingService);
   });
 
-  it('should load overview snapshot, filter options and open occurrences on initialization', async () => {
-    await viewModel.loadOverview();
+  it('should load My Orchard snapshot, filter options and open occurrences on initialization', async () => {
+    await viewModel.loadMyOrchard();
 
     expect(getOverviewData).toHaveBeenLastCalledWith(
       {
@@ -146,7 +146,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should not show loading when the snapshot comes from cache', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     expect(loadingService.isLoading()).toBe(false);
     expect(loadingService.message()).toBeUndefined();
@@ -166,14 +166,14 @@ describe('OverviewViewModel', () => {
       },
     );
 
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     expect(loadingService.isLoading()).toBe(false);
     expect(loadingService.message()).toBeUndefined();
   });
 
   it('should expose available varieties from summary', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     expect(viewModel.availableVarieties()).toEqual([
       { id: 1, name: 'Gala' },
@@ -182,7 +182,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should filter plants by variety when filterVarietyId is set', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     expect(viewModel.filteredPlants().length).toBe(2);
 
@@ -205,7 +205,7 @@ describe('OverviewViewModel', () => {
       farmBoundary: [],
     });
 
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
     expect(viewModel.filteredPlants().length).toBe(2);
 
     viewModel.filterPlantStatus.set('alive');
@@ -228,7 +228,7 @@ describe('OverviewViewModel', () => {
       farmBoundary: [],
     });
 
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
     expect(viewModel.filteredPlants().length).toBe(2);
 
     // When filtering by 'none' (Sem variedade), empty spots must NOT be shown
@@ -241,7 +241,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should filter plants by occurrence when filterOccurrenceId is set', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     expect(viewModel.filteredPlants().length).toBe(2);
 
@@ -251,7 +251,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should load selected zone boundary by collected point order', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -265,7 +265,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should fit the map to the selected zone without extending to the farm boundary', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -284,7 +284,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should filter plants using the ordered selected zone polygon', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
     await waitForAsyncEffects();
     viewModel.mapPlants.set([
       { id: 'inside', latitude: -21.1, longitude: -47.2, varietyId: null, varietyName: null, isDead: false, nonExistent: false },
@@ -319,7 +319,7 @@ describe('OverviewViewModel', () => {
         order: 2,
       },
     ]);
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -331,7 +331,7 @@ describe('OverviewViewModel', () => {
   it('should keep overview plants available when selected zone boundary loading fails', async () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     getZoneRegions.mockRejectedValueOnce(new Error('failed'));
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     viewModel.filterZoneId.set('z1');
     await waitForAsyncEffects();
@@ -342,7 +342,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should use green for living plants and red for nonExistent plants', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     expect(viewModel.getPlantStatusPresentation(viewModel.mapPlants()[0])).toEqual({
       label: 'Viva',
@@ -377,7 +377,7 @@ describe('OverviewViewModel', () => {
       farmBoundary: [],
     });
 
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
 
     expect(viewModel.mapPlants().length).toBe(2);
     expect(viewModel.filteredPlants().find((p) => p.id === 'p-empty')?.nonExistent).toBe(true);
@@ -404,7 +404,7 @@ describe('OverviewViewModel', () => {
   });
 
   it('should keep all plants in filteredPlants and highlight matching ones in activeOccurrencePlantIds when selectedOccurrenceIds is set', async () => {
-    await viewModel.loadOverview();
+    await viewModel.loadMyOrchard();
     expect(viewModel.filteredPlants().length).toBe(2);
 
     viewModel.selectedOccurrenceIds.set(['o1']);

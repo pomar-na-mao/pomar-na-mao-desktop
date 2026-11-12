@@ -11,7 +11,7 @@ describe('ROUTES', () => {
     expect(childPaths).not.toContain('atribuicao-zonas');
     expect(childPaths).toEqual(
       expect.arrayContaining([
-        'visao-geral',
+        'meu-pomar',
         'cadastro',
         'atividades-de-campo',
         'registrar',
@@ -33,14 +33,14 @@ describe('ROUTES', () => {
     await expect(loadFn()).resolves.toBeDefined();
   });
 
-  it('should lazy-load overview as a root authenticated route', async () => {
+  it('should lazy-load My Orchard as a root authenticated route', async () => {
     const mainRoute = ROUTES.find((route) => route.path === '');
-    const overviewRoute = mainRoute?.children?.find(
-      (route) => route.path === 'visao-geral',
+    const myOrchardRoute = mainRoute?.children?.find(
+      (route) => route.path === 'meu-pomar',
     );
 
-    expect(overviewRoute?.loadComponent).toBeDefined();
-    const loadFn = overviewRoute?.loadComponent as () => Promise<unknown>;
+    expect(myOrchardRoute?.loadComponent).toBeDefined();
+    const loadFn = myOrchardRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
   });
 

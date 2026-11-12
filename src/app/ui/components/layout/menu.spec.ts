@@ -17,7 +17,7 @@ describe('AppMenu', () => {
     }).compileComponents();
   });
 
-  it('shows overview first and outside the registration submenu', () => {
+  it('shows My Orchard first and outside the registration submenu', () => {
     const fixture = TestBed.createComponent(AppMenu);
     fixture.detectChanges();
 
@@ -26,18 +26,18 @@ describe('AppMenu', () => {
     const registrationItems = registrationItem?.items ?? [];
 
     expect(items[0]).toMatchObject({
-      label: 'Visão geral',
-      icon: 'pi pi-fw pi-chart-bar',
-      routerLink: ['/visao-geral'],
+      label: 'Meu Pomar',
+      icon: 'pi pi-fw pi-apple',
+      routerLink: ['/meu-pomar'],
     });
     expect(registrationItem).toMatchObject({
       icon: 'pi pi-fw pi-file-import',
     });
     expect(registrationItems.map((item) => item.routerLink?.[0])).toEqual([
       '/cadastro/propriedade',
+      '/cadastro/zonas',
       '/cadastro/variedades',
       '/cadastro/ocorrencias',
-      '/cadastro/zonas',
       '/cadastro/estoque',
       '/cadastro/caldas',
       '/cadastro/maquinas',
@@ -46,8 +46,8 @@ describe('AppMenu', () => {
       label: 'Demarcação propriedade',
       icon: 'pi pi-fw pi-map-marker',
     });
-    expect(registrationItems[3]).toMatchObject({
-      label: 'Zonas',
+    expect(registrationItems[1]).toMatchObject({
+      label: 'Demarcação zonas',
       icon: 'pi pi-fw pi-map',
     });
 

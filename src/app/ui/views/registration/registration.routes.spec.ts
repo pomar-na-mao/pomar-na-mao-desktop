@@ -5,7 +5,7 @@ describe('Registration routes', () => {
   it('should redirect /cadastro to the overview route', () => {
     const defaultRoute = routes.find((route) => route.path === '');
 
-    expect(defaultRoute?.redirectTo).toBe('/visao-geral');
+    expect(defaultRoute?.redirectTo).toBe('/meu-pomar');
     expect(defaultRoute?.pathMatch).toBe('full');
   });
 

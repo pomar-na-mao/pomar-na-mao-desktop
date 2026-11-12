@@ -4,11 +4,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { Sidebar } from './sidebar';
 
 describe('Sidebar', () => {
-  it('shows overview as the first navigation item', () => {
+  it('shows My Orchard as the first navigation item', () => {
     const sidebar = new Sidebar();
 
     expect(sidebar.menuItems[0]).toEqual(
-      expect.objectContaining({ label: 'Visão geral', path: '/visao-geral' }),
+      expect.objectContaining({ label: 'Meu Pomar', path: '/meu-pomar' }),
     );
   });
 

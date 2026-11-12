@@ -7,11 +7,11 @@ import type {
   InspectionPlant,
   OverviewOperationType,
 } from '../../../../domain/models/overview.model';
-import { OverviewViewModel } from '../../../view-models/overview/overview.view-model';
-import { OverviewMap } from './overview-map';
+import { MyOrchardViewModel } from '../../../view-models/my-orchard/my-orchard.view-model';
+import { MyOrchardMap } from './my-orchard-map';
 
-describe('OverviewMap', () => {
-  let fixture: ComponentFixture<OverviewMap>;
+describe('MyOrchardMap', () => {
+  let fixture: ComponentFixture<MyOrchardMap>;
   const viewModel = {
     isMapFullscreen: signal(false),
     selectedInspectionDetails: signal<InspectionOperationResponse | null>(null),
@@ -31,18 +31,18 @@ describe('OverviewMap', () => {
     document.body.classList.remove('map-fullscreen-active');
     vi.clearAllMocks();
     await TestBed.configureTestingModule({
-      imports: [OverviewMap],
-      providers: [{ provide: OverviewViewModel, useValue: viewModel }],
+      imports: [MyOrchardMap],
+      providers: [{ provide: MyOrchardViewModel, useValue: viewModel }],
     }).compileComponents();
-    fixture = TestBed.createComponent(OverviewMap);
+    fixture = TestBed.createComponent(MyOrchardMap);
     fixture.detectChanges();
   });
 
   it('keeps a full-size map area and names the fullscreen control', () => {
     const root = fixture.nativeElement as HTMLElement;
-    expect(root.querySelector('#overview-map')?.className).toContain('h-full');
+    expect(root.querySelector('#my-orchard-map')?.className).toContain('h-full');
     expect(root.querySelector('button[aria-label="Tela cheia"], [aria-label="Tela cheia"]')).toBeTruthy();
-    expect(viewModel.initMap).toHaveBeenCalledWith('overview-map');
+    expect(viewModel.initMap).toHaveBeenCalledWith('my-orchard-map');
   });
 
   it('preserves fullscreen behavior and invalidates map size', () => {
