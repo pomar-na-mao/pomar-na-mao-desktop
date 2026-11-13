@@ -113,12 +113,12 @@ describe('MipdRegistration Component', () => {
     const fixture = TestBed.createComponent(MipdRegistration);
     const comp = fixture.componentInstance;
 
-    mockViewModel.selectedPlantId.set('plant-1');
+    mockViewModel.selectedPlantId?.set('plant-1');
     comp.handleKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
     expect(mockViewModel.selectPlant).toHaveBeenCalledWith('');
 
     vi.clearAllMocks();
-    mockViewModel.selectedPlantId.set('plant-1');
+    mockViewModel.selectedPlantId?.set('plant-1');
     comp.handleKeydown(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true }));
     expect(mockViewModel.selectPlant).toHaveBeenCalledWith('');
   });

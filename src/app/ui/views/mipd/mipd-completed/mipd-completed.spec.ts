@@ -112,7 +112,7 @@ describe('MipdCompleted Component', () => {
     const fixture = TestBed.createComponent(MipdCompleted);
     const comp = fixture.componentInstance;
 
-    mockViewModel.selectedItem.set(sampleItem);
+    mockViewModel.selectedItem?.set(sampleItem);
     comp.onDetailsShown();
 
     expect(mockViewModel.initMiniMap).toHaveBeenCalledWith('mipd-mini-map', sampleItem);
