@@ -17,7 +17,7 @@ describe('AppMenu', () => {
     }).compileComponents();
   });
 
-  it('shows overview first and outside the registration submenu', () => {
+  it('shows My Orchard first and outside the registration submenu', () => {
     const fixture = TestBed.createComponent(AppMenu);
     fixture.detectChanges();
 
@@ -26,18 +26,18 @@ describe('AppMenu', () => {
     const registrationItems = registrationItem?.items ?? [];
 
     expect(items[0]).toMatchObject({
-      label: 'Visão geral',
-      icon: 'pi pi-fw pi-chart-bar',
-      routerLink: ['/visao-geral'],
+      label: 'Meu Pomar',
+      icon: 'pi pi-fw pi-apple',
+      routerLink: ['/meu-pomar'],
     });
     expect(registrationItem).toMatchObject({
       icon: 'pi pi-fw pi-file-import',
     });
     expect(registrationItems.map((item) => item.routerLink?.[0])).toEqual([
       '/cadastro/propriedade',
+      '/cadastro/zonas',
       '/cadastro/variedades',
       '/cadastro/ocorrencias',
-      '/cadastro/zonas',
       '/cadastro/estoque',
       '/cadastro/caldas',
       '/cadastro/maquinas',
@@ -46,28 +46,64 @@ describe('AppMenu', () => {
       label: 'Demarcação propriedade',
       icon: 'pi pi-fw pi-map-marker',
     });
-    expect(registrationItems[3]).toMatchObject({
-      label: 'Zonas',
+    expect(registrationItems[1]).toMatchObject({
+      label: 'Demarcação zonas',
       icon: 'pi pi-fw pi-map',
     });
 
-    expect(items.find((item) => item.label === 'Zoneamento')).toMatchObject({
-      icon: 'pi pi-fw pi-share-alt',
-      routerLink: ['/zoneamento'],
-    });
+    expect(items.find((item) => item.label === 'Zoneamento')).toBeUndefined();
+    expect(items.find((item) => item.label === 'Dados básicos')).toBeUndefined();
     expect(items.find((item) => item.label === 'Zonas')).toBeUndefined();
 
     const registrationIndex = items.findIndex(
       (item) => item.label === 'Cadastro',
     );
-    expect(items[registrationIndex + 1]).toMatchObject({
-      label: 'Atividades de campo',
+    const registerItem = items[registrationIndex + 1];
+    expect(registerItem).toMatchObject({
+      label: 'Registrar',
+      icon: 'pi pi-fw pi-pencil',
+    });
+    expect(registerItem.items).toHaveLength(1);
+    expect(registerItem.items?.[0]).toMatchObject({
+      label: 'Ocorrências',
+      icon: 'pi pi-fw pi-exclamation-circle',
+      routerLink: ['/registrar/ocorrencias'],
+    });
+    expect(items[registrationIndex + 2]).toMatchObject({
+      label: 'Atividade de campo',
       icon: 'pi pi-fw pi-book',
-      routerLink: ['/atividades-de-campo'],
+      items: [
+        expect.objectContaining({
+          label: 'Gerar',
+          icon: 'pi pi-fw pi-plus-circle',
+          routerLink: ['/atividades-de-campo/gerar'],
+        }),
+        expect.objectContaining({
+          label: 'Realizadas',
+          icon: 'pi pi-fw pi-check-circle',
+          routerLink: ['/atividades-de-campo/realizadas'],
+        }),
+      ],
+    });
+    expect(items[registrationIndex + 3]).toMatchObject({
+      label: 'Mipd',
+      icon: 'pi pi-fw pi-shield',
+      items: [
+        expect.objectContaining({
+          label: 'Registrar',
+          icon: 'pi pi-fw pi-pencil',
+          routerLink: ['/mpid/registrar'],
+        }),
+        expect.objectContaining({
+          label: 'Realizadas',
+          icon: 'pi pi-fw pi-check-circle',
+          routerLink: ['/mpid/realizadas'],
+        }),
+      ],
     });
   });
 
-  it('groups Operações and Mipd under Visão das operações', () => {
+  it('does not contain Visão das operações or its child routes', () => {
     const fixture = TestBed.createComponent(AppMenu);
     fixture.detectChanges();
 
@@ -76,13 +112,9 @@ describe('AppMenu', () => {
       (item) => item.label === 'Visão das operações',
     );
 
-    expect(operationsView).toMatchObject({
-      icon: 'pi pi-fw pi-hammer',
-    });
-    expect(operationsView?.items?.map((item) => item.routerLink?.[0])).toEqual([
-      '/visao-das-operacoes/operacoes',
-      '/visao-das-operacoes/mipd',
-    ]);
+    expect(operationsView).toBeUndefined();
+    expect(items.find((item) => item.routerLink?.[0] === '/visao-das-operacoes/operacoes')).toBeUndefined();
+    expect(items.find((item) => item.routerLink?.[0] === '/visao-das-operacoes/mipd')).toBeUndefined();
     expect(items.find((item) => item.routerLink?.[0] === '/operacoes')).toBeUndefined();
     expect(items.find((item) => item.routerLink?.[0] === '/mipd')).toBeUndefined();
   });

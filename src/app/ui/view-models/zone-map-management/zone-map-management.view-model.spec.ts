@@ -4,10 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { MessageService } from '../../../data/services/message/message.service';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import type { Region } from '../../../domain/models/regions.model';
 import type { Zone } from '../../../domain/models/zone.model';
+import type { PlantMapItem } from '../../../domain/models/plant-data.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { ZoneMapManagementViewModel } from './zone-map-management.view-model';
 
@@ -60,13 +62,21 @@ describe('ZoneMapManagementViewModel', () => {
     getBoundary: vi.fn().mockResolvedValue([]),
   };
 
+  const plantsSignal = signal<PlantMapItem[]>([]);
+  const mockPlantsRepository = {
+    allPlants: plantsSignal,
+    loadAllPlants: vi.fn().mockResolvedValue({ data: [], error: null }),
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     TestBed.resetTestingModule();
     zonesSignal.set([createZone()]);
     regionsSignal.set([]);
+    plantsSignal.set([]);
     mockZonesRepository.findAll.mockResolvedValue({ error: null });
     mockRegionsRepository.findAll.mockResolvedValue({ error: null });
+    mockPlantsRepository.loadAllPlants.mockResolvedValue({ data: [], error: null });
     mockFarmBoundaryService.getBoundary.mockResolvedValue([]);
 
     TestBed.configureTestingModule({
@@ -75,6 +85,7 @@ describe('ZoneMapManagementViewModel', () => {
         ZoneMapManagementViewModel,
         { provide: ZonesRepository, useValue: mockZonesRepository },
         { provide: RegionsRepository, useValue: mockRegionsRepository },
+        { provide: PlantsRepository, useValue: mockPlantsRepository },
         { provide: MessageService, useValue: mockMessageService },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
@@ -98,6 +109,7 @@ describe('ZoneMapManagementViewModel', () => {
         ZoneMapManagementViewModel,
         { provide: ZonesRepository, useValue: mockZonesRepository },
         { provide: RegionsRepository, useValue: mockRegionsRepository },
+        { provide: PlantsRepository, useValue: mockPlantsRepository },
         { provide: MessageService, useValue: mockMessageService },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: FarmBoundaryService, useValue: mockFarmBoundaryService },
@@ -111,8 +123,8 @@ describe('ZoneMapManagementViewModel', () => {
     expect(viewModel.farmInitialCenter()).toEqual([3, 4]);
     expect(viewModel.farmInitialZoom()).toBe(16);
     expect(viewModel.mapBackgroundPolygonLabels()[0]).toBe('');
-    expect(viewModel.mapBackgroundPolygonColors()[0]).toBe('#0f3b8f');
-    expect(viewModel.mapBackgroundPolygonDashArrays()[0]).toBeNull();
+    expect(viewModel.mapBackgroundPolygonColors()[0]).toBe('#ffffff');
+    expect(viewModel.mapBackgroundPolygonDashArrays()[0]).toBe('4, 4');
     expect(viewModel.mapBackgroundPolygonFillOpacities()[0]).toBe(0);
   });
 
@@ -513,6 +525,80 @@ describe('ZoneMapManagementViewModel', () => {
     expect(viewModel.canSave()).toBe(false);
     expect(mockMessageService.error).toHaveBeenCalledWith(
       'Erro ao carregar zonas existentes.',
+    );
+  });
+
+  it('should load plants on loadInitialData and filter out non_existent plants', async () => {
+    mockPlantsRepository.loadAllPlants.mockClear();
+    plantsSignal.set([
+      { id: '1', latitude: -23.1, longitude: -49.1, zoneId: null, non_existent: false },
+      { id: '2', latitude: -23.2, longitude: -49.2, zoneId: null, non_existent: true },
+      { id: '3', latitude: -23.3, longitude: -49.3, zoneId: null, non_existent: false },
+    ]);
+
+    await viewModel.loadInitialData();
+
+    expect(mockPlantsRepository.loadAllPlants).toHaveBeenCalled();
+    expect(viewModel.plants()).toHaveLength(2);
+    expect(viewModel.plants().map((p) => p.id)).toEqual(['1', '3']);
+  });
+
+  it('should reload plants and announce plant count after saving zone', async () => {
+    viewModel.zoneForm.controls.name.setValue('Zona B');
+    viewModel.zoneForm.controls.code.setValue('B');
+    viewModel.onPolygonSelected([
+      { lat: -23.1, lng: -49.1 },
+      { lat: -23.2, lng: -49.1 },
+      { lat: -23.2, lng: -49.2 },
+    ]);
+
+    mockZonesRepository.createWithRegions.mockResolvedValueOnce({
+      data: {
+        zone_id: 'zone-new',
+        zone_name: 'Zona B',
+        region_points_count: 3,
+        polygon: { type: 'Polygon', coordinates: [] },
+        plants_updated_count: 42,
+      },
+      error: null,
+      message: null,
+    });
+
+    mockPlantsRepository.loadAllPlants.mockClear();
+
+    await viewModel.save();
+
+    expect(mockPlantsRepository.loadAllPlants).toHaveBeenCalled();
+    expect(mockMessageService.success).toHaveBeenCalledWith(
+      'Zona criada com sucesso! 42 planta(s) vinculada(s).',
+    );
+  });
+
+  it('should show generic success message when no plants were updated', async () => {
+    viewModel.zoneForm.controls.name.setValue('Zona C');
+    viewModel.zoneForm.controls.code.setValue('C');
+    viewModel.onPolygonSelected([
+      { lat: -23.1, lng: -49.1 },
+      { lat: -23.2, lng: -49.1 },
+      { lat: -23.2, lng: -49.2 },
+    ]);
+
+    mockZonesRepository.createWithRegions.mockResolvedValueOnce({
+      data: {
+        zone_id: 'zone-c',
+        zone_name: 'Zona C',
+        region_points_count: 3,
+        polygon: { type: 'Polygon', coordinates: [] },
+        plants_updated_count: 0,
+      },
+      error: null,
+      message: null,
+    });
+
+    await viewModel.save();
+
+    expect(mockMessageService.success).toHaveBeenCalledWith(
+      'Zona criada com sucesso',
     );
   });
 });

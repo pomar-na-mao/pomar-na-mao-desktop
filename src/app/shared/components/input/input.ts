@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    Input as NgInput,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input as NgInput,
 } from '@angular/core';
 import {
-    ControlValueAccessor,
-    FormsModule,
-    NgControl,
-    ReactiveFormsModule,
+  ControlValueAccessor,
+  FormsModule,
+  NgControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
@@ -17,8 +17,39 @@ import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-input',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, DatePickerModule, MessageModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    DatePickerModule,
+    MessageModule,
+  ],
   changeDetection: ChangeDetectionStrategy.Eager,
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+      }
+      :host ::ng-deep .p-datepicker {
+        width: 100%;
+        display: flex;
+      }
+      :host ::ng-deep .p-datepicker-input,
+      :host ::ng-deep input.p-inputtext {
+        height: 2.5rem;
+        box-sizing: border-box;
+      }
+      :host ::ng-deep input[type="time"].p-inputtext {
+        height: 2.5rem;
+        padding-top: 0;
+        padding-bottom: 0;
+        line-height: 2.5rem;
+        box-sizing: border-box;
+      }
+    `,
+  ],
   template: `
     <div class="w-full space-y-1">
       @if (label) {
@@ -26,8 +57,13 @@ import { MessageModule } from 'primeng/message';
           <label
             [for]="id"
             class="block text-md font-medium text-surface-700 dark:text-surface-200"
-            >{{ label }}</label
           >
+            @if (hasAsterisk) {
+              {{ labelWithoutAsterisk }} <span class="text-red-500" aria-hidden="true">*</span>
+            } @else {
+              {{ label }}
+            }
+          </label>
           <ng-content select="[label-extra]"></ng-content>
         </div>
       }
@@ -47,7 +83,7 @@ import { MessageModule } from 'primeng/message';
             appendTo="body"
             [fluid]="true"
             [ngClass]="{
-              'ng-invalid ng-dirty': !!errorMessage
+              'ng-invalid ng-dirty': !!errorMessage,
             }"
           />
         } @else {
@@ -62,6 +98,7 @@ import { MessageModule } from 'primeng/message';
             [id]="id"
             [type]="type"
             [placeholder]="placeholder"
+            [attr.maxlength]="maxlength"
             [value]="value"
             (input)="onInput($event)"
             (blur)="onBlur()"
@@ -74,7 +111,7 @@ import { MessageModule } from 'primeng/message';
               'p-inputtext-sm': size === 'sm',
               'ng-invalid ng-dirty': !!errorMessage,
               'pl-10': !!icon,
-              'pr-10': trailingAction
+              'pr-10': trailingAction,
             }"
           />
           @if (trailingAction) {
@@ -85,7 +122,11 @@ import { MessageModule } from 'primeng/message';
         }
       </div>
       @if (errorMessage) {
-        <p-message severity="error" variant="simple" class="mt-[3px] flex items-start">
+        <p-message
+          severity="error"
+          variant="simple"
+          class="mt-[3px] flex items-start"
+        >
           <span class="text-sm" [id]="id + '-error'">{{ errorMessage }}</span>
         </p-message>
       }
@@ -96,6 +137,7 @@ export class Input implements ControlValueAccessor {
   @NgInput() label = '';
   @NgInput() placeholder = '';
   @NgInput() type = 'text';
+  @NgInput() maxlength: number | null = null;
   @NgInput() id = 'input-' + Math.random().toString(36).substring(2, 9);
   @NgInput() icon = '';
   @NgInput() trailingAction = false;
@@ -126,6 +168,14 @@ export class Input implements ControlValueAccessor {
 
     const firstErrorKey = Object.keys(this.ngControl.errors)[0];
     return this.errors[firstErrorKey] || '';
+  }
+
+  get hasAsterisk(): boolean {
+    return this.label.includes('*');
+  }
+
+  get labelWithoutAsterisk(): string {
+    return this.label.replace(/\s*\*\s*$/, '').trim();
   }
 
   private _value = '';

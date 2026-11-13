@@ -27,7 +27,7 @@ export class LoginViewModel {
       return;
     }
 
-    this.router.navigateByUrl('/visao-geral');
+    this.router.navigateByUrl('/meu-pomar');
 
     await this.authenticationRepository.getUser();
 

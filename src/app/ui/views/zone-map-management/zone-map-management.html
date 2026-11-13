@@ -164,7 +164,7 @@
       [backgroundPolygonDashArrays]="viewModel.mapBackgroundPolygonDashArrays()"
       [backgroundPolygonFillOpacities]="viewModel.mapBackgroundPolygonFillOpacities()"
       [focusedPolygon]="viewModel.savedZoneFocusPolygon()"
-      [plants]="[]"
+      [plants]="viewModel.plants()"
       [allowDrawingWithoutPlants]="true"
       [clearSignal]="viewModel.clearMapSignal()"
       (polygonSelected)="onPolygonSelected($event)"

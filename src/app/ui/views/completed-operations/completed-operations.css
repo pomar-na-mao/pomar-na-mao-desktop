@@ -49,13 +49,7 @@
   z-index: 1;
 }
 
-:host-context(.dark) .activities-full-map,
-:host-context(.app-dark) .activities-full-map,
-:host-context(.dark) .activity-mini-map,
-:host-context(.app-dark) .activity-mini-map {
-  filter: invert(0.9) hue-rotate(180deg) brightness(0.9) contrast(1.1);
-  transition: filter 0.2s ease-in-out;
-}
+
 
 /* Filtros com larguras fixas e padronizadas */
 .filter-search-box {

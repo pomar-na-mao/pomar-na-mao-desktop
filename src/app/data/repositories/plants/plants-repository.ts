@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { PlantsService, type PlantsFilter } from "../../services/plants/plants-service";
 import { OverviewStatsService, type OverviewStats } from "../../services/overview-stats/overview-stats-service";
-import type { Plant, PlantData, PlantInsert, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
+import type { Plant, PlantData, PlantInsert, PlantMapItem, PlantRecentUpdate } from "../../../domain/models/plant-data.model";
 import type { PostgrestError } from "@supabase/supabase-js";
 
 @Injectable({
@@ -14,6 +14,20 @@ export class PlantsRepository {
   public plants = signal<Plant[]>([]);
   private _routineCurrentPlants = signal<PlantData[]>([]);
   public routineCurrentPlants = this._routineCurrentPlants.asReadonly();
+
+  private _allPlants = signal<PlantMapItem[]>([]);
+  public allPlants = this._allPlants.asReadonly();
+
+  public async loadAllPlants(): Promise<{
+    data: PlantMapItem[] | null;
+    error: unknown;
+  }> {
+    const result = await this.plantsService.getAllPlantsForMap();
+    if (!result.error && result.data) {
+      this._allPlants.set(result.data);
+    }
+    return result;
+  }
 
   public addRoutineCurrentPlantsItem(plant: PlantData): void {
     this._routineCurrentPlants.update(plants => {

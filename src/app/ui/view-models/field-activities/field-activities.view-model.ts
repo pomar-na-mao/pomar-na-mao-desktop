@@ -193,17 +193,22 @@ export class FieldActivitiesViewModel {
       maxZoom: 22,
     }).setView(DEFAULT_CENTER, 15);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 22,
-      maxNativeZoom: 19,
-    }).addTo(this.map);
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 22,
+        maxNativeZoom: 18,
+        attribution: 'Esri World Imagery',
+      },
+    ).addTo(this.map);
 
     this.farmPolygonLayer = L.polygon([], {
       interactive: false,
-      color: '#2563eb',
+      color: '#ffffff',
       weight: 2,
-      fillColor: '#60a5fa',
-      fillOpacity: 0.05,
+      fill: false,
+      fillOpacity: 0,
+      dashArray: '4, 4',
     }).addTo(this.map);
 
     this.activitiesLayerGroup = L.layerGroup().addTo(this.map);
@@ -241,10 +246,14 @@ export class FieldActivitiesViewModel {
         maxZoom: 22,
       }).setView(DEFAULT_CENTER, 16);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 22,
-        maxNativeZoom: 19,
-      }).addTo(this.miniMap);
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 22,
+          maxNativeZoom: 18,
+          attribution: 'Esri World Imagery',
+        },
+      ).addTo(this.miniMap);
 
       const isArea = activity.geometry_type === 'area';
       this.miniMapLayer = L.geoJSON(activity.geometry_geojson as GeoJSON.GeoJsonObject, {

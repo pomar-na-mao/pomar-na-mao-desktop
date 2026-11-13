@@ -1,0 +1,542 @@
+<div
+  [class]="
+    viewModel.isMapFullscreen()
+      ? 'fixed inset-0 z-[1100] flex h-screen w-screen overflow-hidden bg-surface-0 dark:bg-surface-900'
+      : 'flex h-[calc(100vh-8rem)] w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-surface-0 shadow-sm dark:border-surface-800 dark:bg-surface-900 !mb-0'
+  "
+>
+  <!-- Barra Superior / Header Padronizado -->
+  <div
+    class="flex shrink-0 flex-col gap-3 border-b border-surface-200 bg-surface-50/50 px-4 py-3 dark:border-surface-800 dark:bg-surface-800/20"
+  >
+    <!-- Linha 1: Título/Subtítulo e Ações -->
+    <div
+      class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div class="shrink-0">
+        <div class="flex items-center gap-2">
+          <h4
+            class="font-bold leading-none text-surface-900 dark:text-surface-0"
+          >
+            Realizadas (MIPD)
+          </h4>
+          <span
+            class="text-[10px] mb-[0.5rem] font-semibold px-2 py-0.5 rounded-full bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60"
+          >
+            {{ viewModel.totalCount() }} registros
+          </span>
+        </div>
+        <p
+          class="text-[10px] leading-none text-surface-500 dark:text-surface-400 mt-1"
+        >
+          Acompanhamento georreferenciado e auditoria fotográfica de pragas e doenças no pomar
+        </p>
+      </div>
+
+      <!-- Alternador Tabela / Mapa e Ações -->
+      <div
+        class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto"
+      >
+        <!-- Switcher de Visualização -->
+        <div
+          class="inline-flex rounded-lg border border-surface-200 dark:border-surface-700 p-0.5 bg-surface-0 dark:bg-surface-900"
+        >
+          <button
+            type="button"
+            (click)="setViewMode('table')"
+            [class]="
+              viewModel.viewMode() === 'table'
+                ? 'bg-surface-100 dark:bg-surface-800 text-primary-600 dark:text-primary-400 shadow-xs'
+                : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+            "
+            class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer"
+          >
+            <i class="pi pi-table text-xs"></i>
+            <span>Tabela</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="setViewMode('map')"
+            [class]="
+              viewModel.viewMode() === 'map'
+                ? 'bg-surface-100 dark:bg-surface-800 text-primary-600 dark:text-primary-400 shadow-xs'
+                : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+            "
+            class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer"
+          >
+            <i class="pi pi-map text-xs"></i>
+            <span>Mapa</span>
+          </button>
+        </div>
+
+        <p-button
+          icon="pi pi-refresh"
+          [outlined]="true"
+          severity="secondary"
+          size="small"
+          [loading]="viewModel.isLoading()"
+          (onClick)="viewModel.loadInitialData()"
+          ariaLabel="Atualizar registros de MIPD"
+          pTooltip="Atualizar dados"
+          tooltipPosition="bottom"
+        />
+      </div>
+    </div>
+
+    <!-- Linha 2: Busca e Filtros Combinados -->
+    <div
+      class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5"
+    >
+      <!-- Campo de Pesquisa -->
+      <div class="filter-search-box shrink-0">
+        <p-iconfield class="w-full">
+          <p-inputicon class="pi pi-search" />
+          <input
+            pInputText
+            type="search"
+            [ngModel]="viewModel.globalFilter()"
+            (ngModelChange)="viewModel.globalFilter.set($event)"
+            placeholder="Pesquisar por praga, zona, planta..."
+            class="w-full text-xs"
+          />
+        </p-iconfield>
+      </div>
+
+      <!-- Filtros Avançados -->
+      <div
+        class="flex flex-wrap items-center gap-2 justify-start lg:justify-end flex-1"
+      >
+        <!-- Filtro por Zona -->
+        <p-select
+          [options]="zoneFilterOptions"
+          optionLabel="label"
+          optionValue="value"
+          [ngModel]="viewModel.selectedZoneId()"
+          (ngModelChange)="onZoneFilterChange($event)"
+          placeholder="Todas as zonas"
+          size="small"
+          class="filter-select shrink-0 text-xs"
+        />
+
+        <!-- Filtro por Praga / Doença -->
+        <p-select
+          [options]="occurrenceTypeFilterOptions"
+          optionLabel="label"
+          optionValue="value"
+          [ngModel]="viewModel.selectedOccurrenceTypeId()"
+          (ngModelChange)="onOccurrenceTypeFilterChange($event)"
+          placeholder="Todas as ocorrências"
+          size="small"
+          class="filter-select shrink-0 text-xs"
+        />
+
+        <!-- Período Datas -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <p-datepicker
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            dataType="string"
+            placeholder="Início"
+            [ngModel]="viewModel.startDate()"
+            (ngModelChange)="viewModel.startDate.set($event || '')"
+            size="small"
+            class="filter-datepicker shrink-0 text-xs"
+          />
+          <span class="text-surface-400 text-xs shrink-0">até</span>
+          <p-datepicker
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            dataType="string"
+            placeholder="Fim"
+            [ngModel]="viewModel.endDate()"
+            (ngModelChange)="viewModel.endDate.set($event || '')"
+            size="small"
+            class="filter-datepicker shrink-0 text-xs"
+          />
+          <p-button
+            icon="pi pi-filter"
+            size="small"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="viewModel.filterByDates()"
+            pTooltip="Filtrar por data"
+            ariaLabel="Filtrar por data"
+            class="shrink-0"
+          />
+        </div>
+
+        <p-button
+          icon="pi pi-filter-slash"
+          label="Limpar"
+          size="small"
+          [text]="true"
+          severity="secondary"
+          [disabled]="!viewModel.hasActiveFilters()"
+          (onClick)="viewModel.clearFilters()"
+          pTooltip="Limpar filtros"
+          class="shrink-0"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Corpo Principal: Tabela ou Mapa -->
+  <div class="relative flex-1 min-h-0 w-full overflow-hidden">
+    @if (viewModel.viewMode() === 'table') {
+      <!-- Modo Tabela -->
+      <div class="flex h-full w-full flex-col overflow-hidden">
+        <!-- Barra de Métricas Resumidas -->
+        <div
+          class="flex items-center gap-4 px-4 py-2 bg-surface-50/30 dark:bg-surface-800/10 border-b border-surface-200/60 dark:border-surface-800/60 text-xs text-surface-500 overflow-x-auto shrink-0"
+        >
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-shield text-primary-500"></i>
+            <span>
+              Total de Registros:
+              <strong class="text-surface-700 dark:text-surface-300">
+                {{ viewModel.totalCount() }}
+              </strong>
+            </span>
+          </div>
+          <span class="text-surface-300 dark:text-surface-700">•</span>
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-camera text-violet-500"></i>
+            <span>
+              Com Foto:
+              <strong class="text-surface-700 dark:text-surface-300">
+                {{ viewModel.withPhotoCount() }}
+              </strong>
+            </span>
+          </div>
+          <span class="text-surface-300 dark:text-surface-700">•</span>
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-map-marker text-emerald-500"></i>
+            <span>
+              Plantas Afetadas:
+              <strong class="text-surface-700 dark:text-surface-300">
+                {{ viewModel.uniquePlantsCount() }}
+              </strong>
+            </span>
+          </div>
+        </div>
+
+        <p-table
+          #dt
+          [value]="viewModel.filteredOperations()"
+          dataKey="marking_id"
+          [rows]="10"
+          [paginator]="true"
+          [rowsPerPageOptions]="[5, 10, 20, 50]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} registros"
+          [rowHover]="true"
+          [loading]="viewModel.isLoading()"
+          responsiveLayout="stack"
+          styleClass="p-datatable-sm"
+        >
+          <ng-template #header>
+            <tr
+              class="bg-surface-50 text-xs uppercase tracking-wider text-surface-500 dark:bg-surface-800/50 dark:text-surface-400"
+            >
+              <th pSortableColumn="observed_at" style="min-width: 10rem">
+                <div class="flex items-center gap-2">
+                  Data da Observação
+                  <p-sortIcon field="observed_at" />
+                </div>
+              </th>
+              <th pSortableColumn="occurrence_type_name" style="min-width: 12rem">
+                <div class="flex items-center gap-2">
+                  Praga / Doença
+                  <p-sortIcon field="occurrence_type_name" />
+                </div>
+              </th>
+              <th pSortableColumn="zone_name" style="min-width: 9rem">
+                <div class="flex items-center gap-2">
+                  Zona
+                  <p-sortIcon field="zone_name" />
+                </div>
+              </th>
+              <th style="min-width: 9rem">Identificação da Planta</th>
+              <th style="min-width: 14rem">Regiões Afetadas</th>
+              <th style="width: 5rem; text-align: center">Foto</th>
+              <th style="width: 6rem; text-align: center">Ações</th>
+            </tr>
+          </ng-template>
+
+          <ng-template #body let-item>
+            <tr
+              class="text-xs hover:bg-surface-50 dark:hover:bg-surface-800/40 transition-colors"
+            >
+              <!-- Data da Observação -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Data: </span>
+                <div class="flex flex-col">
+                  <span class="font-semibold text-surface-900 dark:text-surface-100">
+                    {{ item.observed_at | date: 'dd/MM/yyyy' }}
+                  </span>
+                  <span class="text-[10px] text-surface-400">
+                    {{ item.observed_at | date: 'HH:mm' }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Praga / Doença -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Ocorrência: </span>
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-6 h-6 rounded-md bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center text-purple-700 dark:text-purple-300 shrink-0"
+                  >
+                    <i class="pi pi-shield text-xs"></i>
+                  </div>
+                  <span class="font-bold text-surface-900 dark:text-surface-0">
+                    {{ item.occurrence_type_name }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Zona -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Zona: </span>
+                <span class="font-medium text-surface-700 dark:text-surface-300">
+                  {{ item.zone_name || 'Sem zona' }}
+                </span>
+              </td>
+
+              <!-- Planta -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Planta: </span>
+                <div class="flex flex-col font-mono text-[11px]">
+                  <span class="font-bold text-surface-800 dark:text-surface-200">
+                    {{ item.plant_id.slice(0, 8) }}
+                  </span>
+                  <span class="text-[10px] text-surface-400">
+                    {{ item.latitude | number: '1.4-4' }}, {{ item.longitude | number: '1.4-4' }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Partes Afetadas -->
+              <td>
+                <span class="p-column-title font-semibold md:hidden">Partes Afetadas: </span>
+                <div class="flex flex-wrap gap-1">
+                  @for (part of item.plant_parts; track part) {
+                    <span
+                      class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 border border-surface-200 dark:border-surface-700"
+                    >
+                      {{ getPartLabel(part) }}
+                    </span>
+                  }
+                </div>
+              </td>
+
+              <!-- Foto -->
+              <td class="text-center">
+                <span class="p-column-title font-semibold md:hidden">Foto: </span>
+                @if (item.photo_object_path) {
+                  <span
+                    class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-300 border border-violet-200 dark:border-violet-800"
+                    title="Foto anexada"
+                  >
+                    <i class="pi pi-camera text-[11px]"></i>
+                  </span>
+                } @else {
+                  <span class="text-surface-300 dark:text-surface-600 text-xs">-</span>
+                }
+              </td>
+
+              <!-- Ações -->
+              <td class="text-center">
+                <p-button
+                  icon="pi pi-eye"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="secondary"
+                  size="small"
+                  (onClick)="viewModel.openDetails(item); onDetailsShown()"
+                  pTooltip="Ver detalhes e foto"
+                  tooltipPosition="left"
+                  ariaLabel="Ver detalhes do registro"
+                />
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="7" class="text-center p-8 text-surface-400 text-sm">
+                Nenhum registro de MIPD encontrado para os filtros selecionados.
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    } @else {
+      <!-- Modo Mapa -->
+      <div class="relative h-full w-full">
+        <div id="mipd-main-map" class="mipd-full-map"></div>
+
+        <!-- Painel Flutuante de Controle e Resumo -->
+        <div
+          class="absolute bottom-6 right-6 z-[1000] flex flex-col gap-2 rounded-xl border border-surface-200/90 bg-surface-0/95 p-3 text-xs shadow-lg backdrop-blur-sm dark:border-surface-800/90 dark:bg-surface-900/95"
+        >
+          <div class="font-bold text-surface-800 dark:text-surface-100 border-b pb-1.5 mb-1">
+            Resumo Cartográfico
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-surface-500">Ocorrências Mapeadas:</span>
+            <strong class="text-primary-600 dark:text-primary-400">
+              {{ viewModel.filteredOperations().length }}
+            </strong>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-surface-500">Plantas Distintas:</span>
+            <strong>{{ viewModel.uniquePlantsCount() }}</strong>
+          </div>
+
+          <div class="pt-2 border-t flex gap-2">
+            <p-button
+              label="Enquadrar Pomar"
+              icon="pi pi-home"
+              size="small"
+              [outlined]="true"
+              severity="secondary"
+              (onClick)="viewModel.zoomToFarm()"
+            />
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal Detalhado com Exibição de Fotografia -->
+<p-dialog
+  [visible]="viewModel.detailsDialogVisible()"
+  (visibleChange)="onDialogVisibleChange($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="mipd-details-dialog w-[95vw] sm:w-[36rem] md:w-[42rem] max-w-full"
+  [header]="'Detalhes do Registro MIPD'"
+  (onShow)="onDetailsShown()"
+>
+  @if (viewModel.selectedItem(); as item) {
+    <div class="flex flex-col gap-4 text-xs">
+      <!-- Cabeçalho do Registro -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-surface-50 dark:bg-surface-800/40 border border-surface-200 dark:border-surface-700"
+      >
+        <div class="flex items-center gap-2.5">
+          <div
+            class="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-950/80 flex items-center justify-center text-purple-700 dark:text-purple-300 font-bold"
+          >
+            <i class="pi pi-shield text-base"></i>
+          </div>
+          <div>
+            <h5 class="font-bold text-sm text-surface-900 dark:text-surface-0 leading-none">
+              {{ item.occurrence_type_name }}
+            </h5>
+            <p class="text-[11px] text-surface-500 mt-1">
+              Zona: <strong class="text-surface-700 dark:text-surface-300">{{ item.zone_name || 'N/A' }}</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="text-right sm:self-center">
+          <span class="text-[10px] text-surface-400 block">Observado em</span>
+          <span class="font-semibold text-surface-800 dark:text-surface-200">
+            {{ item.observed_at | date: 'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Informações da Planta e Afetação -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="p-3 rounded-xl border border-surface-200 dark:border-surface-700 space-y-1.5">
+          <span class="text-[10px] text-surface-400 font-bold uppercase tracking-wider block">
+            Dados da Planta
+          </span>
+          <div class="flex justify-between">
+            <span class="text-surface-500">ID da Planta:</span>
+            <span class="font-mono font-medium">{{ item.plant_id.slice(0, 13) }}...</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-surface-500">Coordenadas:</span>
+            <span class="font-mono">{{ item.latitude | number: '1.5-5' }}, {{ item.longitude | number: '1.5-5' }}</span>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl border border-surface-200 dark:border-surface-700 space-y-1.5">
+          <span class="text-[10px] text-surface-400 font-bold uppercase tracking-wider block">
+            Regiões Afetadas
+          </span>
+          <div class="flex flex-wrap gap-1 mt-1">
+            @for (part of item.plant_parts; track part) {
+              <span
+                class="px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800"
+              >
+                {{ getPartLabel(part) }}
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção: Foto Comprobatória Privada -->
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-bold text-surface-700 dark:text-surface-300 flex items-center gap-1.5">
+          <i class="pi pi-camera text-primary"></i> Fotografia da Planta Coletada
+        </span>
+
+        @if (viewModel.photoLoading()) {
+          <div
+            class="flex items-center justify-center gap-2 p-8 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/20 text-surface-500"
+          >
+            <i class="pi pi-spin pi-spinner text-primary"></i>
+            <span>Gerando acesso seguro à foto...</span>
+          </div>
+        } @else if (viewModel.photoUrl()) {
+          <div class="overflow-hidden rounded-xl border border-surface-200 dark:border-surface-700 bg-black/5 dark:bg-black/40 flex justify-center p-2">
+            <img
+              [src]="viewModel.photoUrl()"
+              alt="Fotografia da planta com sintoma"
+              class="max-h-72 w-auto object-contain rounded-lg shadow-sm"
+            />
+          </div>
+        } @else if (viewModel.photoError()) {
+          <div class="p-4 rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-950/20 text-rose-700 text-xs">
+            {{ viewModel.photoError() }}
+          </div>
+        } @else {
+          <div class="p-4 rounded-xl border border-dashed border-surface-200 dark:border-surface-700 text-center text-surface-400 text-xs italic">
+            Nenhuma foto foi anexada nesta coleta de campo.
+          </div>
+        }
+      </div>
+
+      <!-- Mini-Mapa com Localização -->
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-bold text-surface-700 dark:text-surface-300 flex items-center gap-1.5">
+          <i class="pi pi-map text-primary"></i> Localização no Pomar
+        </span>
+        <div id="mipd-mini-map" class="mipd-mini-map border border-surface-200 dark:border-surface-700"></div>
+      </div>
+    </div>
+  }
+
+  <ng-template #footer>
+    <div class="flex items-center justify-end w-full pt-2">
+      <p-button
+        label="Fechar"
+        severity="secondary"
+        size="small"
+        [outlined]="true"
+        (onClick)="viewModel.closeDetails()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>
