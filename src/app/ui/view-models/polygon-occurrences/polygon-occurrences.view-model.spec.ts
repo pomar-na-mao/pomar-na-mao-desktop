@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PolygonOccurrencesRepository } from '../../../data/repositories/polygon-occurrences/polygon-occurrences.repository';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
 import type { PolygonOccurrencePreviewPlant } from '../../../domain/models/polygon-occurrences';
@@ -17,6 +18,8 @@ describe('PolygonOccurrencesViewModel', () => {
   const options = signal([{ id: 'o1', code: 'broca', name: 'Broca' }]);
   const zones = signal<Zone[]>([{ id: 'z1', name: 'Zona A' } as Zone]);
   const currentZone = signal<Zone | null>(null);
+  const regions = signal<any[]>([]);
+  const allPlants = signal<any[]>([]);
   const messages = { success: vi.fn(), error: vi.fn() };
   const loading = { show: vi.fn(), hide: vi.fn() };
   const repository = {
@@ -31,13 +34,16 @@ describe('PolygonOccurrencesViewModel', () => {
     syncPolygonOccurrences: vi.fn(),
   };
   const zonesRepository = { zones, currentZone, findAll: vi.fn() };
-  const regionsRepository = { findByZoneId: vi.fn() };
+  const regionsRepository = { regions, findAll: vi.fn().mockResolvedValue({ error: null }), findByZoneId: vi.fn() };
+  const plantsRepository = { allPlants, loadAllPlants: vi.fn().mockResolvedValue({ data: [], error: null }) };
   let viewModel: PolygonOccurrencesViewModel;
 
   beforeEach(() => {
     vi.clearAllMocks();
     coordinates.set([]);
     previewPlants.set([]);
+    allPlants.set([]);
+    regions.set([]);
     currentZone.set(null);
     repository.loadOccurrenceTypeOptions.mockResolvedValue({ data: options(), error: null });
     repository.previewPlantsInsidePolygon.mockImplementation(async () => {
@@ -49,6 +55,7 @@ describe('PolygonOccurrencesViewModel', () => {
       return { data: plants, error: null };
     });
     zonesRepository.findAll.mockResolvedValue({ error: null });
+    regionsRepository.findAll.mockResolvedValue({ error: null });
     regionsRepository.findByZoneId.mockResolvedValue({
       data: [
         { latitude: 1, longitude: 2 }, { latitude: 2, longitude: 3 }, { latitude: 3, longitude: 1 },
@@ -62,6 +69,7 @@ describe('PolygonOccurrencesViewModel', () => {
         { provide: PolygonOccurrencesRepository, useValue: repository },
         { provide: ZonesRepository, useValue: zonesRepository },
         { provide: RegionsRepository, useValue: regionsRepository },
+        { provide: PlantsRepository, useValue: plantsRepository },
         { provide: FarmBoundaryService, useValue: { getBoundary: vi.fn().mockResolvedValue([]) } },
         { provide: MessageService, useValue: messages },
         { provide: LoadingService, useValue: loading },

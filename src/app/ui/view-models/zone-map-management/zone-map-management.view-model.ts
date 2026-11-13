@@ -21,30 +21,22 @@ import {
 } from '../../../shared/utils/ordered-map-boundary';
 
 const ZONE_POLYGON_COLORS = [
-  '#0ea5e9',
-  '#22c55e',
-  '#f59e0b',
-  '#ef4444',
-  '#8b5cf6',
-  '#ec4899',
-  '#14b8a6',
-  '#84cc16',
-  '#3b82f6',
-  '#f97316',
-  '#06b6d4',
-  '#a855f7',
-  '#e11d48',
-  '#65a30d',
-  '#4f46e5',
-  '#dc2626',
-  '#0891b2',
-  '#16a34a',
-  '#ca8a04',
-  '#c026d3',
-  '#0284c7',
-  '#db2777',
-  '#059669',
-  '#d97706',
+  '#0ea5e9', // Azul celeste vibrante
+  '#f97316', // Laranja vibrante
+  '#ec4899', // Rosa pink vivo
+  '#eab308', // Amarelo ouro brilhante
+  '#a855f7', // Roxo elétrico
+  '#10b981', // Esmeralda brilhante
+  '#3b82f6', // Azul royal vivo
+  '#ef4444', // Vermelho vivo
+  '#14b8a6', // Turquesa vivo
+  '#84cc16', // Lima neon
+  '#f43f5e', // Carmesim vibrante
+  '#8b5cf6', // Violeta intenso
+  '#06b6d4', // Ciano vivo
+  '#d97706', // Âmbar saturado
+  '#c026d3', // Magenta fúcsia
+  '#0284c7', // Azul cerúleo brilhante
 ];
 
 @Injectable({
@@ -115,16 +107,16 @@ export class ZoneMapManagementViewModel {
     ...this.existingZonePolygonLabels(),
   ]);
   public mapBackgroundPolygonColors = computed(() => [
-    ...(this.farmPolygonCoords() ? ['#0f3b8f'] : []),
+    ...(this.farmPolygonCoords() ? ['#ffffff'] : []),
     ...this.existingZonePolygonColors(),
   ]);
   public mapBackgroundPolygonDashArrays = computed<Array<string | null>>(() => [
-    ...(this.farmPolygonCoords() ? [null] : []),
+    ...(this.farmPolygonCoords() ? ['4, 4'] : []),
     ...this.existingZonePolygonDashArrays(),
   ]);
   public mapBackgroundPolygonFillOpacities = computed(() => [
     ...(this.farmPolygonCoords() ? [0] : []),
-    ...this.existingZonePolygons().map(() => 0.24),
+    ...this.existingZonePolygons().map(() => 0),
   ]);
 
   public zoneForm = this.formBuilder.group({

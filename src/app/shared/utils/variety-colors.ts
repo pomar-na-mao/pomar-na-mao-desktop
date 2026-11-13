@@ -5,7 +5,7 @@ export interface VarietyColor {
 
 export const VARIETY_COLOR_PALETTE: VarietyColor[] = [
   { strokeColor: '#1d4ed8', fillColor: '#3b82f6' }, // Azul
-  { strokeColor: '#047857', fillColor: '#10b981' }, // Verde esmeralda
+  { strokeColor: '#0d9488', fillColor: '#14b8a6' }, // Teal
   { strokeColor: '#b45309', fillColor: '#f59e0b' }, // Âmbar
   { strokeColor: '#b91c1c', fillColor: '#ef4444' }, // Vermelho
   { strokeColor: '#6d28d9', fillColor: '#8b5cf6' }, // Roxo
@@ -14,7 +14,6 @@ export const VARIETY_COLOR_PALETTE: VarietyColor[] = [
   { strokeColor: '#4d7c0f', fillColor: '#84cc16' }, // Lima
   { strokeColor: '#c2410c', fillColor: '#f97316' }, // Laranja
   { strokeColor: '#4338ca', fillColor: '#6366f1' }, // Índigo
-  { strokeColor: '#0f766e', fillColor: '#14b8a6' }, // Teal
   { strokeColor: '#a21caf', fillColor: '#d946ef' }, // Fúcsia
   { strokeColor: '#a16207', fillColor: '#eab308' }, // Amarelo
   { strokeColor: '#0369a1', fillColor: '#0284c7' }, // Azul celeste
@@ -23,8 +22,8 @@ export const VARIETY_COLOR_PALETTE: VarietyColor[] = [
 ];
 
 export const UNASSIGNED_VARIETY_COLOR: VarietyColor = {
-  strokeColor: '#4b5563',
-  fillColor: '#9ca3af',
+  strokeColor: '#047857',
+  fillColor: '#10b981',
 };
 
 export function getVarietyColor(varietyIndex: number): VarietyColor {

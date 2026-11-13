@@ -178,7 +178,7 @@ describe('CompletedOperations Component', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const mainMap = compiled.querySelector('#activities-main-map');
     expect(mainMap).toBeTruthy();
-    expect(mainMap?.className).toContain('dark:[filter:invert');
+    expect(mainMap?.className).toContain('activities-full-map');
   });
 
   it('should clean up maps on destroy', async () => {

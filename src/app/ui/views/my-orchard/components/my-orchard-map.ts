@@ -26,7 +26,7 @@ import { MyOrchardMapDetailsCard } from './my-orchard-map-details-card';
     <div class="relative h-full w-full">
       <div
         id="my-orchard-map"
-        class="h-full w-full bg-slate-100 dark:bg-slate-900 dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)] transition-[filter]"
+        class="h-full w-full bg-slate-100 dark:bg-slate-900"
       ></div>
 
       <!-- Floating Plant Inspection Details Card -->

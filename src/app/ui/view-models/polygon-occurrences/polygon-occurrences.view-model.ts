@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { PolygonOccurrencesRepository } from '../../../data/repositories/polygon-occurrences/polygon-occurrences.repository';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
 import type {
@@ -11,10 +12,31 @@ import type {
   PolygonOccurrenceFormValue,
   PolygonOccurrencePayload,
 } from '../../../domain/models/polygon-occurrences';
+import type { GeoJsonPolygon } from '../../../domain/models/map-polygon.model';
+import type { Zone } from '../../../domain/models/zone.model';
 import type { SelectOption } from '../../../shared/components/select/select';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { buildOrderedMapBoundary } from '../../../shared/utils/ordered-map-boundary';
 import { toClosedGeoJsonPolygon } from '../../../shared/utils/polygon-geojson';
+
+const ZONE_POLYGON_COLORS = [
+  '#0ea5e9', // Azul celeste vibrante
+  '#f97316', // Laranja vibrante
+  '#ec4899', // Rosa pink vivo
+  '#eab308', // Amarelo ouro brilhante
+  '#a855f7', // Roxo elétrico
+  '#10b981', // Esmeralda brilhante
+  '#3b82f6', // Azul royal vivo
+  '#ef4444', // Vermelho vivo
+  '#14b8a6', // Turquesa vivo
+  '#84cc16', // Lima neon
+  '#f43f5e', // Carmesim vibrante
+  '#8b5cf6', // Violeta intenso
+  '#06b6d4', // Ciano vivo
+  '#d97706', // Âmbar saturado
+  '#c026d3', // Magenta fúcsia
+  '#0284c7', // Azul cerúleo brilhante
+];
 
 @Injectable({ providedIn: 'root' })
 export class PolygonOccurrencesViewModel {
@@ -22,6 +44,7 @@ export class PolygonOccurrencesViewModel {
   private repository = inject(PolygonOccurrencesRepository);
   private zonesRepository = inject(ZonesRepository);
   private regionsRepository = inject(RegionsRepository);
+  private plantsRepository = inject(PlantsRepository);
   private farmBoundaryService = inject(FarmBoundaryService);
   private loadingService = inject(LoadingService);
   private messageService = inject(MessageService);
@@ -41,6 +64,8 @@ export class PolygonOccurrencesViewModel {
   public selectedPolygonCoordinates = this.repository.selectedPolygonCoordinates;
   public previewPlants = this.repository.previewPlants;
   public plantsFoundCount = computed(() => this.previewPlants().length);
+  public allPlants = this.plantsRepository.allPlants;
+  public zones = this.zonesRepository.zones;
 
   public form = this.formBuilder.group({
     occurrenceAction: this.formBuilder.nonNullable.control<PolygonOccurrenceAction>('add'),
@@ -64,25 +89,105 @@ export class PolygonOccurrencesViewModel {
 
   public zonePolygonCoords = signal<[number, number][] | null>(null);
   public farmPolygonCoords = signal<[number, number][] | null>(null);
-  public backgroundPolygons = computed<[number, number][][]>(() =>
-    [this.farmPolygonCoords(), this.zonePolygonCoords()].filter(
-      (polygon): polygon is [number, number][] => Boolean(polygon && polygon.length >= 3),
+
+  public existingZonePolygonEntries = computed(() => {
+    const regionPolygons = this.buildRegionPolygonsByZone();
+
+    return this.zones()
+      .map((zone) => ({
+        zone,
+        polygon: regionPolygons.get(zone.id) ?? this.toPolygonCoordinates(zone.polygon),
+      }))
+      .filter((entry): entry is { zone: Zone; polygon: [number, number][] } => entry.polygon !== null);
+  });
+
+  public existingZonePolygons = computed(() =>
+    this.existingZonePolygonEntries().map((entry) => entry.polygon),
+  );
+
+  public existingZonePolygonLabels = computed(() =>
+    this.existingZonePolygonEntries().map((entry) => entry.zone.name),
+  );
+
+  public existingZonePolygonColors = computed(() =>
+    this.existingZonePolygonEntries().map((_, index) =>
+      ZONE_POLYGON_COLORS[index % ZONE_POLYGON_COLORS.length],
     ),
   );
+
+  public existingZonePolygonDashArrays = computed(() =>
+    this.existingZonePolygonEntries().map(() => null as string | null),
+  );
+
+  public zoneColorMap = computed(() => {
+    const map = new Map<string, string>();
+    this.existingZonePolygonEntries().forEach((entry, index) => {
+      map.set(entry.zone.id, ZONE_POLYGON_COLORS[index % ZONE_POLYGON_COLORS.length]);
+    });
+    return map;
+  });
+
+  public backgroundPolygons = computed<[number, number][][]>(() => {
+    const farm = this.farmPolygonCoords();
+    return [
+      ...(farm ? [farm] : []),
+      ...this.existingZonePolygons(),
+    ];
+  });
+
   public focusedBackgroundPolygon = computed(
     () => this.zonePolygonCoords() ?? this.farmPolygonCoords(),
   );
-  public backgroundPolygonColors = computed(() => {
-    const colors: string[] = [];
-    if (this.farmPolygonCoords()) colors.push('#2563eb');
-    if (this.zonePolygonCoords()) colors.push('#f97316');
-    return colors;
-  });
-  public backgroundPolygonDashArrays = computed(() => {
-    const values: Array<string | null> = [];
-    if (this.farmPolygonCoords()) values.push(null);
-    if (this.zonePolygonCoords()) values.push('6, 6');
-    return values;
+
+  public backgroundPolygonLabels = computed(() => [
+    ...(this.farmPolygonCoords() ? [''] : []),
+    ...this.existingZonePolygonLabels(),
+  ]);
+
+  public backgroundPolygonColors = computed(() => [
+    ...(this.farmPolygonCoords() ? ['#ffffff'] : []),
+    ...this.existingZonePolygonColors(),
+  ]);
+
+  public backgroundPolygonDashArrays = computed<Array<string | null>>(() => [
+    ...(this.farmPolygonCoords() ? ['4, 4'] : []),
+    ...this.existingZonePolygonDashArrays(),
+  ]);
+
+  public backgroundPolygonFillOpacities = computed(() => [
+    ...(this.farmPolygonCoords() ? [0] : []),
+    ...this.existingZonePolygons().map(() => 0),
+  ]);
+
+  public displayPlants = computed(() => {
+    const all = this.allPlants();
+    const colorMap = this.zoneColorMap();
+    const preview = this.previewPlants();
+    const isPreview = this.previewLoaded() && preview.length > 0;
+    const previewIds = isPreview ? new Set(preview.map((p) => p.plantId)) : null;
+
+    return all.map((plant) => {
+      const zoneId = plant.zone_id ?? plant.zoneId;
+      const zoneColor = zoneId ? colorMap.get(zoneId) : undefined;
+
+      if (previewIds && previewIds.has(plant.id)) {
+        return {
+          ...plant,
+          strokeColor: '#ffffff',
+          fillColor: '#f97316',
+        };
+      }
+
+      if (zoneColor) {
+        return {
+          ...plant,
+          strokeColor: zoneColor,
+          fillColor: zoneColor,
+        };
+      }
+
+      return plant;
+    });
   });
 
   public canEditForm = computed(() => this.selectedPolygonCoordinates().length >= 3);
@@ -112,8 +217,10 @@ export class PolygonOccurrencesViewModel {
     this.isLoadingZones.set(true);
     this.isLoadingOptions.set(true);
     try {
-      const [, occurrenceResult] = await Promise.all([
+      const [, , , occurrenceResult] = await Promise.all([
         this.zonesRepository.findAll(),
+        this.regionsRepository.findAll(),
+        this.plantsRepository.loadAllPlants(),
         this.repository.loadOccurrenceTypeOptions(),
       ]);
       if (occurrenceResult.error) {
@@ -141,6 +248,12 @@ export class PolygonOccurrencesViewModel {
     this.zonesRepository.currentZone.set(zone);
     if (!zone) {
       this.zonePolygonCoords.set(null);
+      return;
+    }
+
+    const cachedEntry = this.existingZonePolygonEntries().find((e) => e.zone.id === zoneId);
+    if (cachedEntry) {
+      this.zonePolygonCoords.set(cachedEntry.polygon);
       return;
     }
 
@@ -270,5 +383,84 @@ export class PolygonOccurrencesViewModel {
       this.farmPolygonCoords.set(null);
     }
   }
-}
 
+  private toFiniteOrder(value: number | null | undefined): number | null {
+    if (value == null) return null;
+
+    const order = Number(value);
+    return Number.isFinite(order) ? order : null;
+  }
+
+  private buildRegionPolygonsByZone(): Map<string, [number, number][]> {
+    const polygons = new Map<string, [number, number][]>();
+    const grouped = new Map<
+      string,
+      Array<{ latitude: number; longitude: number; order: number | null }>
+    >();
+
+    this.regionsRepository.regions().forEach((region) => {
+      if (!region.zone_id) return;
+      if (!Number.isFinite(region.latitude) || !Number.isFinite(region.longitude)) return;
+
+      const points = grouped.get(region.zone_id) ?? [];
+      points.push({
+        latitude: region.latitude,
+        longitude: region.longitude,
+        order: this.toFiniteOrder(region.order),
+      });
+      grouped.set(region.zone_id, points);
+    });
+
+    grouped.forEach((points, zoneId) => {
+      const orderedPoints = points.filter(
+        (point): point is { latitude: number; longitude: number; order: number } =>
+          point.order !== null,
+      );
+
+      if (orderedPoints.length < 3) return;
+
+      polygons.set(
+        zoneId,
+        [...orderedPoints]
+          .sort((left, right) => left.order - right.order)
+          .map((point) => [point.latitude, point.longitude]),
+      );
+    });
+
+    return polygons;
+  }
+
+  private toPolygonCoordinates(
+    polygon: Record<string, unknown> | GeoJsonPolygon | null | undefined,
+  ): [number, number][] | null {
+    if (!polygon || polygon['type'] !== 'Polygon') return null;
+
+    const coordinates = polygon['coordinates'];
+    if (!Array.isArray(coordinates) || !Array.isArray(coordinates[0])) {
+      return null;
+    }
+
+    const firstRing = coordinates[0];
+    const parsedCoordinates = firstRing
+      .map((point): [number, number] | null => {
+        if (!Array.isArray(point) || point.length < 2) return null;
+
+        const [longitude, latitude] = point;
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+          return null;
+        }
+
+        return [latitude as number, longitude as number];
+      })
+      .filter((point): point is [number, number] => point !== null);
+
+    if (parsedCoordinates.length < 3) return null;
+
+    const firstPoint = parsedCoordinates[0];
+    const lastPoint = parsedCoordinates[parsedCoordinates.length - 1];
+    const hasClosingPoint =
+      firstPoint[0] === lastPoint[0] && firstPoint[1] === lastPoint[1];
+
+    return hasClosingPoint ? parsedCoordinates.slice(0, -1) : parsedCoordinates;
+  }
+}

@@ -25,30 +25,22 @@ import type {
 import type { PlantMapItem } from '../../../../domain/models/plant-data.model';
 
 const ZONE_POLYGON_COLORS = [
-  '#0ea5e9',
-  '#22c55e',
-  '#f59e0b',
-  '#ef4444',
-  '#8b5cf6',
-  '#ec4899',
-  '#14b8a6',
-  '#84cc16',
-  '#3b82f6',
-  '#f97316',
-  '#06b6d4',
-  '#a855f7',
-  '#e11d48',
-  '#65a30d',
-  '#4f46e5',
-  '#dc2626',
-  '#0891b2',
-  '#16a34a',
-  '#ca8a04',
-  '#c026d3',
-  '#0284c7',
-  '#db2777',
-  '#059669',
-  '#d97706',
+  '#0ea5e9', // Azul celeste vibrante
+  '#f97316', // Laranja vibrante
+  '#ec4899', // Rosa pink vivo
+  '#eab308', // Amarelo ouro brilhante
+  '#a855f7', // Roxo elétrico
+  '#10b981', // Esmeralda brilhante
+  '#3b82f6', // Azul royal vivo
+  '#ef4444', // Vermelho vivo
+  '#14b8a6', // Turquesa vivo
+  '#84cc16', // Lima neon
+  '#f43f5e', // Carmesim vibrante
+  '#8b5cf6', // Violeta intenso
+  '#06b6d4', // Ciano vivo
+  '#d97706', // Âmbar saturado
+  '#c026d3', // Magenta fúcsia
+  '#0284c7', // Azul cerúleo brilhante
 ];
 
 @Component({
@@ -151,7 +143,7 @@ const ZONE_POLYGON_COLORS = [
 
       <div
         #mapContainer
-        class="map-container flex-1 dark:[filter:invert(0.9)_hue-rotate(180deg)_brightness(0.9)_contrast(1.1)]"
+        class="map-container flex-1"
         aria-label="Mapa para desenhar a atividade"
       ></div>
 
@@ -214,10 +206,14 @@ export class ActivityGeometryMap
       center: [-23.398772, -49.148646],
       zoom: 16,
     });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 24,
-    }).addTo(this.map);
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Esri World Imagery',
+        maxZoom: 24,
+        maxNativeZoom: 18,
+      },
+    ).addTo(this.map);
     this.map.createPane('activityZones');
     const zonesPane = this.map.getPane('activityZones');
     if (zonesPane) zonesPane.style.zIndex = '350';
@@ -338,11 +334,11 @@ export class ActivityGeometryMap
       .map((point) => [point.latitude, point.longitude] as L.LatLngTuple);
     if (coordinates.length < 3) return;
     this.boundaryLayer = L.polygon(coordinates, {
-      color: '#16a34a',
-      fillColor: '#22c55e',
-      fillOpacity: 0.08,
-      dashArray: '6 6',
+      color: '#ffffff',
       weight: 2,
+      fill: false,
+      fillOpacity: 0,
+      dashArray: '4, 4',
       interactive: false,
     }).addTo(this.map);
     this.map.fitBounds(this.boundaryLayer.getBounds(), {
@@ -372,36 +368,18 @@ export class ActivityGeometryMap
         if (coordinates.length < 3) return null;
 
         const color = ZONE_POLYGON_COLORS[index % ZONE_POLYGON_COLORS.length];
-        const fillLayer = L.polygon(coordinates, {
-          pane: 'activityZones',
-          stroke: false,
-          fillColor: color,
-          fillOpacity: 0.16,
+        const borderLayer = L.polygon(coordinates, {
+          pane: 'activityZoneBorders',
+          color,
+          fill: false,
+          fillOpacity: 0,
+          opacity: 1,
+          weight: 3.5,
           interactive: false,
         }).addTo(this.map!);
 
-        this.zoneBorderHaloLayers.push(
-          L.polygon(coordinates, {
-            pane: 'activityZoneBorders',
-            color: '#ffffff',
-            fill: false,
-            opacity: 0.9,
-            weight: 5,
-            interactive: false,
-          }).addTo(this.map!),
-        );
-        this.zoneBorderLayers.push(
-          L.polygon(coordinates, {
-            pane: 'activityZoneBorders',
-            color,
-            fill: false,
-            opacity: 1,
-            weight: 3,
-            interactive: false,
-          }).addTo(this.map!),
-        );
-
-        return fillLayer;
+        this.zoneBorderLayers.push(borderLayer);
+        return borderLayer;
       })
       .filter((layer): layer is L.Polygon => layer !== null);
   }

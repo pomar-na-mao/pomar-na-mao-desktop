@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  HostListener,
   inject,
   OnDestroy,
   OnInit,
@@ -13,6 +14,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import * as L from 'leaflet';
 import { ButtonModule } from 'primeng/button';
 import { FarmBoundaryService } from '../../../../data/services/farm-boundary/farm-boundary-service';
+import { ZonesRepository } from '../../../../data/repositories/zones/zones-repository';
+import { RegionsRepository } from '../../../../data/repositories/regions/regions-repository';
 import {
   MIPD_PLANT_PARTS,
   mipdPlantPartLabel,
@@ -30,6 +33,25 @@ import {
 import { MipdRegistrationViewModel } from '../../../view-models/mipd/mipd-registration.view-model';
 
 const DEFAULT_CENTER: L.LatLngTuple = [-23.403, -49.149];
+
+const ZONE_POLYGON_COLORS = [
+  '#0ea5e9', // Azul celeste vibrante
+  '#f97316', // Laranja vibrante
+  '#ec4899', // Rosa pink vivo
+  '#eab308', // Amarelo ouro brilhante
+  '#a855f7', // Roxo elétrico
+  '#10b981', // Esmeralda brilhante
+  '#3b82f6', // Azul royal vivo
+  '#ef4444', // Vermelho vivo
+  '#14b8a6', // Turquesa vivo
+  '#84cc16', // Lima neon
+  '#f43f5e', // Carmesim vibrante
+  '#8b5cf6', // Violeta intenso
+  '#06b6d4', // Ciano vivo
+  '#d97706', // Âmbar saturado
+  '#c026d3', // Magenta fúcsia
+  '#0284c7', // Azul cerúleo brilhante
+];
 
 @Component({
   selector: 'app-mipd-registration',
@@ -53,9 +75,12 @@ export class MipdRegistration implements OnInit, AfterViewInit, OnDestroy {
 
   public viewModel = inject(MipdRegistrationViewModel);
   private farmBoundaryService = inject(FarmBoundaryService);
+  private zonesRepository = inject(ZonesRepository, { optional: true });
+  private regionsRepository = inject(RegionsRepository, { optional: true });
 
   private map: L.Map | null = null;
   private boundaryLayer: L.Polygon | null = null;
+  private zonesLayer: L.LayerGroup | null = null;
   private plantsLayer: L.LayerGroup | null = null;
   private selectedMarker: L.CircleMarker | null = null;
 
@@ -66,7 +91,7 @@ export class MipdRegistration implements OnInit, AfterViewInit, OnDestroy {
 
   public get zoneOptions(): SelectOption[] {
     return [
-      { label: 'Todos os talhões', value: '' },
+      { label: 'Todas as zonas', value: '' },
       ...this.viewModel.zones().map((z) => ({
         label: z.name,
         value: z.id,
@@ -94,6 +119,7 @@ export class MipdRegistration implements OnInit, AfterViewInit, OnDestroy {
 
   public ngOnInit(): void {
     void this.viewModel.initialize().then(() => {
+      void this.loadZones();
       this.renderPlantsOnMap();
     });
   }
@@ -116,20 +142,109 @@ export class MipdRegistration implements OnInit, AfterViewInit, OnDestroy {
       zoomControl: true,
       center: DEFAULT_CENTER,
       zoom: 15,
+      maxZoom: 22,
     });
 
     L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       {
-        maxZoom: 20,
+        maxZoom: 22,
+        maxNativeZoom: 18,
         attribution: 'Esri World Imagery',
       },
     ).addTo(this.map);
 
+    this.zonesLayer = L.layerGroup().addTo(this.map);
     this.plantsLayer = L.layerGroup().addTo(this.map);
 
     void this.loadFarmBoundary();
+    void this.loadZones();
     this.renderPlantsOnMap();
+  }
+
+  private async loadZones(): Promise<void> {
+    try {
+      if (this.zonesRepository && this.zonesRepository.zones().length === 0) {
+        await this.zonesRepository.findAll();
+      }
+      if (this.regionsRepository && this.regionsRepository.regions().length === 0) {
+        await this.regionsRepository.findAll();
+      }
+      this.renderZonesOnMap();
+    } catch {
+      // Ignora erro no carregamento das zonas
+    }
+  }
+
+  public renderZonesOnMap(): void {
+    if (!this.map || !this.zonesLayer) return;
+    this.zonesLayer.clearLayers();
+
+    const zones = this.zonesRepository?.zones() ?? [];
+    const regions = this.regionsRepository?.regions() ?? [];
+    if (zones.length === 0) return;
+
+    const regionCoordinates = new Map<
+      string,
+      Array<{ latitude: number; longitude: number; order: number }>
+    >();
+
+    regions.forEach((region) => {
+      const order = Number(region.order);
+      if (
+        !region.zone_id ||
+        !Number.isFinite(region.latitude) ||
+        !Number.isFinite(region.longitude) ||
+        !Number.isFinite(order)
+      ) {
+        return;
+      }
+      const points = regionCoordinates.get(region.zone_id) ?? [];
+      points.push({ latitude: region.latitude, longitude: region.longitude, order });
+      regionCoordinates.set(region.zone_id, points);
+    });
+
+    zones.forEach((zone, index) => {
+      const orderedRegion = (regionCoordinates.get(zone.id) ?? [])
+        .sort((left, right) => left.order - right.order)
+        .map(({ latitude, longitude }) => [latitude, longitude] as L.LatLngTuple);
+
+      const coordinates =
+        orderedRegion.length >= 3
+          ? orderedRegion
+          : this.parseZonePolygon(zone.polygon);
+
+      if (!coordinates || coordinates.length < 3) return;
+
+      const color = ZONE_POLYGON_COLORS[index % ZONE_POLYGON_COLORS.length];
+      L.polygon(coordinates, {
+        color,
+        weight: 3.5,
+        opacity: 1,
+        fill: false,
+        fillOpacity: 0,
+        interactive: false,
+      }).addTo(this.zonesLayer!);
+    });
+  }
+
+  private parseZonePolygon(
+    polygon: Record<string, unknown> | null | undefined,
+  ): L.LatLngTuple[] | null {
+    if (!polygon || polygon['type'] !== 'Polygon') return null;
+    const rings = polygon['coordinates'];
+    if (!Array.isArray(rings) || !Array.isArray(rings[0])) return null;
+
+    const coords = (rings[0] as unknown[])
+      .map((pt): L.LatLngTuple | null => {
+        if (!Array.isArray(pt) || pt.length < 2) return null;
+        const [lng, lat] = pt;
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+        return [lat as number, lng as number];
+      })
+      .filter((pt): pt is L.LatLngTuple => pt !== null);
+
+    return coords.length >= 3 ? coords : null;
   }
 
   private async loadFarmBoundary(): Promise<void> {
@@ -142,7 +257,8 @@ export class MipdRegistration implements OnInit, AfterViewInit, OnDestroy {
           this.boundaryLayer = L.polygon(latLngs, {
             color: '#ffffff',
             weight: 2,
-            fillOpacity: 0.05,
+            fill: false,
+            fillOpacity: 0,
             dashArray: '4, 4',
           }).addTo(this.map);
 
@@ -172,12 +288,46 @@ export class MipdRegistration implements OnInit, AfterViewInit, OnDestroy {
       });
 
       marker.on('click', () => {
-        this.viewModel.selectPlant(plant.id);
-        this.renderPlantsOnMap();
+        if (this.viewModel.selectedPlantId() === plant.id) {
+          this.deselectPlant();
+        } else {
+          this.viewModel.selectPlant(plant.id);
+          this.renderPlantsOnMap();
+        }
       });
 
       marker.addTo(this.plantsLayer);
     }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  public handleKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      if (this.viewModel.selectedPlantId()) {
+        event.preventDefault();
+        this.deselectPlant();
+      }
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && (event.key === 'z' || event.key === 'Z')) {
+      const activeEl = document.activeElement;
+      const isInput =
+        activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement;
+      if (isInput && activeEl.type !== 'button' && activeEl.type !== 'submit') {
+        return;
+      }
+
+      if (this.viewModel.selectedPlantId()) {
+        event.preventDefault();
+        this.deselectPlant();
+      }
+    }
+  }
+
+  public deselectPlant(): void {
+    this.viewModel.selectPlant('');
+    this.renderPlantsOnMap();
   }
 
   public onZoneChange(zoneId: string): void {

@@ -161,6 +161,10 @@ export class MipdCompletedViewModel {
     }
   }
 
+  public async filterByDates(): Promise<void> {
+    await this.fetchData();
+  }
+
   public clearFilters(): void {
     this.globalFilter.set('');
     this.selectedZoneId.set('');
@@ -210,17 +214,22 @@ export class MipdCompletedViewModel {
       maxZoom: 22,
     }).setView(DEFAULT_CENTER, 15);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 22,
-      maxNativeZoom: 19,
-    }).addTo(this.map);
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 22,
+        maxNativeZoom: 18,
+        attribution: 'Esri World Imagery',
+      },
+    ).addTo(this.map);
 
     this.farmPolygonLayer = L.polygon([], {
       interactive: false,
-      color: '#2563eb',
+      color: '#ffffff',
       weight: 2,
-      fillColor: '#60a5fa',
-      fillOpacity: 0.05,
+      fill: false,
+      fillOpacity: 0,
+      dashArray: '4, 4',
     }).addTo(this.map);
 
     this.markersLayerGroup = L.layerGroup().addTo(this.map);
@@ -257,10 +266,14 @@ export class MipdCompletedViewModel {
         maxZoom: 22,
       }).setView([item.latitude, item.longitude], 17);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 22,
-        maxNativeZoom: 19,
-      }).addTo(this.miniMap);
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 22,
+          maxNativeZoom: 18,
+          attribution: 'Esri World Imagery',
+        },
+      ).addTo(this.miniMap);
 
       this.miniMapMarker = L.circleMarker([item.latitude, item.longitude], {
         radius: 8,

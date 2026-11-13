@@ -281,29 +281,34 @@ export class MyOrchardViewModel {
       DEFAULT_CENTER,
       16,
     );
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-      maxZoom: 22,
-      maxNativeZoom: 19,
-    }).addTo(this.map);
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Esri World Imagery',
+        maxZoom: 22,
+        maxNativeZoom: 18,
+      },
+    ).addTo(this.map);
 
     // Order of layers (bottom to top):
     // 1. All colored zones
     this.coloredZonesLayer = L.featureGroup().addTo(this.map);
     // 2. Farm polygon boundary
     this.farmPolygonLayer = L.polygon([], {
-      color: '#2563eb',
-      weight: 2.5,
-      fillColor: '#60a5fa',
-      fillOpacity: 0.05,
+      color: '#ffffff',
+      weight: 2,
+      fill: false,
+      fillOpacity: 0,
+      dashArray: '4, 4',
     }).addTo(this.map);
     // 3. Selected single zone highlight (if filtered)
     this.selectedZonePolygonLayer = L.geoJSON(undefined, {
       style: {
-        color: '#06b6d4',
-        weight: 3.5,
-        fillColor: '#06b6d4',
-        fillOpacity: 0.2,
+        color: '#facc15',
+        weight: 4,
+        opacity: 1,
+        fillColor: '#facc15',
+        fillOpacity: 0.35,
         dashArray: '6 4',
       },
     }).addTo(this.map);
@@ -467,15 +472,17 @@ export class MyOrchardViewModel {
       const layer = L.geoJSON(zone.boundary.geoJson, {
         style: {
           color: zone.color,
-          weight: 2,
+          weight: 3.5,
+          opacity: 1,
           fillColor: zone.color,
-          fillOpacity: 0.15,
+          fillOpacity: 0.28,
         },
       });
 
+      const safeName = zone.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       layer.bindTooltip(
-        `<div style="font-size: 11px; font-weight: bold; color: ${zone.color};">${zone.name}</div>`,
-        { permanent: false, direction: 'center', opacity: 0.9 },
+        `<div style="font-size: 11px; font-weight: 700; color: #ffffff; background: rgba(15, 23, 42, 0.88); border: 1.5px solid ${zone.color}; border-radius: 9999px; padding: 3px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); pointer-events: none; white-space: nowrap;">${safeName}</div>`,
+        { permanent: true, direction: 'center', className: 'zone-center-tooltip', opacity: 1 },
       );
 
       layer.addTo(this.coloredZonesLayer!);

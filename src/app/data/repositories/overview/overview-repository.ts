@@ -14,20 +14,22 @@ import { RegionsRepository } from '../regions/regions-repository';
 import { ZonesRepository } from '../zones/zones-repository';
 
 export const ZONE_PALETTE = [
-  '#2563eb', // blue
-  '#16a34a', // green
-  '#d97706', // amber
-  '#9333ea', // purple
-  '#06b6d4', // cyan
-  '#e11d48', // rose
-  '#0d9488', // teal
-  '#ea580c', // orange
-  '#4f46e5', // indigo
-  '#ca8a04', // yellow
-  '#db2777', // pink
-  '#059669', // emerald
-  '#7c3aed', // violet
-  '#0284c7', // sky
+  '#00e5ff', // Cyan elétrico
+  '#f97316', // Laranja vibrante
+  '#ec4899', // Rosa pink vivo
+  '#eab308', // Amarelo ouro brilhante
+  '#a855f7', // Roxo elétrico
+  '#10b981', // Esmeralda brilhante
+  '#3b82f6', // Azul royal vivo
+  '#ef4444', // Vermelho vivo
+  '#14b8a6', // Turquesa vivo
+  '#84cc16', // Lima neon
+  '#f43f5e', // Carmesim vibrante
+  '#8b5cf6', // Violeta intenso
+  '#06b6d4', // Ciano vivo
+  '#d97706', // Âmbar saturado
+  '#c026d3', // Magenta fúcsia
+  '#0284c7', // Azul celeste brilhante
 ];
 
 @Injectable({
@@ -88,8 +90,21 @@ export class OverviewRepository {
 
     return zones.map((zone, index) => {
       const zoneRegions = regionsByZone.get(zone.id) ?? [];
-      const boundary =
+      let boundary =
         zoneRegions.length > 0 ? buildOrderedMapBoundary(zoneRegions) : null;
+
+      if (!boundary && zone.polygon && (zone.polygon as Record<string, unknown>)['type'] === 'Polygon') {
+        const coords = (zone.polygon as Record<string, unknown>)['coordinates'] as unknown;
+        if (Array.isArray(coords) && Array.isArray(coords[0]) && coords[0].length >= 3) {
+          const points = (coords[0] as Array<[number, number]>).map((c, i) => ({
+            longitude: c[0],
+            latitude: c[1],
+            order: i + 1,
+          }));
+          boundary = buildOrderedMapBoundary(points);
+        }
+      }
+
       const color = ZONE_PALETTE[index % ZONE_PALETTE.length];
 
       return {

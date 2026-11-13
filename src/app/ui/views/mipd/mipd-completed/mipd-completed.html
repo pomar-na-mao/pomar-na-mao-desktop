@@ -97,7 +97,7 @@
             type="search"
             [ngModel]="viewModel.globalFilter()"
             (ngModelChange)="viewModel.globalFilter.set($event)"
-            placeholder="Pesquisar por praga, talhão, planta..."
+            placeholder="Pesquisar por praga, zona, planta..."
             class="w-full text-xs"
           />
         </p-iconfield>
@@ -107,15 +107,16 @@
       <div
         class="flex flex-wrap items-center gap-2 justify-start lg:justify-end flex-1"
       >
-        <!-- Filtro por Talhão / Zona -->
+        <!-- Filtro por Zona -->
         <p-select
           [options]="zoneFilterOptions"
           optionLabel="label"
           optionValue="value"
           [ngModel]="viewModel.selectedZoneId()"
           (ngModelChange)="onZoneFilterChange($event)"
-          placeholder="Todos os talhões"
-          styleClass="filter-select text-xs"
+          placeholder="Todas as zonas"
+          size="small"
+          class="filter-select shrink-0 text-xs"
         />
 
         <!-- Filtro por Praga / Doença -->
@@ -126,37 +127,58 @@
           [ngModel]="viewModel.selectedOccurrenceTypeId()"
           (ngModelChange)="onOccurrenceTypeFilterChange($event)"
           placeholder="Todas as ocorrências"
-          styleClass="filter-select text-xs"
+          size="small"
+          class="filter-select shrink-0 text-xs"
         />
 
-        <!-- Datas -->
-        <input
-          type="date"
-          [ngModel]="viewModel.startDate()"
-          (ngModelChange)="onDateChange('start', $event)"
-          class="filter-date-input text-xs border border-surface-300 dark:border-surface-600 rounded-lg px-2 py-1.5 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
-          title="Data Inicial"
-        />
-        <input
-          type="date"
-          [ngModel]="viewModel.endDate()"
-          (ngModelChange)="onDateChange('end', $event)"
-          class="filter-date-input text-xs border border-surface-300 dark:border-surface-600 rounded-lg px-2 py-1.5 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
-          title="Data Final"
-        />
-
-        @if (viewModel.hasActiveFilters()) {
-          <p-button
-            icon="pi pi-filter-slash"
-            [text]="true"
-            severity="danger"
+        <!-- Período Datas -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <p-datepicker
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            dataType="string"
+            placeholder="Início"
+            [ngModel]="viewModel.startDate()"
+            (ngModelChange)="viewModel.startDate.set($event || '')"
             size="small"
-            (onClick)="viewModel.clearFilters()"
-            pTooltip="Limpar filtros"
-            tooltipPosition="bottom"
-            ariaLabel="Limpar todos os filtros ativos"
+            class="filter-datepicker shrink-0 text-xs"
           />
-        }
+          <span class="text-surface-400 text-xs shrink-0">até</span>
+          <p-datepicker
+            appendTo="body"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            dataType="string"
+            placeholder="Fim"
+            [ngModel]="viewModel.endDate()"
+            (ngModelChange)="viewModel.endDate.set($event || '')"
+            size="small"
+            class="filter-datepicker shrink-0 text-xs"
+          />
+          <p-button
+            icon="pi pi-filter"
+            size="small"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="viewModel.filterByDates()"
+            pTooltip="Filtrar por data"
+            ariaLabel="Filtrar por data"
+            class="shrink-0"
+          />
+        </div>
+
+        <p-button
+          icon="pi pi-filter-slash"
+          label="Limpar"
+          size="small"
+          [text]="true"
+          severity="secondary"
+          [disabled]="!viewModel.hasActiveFilters()"
+          (onClick)="viewModel.clearFilters()"
+          pTooltip="Limpar filtros"
+          class="shrink-0"
+        />
       </div>
     </div>
   </div>
@@ -233,7 +255,7 @@
               </th>
               <th pSortableColumn="zone_name" style="min-width: 9rem">
                 <div class="flex items-center gap-2">
-                  Talhão / Zona
+                  Zona
                   <p-sortIcon field="zone_name" />
                 </div>
               </th>
@@ -276,11 +298,11 @@
                 </div>
               </td>
 
-              <!-- Talhão / Zona -->
+              <!-- Zona -->
               <td>
-                <span class="p-column-title font-semibold md:hidden">Talhão: </span>
+                <span class="p-column-title font-semibold md:hidden">Zona: </span>
                 <span class="font-medium text-surface-700 dark:text-surface-300">
-                  {{ item.zone_name || 'Sem talhão' }}
+                  {{ item.zone_name || 'Sem zona' }}
                 </span>
               </td>
 
@@ -329,7 +351,7 @@
               <!-- Ações -->
               <td class="text-center">
                 <p-button
-                  icon="pi pi-search"
+                  icon="pi pi-eye"
                   [rounded]="true"
                   [text]="true"
                   severity="secondary"
@@ -419,7 +441,7 @@
               {{ item.occurrence_type_name }}
             </h5>
             <p class="text-[11px] text-surface-500 mt-1">
-              Talhão: <strong class="text-surface-700 dark:text-surface-300">{{ item.zone_name || 'N/A' }}</strong>
+              Zona: <strong class="text-surface-700 dark:text-surface-300">{{ item.zone_name || 'N/A' }}</strong>
             </p>
           </div>
         </div>

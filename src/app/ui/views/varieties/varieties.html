@@ -107,23 +107,6 @@
 
       <!-- 2. Abaixo: Mini Tabela com as Variedades Existentes -->
       <div class="p-3.5 sm:p-4 flex-1 flex flex-col min-h-[16rem]">
-        <!-- Cabeçalho da Mini Tabela -->
-        <div class="flex items-center justify-between mb-2 shrink-0">
-          <div class="flex items-center gap-1.5">
-            <i class="pi pi-tags text-primary text-xs"></i>
-            <span
-              class="text-xs font-semibold text-surface-700 dark:text-surface-200 uppercase tracking-wider"
-            >
-              Variedades Cadastradas
-            </span>
-          </div>
-          <span
-            class="font-bold px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 text-[11px]"
-          >
-            {{ viewModel.varieties().length }}
-          </span>
-        </div>
-
         <!-- Mini Tabela -->
         <div
           class="flex-1 overflow-y-auto overflow-x-hidden rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900"
@@ -138,7 +121,7 @@
           >
             <ng-template #header>
               <tr
-                class="bg-surface-50 text-[11px] uppercase tracking-wider text-surface-500 dark:bg-surface-800/50 dark:text-surface-400 border-b border-surface-200 dark:border-surface-800"
+                class="bg-surface-50 text-[11px] tracking-wider text-surface-500 dark:bg-surface-800/50 dark:text-surface-400 border-b border-surface-200 dark:border-surface-800"
               >
                 <th class="py-2 px-3 text-left">Variedade</th>
                 <th style="width: 5.5rem; text-align: center" class="py-2 px-1">

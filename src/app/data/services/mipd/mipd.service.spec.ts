@@ -127,4 +127,28 @@ describe('MipdService', () => {
     expect(res.signedUrl).toBe('https://storage/signed-photo');
     expect(res.error).toBeNull();
   });
+
+  it('loads plants without limit or dead/non-existent filters', async () => {
+    const mockOrder = vi.fn().mockResolvedValueOnce({
+      data: [
+        {
+          id: 'plant-1',
+          latitude: -22.37,
+          longitude: -47.37,
+          zone_id: 'z-1',
+          zones: { name: 'Talhão 1' },
+          varieties: { name: 'Lichia' },
+        },
+      ],
+      error: null,
+    });
+    const mockSelect = vi.fn().mockReturnValue({ order: mockOrder });
+    mockFrom.mockReturnValueOnce({ select: mockSelect });
+
+    const res = await service.getPlants();
+    expect(mockFrom).toHaveBeenCalledWith('plants');
+    expect(res.data?.length).toBe(1);
+    expect(res.data?.[0].zone_name).toBe('Talhão 1');
+    expect(res.data?.[0].variety_name).toBe('Lichia');
+  });
 });

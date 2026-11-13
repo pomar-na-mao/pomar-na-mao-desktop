@@ -133,8 +133,7 @@ describe('Varieties', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     expect(root.textContent).toContain('Cadastro de Variedades');
-    expect(root.textContent).toContain('Nova Variedade');
-    expect(root.textContent).toContain('Variedades Cadastradas');
+    expect(root.textContent).toContain('Nome da Variedade');
     expect(root.textContent).toContain('Hass');
     expect(root.textContent).toContain('Abacate Hass');
 
@@ -152,9 +151,8 @@ describe('Varieties', () => {
     expect(confirmDeleteSpy).toHaveBeenCalledWith(item);
   });
 
-  it('shows instruction card when no polygon is drawn and enables form after polygon selection', async () => {
-    const root = fixture.nativeElement as HTMLElement;
-    expect(root.textContent).toContain('Desenhe um polígono no mapa');
+  it('updates polygon state after polygon selection', async () => {
+    expect(component.viewModel.hasPolygon()).toBe(false);
 
     component.onPolygonSelected({
       coordinates: [
@@ -181,8 +179,8 @@ describe('Varieties', () => {
     });
     fixture.detectChanges();
 
-    expect(root.textContent).toContain('3 vértices');
     expect(component.viewModel.hasPolygon()).toBe(true);
+    expect(component.viewModel.selectedPolygonCoordinates().length).toBe(3);
   });
 
   it('confirms and executes variety deletion', () => {

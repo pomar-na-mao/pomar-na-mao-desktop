@@ -9,6 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -35,6 +36,7 @@ import { MipdCompletedViewModel } from '../../../view-models/mipd/mipd-completed
     IconFieldModule,
     InputIconModule,
     SelectModule,
+    DatePickerModule,
     DialogModule,
     TooltipModule,
   ],
@@ -48,7 +50,7 @@ export class MipdCompleted implements OnInit, OnDestroy {
 
   public get zoneFilterOptions(): SelectOption[] {
     return [
-      { label: 'Todos os talhões', value: '' },
+      { label: 'Todas as zonas', value: '' },
       ...this.viewModel.zones().map((z) => ({
         label: z.name,
         value: z.name,

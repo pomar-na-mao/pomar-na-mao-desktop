@@ -11,3 +11,15 @@ body.map-fullscreen-active > .p-multiselect-overlay,
 body.map-fullscreen-active > .p-datepicker-panel {
   z-index: 1200 !important;
 }
+
+.zone-center-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+
+  &::before {
+    display: none !important;
+  }
+}
+

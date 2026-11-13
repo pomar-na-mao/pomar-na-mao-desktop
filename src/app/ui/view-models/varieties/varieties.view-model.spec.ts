@@ -159,12 +159,12 @@ describe('VarietiesViewModel', () => {
     const mapped = viewModel.mapPlants();
     expect(mapped).toHaveLength(3);
     // Plant 1 has Hass color
-    expect(mapped[0].fillColor).not.toBe('#9ca3af');
+    expect(mapped[0].fillColor).not.toBe('#10b981');
     // Plant 2 has Breda color
-    expect(mapped[1].fillColor).not.toBe('#9ca3af');
+    expect(mapped[1].fillColor).not.toBe('#10b981');
     expect(mapped[0].fillColor).not.toBe(mapped[1].fillColor);
-    // Plant 3 has unassigned gray color
-    expect(mapped[2].fillColor).toBe('#9ca3af');
+    // Plant 3 has unassigned green color (standard across screens)
+    expect(mapped[2].fillColor).toBe('#10b981');
   });
 
   it('validates variety name when creating new variety', async () => {

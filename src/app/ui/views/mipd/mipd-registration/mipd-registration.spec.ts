@@ -75,7 +75,7 @@ describe('MipdRegistration Component', () => {
     const comp = fixture.componentInstance;
 
     expect(comp.zoneOptions).toEqual([
-      { label: 'Todos os talhões', value: '' },
+      { label: 'Todas as zonas', value: '' },
       { label: 'Talhão Sul', value: 'z-1' },
     ]);
 
@@ -107,5 +107,19 @@ describe('MipdRegistration Component', () => {
 
     comp.onFileSelected(event);
     expect(mockViewModel.setPhoto).toHaveBeenCalledWith(file);
+  });
+
+  it('deselects plant on Escape or Ctrl+Z', () => {
+    const fixture = TestBed.createComponent(MipdRegistration);
+    const comp = fixture.componentInstance;
+
+    (mockViewModel.selectedPlantId as any).set('plant-1');
+    comp.handleKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(mockViewModel.selectPlant).toHaveBeenCalledWith('');
+
+    vi.clearAllMocks();
+    (mockViewModel.selectedPlantId as any).set('plant-1');
+    comp.handleKeydown(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true }));
+    expect(mockViewModel.selectPlant).toHaveBeenCalledWith('');
   });
 });

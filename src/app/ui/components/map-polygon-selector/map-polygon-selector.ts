@@ -25,14 +25,22 @@ import type {
 } from '../../../domain/models/map-polygon.model';
 
 const BACKGROUND_POLYGON_COLORS = [
+  '#00e5ff', // Cyan elétrico
   '#f97316', // Laranja vibrante
-  '#2563eb', // Azul royal
-  '#9333ea', // Roxo
-  '#dc2626', // Vermelho
-  '#0891b2', // Ciano
-  '#ca8a04', // Âmbar
-  '#db2777', // Rosa
-  '#4f46e5', // Índigo
+  '#ec4899', // Rosa pink vivo
+  '#eab308', // Amarelo ouro brilhante
+  '#a855f7', // Roxo elétrico
+  '#10b981', // Esmeralda brilhante
+  '#3b82f6', // Azul royal vivo
+  '#ef4444', // Vermelho vivo
+  '#14b8a6', // Turquesa vivo
+  '#84cc16', // Lima neon
+  '#f43f5e', // Carmesim vibrante
+  '#8b5cf6', // Violeta intenso
+  '#06b6d4', // Ciano vivo
+  '#d97706', // Âmbar saturado
+  '#c026d3', // Magenta fúcsia
+  '#0284c7', // Azul celeste brilhante
 ];
 
 @Component({
@@ -88,11 +96,6 @@ const BACKGROUND_POLYGON_COLORS = [
         width: auto !important;
         height: auto !important;
       }
-      :host-context(.dark) ::ng-deep .map-zone-label {
-        background: rgba(15, 23, 42, 0.88);
-        border-color: rgba(255, 255, 255, 0.18);
-        color: #ffffff;
-      }
     `,
   ],
 })
@@ -147,8 +150,10 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   @Input() backgroundPolygonLabels: string[] | null = null;
   @Input() backgroundPolygonDashArray: string | null = '6, 6';
   @Input() backgroundPolygonDashArrays: Array<string | null> | null = null;
-  @Input() backgroundPolygonFillOpacity = 0.24;
+  @Input() backgroundPolygonFillOpacity = 0;
   @Input() backgroundPolygonFillOpacities: number[] | null = null;
+  @Input() backgroundPolygonWeight = 3.5;
+  @Input() backgroundPolygonWeights: number[] | null = null;
   @Input() plantColor?: string;
   @Input() plantFillColor?: string;
   @Output() polygonSelected = new EventEmitter<PolygonSelection>();
@@ -222,6 +227,8 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       'backgroundPolygonDashArrays',
       'backgroundPolygonFillOpacity',
       'backgroundPolygonFillOpacities',
+      'backgroundPolygonWeight',
+      'backgroundPolygonWeights',
     ].some((inputName) => changes[inputName]);
 
     if (backgroundStyleChanged) {
@@ -252,10 +259,14 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       attributionControl: true,
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 24,
-    }).addTo(this.map);
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Esri World Imagery',
+        maxZoom: 24,
+        maxNativeZoom: 18,
+      },
+    ).addTo(this.map);
 
     this.map.on('click', (e: L.LeafletMouseEvent) =>
       this.ngZone.run(() => this.onMapClick(e)),
@@ -298,11 +309,16 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
         const fillOpacity =
           this.backgroundPolygonFillOpacities?.[index] ??
           this.backgroundPolygonFillOpacity;
+        const weight =
+          this.backgroundPolygonWeights?.[index] ??
+          (dashArray ? 2 : (this.backgroundPolygonWeight ?? 3.5));
         const layer = L.polygon(polygon, {
           color,
           fillColor: color,
+          fill: fillOpacity > 0,
           fillOpacity,
-          weight: 2,
+          weight,
+          opacity: 1,
           dashArray,
           interactive: false,
         }).addTo(this.map);

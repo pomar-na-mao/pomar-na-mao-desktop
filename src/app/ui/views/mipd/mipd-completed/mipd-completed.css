@@ -49,19 +49,13 @@
   z-index: 1;
 }
 
-:host-context(.dark) .mipd-full-map,
-:host-context(.app-dark) .mipd-full-map,
-:host-context(.dark) .mipd-mini-map,
-:host-context(.app-dark) .mipd-mini-map {
-  filter: invert(0.9) hue-rotate(180deg) brightness(0.9) contrast(1.1);
-  transition: filter 0.2s ease-in-out;
-}
 
-/* Filtros com larguras padronizadas */
+
+/* Filtros com larguras fixas e padronizadas */
 .filter-search-box {
   width: 20rem;
-  min-width: 18rem;
-  max-width: 24rem;
+  min-width: 20rem;
+  max-width: 20rem;
 }
 
 @media (max-width: 1024px) {
@@ -74,10 +68,32 @@
 
 .filter-select {
   width: 12rem !important;
-  min-width: 10rem !important;
-  max-width: 14rem !important;
+  min-width: 12rem !important;
+  max-width: 12rem !important;
+  box-sizing: border-box;
 }
 
-.filter-date-input {
-  width: 10rem !important;
+.filter-select .p-select {
+  width: 100% !important;
+}
+
+.filter-datepicker {
+  display: inline-flex !important;
+  width: 11.5rem !important;
+  min-width: 11.5rem !important;
+  max-width: 11.5rem !important;
+  box-sizing: border-box;
+}
+
+.filter-datepicker .p-datepicker {
+  display: inline-flex !important;
+  align-items: center;
+  width: 100% !important;
+}
+
+.filter-datepicker input.p-inputtext,
+.filter-datepicker .p-datepicker-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
 }

@@ -123,8 +123,8 @@ describe('ZoneMapManagementViewModel', () => {
     expect(viewModel.farmInitialCenter()).toEqual([3, 4]);
     expect(viewModel.farmInitialZoom()).toBe(16);
     expect(viewModel.mapBackgroundPolygonLabels()[0]).toBe('');
-    expect(viewModel.mapBackgroundPolygonColors()[0]).toBe('#0f3b8f');
-    expect(viewModel.mapBackgroundPolygonDashArrays()[0]).toBeNull();
+    expect(viewModel.mapBackgroundPolygonColors()[0]).toBe('#ffffff');
+    expect(viewModel.mapBackgroundPolygonDashArrays()[0]).toBe('4, 4');
     expect(viewModel.mapBackgroundPolygonFillOpacities()[0]).toBe(0);
   });
 

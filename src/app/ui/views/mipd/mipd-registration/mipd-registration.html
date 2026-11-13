@@ -20,7 +20,7 @@
 
     @if (viewModel.loading()) {
       <div
-        class="flex flex-1 items-center justify-center gap-3 p-8 text-sm text-surface-600 dark:text-surface-300"
+        class="flex flex-1 items-center justify-center gap-3 p-8 text-sm font-medium text-black dark:text-white"
         role="status"
       >
         <i class="pi pi-spin pi-spinner text-primary" aria-hidden="true"></i>
@@ -43,12 +43,12 @@
             </div>
           }
 
-          <!-- Filtro de Talhão / Zona -->
+          <!-- Filtro por Zona -->
           <app-select
             id="mipd-zone"
             name="selectedZone"
-            label="Filtrar por Talhão / Zona"
-            placeholder="Todos os talhões"
+            label="Filtrar por Zona"
+            placeholder="Todas as zonas"
             [options]="zoneOptions"
             [ngModel]="viewModel.selectedZoneId()"
             [ngModelOptions]="{ standalone: true }"
@@ -56,17 +56,31 @@
           />
 
           <!-- Seleção da Planta -->
-          <app-select
-            id="mipd-plant"
-            name="selectedPlant"
-            label="Planta Selecionada *"
-            placeholder="Selecione ou clique no mapa"
-            [options]="plantOptions"
-            [ngModel]="viewModel.selectedPlantId()"
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="onPlantChange($event)"
-            required
-          />
+          <div>
+            <app-select
+              id="mipd-plant"
+              name="selectedPlant"
+              label="Planta Selecionada *"
+              placeholder="Selecione ou clique no mapa"
+              [options]="plantOptions"
+              [ngModel]="viewModel.selectedPlantId()"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="onPlantChange($event)"
+              required
+            />
+            @if (viewModel.selectedPlantId()) {
+              <div class="flex items-center justify-between mt-1 text-[11px] text-surface-500 dark:text-surface-400">
+                <span>Pressione <kbd class="px-1 py-0.5 rounded bg-surface-100 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 text-[10px]">Esc</kbd> ou <kbd class="px-1 py-0.5 rounded bg-surface-100 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 text-[10px]">Ctrl+Z</kbd> para desmarcar</span>
+                <button
+                  type="button"
+                  (click)="deselectPlant()"
+                  class="text-primary hover:underline cursor-pointer font-medium"
+                >
+                  Desmarcar
+                </button>
+              </div>
+            }
+          </div>
 
           <!-- Tipo de Praga / Doença -->
           <app-select

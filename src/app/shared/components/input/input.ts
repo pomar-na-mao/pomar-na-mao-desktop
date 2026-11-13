@@ -32,6 +32,22 @@ import { MessageModule } from 'primeng/message';
         display: block;
         width: 100%;
       }
+      :host ::ng-deep .p-datepicker {
+        width: 100%;
+        display: flex;
+      }
+      :host ::ng-deep .p-datepicker-input,
+      :host ::ng-deep input.p-inputtext {
+        height: 2.5rem;
+        box-sizing: border-box;
+      }
+      :host ::ng-deep input[type="time"].p-inputtext {
+        height: 2.5rem;
+        padding-top: 0;
+        padding-bottom: 0;
+        line-height: 2.5rem;
+        box-sizing: border-box;
+      }
     `,
   ],
   template: `
