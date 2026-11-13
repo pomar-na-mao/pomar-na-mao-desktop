@@ -177,7 +177,7 @@ describe('PlantsService', () => {
       ],
       error: null,
     });
-    (service as any).supabase.rpc = mockRpc;
+    (service as unknown as { supabase: { rpc: typeof mockRpc } }).supabase.rpc = mockRpc;
 
     const result = await service.getAllPlantsForMap();
 

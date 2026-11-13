@@ -19,7 +19,6 @@ import { RegionsRepository } from '../../../../data/repositories/regions/regions
 import {
   MIPD_PLANT_PARTS,
   mipdPlantPartLabel,
-  type MipdPlantPart,
 } from '../../../../domain/models/mipd-operation.model';
 import { Input } from '../../../../shared/components/input/input';
 import {
@@ -28,7 +27,6 @@ import {
 } from '../../../../shared/components/select/select';
 import {
   buildOrderedMapBoundary,
-  type OrderedMapBoundary,
 } from '../../../../shared/utils/ordered-map-boundary';
 import { MipdRegistrationViewModel } from '../../../view-models/mipd/mipd-registration.view-model';
 

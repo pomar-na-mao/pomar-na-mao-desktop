@@ -57,8 +57,13 @@ import { MessageModule } from 'primeng/message';
           <label
             [for]="id"
             class="block text-md font-medium text-surface-700 dark:text-surface-200"
-            >{{ label }}</label
           >
+            @if (hasAsterisk) {
+              {{ labelWithoutAsterisk }} <span class="text-red-500" aria-hidden="true">*</span>
+            } @else {
+              {{ label }}
+            }
+          </label>
           <ng-content select="[label-extra]"></ng-content>
         </div>
       }
@@ -163,6 +168,14 @@ export class Input implements ControlValueAccessor {
 
     const firstErrorKey = Object.keys(this.ngControl.errors)[0];
     return this.errors[firstErrorKey] || '';
+  }
+
+  get hasAsterisk(): boolean {
+    return this.label.includes('*');
+  }
+
+  get labelWithoutAsterisk(): string {
+    return this.label.replace(/\s*\*\s*$/, '').trim();
   }
 
   private _value = '';

@@ -18,8 +18,8 @@ describe('MipdRegistration Component', () => {
       loading: signal(false),
       saving: signal(false),
       error: signal<string | null>(null),
-      zones: signal([{ id: 'z-1', name: 'Talhão Sul' }]) as any,
-      occurrenceTypes: signal([{ id: 'occ-1', name: 'Cancro Cítrico' }]) as any,
+      zones: signal([{ id: 'z-1', name: 'Talhão Sul' }]) as unknown as MipdRegistrationViewModel['zones'],
+      occurrenceTypes: signal([{ id: 'occ-1', name: 'Cancro Cítrico' }]) as unknown as MipdRegistrationViewModel['occurrenceTypes'],
       plants: signal([
         {
           id: 'plant-1',
@@ -29,7 +29,7 @@ describe('MipdRegistration Component', () => {
           zone_name: 'Talhão Sul',
           variety_name: 'Pera',
         },
-      ]) as any,
+      ]) as unknown as MipdRegistrationViewModel['plants'],
       selectedZoneId: signal(''),
       selectedPlantId: signal(''),
       selectedOccurrenceTypeId: signal(''),
@@ -113,12 +113,12 @@ describe('MipdRegistration Component', () => {
     const fixture = TestBed.createComponent(MipdRegistration);
     const comp = fixture.componentInstance;
 
-    (mockViewModel.selectedPlantId as any).set('plant-1');
+    mockViewModel.selectedPlantId.set('plant-1');
     comp.handleKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
     expect(mockViewModel.selectPlant).toHaveBeenCalledWith('');
 
     vi.clearAllMocks();
-    (mockViewModel.selectedPlantId as any).set('plant-1');
+    mockViewModel.selectedPlantId.set('plant-1');
     comp.handleKeydown(new KeyboardEvent('keydown', { key: 'z', ctrlKey: true }));
     expect(mockViewModel.selectPlant).toHaveBeenCalledWith('');
   });

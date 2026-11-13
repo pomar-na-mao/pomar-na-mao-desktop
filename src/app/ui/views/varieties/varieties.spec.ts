@@ -1,16 +1,15 @@
 import { Component, input, output, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ConfirmationService } from 'primeng/api';
-import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
-import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
-import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
-import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
 import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
+import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { VarietiesRepository } from '../../../data/repositories/varieties/varieties-repository';
+import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
+import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
-import { LoadingService } from '../../../shared/services/loading.service';
+import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
 import type { Variety } from '../../../domain/models/variety.model';
+import { LoadingService } from '../../../shared/services/loading.service';
 import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
 import { Varieties } from './varieties';
 
@@ -49,9 +48,9 @@ describe('Varieties', () => {
     updated_at: '2026-10-20T11:00:00Z',
   };
   const varieties = signal<Variety[]>([item]);
-  const allPlants = signal<any[]>([]);
-  const zones = signal<any[]>([]);
-  const regions = signal<any[]>([]);
+  const allPlants = signal<unknown[]>([]);
+  const zones = signal<unknown[]>([]);
+  const regions = signal<unknown[]>([]);
 
   const repository = {
     varieties,
@@ -138,8 +137,12 @@ describe('Varieties', () => {
     expect(root.textContent).toContain('Hass');
     expect(root.textContent).toContain('Abacate Hass');
 
-    const editBtn = root.querySelector('button[aria-label="Editar variedade"]') as HTMLButtonElement;
-    const deleteBtn = root.querySelector('button[aria-label="Excluir variedade"]') as HTMLButtonElement;
+    const editBtn = root.querySelector(
+      'button[aria-label="Editar variedade"]',
+    ) as HTMLButtonElement;
+    const deleteBtn = root.querySelector(
+      'button[aria-label="Excluir variedade"]',
+    ) as HTMLButtonElement;
     expect(editBtn).toBeTruthy();
     expect(deleteBtn).toBeTruthy();
 

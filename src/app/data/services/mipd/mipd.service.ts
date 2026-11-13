@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import type { PostgrestError, PostgrestResponse } from '@supabase/supabase-js';
 import type {
-  MipdMarkingInput,
   MipdOperationItem,
   MipdSyncPayload,
   MipdSyncResponse,

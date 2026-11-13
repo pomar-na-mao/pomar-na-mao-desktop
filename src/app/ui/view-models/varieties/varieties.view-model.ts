@@ -333,6 +333,10 @@ export class VarietiesViewModel {
       if (zonesResult.error) {
         this.messageService.error('Erro ao carregar zonas no mapa.');
       }
+
+      if (regionsResult.error) {
+        this.messageService.error('Erro ao carregar regiões no mapa.');
+      }
     } catch {
       this.loadFailed.set(true);
       this.messageService.error('Erro ao carregar dados do catálogo.');

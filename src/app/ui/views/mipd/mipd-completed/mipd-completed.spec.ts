@@ -30,8 +30,8 @@ describe('MipdCompleted Component', () => {
     mockViewModel = {
       operations: signal([sampleItem]),
       filteredOperations: signal([sampleItem]),
-      zones: signal([{ id: 'z1', name: 'Talhão 1' }]) as any,
-      occurrenceTypes: signal([{ id: 'occ-1', name: 'Cancro Cítrico' }]) as any,
+      zones: signal([{ id: 'z1', name: 'Talhão 1' }]) as unknown as MipdCompletedViewModel['zones'],
+      occurrenceTypes: signal([{ id: 'occ-1', name: 'Cancro Cítrico' }]) as unknown as MipdCompletedViewModel['occurrenceTypes'],
       isLoading: signal(false),
       loadFailed: signal(false),
       globalFilter: signal(''),
@@ -112,7 +112,7 @@ describe('MipdCompleted Component', () => {
     const fixture = TestBed.createComponent(MipdCompleted);
     const comp = fixture.componentInstance;
 
-    (mockViewModel.selectedItem as any).set(sampleItem);
+    mockViewModel.selectedItem.set(sampleItem);
     comp.onDetailsShown();
 
     expect(mockViewModel.initMiniMap).toHaveBeenCalledWith('mipd-mini-map', sampleItem);

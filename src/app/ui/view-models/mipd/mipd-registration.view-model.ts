@@ -45,7 +45,7 @@ export class MipdRegistrationViewModel {
         this.repository.loadOccurrenceTypes(),
         this.repository.loadPlants(),
       ]);
-    } catch (err) {
+    } catch {
       this.error.set('Não foi possível carregar os dados iniciais.');
     } finally {
       this.loading.set(false);

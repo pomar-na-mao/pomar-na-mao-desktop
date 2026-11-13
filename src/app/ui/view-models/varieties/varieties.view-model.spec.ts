@@ -27,8 +27,8 @@ describe('VarietiesViewModel', () => {
   let viewModel: VarietiesViewModel;
   const varieties = signal<Variety[]>([]);
   const allPlants = signal<PlantMapItem[]>([]);
-  const zones = signal<any[]>([]);
-  const regions = signal<any[]>([]);
+  const zones = signal<unknown[]>([]);
+  const regions = signal<unknown[]>([]);
 
   const varietiesRepo = {
     varieties,
