@@ -31,8 +31,13 @@ export interface SelectOption {
         <label
           [for]="id"
           class="block text-md font-medium text-surface-700 dark:text-surface-200"
-          >{{ label }}</label
         >
+          @if (hasAsterisk) {
+            {{ labelWithoutAsterisk }} <span class="text-red-500" aria-hidden="true">*</span>
+          } @else {
+            {{ label }}
+          }
+        </label>
       }
 
       @if (!multiple) {
@@ -137,6 +142,14 @@ export class Select implements ControlValueAccessor {
 
   @NgInput() set value(val: string | number | string[] | null) {
     this._value = val !== null ? val : '';
+  }
+
+  get hasAsterisk(): boolean {
+    return this.label.includes('*');
+  }
+
+  get labelWithoutAsterisk(): string {
+    return this.label.replace(/\s*\*\s*$/, '').trim();
   }
 
   get value(): string | number | string[] {

@@ -12,56 +12,79 @@ export const ROUTES: Routes = [
     canActivate: [isLoggedGuard],
     children: [
       {
-        path: 'visao-geral',
-        loadComponent: () => import('./ui/views/overview/overview').then(m => m.Overview)
+        path: 'meu-pomar',
+        loadComponent: () => import('./ui/views/my-orchard/my-orchard').then(m => m.MyOrchard)
       },
       {
         path: 'cadastro',
-        loadComponent: () => import('./ui/views/orchard/orchard').then(m => m.Orchard),
+        loadComponent: () => import('./ui/views/registration/registration').then(m => m.Registration),
         children: [
           {
             path: '',
-            loadChildren: () => import('./ui/views/orchard/orchard.routes')
+            loadChildren: () => import('./ui/views/registration/registration.routes')
           }
         ]
       },
       {
         path: 'inicio',
-        redirectTo: 'visao-geral',
+        redirectTo: 'meu-pomar',
       },
       {
         path: 'atividades-de-campo',
-        loadComponent: () => import('./ui/views/completed-operations/completed-operations').then(m => m.CompletedOperations)
-      },
-      {
-        path: 'visao-das-operacoes',
         children: [
           {
             path: '',
-            redirectTo: 'operacoes',
+            redirectTo: 'realizadas',
             pathMatch: 'full'
           },
           {
-            path: 'operacoes',
-            loadComponent: () => import('./ui/views/operations/operations').then(m => m.Operations)
+            path: 'realizadas',
+            loadComponent: () => import('./ui/views/completed-operations/completed-operations').then(m => m.CompletedOperations)
           },
           {
-            path: 'mipd',
-            loadComponent: () => import('./ui/views/mipd/mipd').then(m => m.Mipd)
+            path: 'gerar',
+            loadComponent: () => import('./ui/views/generate-activity/generate-activity').then(m => m.GenerateActivity)
           }
         ]
       },
       {
-        path: 'dados-basicos',
-        loadComponent: () => import('./ui/views/basic-data/basic-data').then(m => m.BasicData)
+        path: 'mpid',
+        children: [
+          {
+            path: '',
+            redirectTo: 'realizadas',
+            pathMatch: 'full'
+          },
+          {
+            path: 'realizadas',
+            loadComponent: () => import('./ui/views/mipd/mipd-completed/mipd-completed').then(m => m.MipdCompleted)
+          },
+          {
+            path: 'registrar',
+            loadComponent: () => import('./ui/views/mipd/mipd-registration/mipd-registration').then(m => m.MipdRegistration)
+          }
+        ]
       },
       {
-        path: 'zoneamento',
-        loadComponent: () => import('./ui/views/zone-assignment/zone-assignment').then(m => m.ZoneAssignment)
+        path: 'mipd',
+        redirectTo: 'mpid',
       },
       {
-        path: 'atribuicao-zonas',
-        redirectTo: 'zoneamento'
+        path: 'mipd/realizadas',
+        redirectTo: 'mpid/realizadas',
+      },
+      {
+        path: 'mipd/registrar',
+        redirectTo: 'mpid/registrar',
+      },
+      {
+        path: 'registrar',
+        children: [
+          {
+            path: 'ocorrencias',
+            loadComponent: () => import('./ui/views/polygon-occurrences/polygon-occurrences').then(m => m.PolygonOccurrences)
+          }
+        ]
       },
       {
         path: 'configuracoes',
@@ -73,7 +96,7 @@ export const ROUTES: Routes = [
       },
       {
         path: '',
-        redirectTo: 'visao-geral',
+        redirectTo: 'meu-pomar',
         pathMatch: 'full'
       },
     ]

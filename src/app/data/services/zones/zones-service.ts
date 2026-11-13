@@ -75,6 +75,7 @@ export class ZonesService implements IZonesService {
       this.requestCache.invalidate([
         SUPABASE_CACHE_NAMESPACES.referenceData,
         SUPABASE_CACHE_NAMESPACES.overview,
+        SUPABASE_CACHE_NAMESPACES.plants,
       ]);
     }
 

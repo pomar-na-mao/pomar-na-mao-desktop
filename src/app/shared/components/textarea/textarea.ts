@@ -25,8 +25,13 @@ import { TextareaModule } from 'primeng/textarea';
           <label
             [for]="id"
             class="block text-md font-medium text-surface-700 dark:text-surface-200"
-            >{{ label }}</label
           >
+            @if (hasAsterisk) {
+              {{ labelWithoutAsterisk }} <span class="text-red-500" aria-hidden="true">*</span>
+            } @else {
+              {{ label }}
+            }
+          </label>
           <ng-content select="[label-extra]"></ng-content>
         </div>
       }
@@ -75,6 +80,14 @@ export class Textarea implements ControlValueAccessor {
   }
   get value(): string {
     return this._value;
+  }
+
+  get hasAsterisk(): boolean {
+    return this.label.includes('*');
+  }
+
+  get labelWithoutAsterisk(): string {
+    return this.label.replace(/\s*\*\s*$/, '').trim();
   }
 
   constructor() {

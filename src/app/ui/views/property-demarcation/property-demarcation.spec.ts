@@ -1,10 +1,10 @@
 import { Component, input, output } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { PolygonSelection } from '../../../domain/models/basic-data';
+import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
-import { MapPolygonSelector } from '../../components/basic-data/map-polygon-selector/map-polygon-selector';
+import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
 import { PropertyDemarcation } from './property-demarcation';
 
 @Component({

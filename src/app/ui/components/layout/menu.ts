@@ -33,10 +33,10 @@ export class AppMenu implements OnInit {
         visible: true,
         items: [
           {
-            label: 'Visão geral',
+            label: 'Meu Pomar',
             visible: true,
-            icon: 'pi pi-fw pi-chart-bar',
-            routerLink: ['/visao-geral'],
+            icon: 'pi pi-fw pi-apple',
+            routerLink: ['/meu-pomar'],
           },
           {
             label: 'Cadastro',
@@ -50,7 +50,13 @@ export class AppMenu implements OnInit {
                 routerLink: ['/cadastro/propriedade'],
               },
               {
-                label: 'Variedades',
+                label: 'Demarcação zonas',
+                visible: true,
+                icon: 'pi pi-fw pi-map',
+                routerLink: ['/cadastro/zonas'],
+              },
+              {
+                label: 'Atribuição variedades',
                 visible: true,
                 icon: 'pi pi-fw pi-list',
                 routerLink: ['/cadastro/variedades'],
@@ -61,20 +67,15 @@ export class AppMenu implements OnInit {
                 icon: 'pi pi-fw pi-exclamation-triangle',
                 routerLink: ['/cadastro/ocorrencias'],
               },
+
               {
-                label: 'Zonas',
-                visible: true,
-                icon: 'pi pi-fw pi-map',
-                routerLink: ['/cadastro/zonas'],
-              },
-               {
                 label: 'Estoque',
                 visible: true,
                 icon: 'pi pi-fw pi-box',
                 routerLink: ['/cadastro/estoque'],
               },
               {
-                label: 'Caldas',
+                label: 'Caldas e mesclas',
                 visible: true,
                 icon: 'pi pi-fw pi-filter',
                 routerLink: ['/cadastro/caldas'],
@@ -94,41 +95,55 @@ export class AppMenu implements OnInit {
             ],
           },
           {
-            label: 'Atividades de campo',
+            label: 'Registrar',
             visible: true,
-            icon: 'pi pi-fw pi-book',
-            routerLink: ['/atividades-de-campo'],
-          },
-          {
-            label: 'Visão das operações',
-            visible: true,
-            icon: 'pi pi-fw pi-hammer',
+            icon: 'pi pi-fw pi-pencil',
             items: [
               {
-                label: 'Operações',
+                label: 'Ocorrências',
                 visible: true,
-                icon: 'pi pi-fw pi-briefcase',
-                routerLink: ['/visao-das-operacoes/operacoes'],
-              },
-              {
-                label: 'Mipd',
-                visible: true,
-                icon: 'pi pi-fw pi-shield',
-                routerLink: ['/visao-das-operacoes/mipd'],
+                icon: 'pi pi-fw pi-exclamation-circle',
+                routerLink: ['/registrar/ocorrencias'],
               },
             ],
           },
           {
-            label: 'Dados básicos',
+            label: 'Atividade de campo',
             visible: true,
-            icon: 'pi pi-fw pi-receipt',
-            routerLink: ['/dados-basicos'],
+            icon: 'pi pi-fw pi-book',
+            items: [
+              {
+                label: 'Gerar',
+                visible: true,
+                icon: 'pi pi-fw pi-plus-circle',
+                routerLink: ['/atividades-de-campo/gerar'],
+              },
+              {
+                label: 'Realizadas',
+                visible: true,
+                icon: 'pi pi-fw pi-check-circle',
+                routerLink: ['/atividades-de-campo/realizadas'],
+              },
+            ],
           },
           {
-            label: 'Zoneamento',
+            label: 'Mipd',
             visible: true,
-            icon: 'pi pi-fw pi-share-alt',
-            routerLink: ['/zoneamento'],
+            icon: 'pi pi-fw pi-shield',
+            items: [
+              {
+                label: 'Registrar',
+                visible: true,
+                icon: 'pi pi-fw pi-pencil',
+                routerLink: ['/mpid/registrar'],
+              },
+              {
+                label: 'Realizadas',
+                visible: true,
+                icon: 'pi pi-fw pi-check-circle',
+                routerLink: ['/mpid/realizadas'],
+              },
+            ],
           },
           /* {
             label: 'Configurações',

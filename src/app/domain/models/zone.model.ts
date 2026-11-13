@@ -1,4 +1,4 @@
-import type { GeoJsonPolygon } from './basic-data';
+import type { GeoJsonPolygon } from './map-polygon.model';
 
 export interface Zone {
   id: string;
@@ -33,4 +33,5 @@ export interface CreateZoneWithRegionsResult {
   zone_name: string;
   region_points_count: number;
   polygon: GeoJsonPolygon;
+  plants_updated_count?: number;
 }

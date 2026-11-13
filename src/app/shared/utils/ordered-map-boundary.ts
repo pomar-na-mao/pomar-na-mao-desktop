@@ -1,4 +1,4 @@
-import type { GeoJsonPolygon } from '../../domain/models/basic-data';
+import type { GeoJsonPolygon } from '../../domain/models/map-polygon.model';
 import type {
   FarmBoundaryCoordinate,
   FarmBoundaryDraftCoordinate,

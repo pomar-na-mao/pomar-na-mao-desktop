@@ -1,0 +1,39 @@
+<div
+  [class]="viewModel.isMapFullscreen()
+    ? 'fixed inset-0 z-[1100] flex h-screen w-screen overflow-hidden bg-surface-0 dark:bg-surface-900'
+    : 'h-[calc(100vh-8rem)] w-full overflow-hidden flex flex-col md:flex-row rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm bg-surface-0 dark:bg-surface-900 !mb-0'"
+>
+  <aside class="flex h-full w-full shrink-0 flex-col overflow-hidden border-b border-surface-200 bg-surface-0 dark:border-surface-800 dark:bg-surface-900 md:w-96 md:border-b-0 md:border-r lg:w-[25rem] xl:w-[26rem]">
+    <app-polygon-occurrences-form class="flex h-full min-h-0 flex-1 flex-col" />
+  </aside>
+
+  <div class="relative h-full min-w-0 flex-1 overflow-hidden bg-surface-100 dark:bg-surface-950">
+    <app-map-polygon-selector
+      class="absolute inset-0 h-full w-full"
+      [center]="[-23.398772, -49.148646]"
+      [zoom]="16"
+      [backgroundPolygons]="viewModel.backgroundPolygons()"
+      [backgroundPolygonLabels]="viewModel.backgroundPolygonLabels()"
+      [backgroundPolygonColors]="viewModel.backgroundPolygonColors()"
+      [backgroundPolygonDashArrays]="viewModel.backgroundPolygonDashArrays()"
+      [backgroundPolygonFillOpacities]="viewModel.backgroundPolygonFillOpacities()"
+      [focusedPolygon]="viewModel.focusedBackgroundPolygon()"
+      [plants]="viewModel.displayPlants()"
+      [allowDrawingWithoutPlants]="true"
+      [clearSignal]="viewModel.clearMapSignal()"
+      (polygonSelected)="onPolygonSelected($event)"
+      (polygonCleared)="viewModel.onPolygonCleared()"
+    />
+
+    <p-button
+      type="button"
+      [icon]="viewModel.isMapFullscreen() ? 'pi pi-window-minimize' : 'pi pi-window-maximize'"
+      [rounded]="true"
+      severity="secondary"
+      styleClass="!absolute right-3 top-14 z-[400] shadow-md"
+      [title]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+      [attr.aria-label]="viewModel.isMapFullscreen() ? 'Sair da tela cheia' : 'Tela cheia'"
+      (onClick)="toggleFullscreen()"
+    />
+  </div>
+</div>

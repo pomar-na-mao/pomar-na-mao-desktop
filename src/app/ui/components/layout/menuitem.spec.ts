@@ -23,8 +23,8 @@ class MenuHost {
     label: 'Menu',
     items: [
       {
-        label: 'Visão geral',
-        routerLink: ['/visao-geral'],
+        label: 'Meu Pomar',
+        routerLink: ['/meu-pomar'],
       },
       {
         label: 'Cadastro',
@@ -55,7 +55,7 @@ describe('AppMenuitem', () => {
       imports: [MenuHost],
       providers: [
         provideRouter([
-          { path: 'visao-geral', component: EmptyRoute },
+          { path: 'meu-pomar', component: EmptyRoute },
           { path: 'cadastro/variedades', component: EmptyRoute },
           { path: 'cadastro/zonas', component: EmptyRoute },
           { path: 'zoneamento', component: EmptyRoute },
@@ -67,7 +67,7 @@ describe('AppMenuitem', () => {
   });
 
   it('keeps sibling submenus closed when the current route belongs to another parent', async () => {
-    await router.navigateByUrl('/visao-geral');
+    await router.navigateByUrl('/meu-pomar');
 
     const fixture = TestBed.createComponent(MenuHost);
     fixture.detectChanges();

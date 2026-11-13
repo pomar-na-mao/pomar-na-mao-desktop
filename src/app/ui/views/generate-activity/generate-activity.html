@@ -1,0 +1,202 @@
+<div
+  class="!mb-0 flex h-[calc(100vh-8rem)] w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-surface-0 shadow-sm dark:border-surface-800 dark:bg-surface-900 md:flex-row"
+>
+  <aside
+    class="flex h-full w-full shrink-0 flex-col overflow-hidden border-b border-surface-200 bg-surface-0 dark:border-surface-800 dark:bg-surface-900 md:w-96 md:border-b-0 md:border-r lg:w-[25rem] xl:w-[26rem]"
+  >
+    <div
+      class="shrink-0 border-b border-surface-200 bg-surface-50/50 px-3.5 pb-2 pt-4 dark:border-surface-800 dark:bg-surface-800/20"
+    >
+      <h4 class="font-bold leading-none text-surface-900 dark:text-surface-0">
+        Cadastro de Atividade
+      </h4>
+      <p
+        class="text-[10px] leading-none text-surface-500 dark:text-surface-400"
+      >
+        Delimitação e registro de atividades no mapa
+      </p>
+    </div>
+
+    @if (viewModel.loading()) {
+    <div
+      class="flex flex-1 items-center justify-center gap-3 p-8 text-sm font-medium text-black dark:text-white"
+      role="status"
+    >
+      <i class="pi pi-spin pi-spinner text-primary" aria-hidden="true"></i>
+      Carregando dados…
+    </div>
+    } @else {
+    <form
+      #activityForm="ngForm"
+      class="flex min-h-0 flex-1 flex-col"
+      (ngSubmit)="submit(activityForm)"
+    >
+      <div
+        class="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3.5 sm:p-4"
+      >
+        @if (viewModel.error()) {
+        <div
+          class="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-800 dark:border-rose-900/40 dark:bg-rose-950/20 dark:text-rose-200"
+          role="alert"
+        >
+          <i class="pi pi-times-circle text-rose-500" aria-hidden="true"></i>
+          {{ viewModel.error() }}
+        </div>
+        }
+
+        <fieldset>
+          <legend
+            class="mb-1 block text-md font-medium text-surface-700 dark:text-surface-200"
+          >
+            Geometria <span class="text-red-500" aria-hidden="true">*</span>
+          </legend>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              class="cursor-pointer rounded-lg border px-4 py-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              [class]="viewModel.geometryType() === 'route' ? 'border-primary bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300' : 'border-surface-200 text-surface-600 hover:bg-surface-50 dark:border-surface-700 dark:text-surface-300 dark:hover:bg-surface-800'"
+              (click)="setGeometryType('route')"
+            >
+              <i class="pi pi-share-alt mr-2" aria-hidden="true"></i>Rota
+            </button>
+            <button
+              type="button"
+              class="cursor-pointer rounded-lg border px-4 py-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              [class]="viewModel.geometryType() === 'area' ? 'border-primary bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300' : 'border-surface-200 text-surface-600 hover:bg-surface-50 dark:border-surface-700 dark:text-surface-300 dark:hover:bg-surface-800'"
+              (click)="setGeometryType('area')"
+            >
+              <i class="pi pi-map mr-2" aria-hidden="true"></i>Área
+            </button>
+          </div>
+        </fieldset>
+
+        <app-input
+          id="activity"
+          name="activity"
+          label="Atividade realizada *"
+          placeholder="Ex.: roçagem"
+          required
+          [maxlength]="200"
+          [(ngModel)]="activity"
+          [errors]="{ required: 'Campo obrigatório.' }"
+        />
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <app-input
+            id="performed-date"
+            name="performedDate"
+            label="Data *"
+            type="date"
+            required
+            [(ngModel)]="performedDate"
+            [errors]="{ required: 'Campo obrigatório.' }"
+          />
+          <app-input
+            id="performed-time"
+            name="performedTime"
+            label="Hora *"
+            type="time"
+            required
+            [(ngModel)]="performedTime"
+            [errors]="{ required: 'Campo obrigatório.' }"
+          />
+        </div>
+
+        <app-input
+          id="responsible"
+          name="responsible"
+          label="Responsável *"
+          placeholder="Ex.: João"
+          required
+          [maxlength]="160"
+          [(ngModel)]="responsible"
+          [errors]="{ required: 'Campo obrigatório.' }"
+        />
+
+        <div>
+          <app-select
+            id="machine"
+            name="machineId"
+            label="Máquina/Trator"
+            placeholder="Selecione uma máquina..."
+            [options]="machineOptions"
+            [(ngModel)]="machineId"
+          />
+          @if (viewModel.selectedMachine(machineId); as machine) {
+          <p
+            class="mt-2 rounded-lg bg-surface-50 px-3 py-2 text-xs text-surface-600 dark:bg-surface-800 dark:text-surface-300"
+          >
+            {{ machine.name }} · {{ machine.brand || 'Marca não informada' }} ·
+            {{ machine.quantity }} unidade(s)
+          </p>
+          }
+        </div>
+
+        <div>
+          <app-select
+            id="mixture"
+            name="mixtureId"
+            label="Calda utilizada"
+            placeholder="Selecione uma calda..."
+            [options]="mixtureOptions"
+            [(ngModel)]="mixtureId"
+          />
+          @if (viewModel.selectedMixture(mixtureId); as mixture) {
+          <div
+            class="mt-2 rounded-lg bg-surface-50 px-3 py-2 text-xs text-surface-600 dark:bg-surface-800 dark:text-surface-300"
+          >
+            <p class="font-semibold text-surface-800 dark:text-surface-100">
+              {{ mixture.name }}
+            </p>
+            <p>
+              {{ mixture.inputs?.length || 0 }} insumo(s) na composição. {{
+              mixture.observations || 'Sem observações.' }}
+            </p>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div
+        class="shrink-0 border-t border-surface-200 bg-surface-50/50 p-3.5 dark:border-surface-800 dark:bg-surface-800/20 sm:p-4"
+      >
+        <p-button
+          type="submit"
+          label="Registrar atividade"
+          icon="pi pi-check"
+          [loading]="viewModel.saving()"
+          loadingIcon="pi pi-spin pi-spinner"
+          severity="primary"
+          size="small"
+          [disabled]="viewModel.saving()"
+          styleClass="w-full"
+        />
+      </div>
+    </form>
+    }
+  </aside>
+
+  <div
+    class="relative h-full min-w-0 flex-1 overflow-hidden bg-surface-100 dark:bg-surface-950"
+  >
+    @if (viewModel.loading()) {
+    <div
+      class="flex h-full items-center justify-center gap-3 text-sm font-medium text-black dark:text-white"
+      role="status"
+    >
+      <i class="pi pi-spin pi-spinner text-primary" aria-hidden="true"></i>
+      Carregando mapa…
+    </div>
+    } @else {
+    <app-activity-geometry-map
+      class="absolute inset-0 block h-full w-full"
+      [geometryType]="viewModel.geometryType()"
+      [boundary]="viewModel.boundary()"
+      [zones]="viewModel.zones()"
+      [plants]="viewModel.plants()"
+      [clearSignal]="viewModel.clearSignal()"
+      (geometryChange)="setCoordinates($event)"
+    />
+    }
+  </div>
+</div>

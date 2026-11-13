@@ -1,7 +1,7 @@
 
 import { inject, Injectable } from "@angular/core";
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
-import type { Plant, PlantInsert } from "../../../domain/models/plant-data.model";
+import type { Plant, PlantInsert, PlantMapItem } from "../../../domain/models/plant-data.model";
 import { injectSupabase } from "../supabase";
 import {
   SUPABASE_CACHE_NAMESPACES,
@@ -132,6 +132,66 @@ export class PlantsService implements IPlantsService {
 
       return { value: error ? null : data?.updated_at, error };
     });
+  }
+
+  public async getAllPlantsForMap(): Promise<{
+    data: PlantMapItem[] | null;
+    error: unknown;
+  }> {
+    return this.requestCache.read(
+      {
+        namespace: SUPABASE_CACHE_NAMESPACES.plants,
+        operation: 'plants.getAllPlantsForMap',
+        policy: { mode: 'ttl', ttlMs: 30_000 },
+      },
+      async () => {
+        const { data, error } = await this.supabase.rpc('get_all_plants_for_map');
+        if (error) {
+          return { data: null, error };
+        }
+
+        const rawPlants = (data ?? []) as Array<Record<string, unknown>>;
+        const activePlants = rawPlants.filter(
+          (row) => row['non_existent'] !== true && row['nonExistent'] !== true,
+        );
+        const plants: PlantMapItem[] = activePlants.map((row) => {
+          const zoneId = (row['zoneId'] ?? row['zone_id'] ?? null) as string | null;
+          const varietyName = (row['varietyName'] ?? row['variety_name'] ?? null) as string | null;
+          const varietyId =
+            row['varietyId'] != null
+              ? Number(row['varietyId'])
+              : row['variety_id'] != null
+                ? Number(row['variety_id'])
+                : null;
+
+          const plant: PlantMapItem = {
+            id: String(row['id']),
+            latitude: Number(row['latitude']),
+            longitude: Number(row['longitude']),
+            zoneId,
+            non_existent: false,
+            nonExistent: false,
+          };
+
+          if (varietyName) {
+            plant.varietyName = varietyName;
+          }
+          if (varietyId != null) {
+            plant.varietyId = varietyId;
+            plant.variety_id = varietyId;
+          }
+          if (row['zone_id']) {
+            plant.zone_id = String(row['zone_id']);
+          }
+          if (row['variety_name']) {
+            plant.variety_name = String(row['variety_name']);
+          }
+
+          return plant;
+        });
+        return { data: plants, error: null };
+      },
+    );
   }
 
   private async readPlantCounter<T>(

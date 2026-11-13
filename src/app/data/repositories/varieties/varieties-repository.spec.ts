@@ -23,6 +23,7 @@ describe('VarietiesRepository', () => {
   const service = {
     findAll: vi.fn(),
     create: vi.fn(),
+    createWithPlants: vi.fn(),
     update: vi.fn(),
     deleteMany: vi.fn(),
   };
@@ -108,5 +109,34 @@ describe('VarietiesRepository', () => {
     await repository.update(1, { name: 'Alterada', description: null });
 
     expect(repository.varieties()).toEqual([existing]);
+  });
+
+  it('adds variety to collection when createWithPlants succeeds', async () => {
+    const existing = variety(1, 'Hass');
+    repository.varieties.set([existing]);
+    const created = variety(2, 'Geada');
+    service.createWithPlants.mockResolvedValue({
+      data: { variety: created, plants_updated_count: 15 },
+      error: null,
+    });
+
+    const result = await repository.createWithPlants({
+      name: 'Geada',
+      description: null,
+      polygonGeojson: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-49.1, -23.1],
+            [-49.2, -23.1],
+            [-49.2, -23.2],
+            [-49.1, -23.1],
+          ],
+        ],
+      },
+    });
+
+    expect(result.data?.plants_updated_count).toBe(15);
+    expect(repository.varieties()).toContainEqual(created);
   });
 });
