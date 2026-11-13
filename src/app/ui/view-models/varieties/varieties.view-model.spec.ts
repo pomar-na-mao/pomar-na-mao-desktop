@@ -35,6 +35,7 @@ describe('VarietiesViewModel', () => {
     findAll: vi.fn(),
     create: vi.fn(),
     createWithPlants: vi.fn(),
+    assignToPlants: vi.fn(),
     update: vi.fn(),
     deleteMany: vi.fn(),
   };
@@ -154,17 +155,26 @@ describe('VarietiesViewModel', () => {
         varietyId: null,
         varietyName: null,
       },
+      {
+        id: 'p4-non-existent',
+        latitude: -23.4,
+        longitude: -49.4,
+        zoneId: null,
+        varietyId: 1,
+        varietyName: 'Hass',
+        non_existent: true,
+      },
     ]);
 
     const mapped = viewModel.mapPlants();
     expect(mapped).toHaveLength(3);
     // Plant 1 has Hass color
-    expect(mapped[0].fillColor).not.toBe('#10b981');
+    expect(mapped[0].fillColor).not.toBe('#9ca3af');
     // Plant 2 has Breda color
-    expect(mapped[1].fillColor).not.toBe('#10b981');
+    expect(mapped[1].fillColor).not.toBe('#9ca3af');
     expect(mapped[0].fillColor).not.toBe(mapped[1].fillColor);
-    // Plant 3 has unassigned green color (standard across screens)
-    expect(mapped[2].fillColor).toBe('#10b981');
+    // Plant 3 has unassigned gray color
+    expect(mapped[2].fillColor).toBe('#9ca3af');
   });
 
   it('validates variety name when creating new variety', async () => {
@@ -264,5 +274,81 @@ describe('VarietiesViewModel', () => {
     expect(viewModel.hasPolygon()).toBe(false);
     expect(viewModel.newVarietyForm.controls.name.value).toBe('');
     expect(viewModel.clearMapSignal()).toBeGreaterThan(0);
+  });
+
+  it('toggles operation mode and resets selection', () => {
+    viewModel.setOperationMode('assign');
+    expect(viewModel.operationMode()).toBe('assign');
+
+    viewModel.setSelectedAssignVarietyId('2');
+    expect(viewModel.selectedAssignVarietyId()).toBe(2);
+
+    viewModel.clearNewVarietyForm();
+    expect(viewModel.selectedAssignVarietyId()).toBeNull();
+  });
+
+  it('calculates canSubmitAssign correctly', () => {
+    expect(viewModel.canSubmitAssign()).toBe(false);
+
+    viewModel.setSelectedAssignVarietyId(1);
+    expect(viewModel.canSubmitAssign()).toBe(false);
+
+    viewModel.onPolygonSelected([
+      { lat: -23.1, lng: -49.1 },
+      { lat: -23.2, lng: -49.1 },
+      { lat: -23.2, lng: -49.2 },
+    ]);
+    expect(viewModel.canSubmitAssign()).toBe(true);
+
+    viewModel.isSaving.set(true);
+    expect(viewModel.canSubmitAssign()).toBe(false);
+  });
+
+  it('assigns existing variety to plants inside polygon and reloads plants', async () => {
+    viewModel.onPolygonSelected([
+      { lat: -23.1, lng: -49.1 },
+      { lat: -23.2, lng: -49.1 },
+      { lat: -23.2, lng: -49.2 },
+    ]);
+    viewModel.setSelectedAssignVarietyId(5);
+
+    varietiesRepo.assignToPlants.mockResolvedValue({
+      data: { variety_id: 5, variety_name: 'Avocado Fuerte', plants_updated_count: 14 },
+      error: null,
+    });
+
+    await viewModel.assignExistingVariety();
+
+    expect(varietiesRepo.assignToPlants).toHaveBeenCalledWith(
+      expect.objectContaining({
+        varietyId: 5,
+        polygonGeojson: expect.any(Object),
+      }),
+    );
+    expect(plantsRepo.loadAllPlants).toHaveBeenCalled();
+    expect(messages.success).toHaveBeenCalledWith(
+      'Variedade “Avocado Fuerte” atribuída com sucesso a 14 planta(s)!',
+    );
+    expect(viewModel.hasPolygon()).toBe(false);
+    expect(viewModel.selectedAssignVarietyId()).toBeNull();
+  });
+
+  it('handles error when assigning variety fails', async () => {
+    viewModel.onPolygonSelected([
+      { lat: -23.1, lng: -49.1 },
+      { lat: -23.2, lng: -49.1 },
+      { lat: -23.2, lng: -49.2 },
+    ]);
+    viewModel.setSelectedAssignVarietyId(5);
+
+    varietiesRepo.assignToPlants.mockResolvedValue({
+      data: null,
+      error: new Error('Database error'),
+    });
+
+    await viewModel.assignExistingVariety();
+
+    expect(messages.error).toHaveBeenCalledWith('Erro ao atribuir variedade às plantas.');
+    expect(viewModel.saveError()).toBe('Erro ao atribuir variedade às plantas.');
   });
 });

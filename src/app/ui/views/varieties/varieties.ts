@@ -17,6 +17,7 @@ import { TableModule } from 'primeng/table';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
 import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
+import { Select } from '../../../shared/components/select/select';
 import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
 import type { Variety } from '../../../domain/models/variety.model';
 import { VarietiesViewModel } from '../../view-models/varieties/varieties.view-model';
@@ -35,6 +36,7 @@ import { VarietiesViewModel } from '../../view-models/varieties/varieties.view-m
     TextareaModule,
     TooltipModule,
     MapPolygonSelector,
+    Select,
   ],
   providers: [ConfirmationService],
   templateUrl: './varieties.html',
@@ -73,6 +75,15 @@ export class Varieties implements OnInit, OnDestroy {
 
   public async onSubmitCreate(): Promise<void> {
     await this.viewModel.saveNewVariety();
+  }
+
+  public onAssignVarietyChange(value: string | number | string[]): void {
+    const raw = Array.isArray(value) ? value[0] : value;
+    this.viewModel.setSelectedAssignVarietyId(raw);
+  }
+
+  public async onSubmitAssign(): Promise<void> {
+    await this.viewModel.assignExistingVariety();
   }
 
   public confirmDelete(variety: Variety): void {

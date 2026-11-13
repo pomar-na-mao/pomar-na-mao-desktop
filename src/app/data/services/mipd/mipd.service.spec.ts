@@ -128,7 +128,7 @@ describe('MipdService', () => {
     expect(res.error).toBeNull();
   });
 
-  it('loads plants without limit or dead/non-existent filters', async () => {
+  it('loads plants filtering non-existent plants', async () => {
     const mockOrder = vi.fn().mockResolvedValueOnce({
       data: [
         {
@@ -142,11 +142,13 @@ describe('MipdService', () => {
       ],
       error: null,
     });
-    const mockSelect = vi.fn().mockReturnValue({ order: mockOrder });
+    const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
+    const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
     mockFrom.mockReturnValueOnce({ select: mockSelect });
 
     const res = await service.getPlants();
     expect(mockFrom).toHaveBeenCalledWith('plants');
+    expect(mockEq).toHaveBeenCalledWith('non_existent', false);
     expect(res.data?.length).toBe(1);
     expect(res.data?.[0].zone_name).toBe('Talhão 1');
     expect(res.data?.[0].variety_name).toBe('Lichia');

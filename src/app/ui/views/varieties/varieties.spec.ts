@@ -58,6 +58,7 @@ describe('Varieties', () => {
     findAll: vi.fn().mockResolvedValue({ error: null }),
     create: vi.fn(),
     createWithPlants: vi.fn(),
+    assignToPlants: vi.fn(),
     update: vi.fn(),
     deleteMany: vi.fn().mockResolvedValue({ error: null }),
   };
@@ -210,5 +211,23 @@ describe('Varieties', () => {
 
     component.toggleFullscreen();
     expect(component.viewModel.isMapFullscreen()).toBe(false);
+  });
+
+  it('switches to assign mode and triggers onSubmitAssign', async () => {
+    const assignSpy = vi
+      .spyOn(component.viewModel, 'assignExistingVariety')
+      .mockResolvedValue();
+    component.viewModel.setOperationMode('assign');
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.textContent).toContain('Atribuir Existente');
+    expect(root.textContent).toContain('Variedade Existente');
+
+    component.onAssignVarietyChange('1');
+    expect(component.viewModel.selectedAssignVarietyId()).toBe(1);
+
+    await component.onSubmitAssign();
+    expect(assignSpy).toHaveBeenCalled();
   });
 });

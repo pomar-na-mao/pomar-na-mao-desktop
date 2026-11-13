@@ -151,7 +151,10 @@ export class PlantsService implements IPlantsService {
         }
 
         const rawPlants = (data ?? []) as Array<Record<string, unknown>>;
-        const plants: PlantMapItem[] = rawPlants.map((row) => {
+        const activePlants = rawPlants.filter(
+          (row) => row['non_existent'] !== true && row['nonExistent'] !== true,
+        );
+        const plants: PlantMapItem[] = activePlants.map((row) => {
           const zoneId = (row['zoneId'] ?? row['zone_id'] ?? null) as string | null;
           const varietyName = (row['varietyName'] ?? row['variety_name'] ?? null) as string | null;
           const varietyId =
@@ -166,6 +169,8 @@ export class PlantsService implements IPlantsService {
             latitude: Number(row['latitude']),
             longitude: Number(row['longitude']),
             zoneId,
+            non_existent: false,
+            nonExistent: false,
           };
 
           if (varietyName) {

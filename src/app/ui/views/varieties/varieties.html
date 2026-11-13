@@ -25,85 +25,192 @@
 
     <!-- Conteúdo Scrollável da Sidebar -->
     <div class="flex-1 min-h-0 overflow-y-auto flex flex-col">
-      <!-- 1. Topo: Formulário para Nova Variedade com Delimitação de Plantas -->
-      <form
-        [formGroup]="viewModel.newVarietyForm"
-        (ngSubmit)="onSubmitCreate()"
-        class="p-3.5 sm:p-4 space-y-3.5 border-b border-surface-200 dark:border-surface-800 shrink-0"
+      <!-- Seletor de Modo: Nova Variedade vs Atribuir Existente -->
+      <div
+        class="px-3.5 pt-3 pb-2 border-b border-surface-200 dark:border-surface-800 bg-surface-50/40 dark:bg-surface-800/20 shrink-0"
       >
-        <!-- Campo Nome -->
-        <div>
-          <label
-            for="new-variety-name"
-            class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1"
-          >
-            Nome da Variedade
-          </label>
-          <input
-            pInputText
-            id="new-variety-name"
-            type="text"
-            formControlName="name"
-            placeholder="Ex: Avocado Hass"
-            class="w-full"
-            autocomplete="off"
-            [attr.aria-invalid]="!!viewModel.nameError()"
-            [attr.aria-describedby]="viewModel.nameError() ? 'new-variety-name-error' : null"
-          />
-          @if (viewModel.nameError()) {
-          <p
-            id="new-variety-name-error"
-            class="text-xs text-rose-600 dark:text-rose-400 mt-1"
-            role="alert"
-          >
-            {{ viewModel.nameError() }}
-          </p>
-          }
-        </div>
-
-        <!-- Campo Descrição -->
-        <div>
-          <label
-            for="new-variety-description"
-            class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1"
-          >
-            Descrição
-          </label>
-          <textarea
-            pTextarea
-            id="new-variety-description"
-            formControlName="description"
-            rows="3"
-            placeholder="Detalhes opcionais sobre a variedade..."
-            class="w-full resize-none"
-          ></textarea>
-        </div>
-
-        <!-- Botões de Ação do Formulário -->
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <p-button
+        <div
+          class="grid grid-cols-2 p-1 bg-surface-200/60 dark:bg-surface-800 rounded-lg text-xs font-medium"
+        >
+          <button
             type="button"
-            label="Limpar"
-            severity="secondary"
-            size="small"
-            [outlined]="true"
-            [disabled]="viewModel.isSaving()"
-            (onClick)="viewModel.clearNewVarietyForm()"
-            styleClass="w-full"
-          />
-          <p-button
-            type="submit"
-            label="Salvar Variedade"
-            icon="pi pi-check"
-            [loading]="viewModel.isSaving()"
-            loadingIcon="pi pi-spin pi-spinner"
-            severity="primary"
-            size="small"
-            [disabled]="!viewModel.canSubmitCreate()"
-            styleClass="w-full"
-          />
+            class="py-1.5 px-3 rounded-md transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer"
+            [class]="
+              viewModel.operationMode() === 'create'
+                ? 'bg-surface-0 dark:bg-surface-700 text-surface-900 dark:text-surface-0 shadow-sm font-semibold'
+                : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+            "
+            (click)="viewModel.setOperationMode('create')"
+          >
+            <i class="pi pi-plus text-xs"></i>
+            <span>Nova Variedade</span>
+          </button>
+          <button
+            type="button"
+            class="py-1.5 px-3 rounded-md transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer"
+            [class]="
+              viewModel.operationMode() === 'assign'
+                ? 'bg-surface-0 dark:bg-surface-700 text-surface-900 dark:text-surface-0 shadow-sm font-semibold'
+                : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+            "
+            (click)="viewModel.setOperationMode('assign')"
+          >
+            <i class="pi pi-link text-xs"></i>
+            <span>Atribuir Existente</span>
+          </button>
         </div>
-      </form>
+      </div>
+
+      <!-- 1. Topo: Painel de Criação ou Atribuição -->
+      @if (viewModel.operationMode() === 'create') {
+        <form
+          [formGroup]="viewModel.newVarietyForm"
+          (ngSubmit)="onSubmitCreate()"
+          class="p-3.5 sm:p-4 space-y-3.5 border-b border-surface-200 dark:border-surface-800 shrink-0"
+        >
+          <!-- Campo Nome -->
+          <div>
+            <label
+              for="new-variety-name"
+              class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1"
+            >
+              Nome da Variedade
+            </label>
+            <input
+              pInputText
+              id="new-variety-name"
+              type="text"
+              formControlName="name"
+              placeholder="Ex: Avocado Hass"
+              class="w-full"
+              autocomplete="off"
+              [attr.aria-invalid]="!!viewModel.nameError()"
+              [attr.aria-describedby]="viewModel.nameError() ? 'new-variety-name-error' : null"
+            />
+            @if (viewModel.nameError()) {
+            <p
+              id="new-variety-name-error"
+              class="text-xs text-rose-600 dark:text-rose-400 mt-1"
+              role="alert"
+            >
+              {{ viewModel.nameError() }}
+            </p>
+            }
+          </div>
+
+          <!-- Campo Descrição -->
+          <div>
+            <label
+              for="new-variety-description"
+              class="block text-md font-medium text-surface-700 dark:text-surface-200 mb-1"
+            >
+              Descrição
+            </label>
+            <textarea
+              pTextarea
+              id="new-variety-description"
+              formControlName="description"
+              rows="3"
+              placeholder="Detalhes opcionais sobre a variedade..."
+              class="w-full resize-none"
+            ></textarea>
+          </div>
+
+          @if (viewModel.saveError()) {
+            <p class="text-xs text-rose-600 dark:text-rose-400 mt-1" role="alert">
+              {{ viewModel.saveError() }}
+            </p>
+          }
+
+          <!-- Botões de Ação do Formulário -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <p-button
+              type="button"
+              label="Limpar"
+              severity="secondary"
+              size="small"
+              [outlined]="true"
+              [disabled]="viewModel.isSaving()"
+              (onClick)="viewModel.clearNewVarietyForm()"
+              styleClass="w-full"
+            />
+            <p-button
+              type="submit"
+              label="Salvar Variedade"
+              icon="pi pi-check"
+              [loading]="viewModel.isSaving()"
+              loadingIcon="pi pi-spin pi-spinner"
+              severity="primary"
+              size="small"
+              [disabled]="!viewModel.canSubmitCreate()"
+              styleClass="w-full"
+            />
+          </div>
+        </form>
+      } @else {
+        <div
+          class="p-3.5 sm:p-4 space-y-3.5 border-b border-surface-200 dark:border-surface-800 shrink-0"
+        >
+          <div class="space-y-1">
+            <app-select
+              id="assign-variety-select"
+              label="Variedade Existente"
+              placeholder="Selecione a variedade..."
+              [options]="viewModel.assignVarietyOptions()"
+              [value]="viewModel.selectedAssignVarietyId() ?? ''"
+              (valueChange)="onAssignVarietyChange($event)"
+              [disabled]="viewModel.isSaving()"
+            />
+          </div>
+
+          <div
+            class="rounded-lg bg-surface-50 dark:bg-surface-800/40 border border-surface-200 dark:border-surface-800 p-2.5 text-xs text-surface-600 dark:text-surface-400"
+          >
+            @if (viewModel.hasPolygon()) {
+              <span class="text-emerald-600 dark:text-emerald-400 font-medium">
+                <i class="pi pi-check-circle mr-1"></i>Polígono desenhado.
+              </span>
+              Pronto para vincular às plantas contidas nele.
+            } @else {
+              <span>
+                <i class="pi pi-info-circle mr-1"></i>Desenhe um polígono no mapa ao lado para delimitar as plantas.
+              </span>
+            }
+          </div>
+
+          @if (viewModel.saveError()) {
+            <p class="text-xs text-rose-600 dark:text-rose-400 mt-1" role="alert">
+              {{ viewModel.saveError() }}
+            </p>
+          }
+
+          <!-- Botões de Ação de Atribuição -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <p-button
+              type="button"
+              label="Limpar"
+              severity="secondary"
+              size="small"
+              [outlined]="true"
+              [disabled]="viewModel.isSaving()"
+              (onClick)="viewModel.clearNewVarietyForm()"
+              styleClass="w-full"
+            />
+            <p-button
+              type="button"
+              label="Atribuir às Plantas"
+              icon="pi pi-check"
+              [loading]="viewModel.isSaving()"
+              loadingIcon="pi pi-spin pi-spinner"
+              severity="primary"
+              size="small"
+              [disabled]="!viewModel.canSubmitAssign()"
+              (onClick)="onSubmitAssign()"
+              styleClass="w-full"
+            />
+          </div>
+        </div>
+      }
 
       <!-- 2. Abaixo: Mini Tabela com as Variedades Existentes -->
       <div class="p-3.5 sm:p-4 flex-1 flex flex-col min-h-[16rem]">
@@ -135,31 +242,29 @@
                 class="transition-colors hover:bg-surface-50 dark:hover:bg-surface-800/40 text-xs border-b border-surface-100 dark:border-surface-800/60"
               >
                 <td class="py-2 px-3 min-w-0 max-w-0 truncate">
-                  <div class="flex items-center gap-2 min-w-0">
-                    <!-- Marcador de cor da variedade -->
-                    <span
-                      class="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm border"
-                      [style.backgroundColor]="item.color.fillColor"
-                      [style.borderColor]="item.color.strokeColor"
-                      [pTooltip]="item.variety.name"
-                      tooltipPosition="right"
-                    ></span>
-                    <div class="min-w-0 flex-1">
-                      <p
+                  <div class="min-w-0 flex flex-col justify-center">
+                    <!-- Círculo colorido à esquerda e Nome à direita na mesma linha -->
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span
+                        class="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm border inline-block"
+                        [style.backgroundColor]="item.color.fillColor"
+                        [style.borderColor]="item.color.strokeColor"
+                      ></span>
+                      <span
                         class="font-medium text-surface-900 dark:text-surface-0 truncate leading-snug"
                         [title]="item.variety.name"
                       >
                         {{ item.variety.name }}
-                      </p>
-                      @if (item.variety.description) {
-                      <p
-                        class="text-[11px] text-surface-500 dark:text-surface-400 truncate leading-none mt-0.5"
-                        [title]="item.variety.description"
-                      >
-                        {{ item.variety.description }}
-                      </p>
-                      }
+                      </span>
                     </div>
+                    @if (item.variety.description) {
+                    <p
+                      class="text-[11px] text-surface-500 dark:text-surface-400 truncate leading-none mt-1"
+                      [title]="item.variety.description"
+                    >
+                      {{ item.variety.description }}
+                    </p>
+                    }
                   </div>
                 </td>
                 <td style="width: 5.5rem; text-align: center" class="py-1 px-1">

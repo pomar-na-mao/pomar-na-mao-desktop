@@ -307,8 +307,8 @@ export class MyOrchardViewModel {
         color: '#facc15',
         weight: 4,
         opacity: 1,
-        fillColor: '#facc15',
-        fillOpacity: 0.35,
+        fill: false,
+        fillOpacity: 0,
         dashArray: '6 4',
       },
     }).addTo(this.map);
@@ -474,8 +474,8 @@ export class MyOrchardViewModel {
           color: zone.color,
           weight: 3.5,
           opacity: 1,
-          fillColor: zone.color,
-          fillOpacity: 0.28,
+          fill: false,
+          fillOpacity: 0,
         },
       });
 

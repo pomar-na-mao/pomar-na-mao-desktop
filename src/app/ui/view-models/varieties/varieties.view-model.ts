@@ -23,6 +23,7 @@ import {
   UNASSIGNED_VARIETY_COLOR,
   type VarietyColor,
 } from '../../../shared/utils/variety-colors';
+import type { SelectOption } from '../../../shared/components/select/select';
 
 const ZONE_POLYGON_COLORS = [
   '#0ea5e9', // Azul celeste vibrante
@@ -73,6 +74,10 @@ export class VarietiesViewModel {
   public formVersion = signal(0);
   public saveError = signal<string | null>(null);
 
+  // Modo de Operação: 'create' (Nova Variedade) ou 'assign' (Atribuir Existente)
+  public operationMode = signal<'create' | 'assign'>('create');
+  public selectedAssignVarietyId = signal<number | null>(null);
+
   // Modal de Edição (para a mini tabela)
   public editDialogVisible = signal(false);
   public editingVariety = signal<Variety | null>(null);
@@ -108,9 +113,23 @@ export class VarietiesViewModel {
     }));
   });
 
+  public assignVarietyOptions = computed<SelectOption[]>(() => {
+    const colorMap = this.varietyColorMap();
+    return this.varieties().map((v) => {
+      const col = colorMap.get(v.id);
+      return {
+        label: v.name,
+        value: v.id,
+        color: col?.strokeColor,
+      };
+    });
+  });
+
   // Plantas coloridas para o mapa (uma cor por variedade)
   public mapPlants = computed(() => {
-    const plants = this.allPlants();
+    const plants = this.allPlants().filter(
+      (plant) => !plant.non_existent && !plant.nonExistent,
+    );
     const colorMap = this.varietyColorMap();
 
     return plants.map((plant) => {
@@ -252,6 +271,14 @@ export class VarietiesViewModel {
     );
   });
 
+  public canSubmitAssign = computed(() => {
+    return (
+      this.hasPolygon() &&
+      !this.isSaving() &&
+      this.selectedAssignVarietyId() !== null
+    );
+  });
+
   public canSubmitEdit = computed(() => {
     this.editFormVersion();
     return (
@@ -314,6 +341,21 @@ export class VarietiesViewModel {
     }
   }
 
+  public setOperationMode(mode: 'create' | 'assign'): void {
+    this.operationMode.set(mode);
+    this.saveError.set(null);
+  }
+
+  public setSelectedAssignVarietyId(value: number | string | null): void {
+    if (value === null || value === '' || value === undefined) {
+      this.selectedAssignVarietyId.set(null);
+    } else {
+      const num = Number(value);
+      this.selectedAssignVarietyId.set(isNaN(num) ? null : num);
+    }
+    this.saveError.set(null);
+  }
+
   public onPolygonSelected(coordinates: PolygonCoordinate[]): void {
     if (coordinates.length < 3 || !this.coordinatesAreFinite(coordinates)) {
       this.selectedPolygonCoordinates.set([]);
@@ -337,6 +379,7 @@ export class VarietiesViewModel {
     this.newVarietyForm.disable({ emitEvent: false });
     this.newVarietyForm.markAsPristine();
     this.newVarietyForm.markAsUntouched();
+    this.selectedAssignVarietyId.set(null);
     this.formVersion.update((v) => v + 1);
     this.selectedPolygonCoordinates.set([]);
     this.clearMapSignal.update((v) => v + 1);
@@ -399,6 +442,70 @@ export class VarietiesViewModel {
     } catch (error) {
       console.error('Erro inesperado ao cadastrar variedade:', error);
       const userFriendlyMsg = 'Erro ao cadastrar variedade.';
+      this.saveError.set(userFriendlyMsg);
+      this.messageService.error(userFriendlyMsg);
+    } finally {
+      this.loadingService.hide();
+      this.isSaving.set(false);
+    }
+  }
+
+  public async assignExistingVariety(): Promise<void> {
+    if (!this.canSubmitAssign()) {
+      return;
+    }
+
+    const coords = this.selectedPolygonCoordinates();
+    if (coords.length < 3) {
+      this.saveError.set('Desenhe um polígono no mapa antes de atribuir a variedade.');
+      return;
+    }
+
+    const varietyId = this.selectedAssignVarietyId();
+    if (!varietyId) {
+      this.saveError.set('Selecione uma variedade antes de atribuir.');
+      return;
+    }
+
+    const polygonGeojson: GeoJsonPolygon = toClosedGeoJsonPolygon(coords);
+
+    this.isSaving.set(true);
+    this.loadingService.show('Atribuindo variedade às plantas...');
+    this.saveError.set(null);
+
+    try {
+      const result = await this.varietiesRepository.assignToPlants({
+        varietyId,
+        polygonGeojson,
+      });
+
+      if (result.error || !result.data) {
+        console.error('Erro ao atribuir variedade às plantas:', result.error);
+        const userFriendlyMsg = 'Erro ao atribuir variedade às plantas.';
+        this.saveError.set(userFriendlyMsg);
+        this.messageService.error(userFriendlyMsg);
+        return;
+      }
+
+      const count = result.data.plants_updated_count ?? 0;
+      const varietyName = result.data.variety_name;
+      this.clearNewVarietyForm();
+
+      // Recarrega as plantas para atualizar as cores no mapa
+      await this.plantsRepository.loadAllPlants();
+
+      if (count > 0) {
+        this.messageService.success(
+          `Variedade “${varietyName}” atribuída com sucesso a ${count} planta(s)!`,
+        );
+      } else {
+        this.messageService.success(
+          `Variedade “${varietyName}” vinculada. Nenhuma planta encontrada dentro do polígono.`,
+        );
+      }
+    } catch (error) {
+      console.error('Erro inesperado ao atribuir variedade:', error);
+      const userFriendlyMsg = 'Erro ao atribuir variedade.';
       this.saveError.set(userFriendlyMsg);
       this.messageService.error(userFriendlyMsg);
     } finally {
@@ -476,6 +583,10 @@ export class VarietiesViewModel {
       if (error) {
         this.messageService.error('Erro ao excluir a variedade.');
         return;
+      }
+
+      if (this.selectedAssignVarietyId() === variety.id) {
+        this.selectedAssignVarietyId.set(null);
       }
 
       // Recarrega as plantas para que as árvores sem variedade mudem de cor no mapa

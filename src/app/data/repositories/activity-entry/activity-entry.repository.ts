@@ -59,7 +59,10 @@ export class ActivityEntryRepository {
       zones: this.buildMapZones(zones.data ?? [], regions.data ?? []),
       plants: (plants.data ?? []).filter(
         (plant) =>
-          Number.isFinite(plant.latitude) && Number.isFinite(plant.longitude),
+          Number.isFinite(plant.latitude) &&
+          Number.isFinite(plant.longitude) &&
+          !plant.non_existent &&
+          !plant.nonExistent,
       ),
     };
   }

@@ -1,6 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import type { PostgrestError } from '@supabase/supabase-js';
 import type {
+  AssignVarietyToPlantsPayload,
+  AssignVarietyToPlantsResult,
   CreateVarietyWithPlantsPayload,
   CreateVarietyWithPlantsResult,
   Variety,
@@ -46,6 +48,12 @@ export class VarietiesRepository {
     }
 
     return result;
+  }
+
+  public async assignToPlants(
+    payload: AssignVarietyToPlantsPayload,
+  ): Promise<{ data: AssignVarietyToPlantsResult | null; error: unknown }> {
+    return this.varietiesService.assignToPlants(payload);
   }
 
   public async update(

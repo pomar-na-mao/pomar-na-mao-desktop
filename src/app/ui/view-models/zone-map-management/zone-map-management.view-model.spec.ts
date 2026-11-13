@@ -528,12 +528,19 @@ describe('ZoneMapManagementViewModel', () => {
     );
   });
 
-  it('should load plants on loadInitialData', async () => {
+  it('should load plants on loadInitialData and filter out non_existent plants', async () => {
     mockPlantsRepository.loadAllPlants.mockClear();
+    plantsSignal.set([
+      { id: '1', latitude: -23.1, longitude: -49.1, zoneId: null, non_existent: false },
+      { id: '2', latitude: -23.2, longitude: -49.2, zoneId: null, non_existent: true },
+      { id: '3', latitude: -23.3, longitude: -49.3, zoneId: null, non_existent: false },
+    ]);
 
     await viewModel.loadInitialData();
 
     expect(mockPlantsRepository.loadAllPlants).toHaveBeenCalled();
+    expect(viewModel.plants()).toHaveLength(2);
+    expect(viewModel.plants().map((p) => p.id)).toEqual(['1', '3']);
   });
 
   it('should reload plants and announce plant count after saving zone', async () => {

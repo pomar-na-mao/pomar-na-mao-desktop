@@ -166,6 +166,7 @@ export class MipdService {
     let query = this.supabase
       .from('plants')
       .select('id, latitude, longitude, zone_id, zones(name), varieties(name)')
+      .eq('non_existent', false)
       .order('id');
 
     if (zoneId) {

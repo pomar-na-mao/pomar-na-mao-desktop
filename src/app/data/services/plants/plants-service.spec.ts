@@ -168,6 +168,25 @@ describe('PlantsService', () => {
     expect(mockFrom).toHaveBeenCalledTimes(1);
   });
 
+  it('should filter out non_existent plants in getAllPlantsForMap', async () => {
+    const mockRpc = vi.fn().mockResolvedValue({
+      data: [
+        { id: 'p1', latitude: -23.1, longitude: -49.1, non_existent: false },
+        { id: 'p2', latitude: -23.2, longitude: -49.2, non_existent: true },
+        { id: 'p3', latitude: -23.3, longitude: -49.3, non_existent: false },
+      ],
+      error: null,
+    });
+    (service as any).supabase.rpc = mockRpc;
+
+    const result = await service.getAllPlantsForMap();
+
+    expect(mockRpc).toHaveBeenCalledWith('get_all_plants_for_map');
+    expect(result.data).toHaveLength(2);
+    expect(result.data?.map((p) => p.id)).toEqual(['p1', 'p3']);
+    expect(result.data?.[0].non_existent).toBe(false);
+  });
+
   it('should not invalidate cached reads after a failed mutation', async () => {
     const invalidateSpy = vi.spyOn(requestCache, 'invalidate');
     const eq = vi.fn().mockResolvedValue({

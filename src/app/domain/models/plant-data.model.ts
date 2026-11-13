@@ -140,6 +140,8 @@ export interface PlantMapItem {
   strokeColor?: string;
   fillColor?: string;
   color?: string;
+  non_existent?: boolean;
+  nonExistent?: boolean;
 }
 
 export type ZoneAssignmentPlant = PlantMapItem;

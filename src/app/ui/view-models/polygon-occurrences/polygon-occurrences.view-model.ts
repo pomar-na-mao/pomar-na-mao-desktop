@@ -160,16 +160,14 @@ export class PolygonOccurrencesViewModel {
   ]);
 
   public displayPlants = computed(() => {
-    const all = this.allPlants();
-    const colorMap = this.zoneColorMap();
+    const all = this.allPlants().filter(
+      (plant) => !plant.non_existent && !plant.nonExistent,
+    );
     const preview = this.previewPlants();
     const isPreview = this.previewLoaded() && preview.length > 0;
     const previewIds = isPreview ? new Set(preview.map((p) => p.plantId)) : null;
 
     return all.map((plant) => {
-      const zoneId = plant.zone_id ?? plant.zoneId;
-      const zoneColor = zoneId ? colorMap.get(zoneId) : undefined;
-
       if (previewIds && previewIds.has(plant.id)) {
         return {
           ...plant,
@@ -178,15 +176,11 @@ export class PolygonOccurrencesViewModel {
         };
       }
 
-      if (zoneColor) {
-        return {
-          ...plant,
-          strokeColor: zoneColor,
-          fillColor: zoneColor,
-        };
-      }
-
-      return plant;
+      return {
+        ...plant,
+        strokeColor: '#047857',
+        fillColor: '#10b981',
+      };
     });
   });
 

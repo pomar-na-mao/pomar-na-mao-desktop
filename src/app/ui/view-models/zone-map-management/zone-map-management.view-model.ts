@@ -51,7 +51,11 @@ export class ZoneMapManagementViewModel {
   private loadingService = inject(LoadingService);
   public messageService = inject(MessageService);
 
-  public plants = this.plantsRepository.allPlants;
+  public plants = computed(() =>
+    this.plantsRepository
+      .allPlants()
+      .filter((plant) => !plant.non_existent && !plant.nonExistent),
+  );
 
   public isLoading = signal(false);
   public zonesLoadFailed = signal(false);

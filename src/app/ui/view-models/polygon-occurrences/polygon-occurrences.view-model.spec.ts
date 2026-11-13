@@ -157,5 +157,21 @@ describe('PolygonOccurrencesViewModel', () => {
     expect(previewPlants()).toHaveLength(1);
     expect(messages.error).toHaveBeenCalledWith('Erro ao salvar as ocorrências da área.');
   });
+
+  it('filters out non_existent plants and colors plants green by default', () => {
+    allPlants.set([
+      { id: '1', latitude: -23.1, longitude: -49.1, zoneId: 'z1', non_existent: false },
+      { id: '2', latitude: -23.2, longitude: -49.2, zoneId: 'z1', non_existent: true },
+      { id: '3', latitude: -23.3, longitude: -49.3, zoneId: 'z1', non_existent: false },
+    ]);
+
+    const plants = viewModel.displayPlants();
+    expect(plants).toHaveLength(2);
+    expect(plants.map((p) => p.id)).toEqual(['1', '3']);
+    expect(plants[0].fillColor).toBe('#10b981');
+    expect(plants[0].strokeColor).toBe('#047857');
+    expect(plants[1].fillColor).toBe('#10b981');
+    expect(plants[1].strokeColor).toBe('#047857');
+  });
 });
 

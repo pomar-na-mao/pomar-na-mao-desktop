@@ -25,3 +25,14 @@ export interface CreateVarietyWithPlantsResult {
   variety: Variety;
   plants_updated_count: number;
 }
+
+export interface AssignVarietyToPlantsPayload {
+  varietyId: number;
+  polygonGeojson: GeoJsonPolygon;
+}
+
+export interface AssignVarietyToPlantsResult {
+  variety_id: number;
+  variety_name: string;
+  plants_updated_count: number;
+}
