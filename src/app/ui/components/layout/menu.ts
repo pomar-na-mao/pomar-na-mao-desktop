@@ -113,10 +113,35 @@ export class AppMenu implements OnInit {
             icon: 'pi pi-fw pi-book',
             items: [
               {
+                label: 'Gerar',
+                visible: true,
+                icon: 'pi pi-fw pi-plus-circle',
+                routerLink: ['/atividades-de-campo/gerar'],
+              },
+              {
                 label: 'Realizadas',
                 visible: true,
                 icon: 'pi pi-fw pi-check-circle',
                 routerLink: ['/atividades-de-campo/realizadas'],
+              },
+            ],
+          },
+          {
+            label: 'Mipd',
+            visible: true,
+            icon: 'pi pi-fw pi-shield',
+            items: [
+              {
+                label: 'Registrar',
+                visible: true,
+                icon: 'pi pi-fw pi-pencil',
+                routerLink: ['/mpid/registrar'],
+              },
+              {
+                label: 'Realizadas',
+                visible: true,
+                icon: 'pi pi-fw pi-check-circle',
+                routerLink: ['/mpid/realizadas'],
               },
             ],
           },

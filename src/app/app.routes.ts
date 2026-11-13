@@ -40,8 +40,42 @@ export const ROUTES: Routes = [
           {
             path: 'realizadas',
             loadComponent: () => import('./ui/views/completed-operations/completed-operations').then(m => m.CompletedOperations)
+          },
+          {
+            path: 'gerar',
+            loadComponent: () => import('./ui/views/generate-activity/generate-activity').then(m => m.GenerateActivity)
           }
         ]
+      },
+      {
+        path: 'mpid',
+        children: [
+          {
+            path: '',
+            redirectTo: 'realizadas',
+            pathMatch: 'full'
+          },
+          {
+            path: 'realizadas',
+            loadComponent: () => import('./ui/views/mipd/mipd-completed/mipd-completed').then(m => m.MipdCompleted)
+          },
+          {
+            path: 'registrar',
+            loadComponent: () => import('./ui/views/mipd/mipd-registration/mipd-registration').then(m => m.MipdRegistration)
+          }
+        ]
+      },
+      {
+        path: 'mipd',
+        redirectTo: 'mpid',
+      },
+      {
+        path: 'mipd/realizadas',
+        redirectTo: 'mpid/realizadas',
+      },
+      {
+        path: 'mipd/registrar',
+        redirectTo: 'mpid/registrar',
       },
       {
         path: 'registrar',

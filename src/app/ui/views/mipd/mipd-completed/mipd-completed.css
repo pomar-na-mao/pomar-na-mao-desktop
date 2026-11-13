@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Modal Detalhes do MIPD */
+.mipd-details-dialog .p-dialog-header {
+  padding: 1rem 1.25rem 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+}
+
+:host-context(.dark) .mipd-details-dialog .p-dialog-header {
+  border-bottom-color: var(--p-surface-800);
+  background: var(--p-surface-800);
+}
+
+.mipd-details-dialog .p-dialog-content {
+  padding: 1rem 1.25rem;
+  overflow-x: hidden !important;
+}
+
+.mipd-details-dialog .p-dialog-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+}
+
+:host-context(.dark) .mipd-details-dialog .p-dialog-footer {
+  border-top-color: var(--p-surface-800);
+  background: var(--p-surface-800);
+}
+
+/* Mini mapa dentro do diálogo */
+.mipd-mini-map {
+  width: 100%;
+  height: 200px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Mapa principal em tela cheia */
+.mipd-full-map {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  z-index: 1;
+}
+
+:host-context(.dark) .mipd-full-map,
+:host-context(.app-dark) .mipd-full-map,
+:host-context(.dark) .mipd-mini-map,
+:host-context(.app-dark) .mipd-mini-map {
+  filter: invert(0.9) hue-rotate(180deg) brightness(0.9) contrast(1.1);
+  transition: filter 0.2s ease-in-out;
+}
+
+/* Filtros com larguras padronizadas */
+.filter-search-box {
+  width: 20rem;
+  min-width: 18rem;
+  max-width: 24rem;
+}
+
+@media (max-width: 1024px) {
+  .filter-search-box {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+.filter-select {
+  width: 12rem !important;
+  min-width: 10rem !important;
+  max-width: 14rem !important;
+}
+
+.filter-date-input {
+  width: 10rem !important;
+}

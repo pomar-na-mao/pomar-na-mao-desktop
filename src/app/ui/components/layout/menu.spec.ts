@@ -74,9 +74,30 @@ describe('AppMenu', () => {
       icon: 'pi pi-fw pi-book',
       items: [
         expect.objectContaining({
+          label: 'Gerar',
+          icon: 'pi pi-fw pi-plus-circle',
+          routerLink: ['/atividades-de-campo/gerar'],
+        }),
+        expect.objectContaining({
           label: 'Realizadas',
           icon: 'pi pi-fw pi-check-circle',
           routerLink: ['/atividades-de-campo/realizadas'],
+        }),
+      ],
+    });
+    expect(items[registrationIndex + 3]).toMatchObject({
+      label: 'Mipd',
+      icon: 'pi pi-fw pi-shield',
+      items: [
+        expect.objectContaining({
+          label: 'Registrar',
+          icon: 'pi pi-fw pi-pencil',
+          routerLink: ['/mpid/registrar'],
+        }),
+        expect.objectContaining({
+          label: 'Realizadas',
+          icon: 'pi pi-fw pi-check-circle',
+          routerLink: ['/mpid/realizadas'],
         }),
       ],
     });

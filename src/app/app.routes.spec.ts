@@ -14,6 +14,7 @@ describe('ROUTES', () => {
         'meu-pomar',
         'cadastro',
         'atividades-de-campo',
+        'mpid',
         'registrar',
         'configuracoes',
         'usuarios',
@@ -55,6 +56,9 @@ describe('ROUTES', () => {
     const completedRoute = fieldActivitiesRoute?.children?.find(
       (route) => route.path === 'realizadas',
     );
+    const generateRoute = fieldActivitiesRoute?.children?.find(
+      (route) => route.path === 'gerar',
+    );
 
     expect(defaultRoute).toMatchObject({
       redirectTo: 'realizadas',
@@ -63,6 +67,9 @@ describe('ROUTES', () => {
     expect(completedRoute?.loadComponent).toBeDefined();
     const loadFn = completedRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
+    expect(generateRoute?.loadComponent).toBeDefined();
+    const generateLoadFn = generateRoute?.loadComponent as () => Promise<unknown>;
+    await expect(generateLoadFn()).resolves.toBeDefined();
   });
 
   it('should lazy-load the Registration shell with child routes for /cadastro', async () => {
@@ -77,5 +84,28 @@ describe('ROUTES', () => {
     const loadFn = registrationRoute?.loadComponent as () => Promise<unknown>;
     const component = await loadFn();
     expect(component).toBeDefined();
+  });
+
+  it('should expose MIPD operations under /mpid with registrar and realizadas subroutes', async () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const mpidRoute = mainRoute?.children?.find((route) => route.path === 'mpid');
+    const defaultRoute = mpidRoute?.children?.find((route) => route.path === '');
+    const completedRoute = mpidRoute?.children?.find((route) => route.path === 'realizadas');
+    const registerRoute = mpidRoute?.children?.find((route) => route.path === 'registrar');
+
+    expect(defaultRoute).toMatchObject({
+      redirectTo: 'realizadas',
+      pathMatch: 'full',
+    });
+    expect(completedRoute?.loadComponent).toBeDefined();
+    const completedLoadFn = completedRoute?.loadComponent as () => Promise<unknown>;
+    await expect(completedLoadFn()).resolves.toBeDefined();
+
+    expect(registerRoute?.loadComponent).toBeDefined();
+    const registerLoadFn = registerRoute?.loadComponent as () => Promise<unknown>;
+    await expect(registerLoadFn()).resolves.toBeDefined();
+
+    const mipdAlias = mainRoute?.children?.find((route) => route.path === 'mipd');
+    expect(mipdAlias).toMatchObject({ redirectTo: 'mpid' });
   });
 });

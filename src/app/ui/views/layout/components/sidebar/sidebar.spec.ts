@@ -44,8 +44,32 @@ describe('Sidebar', () => {
         label: 'Atividade de campo',
         items: [
           expect.objectContaining({
+            label: 'Gerar',
+            path: '/atividades-de-campo/gerar',
+          }),
+          expect.objectContaining({
             label: 'Realizadas',
             path: '/atividades-de-campo/realizadas',
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('shows Mipd immediately below Atividade de campo with Registrar and Realizadas as children', () => {
+    const sidebar = new Sidebar();
+
+    expect(sidebar.menuItems[4]).toEqual(
+      expect.objectContaining({
+        label: 'Mipd',
+        items: [
+          expect.objectContaining({
+            label: 'Registrar',
+            path: '/mpid/registrar',
+          }),
+          expect.objectContaining({
+            label: 'Realizadas',
+            path: '/mpid/realizadas',
           }),
         ],
       }),

@@ -197,9 +197,30 @@ export class Sidebar {
       icon: 'M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V4H6.5A2.5 2.5 0 004 6.5v13z',
       items: [
         {
+          label: 'Gerar',
+          icon: 'M12 5v14m-7-7h14',
+          path: '/atividades-de-campo/gerar',
+        },
+        {
           label: 'Realizadas',
           icon: 'M5 13l4 4L19 7',
           path: '/atividades-de-campo/realizadas',
+        },
+      ],
+    },
+    {
+      label: 'Mipd',
+      icon: 'M12 2a5 5 0 00-5 5v1H5a1 1 0 000 2h2v2H5a1 1 0 000 2h2v1a5 5 0 0010 0v-1h2a1 1 0 000-2h-2v-2h2a1 1 0 000-2h-2V7a5 5 0 00-5-5z',
+      items: [
+        {
+          label: 'Registrar',
+          icon: 'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z',
+          path: '/mpid/registrar',
+        },
+        {
+          label: 'Realizadas',
+          icon: 'M5 13l4 4L19 7',
+          path: '/mpid/realizadas',
         },
       ],
     },
