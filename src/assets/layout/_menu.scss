@@ -6,15 +6,7 @@
   max-width: calc(100vw - 2rem);
   height: calc(100vh - 8rem);
   z-index: 999;
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-  }
+  overflow: hidden;
   user-select: none;
   top: 6rem;
   left: 1rem;
@@ -28,6 +20,17 @@
     0 1px 3px 0 rgb(0 0 0 / 10%),
     0 1px 2px -1px rgb(0 0 0 / 10%);
   padding: 0.5rem;
+}
+
+.layout-menu-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
 
 :root[class*='app-dark'] .layout-sidebar {
