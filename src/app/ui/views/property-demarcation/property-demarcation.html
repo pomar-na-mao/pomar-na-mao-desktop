@@ -65,7 +65,7 @@
     <app-map-polygon-selector
       [center]="viewModel.mapCenter()"
       [zoom]="viewModel.mapZoom()"
-      [plants]="[]"
+      [plants]="viewModel.plants()"
       [allowDrawingWithoutPlants]="true"
       [maxPolygons]="1"
       [backgroundPolygon]="viewModel.persistedBoundary()"

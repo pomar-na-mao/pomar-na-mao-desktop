@@ -152,7 +152,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   @Input() backgroundPolygonDashArrays: Array<string | null> | null = null;
   @Input() backgroundPolygonFillOpacity = 0;
   @Input() backgroundPolygonFillOpacities: number[] | null = null;
-  @Input() backgroundPolygonWeight = 3.5;
+  @Input() backgroundPolygonWeight = 4.5;
   @Input() backgroundPolygonWeights: number[] | null = null;
   @Input() plantColor?: string;
   @Input() plantFillColor?: string;
@@ -163,6 +163,12 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   @HostListener('window:keydown', ['$event']) handleKeyboardEvent(
     event: KeyboardEvent,
   ) {
+    if (event.key === 'Escape' && this.drawingMode) {
+      event.preventDefault();
+      this.rollbackToLastCheckpoint();
+      return;
+    }
+
     if (event.ctrlKey && event.key.toLowerCase() === 'z') {
       event?.preventDefault();
       this.undoLastPoint();
@@ -174,6 +180,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private drawnLayers: L.Polygon[] = [];
   private tempPoints: L.LatLng[] = [];
   private tempMarkers: L.CircleMarker[] = [];
+  private checkpointPointCounts: number[] = [];
   private tempPolyline: L.Polyline | null = null;
   private previewLine: L.Polyline | null = null;
   private restoreDoubleClickZoom = false;
@@ -311,7 +318,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
           this.backgroundPolygonFillOpacity;
         const weight =
           this.backgroundPolygonWeights?.[index] ??
-          (dashArray ? 2 : (this.backgroundPolygonWeight ?? 3.5));
+          this.backgroundPolygonWeight;
         const layer = L.polygon(polygon, {
           color,
           fillColor: color,
@@ -501,7 +508,22 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     if (!this.drawingMode) return;
 
     L.DomEvent.stopPropagation(e);
-    this.addDrawingPoint(e.latlng, true);
+    this.checkpointDrawing(e.latlng);
+  }
+
+  private checkpointDrawing(point: L.LatLng): void {
+    const checkpointsBeforeClick = this.tempMarkers.length;
+    const pointAdded = this.addDrawingPoint(point, true);
+    if (!pointAdded) {
+      const lastPoint = this.tempPoints[this.tempPoints.length - 1];
+      if (lastPoint) {
+        this.addCheckpointMarker(lastPoint);
+      }
+    }
+
+    if (this.tempMarkers.length > checkpointsBeforeClick) {
+      this.checkpointPointCounts.push(this.tempPoints.length);
+    }
   }
 
   private onMouseMove(e: L.LeafletMouseEvent): void {
@@ -516,7 +538,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     } else {
       this.previewLine = L.polyline(previewPoints, {
         color: '#2563eb', // blue-600
-        weight: 1.5,
+        weight: 3,
         dashArray: '3, 5',
         opacity: 0.5,
       }).addTo(this.map);
@@ -544,15 +566,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     this.tempPoints.push(point);
 
     if (showMarker) {
-      const marker = L.circleMarker(point, {
-        radius: 10,
-        fillColor: '#3b82f6', // blue-500
-        color: '#fff',
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 1,
-      }).addTo(this.map);
-      this.tempMarkers.push(marker);
+      this.addCheckpointMarker(point);
     }
 
     if (this.tempPoints.length > 1) {
@@ -561,7 +575,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       } else {
         this.tempPolyline = L.polyline(this.tempPoints, {
           color: '#2563eb', // blue-600
-          weight: 2,
+          weight: 4,
           dashArray: '5, 5',
           opacity: 0.8,
         }).addTo(this.map);
@@ -569,6 +583,23 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     return true;
+  }
+
+  private addCheckpointMarker(point: L.LatLng): void {
+    const alreadyMarked = this.tempMarkers.some(
+      (marker) => marker.getLatLng().distanceTo(point) < this.freehandMinimumDistanceMeters,
+    );
+    if (alreadyMarked) return;
+
+    const marker = L.circleMarker(point, {
+      radius: 10,
+      fillColor: '#3b82f6', // blue-500
+      color: '#fff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 1,
+    }).addTo(this.map);
+    this.tempMarkers.push(marker);
   }
 
   public completePolygon(): void {
@@ -586,7 +617,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       color: '#2563eb', // blue-600
       fillColor: '#3b82f6', // blue-500
       fillOpacity: 0.2,
-      weight: 2,
+      weight: 4.5,
     }).addTo(this.map);
 
     this.drawnLayers.push(polygon);
@@ -638,6 +669,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   private clearTempLayers(): void {
     this.tempMarkers.forEach((m) => this.map.removeLayer(m));
     this.tempMarkers = [];
+    this.checkpointPointCounts = [];
 
     if (this.tempPolyline) {
       this.map.removeLayer(this.tempPolyline);
@@ -667,15 +699,36 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
   public undoLastPoint(): void {
     if (this.tempPoints.length === 0) return;
 
+    const previousPointCount = this.tempPoints.length;
     this.tempPoints.pop();
-    const lastMarker = this.tempMarkers.pop();
-    if (lastMarker) this.map.removeLayer(lastMarker);
+    if (this.checkpointPointCounts.at(-1) === previousPointCount) {
+      this.checkpointPointCounts.pop();
+      const lastMarker = this.tempMarkers.pop();
+      if (lastMarker) this.map.removeLayer(lastMarker);
+    }
 
+    this.refreshTemporaryPath();
+  }
+
+  public rollbackToLastCheckpoint(): void {
+    const checkpointPointCount = this.checkpointPointCounts.at(-1) ?? 0;
+    if (this.tempPoints.length <= checkpointPointCount) return;
+
+    this.tempPoints = this.tempPoints.slice(0, checkpointPointCount);
+    this.refreshTemporaryPath();
+  }
+
+  private refreshTemporaryPath(): void {
     if (this.tempPoints.length <= 1 && this.tempPolyline) {
       this.map.removeLayer(this.tempPolyline);
       this.tempPolyline = null;
     } else if (this.tempPolyline) {
       this.tempPolyline.setLatLngs(this.tempPoints);
+    }
+
+    if (this.previewLine) {
+      this.map.removeLayer(this.previewLine);
+      this.previewLine = null;
     }
   }
 
@@ -728,6 +781,10 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
     return [...this.tempPoints];
   }
 
+  get checkpointCount(): number {
+    return this.tempMarkers.length;
+  }
+
   public setExternalPolygon(coordinates: [number, number][]): void {
     if (!this.map || coordinates.length < 3) return;
 
@@ -738,7 +795,7 @@ export class MapPolygonSelector implements AfterViewInit, OnChanges, OnDestroy {
       color: '#2563eb',
       fillColor: '#3b82f6',
       fillOpacity: 0.25,
-      weight: 2,
+      weight: 4.5,
     }).addTo(this.map);
 
     this.drawnLayers.push(polygon);
