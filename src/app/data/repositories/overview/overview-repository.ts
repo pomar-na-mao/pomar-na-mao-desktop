@@ -6,6 +6,7 @@ import type {
   OverviewFilterOptions,
   OverviewSnapshot,
   OverviewSnapshotFilters,
+  SprayingAffectedPlantPoint,
 } from '../../../domain/models/overview.model';
 import type { Region } from '../../../domain/models/regions.model';
 import { buildOrderedMapBoundary } from '../../../shared/utils/ordered-map-boundary';
@@ -142,12 +143,12 @@ export class OverviewRepository {
     );
   }
 
-  public async getAnnotationOperations(
+  public async getSprayingAffectedPlantPoints(
     startDate?: string | null,
     endDate?: string | null,
     zoneId?: string | null,
-  ): Promise<InspectionOperationResponse[]> {
-    return await this.overviewService.getAnnotationOperations(
+  ): Promise<SprayingAffectedPlantPoint[]> {
+    return await this.overviewService.getSprayingAffectedPlantPoints(
       startDate,
       endDate,
       zoneId,

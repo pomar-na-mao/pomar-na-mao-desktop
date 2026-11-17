@@ -3,7 +3,10 @@ import * as L from 'leaflet';
 import { MessageService } from 'primeng/api';
 import { FieldActivitiesRepository } from '../../../data/repositories/field-activities/field-activities.repository';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
-import type { FieldActivityItem } from '../../../domain/models/field-activity.model';
+import type {
+  FieldActivityItem,
+  FieldActivityPlantPoint,
+} from '../../../domain/models/field-activity.model';
 import {
   buildOrderedMapBoundary,
   type OrderedMapBoundary,
@@ -37,6 +40,9 @@ export class FieldActivitiesViewModel {
 
   public selectedActivity = signal<FieldActivityItem | null>(null);
   public detailsDialogVisible = signal<boolean>(false);
+  public affectedPlantPoints = signal<FieldActivityPlantPoint[]>([]);
+  public areAffectedPlantsLoading = signal(false);
+  public affectedPlantsLoadFailed = signal(false);
   public isMapFullscreen = signal<boolean>(false);
 
   public farmBoundary = signal<OrderedMapBoundary | null>(null);
@@ -47,6 +53,8 @@ export class FieldActivitiesViewModel {
 
   private miniMap: L.Map | null = null;
   private miniMapLayer: L.GeoJSON | null = null;
+  private miniMapPlantsLayer: L.LayerGroup | null = null;
+  private detailsPlantsRequestId = 0;
 
   public totalCount = computed(() => this.activities().length);
   public routeCount = computed(
@@ -111,6 +119,13 @@ export class FieldActivitiesViewModel {
       }
     });
 
+    effect(() => {
+      const plants = this.affectedPlantPoints();
+      if (this.miniMap) {
+        this.drawMiniMapPlants(plants);
+      }
+    });
+
     void this.loadFarmBoundary();
   }
 
@@ -154,14 +169,53 @@ export class FieldActivitiesViewModel {
     void this.loadInitialData();
   }
 
-  public openDetails(activity: FieldActivityItem): void {
+  public async openDetails(activity: FieldActivityItem): Promise<void> {
+    const requestId = ++this.detailsPlantsRequestId;
     this.selectedActivity.set(activity);
     this.detailsDialogVisible.set(true);
+    this.affectedPlantPoints.set([]);
+    this.affectedPlantsLoadFailed.set(false);
+    this.areAffectedPlantsLoading.set(true);
+
+    try {
+      const { data, error } = await this.repository.findPlantPointsByActivityId(
+        activity.id,
+      );
+      if (requestId !== this.detailsPlantsRequestId) return;
+
+      if (error) {
+        this.affectedPlantsLoadFailed.set(true);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível identificar as plantas envolvidas.',
+        });
+        return;
+      }
+
+      this.affectedPlantPoints.set(data);
+    } catch {
+      if (requestId !== this.detailsPlantsRequestId) return;
+      this.affectedPlantsLoadFailed.set(true);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Falha ao carregar as plantas envolvidas.',
+      });
+    } finally {
+      if (requestId === this.detailsPlantsRequestId) {
+        this.areAffectedPlantsLoading.set(false);
+      }
+    }
   }
 
   public closeDetails(): void {
+    this.detailsPlantsRequestId++;
     this.detailsDialogVisible.set(false);
     this.selectedActivity.set(null);
+    this.affectedPlantPoints.set([]);
+    this.affectedPlantsLoadFailed.set(false);
+    this.areAffectedPlantsLoading.set(false);
     this.destroyMiniMap();
   }
 
@@ -266,6 +320,9 @@ export class FieldActivitiesViewModel {
         }),
       }).addTo(this.miniMap);
 
+      this.miniMapPlantsLayer = L.layerGroup().addTo(this.miniMap);
+      this.drawMiniMapPlants(this.affectedPlantPoints());
+
       try {
         const bounds = this.miniMapLayer.getBounds();
         if (bounds.isValid()) {
@@ -283,6 +340,7 @@ export class FieldActivitiesViewModel {
       this.miniMap.remove();
       this.miniMap = null;
       this.miniMapLayer = null;
+      this.miniMapPlantsLayer = null;
     }
   }
 
@@ -387,6 +445,21 @@ export class FieldActivitiesViewModel {
     } catch {
       this.farmBoundary.set(null);
     }
+  }
+
+  private drawMiniMapPlants(plants: FieldActivityPlantPoint[]): void {
+    if (!this.miniMapPlantsLayer) return;
+
+    this.miniMapPlantsLayer.clearLayers();
+    plants.forEach((plant) => {
+      L.circleMarker([plant.latitude, plant.longitude], {
+        radius: 5,
+        color: '#9a3412',
+        weight: 2,
+        fillColor: '#f97316',
+        fillOpacity: 0.95,
+      }).addTo(this.miniMapPlantsLayer!);
+    });
   }
 
   private renderFarmPolygon(): void {

@@ -248,7 +248,7 @@ export class MyOrchardFiltersPanel {
     return [
       { label: 'Nenhuma / Não filtrar', value: '' },
       { label: 'Inspeção Manual', value: 'inspecao' },
-      { label: 'Anotação / Ocorrência', value: 'ocorrencia' },
+      { label: 'Pulverização', value: 'pulverizacao' },
     ];
   }
 

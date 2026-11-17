@@ -78,6 +78,16 @@ describe('FieldActivitiesViewModel', () => {
 
     viewModel = TestBed.inject(FieldActivitiesViewModel);
     repository = TestBed.inject(FieldActivitiesRepository);
+    vi.spyOn(repository, 'findPlantPointsByActivityId').mockResolvedValue({
+      data: [
+        {
+          id: 'plant-1',
+          latitude: -21.23,
+          longitude: -47.79,
+        },
+      ],
+      error: null,
+    });
   });
 
   it('should calculate KPIs correctly', () => {
@@ -154,7 +164,7 @@ describe('FieldActivitiesViewModel', () => {
     expect(viewModel.hasActiveFilters()).toBe(false);
   });
 
-  it('should manage details dialog state and badge styles', () => {
+  it('should manage details dialog state, affected plants and badge styles', async () => {
     const routeStyle = viewModel.geometryBadgeStyle('route');
     expect(routeStyle.label).toBe('Rota');
     expect(routeStyle.icon).toContain('directions');
@@ -163,13 +173,16 @@ describe('FieldActivitiesViewModel', () => {
     expect(areaStyle.label).toBe('Área');
     expect(areaStyle.icon).toContain('map');
 
-    viewModel.openDetails(sampleActivities[0]);
+    await viewModel.openDetails(sampleActivities[0]);
     expect(viewModel.detailsDialogVisible()).toBe(true);
     expect(viewModel.selectedActivity()).toEqual(sampleActivities[0]);
+    expect(repository.findPlantPointsByActivityId).toHaveBeenCalledWith('act-1');
+    expect(viewModel.affectedPlantPoints()).toHaveLength(1);
 
     viewModel.closeDetails();
     expect(viewModel.detailsDialogVisible()).toBe(false);
     expect(viewModel.selectedActivity()).toBeNull();
+    expect(viewModel.affectedPlantPoints()).toEqual([]);
   });
 
   it('should load initial data and handle errors gracefully', async () => {

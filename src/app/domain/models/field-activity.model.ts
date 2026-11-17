@@ -8,6 +8,12 @@ export interface FieldActivityInputItem {
   applied_dose: string;
 }
 
+export interface FieldActivityPlantPoint {
+  id: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface FieldActivityItem {
   id: string;
   field_operation_id: string;

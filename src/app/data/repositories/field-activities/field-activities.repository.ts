@@ -1,6 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
 import type { PostgrestError } from '@supabase/supabase-js';
-import type { FieldActivityItem } from '../../../domain/models/field-activity.model';
+import type {
+  FieldActivityItem,
+  FieldActivityPlantPoint,
+} from '../../../domain/models/field-activity.model';
 import { FieldActivitiesService } from '../../services/field-activities/field-activities.service';
 import { injectSupabase } from '../../services/supabase';
 
@@ -32,6 +35,23 @@ export class FieldActivitiesRepository {
     }
 
     return { error };
+  }
+
+  public async findPlantPointsByActivityId(
+    activityEntryId: string,
+  ): Promise<{
+    data: FieldActivityPlantPoint[];
+    error: PostgrestError | null;
+  }> {
+    const { data, error } =
+      await this.fieldActivitiesService.getFieldActivityPlantPoints(
+        activityEntryId,
+      );
+
+    return {
+      data: error ? [] : (data ?? []),
+      error,
+    };
   }
 
   private async enrichMissingMachineData(

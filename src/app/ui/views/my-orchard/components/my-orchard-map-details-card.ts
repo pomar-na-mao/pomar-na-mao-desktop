@@ -30,7 +30,7 @@ import { MyOrchardViewModel } from '../../../view-models/my-orchard/my-orchard.v
               Detalhes da Planta
             </h4>
             <p class="text-[10px] text-surface-500 dark:text-surface-400 leading-none">
-              {{ myOrchardViewModel.selectedOperationType() === 'ocorrencia' ? 'Anotação / Ocorrência' : 'Inspeção Manual' }}
+              Inspeção Manual
             </p>
           </div>
           <p-button

@@ -10,6 +10,7 @@ describe('OverviewRepository', () => {
   const getOverviewData = vi.fn();
   const getFilterOptions = vi.fn();
   const getOpenOccurrences = vi.fn();
+  const getSprayingAffectedPlantPoints = vi.fn();
   const findByZoneId = vi.fn();
 
   beforeEach(() => {
@@ -24,6 +25,7 @@ describe('OverviewRepository', () => {
             getOverviewData,
             getFilterOptions,
             getOpenOccurrences,
+            getSprayingAffectedPlantPoints,
           },
         },
         {
@@ -139,5 +141,32 @@ describe('OverviewRepository', () => {
     findByZoneId.mockResolvedValue({ data: [], error });
 
     await expect(repository.getZoneRegions('z1')).rejects.toBe(error);
+  });
+
+  it('should delegate spraying affected plant point loading', async () => {
+    const points = [
+      {
+        operation_id: 'op-1',
+        plant_id: 'plant-1',
+        latitude: -21.23,
+        longitude: -47.79,
+        performed_at: '2026-05-02T12:00:00Z',
+        distance_meters: 4.5,
+      },
+    ];
+    getSprayingAffectedPlantPoints.mockResolvedValue(points);
+
+    const result = await repository.getSprayingAffectedPlantPoints(
+      '2026-05-01',
+      '2026-05-10',
+      'zone-1',
+    );
+
+    expect(getSprayingAffectedPlantPoints).toHaveBeenCalledWith(
+      '2026-05-01',
+      '2026-05-10',
+      'zone-1',
+    );
+    expect(result).toEqual(points);
   });
 });

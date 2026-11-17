@@ -9,6 +9,7 @@ import type { FieldActivityItem } from '../../../domain/models/field-activity.mo
 describe('FieldActivitiesRepository', () => {
   let repository: FieldActivitiesRepository;
   const mockGetFieldActivities = vi.fn();
+  const mockGetFieldActivityPlantPoints = vi.fn();
   const mockFrom = vi.fn();
   const mockSupabaseClient = {
     from: mockFrom,
@@ -24,6 +25,7 @@ describe('FieldActivitiesRepository', () => {
           provide: FieldActivitiesService,
           useValue: {
             getFieldActivities: mockGetFieldActivities,
+            getFieldActivityPlantPoints: mockGetFieldActivityPlantPoints,
           },
         },
         {
@@ -145,5 +147,23 @@ describe('FieldActivitiesRepository', () => {
 
     expect(result.error).toEqual(mockError);
     expect(repository.activities()).toEqual([]);
+  });
+
+  it('should fetch the plant points involved in an activity', async () => {
+    const points = [
+      { id: 'plant-1', latitude: -21.23, longitude: -47.79 },
+    ];
+    mockGetFieldActivityPlantPoints.mockResolvedValue({
+      data: points,
+      error: null,
+      count: points.length,
+      status: 200,
+      statusText: 'OK',
+    });
+
+    const result = await repository.findPlantPointsByActivityId('act-1');
+
+    expect(mockGetFieldActivityPlantPoints).toHaveBeenCalledWith('act-1');
+    expect(result).toEqual({ data: points, error: null });
   });
 });

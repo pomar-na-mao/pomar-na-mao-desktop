@@ -16,6 +16,7 @@ import type {
   OverviewSummary,
   OverviewVariety,
   OverviewZone,
+  SprayingAffectedPlantPoint,
 } from '../../../domain/models/overview.model';
 import { LoadingService } from '../../../shared/services/loading.service';
 import {
@@ -61,6 +62,8 @@ export class MyOrchardViewModel {
   private plantLayers: L.LayerGroup | null = null;
   private mipdLayers: L.LayerGroup | null = null;
   private inspectionPlantLayers: L.LayerGroup | null = null;
+  private sprayingRouteLayers: L.FeatureGroup | null = null;
+  private sprayingPlantLayers: L.LayerGroup | null = null;
   private plantRenderer = L.canvas({ padding: 0.5 });
   private zoneBoundaryCache = new Map<string, OrderedMapBoundary | null>();
   private zoneBoundaryRequestId = 0;
@@ -100,6 +103,7 @@ export class MyOrchardViewModel {
   public isMipdLoading = signal(false);
 
   public inspectionOperations = signal<InspectionOperationResponse[]>([]);
+  public sprayingAffectedPlantPoints = signal<SprayingAffectedPlantPoint[]>([]);
   public isOperationsLoading = signal(false);
   public selectedInspectionPlant = signal<InspectionPlant | null>(null);
   public selectedInspectionDetails =
@@ -259,6 +263,11 @@ export class MyOrchardViewModel {
       this.renderInspectionPlants();
     });
 
+    effect(() => {
+      this.sprayingAffectedPlantPoints();
+      this.renderSprayingPlants();
+    });
+
     void this.loadSupportData();
   }
 
@@ -323,12 +332,16 @@ export class MyOrchardViewModel {
     this.mipdLayers = L.layerGroup().addTo(this.map);
     // 6. Inspection operation markers layer
     this.inspectionPlantLayers = L.layerGroup().addTo(this.map);
+    // 7. Spraying routes and affected plant markers
+    this.sprayingRouteLayers = L.featureGroup().addTo(this.map);
+    this.sprayingPlantLayers = L.layerGroup().addTo(this.map);
 
     this.renderFarmPolygon();
     this.renderColoredZones();
     this.renderPlants();
     this.renderMipdMarkings();
     this.renderInspectionPlants();
+    this.renderSprayingPlants();
     this.renderSelectedZonePolygon();
   }
 
@@ -343,6 +356,8 @@ export class MyOrchardViewModel {
     this.plantLayers = null;
     this.mipdLayers = null;
     this.inspectionPlantLayers = null;
+    this.sprayingRouteLayers = null;
+    this.sprayingPlantLayers = null;
   }
 
   public invalidateMapSize(): void {
@@ -603,6 +618,86 @@ export class MyOrchardViewModel {
     }
   }
 
+  private renderSprayingPlants(): void {
+    if (!this.map || !this.sprayingRouteLayers || !this.sprayingPlantLayers) {
+      return;
+    }
+
+    this.sprayingRouteLayers.clearLayers();
+    this.sprayingPlantLayers.clearLayers();
+    const points = this.sprayingAffectedPlantPoints();
+    if (points.length === 0) {
+      return;
+    }
+
+    const bounds = L.latLngBounds([]);
+    const routesByOperation = new Map<string, SprayingAffectedPlantPoint>();
+    points.forEach((point) => {
+      if (point.route_geojson && !routesByOperation.has(point.operation_id)) {
+        routesByOperation.set(point.operation_id, point);
+      }
+    });
+
+    routesByOperation.forEach((operation) => {
+      const route = L.geoJSON(
+        operation.route_geojson as GeoJSON.GeoJsonObject,
+        {
+          style: {
+            color: '#0284c7',
+            weight: 4.5,
+            opacity: 0.9,
+          },
+        },
+      );
+      const tooltip = document.createElement('span');
+      tooltip.textContent = 'Rota da pulverização';
+      route.bindTooltip(tooltip, { direction: 'top' });
+      route.addTo(this.sprayingRouteLayers!);
+      const routeBounds = route.getBounds();
+      if (routeBounds.isValid()) {
+        bounds.extend(routeBounds);
+      }
+    });
+
+    const pointsByPlant = new Map<string, SprayingAffectedPlantPoint[]>();
+    points.forEach((point) => {
+      if (
+        !point.plant_id ||
+        point.latitude === null ||
+        point.longitude === null
+      ) {
+        return;
+      }
+      const current = pointsByPlant.get(point.plant_id) ?? [];
+      current.push(point);
+      pointsByPlant.set(point.plant_id, current);
+    });
+
+    pointsByPlant.forEach((entries) => {
+      const point = entries[0];
+      const marker = L.circleMarker([point.latitude!, point.longitude!], {
+        radius: 5,
+        color: '#9a3412',
+        fillColor: '#f97316',
+        fillOpacity: 0.95,
+        weight: 2,
+        renderer: this.plantRenderer,
+      });
+      const tooltip = document.createElement('span');
+      tooltip.textContent =
+        entries.length === 1
+          ? 'Afetada por 1 pulverização'
+          : `Afetada por ${entries.length} pulverizações`;
+      marker.bindTooltip(tooltip, { direction: 'top' });
+      marker.addTo(this.sprayingPlantLayers!);
+      bounds.extend([point.latitude!, point.longitude!]);
+    });
+
+    if (bounds.isValid()) {
+      this.map.fitBounds(bounds, { padding: [48, 48], maxZoom: 18 });
+    }
+  }
+
   public navigateInspection(direction: 'prev' | 'next'): void {
     const entries = this.inspectionEntriesForPlant();
     const current = this.currentInspectionIndex();
@@ -816,6 +911,7 @@ export class MyOrchardViewModel {
 
     if (!opType) {
       this.inspectionOperations.set([]);
+      this.sprayingAffectedPlantPoints.set([]);
       this.clearInspectionSelection();
       this.isOperationsLoading.set(false);
       return;
@@ -823,30 +919,34 @@ export class MyOrchardViewModel {
 
     this.isOperationsLoading.set(true);
     this.clearInspectionSelection();
+    this.inspectionOperations.set([]);
+    this.sprayingAffectedPlantPoints.set([]);
 
     try {
-      let data: InspectionOperationResponse[] = [];
       if (opType === 'inspecao') {
-        data = await this.overviewRepository.getInspectionOperations(
+        const data = await this.overviewRepository.getInspectionOperations(
           startDate || null,
           endDate || null,
           zoneId || null,
         );
-      } else if (opType === 'ocorrencia') {
-        data = await this.overviewRepository.getAnnotationOperations(
+        if (currentId === this.operationsRequestId) {
+          this.inspectionOperations.set(data);
+        }
+      } else if (opType === 'pulverizacao') {
+        const data = await this.overviewRepository.getSprayingAffectedPlantPoints(
           startDate || null,
           endDate || null,
           zoneId || null,
         );
-      }
-
-      if (currentId === this.operationsRequestId) {
-        this.inspectionOperations.set(data);
+        if (currentId === this.operationsRequestId) {
+          this.sprayingAffectedPlantPoints.set(data);
+        }
       }
     } catch (error) {
       if (currentId === this.operationsRequestId) {
         console.error('Failed to load operations', error);
         this.inspectionOperations.set([]);
+        this.sprayingAffectedPlantPoints.set([]);
       }
     } finally {
       if (currentId === this.operationsRequestId) {

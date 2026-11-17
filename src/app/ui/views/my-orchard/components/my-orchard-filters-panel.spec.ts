@@ -97,7 +97,7 @@ describe('MyOrchardFiltersPanel', () => {
     expect(component.operationOptions).toEqual([
       { label: 'Nenhuma / Não filtrar', value: '' },
       { label: 'Inspeção Manual', value: 'inspecao' },
-      { label: 'Anotação / Ocorrência', value: 'ocorrencia' },
+      { label: 'Pulverização', value: 'pulverizacao' },
     ]);
 
     expect(component.plantStatusOptions).toEqual([
