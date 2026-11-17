@@ -32,6 +32,11 @@ export const OCCURRENCE_HIGHLIGHT_COLOR = '#f97316';
 export const OCCURRENCE_HIGHLIGHT_STROKE_COLOR = '#ffffff';
 export const MIPD_PLANT_COLOR = '#a855f7';
 export const MIPD_PLANT_STROKE_COLOR = '#ffffff';
+export const MY_ORCHARD_POLYGON_STROKE_WEIGHTS = {
+  farm: 4.5,
+  zone: 4.5,
+  selectedZone: 5,
+} as const;
 
 export interface MyOrchardPlantStatusPresentation {
   label: 'Viva' | 'Não existente';
@@ -296,7 +301,7 @@ export class MyOrchardViewModel {
     // 2. Farm polygon boundary
     this.farmPolygonLayer = L.polygon([], {
       color: '#ffffff',
-      weight: 2,
+      weight: MY_ORCHARD_POLYGON_STROKE_WEIGHTS.farm,
       fill: false,
       fillOpacity: 0,
       dashArray: '4, 4',
@@ -305,7 +310,7 @@ export class MyOrchardViewModel {
     this.selectedZonePolygonLayer = L.geoJSON(undefined, {
       style: {
         color: '#facc15',
-        weight: 4,
+        weight: MY_ORCHARD_POLYGON_STROKE_WEIGHTS.selectedZone,
         opacity: 1,
         fill: false,
         fillOpacity: 0,
@@ -472,7 +477,7 @@ export class MyOrchardViewModel {
       const layer = L.geoJSON(zone.boundary.geoJson, {
         style: {
           color: zone.color,
-          weight: 3.5,
+          weight: MY_ORCHARD_POLYGON_STROKE_WEIGHTS.zone,
           opacity: 1,
           fill: false,
           fillOpacity: 0,

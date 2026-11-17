@@ -2,7 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { OverviewRepository } from '../../../data/repositories/overview/overview-repository';
 import { LoadingService } from '../../../shared/services/loading.service';
-import { MyOrchardViewModel } from './my-orchard.view-model';
+import {
+  MY_ORCHARD_POLYGON_STROKE_WEIGHTS,
+  MyOrchardViewModel,
+} from './my-orchard.view-model';
 
 describe('MyOrchardViewModel', () => {
   let viewModel: MyOrchardViewModel;
@@ -143,6 +146,14 @@ describe('MyOrchardViewModel', () => {
       'f2',
       'f3',
     ]);
+  });
+
+  it('should use thicker boundaries for farm and zone polygons', () => {
+    expect(MY_ORCHARD_POLYGON_STROKE_WEIGHTS).toEqual({
+      farm: 4.5,
+      zone: 4.5,
+      selectedZone: 5,
+    });
   });
 
   it('should not show loading when the snapshot comes from cache', async () => {

@@ -45,7 +45,9 @@ export interface IUser {
   isAdmin: boolean;
 }
 
-export interface IUserRole { user_id: string, role: string }
+export type UserRole = 'admin' | 'user';
+
+export interface IUserRole { user_id: string, role: UserRole }
 
 export interface AuthChangesResponse { data: { subscription: Subscription }; }
 

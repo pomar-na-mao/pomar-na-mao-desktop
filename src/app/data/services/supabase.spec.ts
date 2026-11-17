@@ -1,6 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { SupabaseService, injectSupabase } from './supabase';
+import {
+  SupabaseService,
+  createTenantSupabaseClient,
+  injectSupabase,
+} from './supabase';
 
 describe('SupabaseService', () => {
   beforeEach(() => {
@@ -35,5 +39,16 @@ describe('SupabaseService', () => {
     const client = TestBed.runInInjectionContext(() => injectSupabase());
 
     expect(client).toBe(service.getClient());
+  });
+
+  it('uses independent auth storage for each tenant client', () => {
+    const first = createTenantSupabaseClient('ricardoLichia');
+    const second = createTenantSupabaseClient('hassAvocado');
+    const firstAuth = first.auth as unknown as { storageKey: string };
+    const secondAuth = second.auth as unknown as { storageKey: string };
+
+    expect(firstAuth.storageKey).toBe('pomar-na-mao.auth.ricardoLichia');
+    expect(secondAuth.storageKey).toBe('pomar-na-mao.auth.hassAvocado');
+    expect(firstAuth.storageKey).not.toBe(secondAuth.storageKey);
   });
 });

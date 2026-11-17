@@ -1,9 +1,11 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PolygonSelection } from '../../../domain/models/map-polygon.model';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import { MapPolygonSelector } from '../../components/map-polygon-selector/map-polygon-selector';
 import { PropertyDemarcation } from './property-demarcation';
 
@@ -37,16 +39,25 @@ describe('PropertyDemarcation', () => {
     success: vi.fn(),
     error: vi.fn(),
   };
+  const allPlants = signal([
+    { id: '1', latitude: -23.1, longitude: -49.1, zoneId: null },
+  ]);
+  const plantsRepository = {
+    allPlants,
+    loadAllPlants: vi.fn(),
+  };
 
   beforeEach(async () => {
     vi.clearAllMocks();
     farmBoundaryService.getBoundary.mockResolvedValue([]);
     farmBoundaryService.replaceBoundary.mockResolvedValue(3);
+    plantsRepository.loadAllPlants.mockResolvedValue({ data: allPlants(), error: null });
     await TestBed.configureTestingModule({
       imports: [PropertyDemarcation],
       providers: [
         { provide: FarmBoundaryService, useValue: farmBoundaryService },
         { provide: MessageService, useValue: messageService },
+        { provide: PlantsRepository, useValue: plantsRepository },
       ],
     })
       .overrideComponent(PropertyDemarcation, {
@@ -87,6 +98,18 @@ describe('PropertyDemarcation', () => {
     expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(
       'latitude',
     );
+  });
+
+  it('should pass loaded plants to the property map', async () => {
+    const fixture = TestBed.createComponent(PropertyDemarcation);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const map = fixture.debugElement.query(
+      By.directive(MockMapPolygonSelector),
+    ).componentInstance as MockMapPolygonSelector;
+    expect(map.plants()).toEqual(allPlants());
   });
 
   it('should retain the candidate in the screen state after a save failure', async () => {

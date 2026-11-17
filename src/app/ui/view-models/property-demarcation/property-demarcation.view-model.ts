@@ -4,6 +4,7 @@ import type { FarmBoundaryCoordinate } from '../../../domain/models/farm-boundar
 import type { PolygonCoordinate } from '../../../domain/models/map-polygon.model';
 import { FarmBoundaryService } from '../../../data/services/farm-boundary/farm-boundary-service';
 import { MessageService } from '../../../data/services/message/message.service';
+import { PlantsRepository } from '../../../data/repositories/plants/plants-repository';
 import {
   buildOrderedMapBoundary,
   isValidMapCoordinate,
@@ -19,6 +20,7 @@ export class PropertyDemarcationViewModel {
   private readonly formBuilder = inject(FormBuilder);
   private readonly farmBoundaryService = inject(FarmBoundaryService);
   private readonly messageService = inject(MessageService);
+  private readonly plantsRepository = inject(PlantsRepository);
 
   public readonly persistedBoundary = signal<[number, number][] | null>(null);
   public readonly candidateBoundary = signal<FarmBoundaryCoordinate[]>([]);
@@ -28,6 +30,11 @@ export class PropertyDemarcationViewModel {
   public readonly isLoading = signal(false);
   public readonly isSaving = signal(false);
   public readonly coordinateError = signal('');
+  public readonly plants = computed(() =>
+    this.plantsRepository
+      .allPlants()
+      .filter((plant) => !plant.non_existent && !plant.nonExistent),
+  );
 
   public readonly canSave = computed(
     () => this.candidateBoundary().length >= 3 && !this.isSaving(),
@@ -44,15 +51,25 @@ export class PropertyDemarcationViewModel {
 
   public async loadBoundary(): Promise<void> {
     this.isLoading.set(true);
-    try {
-      await this.refreshPersistedBoundary();
-    } catch {
+    const [boundaryResult, plantsResult] = await Promise.allSettled([
+      this.refreshPersistedBoundary(),
+      this.plantsRepository.loadAllPlants(),
+    ]);
+
+    if (boundaryResult.status === 'rejected') {
       this.messageService.error(
         'Não foi possível carregar a demarcação da propriedade.',
       );
-    } finally {
-      this.isLoading.set(false);
     }
+
+    if (
+      plantsResult.status === 'rejected' ||
+      (plantsResult.status === 'fulfilled' && plantsResult.value.error)
+    ) {
+      this.messageService.error('Não foi possível carregar as plantas no mapa.');
+    }
+
+    this.isLoading.set(false);
   }
 
   public onPolygonSelected(coordinates: PolygonCoordinate[]): void {
