@@ -335,7 +335,7 @@ export class ActivityGeometryMap
     if (coordinates.length < 3) return;
     this.boundaryLayer = L.polygon(coordinates, {
       color: '#ffffff',
-      weight: 2,
+      weight: 4,
       fill: false,
       fillOpacity: 0,
       dashArray: '4, 4',
@@ -374,7 +374,7 @@ export class ActivityGeometryMap
           fill: false,
           fillOpacity: 0,
           opacity: 1,
-          weight: 3.5,
+          weight: 4.5,
           interactive: false,
         }).addTo(this.map!);
 
@@ -442,8 +442,8 @@ export class ActivityGeometryMap
             color: '#2563eb',
             fillColor: '#3b82f6',
             fillOpacity: 0.2,
-            weight: 3,
+            weight: 4.5,
           }).addTo(this.map)
-        : L.polyline(latLngs, { color: '#2563eb', weight: 4 }).addTo(this.map);
+        : L.polyline(latLngs, { color: '#2563eb', weight: 5 }).addTo(this.map);
   }
 }

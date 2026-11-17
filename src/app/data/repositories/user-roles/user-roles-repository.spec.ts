@@ -46,5 +46,13 @@ describe('UserRolesRepository', () => {
     expect(repo.currentUserRole()).toBe(role);
     expect(repo.isUserAdmin()).toBe(true);
   });
+
+  it('treats user as non-admin and clears resolved role state', () => {
+    repo.currentUserRole.set({ user_id: 'u1', role: 'user' });
+    expect(repo.isUserAdmin()).toBe(false);
+
+    repo.clear();
+    expect(repo.currentUserRole()).toBeNull();
+  });
 });
 
