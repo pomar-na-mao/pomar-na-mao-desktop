@@ -1,6 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import type { PostgrestResponse } from '@supabase/supabase-js';
-import type { FieldActivityItem } from '../../../domain/models/field-activity.model';
+import type {
+  FieldActivityItem,
+  FieldActivityPlantPoint,
+} from '../../../domain/models/field-activity.model';
 import { injectSupabase } from '../supabase';
 import {
   SUPABASE_CACHE_NAMESPACES,
@@ -12,6 +15,9 @@ export interface IFieldActivitiesService {
     startDate?: string | null,
     endDate?: string | null,
   ): Promise<PostgrestResponse<FieldActivityItem>>;
+  getFieldActivityPlantPoints(
+    activityEntryId: string,
+  ): Promise<PostgrestResponse<FieldActivityPlantPoint>>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -40,6 +46,27 @@ export class FieldActivitiesService implements IFieldActivitiesService {
           'get_field_activities',
           args,
         )) as unknown as PostgrestResponse<FieldActivityItem>,
+    );
+  }
+
+  public async getFieldActivityPlantPoints(
+    activityEntryId: string,
+  ): Promise<PostgrestResponse<FieldActivityPlantPoint>> {
+    const args = { p_activity_entry_id: activityEntryId };
+
+    return this.requestCache.read(
+      {
+        namespace: SUPABASE_CACHE_NAMESPACES.operations,
+        operation: 'fieldActivities.getActivityPlantPoints',
+        params: args,
+        policy: { mode: 'ttl', ttlMs: 15_000 },
+        cacheWhen: (response) => !response.error,
+      },
+      async () =>
+        (await this.supabase.rpc(
+          'get_field_activity_plant_points',
+          args,
+        )) as unknown as PostgrestResponse<FieldActivityPlantPoint>,
     );
   }
 }

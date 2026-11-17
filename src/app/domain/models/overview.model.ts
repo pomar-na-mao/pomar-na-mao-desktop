@@ -65,6 +65,16 @@ export interface InspectionOperationResponse {
   plants: InspectionPlant[];
 }
 
+export interface SprayingAffectedPlantPoint {
+  operation_id: string;
+  plant_id: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  performed_at: string;
+  distance_meters: number | null;
+  route_geojson: GeoJSON.Geometry | null;
+}
+
 export interface InspectionEntry {
   operation: InspectionOperationResponse;
   plant: InspectionPlant;
@@ -98,7 +108,7 @@ export interface OverviewDiseaseOption {
   name: string;
 }
 
-export type OverviewOperationType = 'inspecao' | 'ocorrencia' | '';
+export type OverviewOperationType = 'inspecao' | 'pulverizacao' | '';
 
 export interface OverviewSnapshotFilters {
   plantingStartDate: string | null;

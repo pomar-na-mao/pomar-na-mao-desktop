@@ -18,7 +18,7 @@ describe('MyOrchardViewModel', () => {
   const loadAllColoredZones = vi.fn();
   const getMipdMarkings = vi.fn();
   const getInspectionOperations = vi.fn();
-  const getAnnotationOperations = vi.fn();
+  const getSprayingAffectedPlantPoints = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -100,7 +100,7 @@ describe('MyOrchardViewModel', () => {
     ]);
     getMipdMarkings.mockResolvedValue([]);
     getInspectionOperations.mockResolvedValue([]);
-    getAnnotationOperations.mockResolvedValue([]);
+    getSprayingAffectedPlantPoints.mockResolvedValue([]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -115,7 +115,7 @@ describe('MyOrchardViewModel', () => {
             loadAllColoredZones,
             getMipdMarkings,
             getInspectionOperations,
-            getAnnotationOperations,
+            getSprayingAffectedPlantPoints,
           },
         },
       ],
@@ -476,6 +476,36 @@ describe('MyOrchardViewModel', () => {
 
     expect(getInspectionOperations).toHaveBeenCalledWith('2026-05-01', '2026-05-10', null);
     expect(viewModel.inspectionOperations().length).toBe(1);
+  });
+
+  it('should fetch affected plants when selectedOperationType is pulverizacao', async () => {
+    getSprayingAffectedPlantPoints.mockResolvedValueOnce([
+      {
+        operation_id: 'op-spray',
+        plant_id: 'plant-1',
+        latitude: -21.23,
+        longitude: -47.79,
+        performed_at: '2026-05-02T12:00:00Z',
+        distance_meters: 4.5,
+        route_geojson: {
+          type: 'LineString',
+          coordinates: [[-47.79, -21.23], [-47.791, -21.231]],
+        },
+      },
+    ]);
+
+    viewModel.operationStartDate.set('2026-05-01');
+    viewModel.operationEndDate.set('2026-05-10');
+    viewModel.selectedOperationType.set('pulverizacao');
+    await waitForAsyncEffects();
+
+    expect(getSprayingAffectedPlantPoints).toHaveBeenCalledWith(
+      '2026-05-01',
+      '2026-05-10',
+      null,
+    );
+    expect(viewModel.sprayingAffectedPlantPoints()).toHaveLength(1);
+    expect(viewModel.inspectionOperations()).toEqual([]);
   });
 
   it('should reset all filters and clear selections when clearFilters is called', () => {

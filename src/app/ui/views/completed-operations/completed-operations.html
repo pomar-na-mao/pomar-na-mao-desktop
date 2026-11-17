@@ -781,7 +781,55 @@
       ></div>
     </section>
 
-    <!-- Seção 4: Rastreabilidade Técnica -->
+    <!-- Seção 4: Plantas envolvidas -->
+    <section
+      class="rounded-xl border border-surface-200/80 dark:border-surface-800/80 bg-surface-50/50 dark:bg-surface-800/20 p-3.5 space-y-2.5"
+    >
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-1.5">
+          <i class="pi pi-map-marker text-orange-500 text-xs"></i>
+          <span
+            class="text-xs font-medium text-surface-700 dark:text-surface-200"
+          >
+            Plantas envolvidas
+          </span>
+        </div>
+        @if (!viewModel.areAffectedPlantsLoading()) {
+        <span
+          class="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[10px] font-semibold text-orange-700 dark:border-orange-800/60 dark:bg-orange-950/40 dark:text-orange-300"
+        >
+          {{ viewModel.affectedPlantPoints().length }} plantas
+        </span>
+        }
+      </div>
+
+      <p class="text-[10px] text-surface-500 dark:text-surface-400">
+        @if (activity.geometry_type === 'area') {
+        Plantas ativas localizadas dentro da área delimitada.
+        } @else {
+        Plantas ativas localizadas até 9 metros à esquerda ou à direita da rota.
+        }
+      </p>
+
+      @if (viewModel.areAffectedPlantsLoading()) {
+      <div
+        class="flex items-center justify-center gap-2 rounded-lg border border-dashed border-surface-200 py-5 text-xs text-surface-500 dark:border-surface-700 dark:text-surface-400"
+      >
+        <i class="pi pi-spin pi-spinner text-primary-500"></i>
+        Identificando plantas envolvidas...
+      </div>
+      } @else if (viewModel.affectedPlantsLoadFailed()) {
+      <div
+        class="flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50/60 py-4 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/20 dark:text-red-300"
+        role="alert"
+      >
+        <i class="pi pi-exclamation-circle"></i>
+        Não foi possível calcular as plantas desta atividade.
+      </div>
+      }
+    </section>
+
+    <!-- Seção 5: Rastreabilidade Técnica -->
     <section
       class="rounded-xl border border-surface-200/80 dark:border-surface-800/80 bg-surface-50/50 dark:bg-surface-800/20 p-3 space-y-2 text-xs"
     >
