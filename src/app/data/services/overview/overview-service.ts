@@ -12,6 +12,7 @@ import type {
   OverviewSnapshotFilters,
   OverviewVariety,
   OverviewZone,
+  SprayingAffectedPlantPoint,
 } from '../../../domain/models/overview.model';
 import { normalizeOrderedBoundaryPoints } from '../../../shared/utils/ordered-map-boundary';
 import { injectSupabase } from '../supabase';
@@ -249,35 +250,35 @@ export class OverviewService {
     );
   }
 
-  public async getAnnotationOperations(
+  public async getSprayingAffectedPlantPoints(
     startDate?: string | null,
     endDate?: string | null,
     zoneId?: string | null,
-  ): Promise<InspectionOperationResponse[]> {
+  ): Promise<SprayingAffectedPlantPoint[]> {
     const args: { p_start_date?: string; p_end_date?: string; p_zone_id?: string } = {};
     if (startDate) args.p_start_date = startDate;
     if (endDate) args.p_end_date = endDate;
     if (zoneId) args.p_zone_id = zoneId;
 
-    return this.requestCache.read<InspectionOperationResponse[]>(
+    return this.requestCache.read<SprayingAffectedPlantPoint[]>(
       {
         namespace: [
           SUPABASE_CACHE_NAMESPACES.operations,
           SUPABASE_CACHE_NAMESPACES.overview,
         ],
-        operation: 'overview.getAnnotationOperations',
+        operation: 'overview.getSprayingAffectedPlantPoints',
         params: args,
         policy: { mode: 'ttl', ttlMs: 15_000 },
       },
       async () => {
         const { data, error } = await this.supabase.rpc(
-          'get_annotation_operations',
+          'get_spraying_affected_plant_points',
           args,
         );
         if (error) {
           throw error;
         }
-        return (data ?? []) as InspectionOperationResponse[];
+        return (data ?? []) as SprayingAffectedPlantPoint[];
       },
     );
   }

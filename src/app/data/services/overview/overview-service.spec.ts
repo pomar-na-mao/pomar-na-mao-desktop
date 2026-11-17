@@ -337,5 +337,39 @@ describe('OverviewService', () => {
       },
     ]);
   });
+
+  it('should load spraying affected plant points with operation filters', async () => {
+    const points = [
+      {
+        operation_id: 'op-1',
+        plant_id: 'plant-1',
+        latitude: -21.23,
+        longitude: -47.79,
+        performed_at: '2026-05-02T12:00:00Z',
+        distance_meters: 4.5,
+        route_geojson: {
+          type: 'LineString',
+          coordinates: [[-47.79, -21.23], [-47.791, -21.231]],
+        },
+      },
+    ];
+    mockRpc.mockResolvedValue({ data: points, error: null });
+
+    const result = await service.getSprayingAffectedPlantPoints(
+      '2026-05-01',
+      '2026-05-10',
+      'zone-1',
+    );
+
+    expect(mockRpc).toHaveBeenCalledWith(
+      'get_spraying_affected_plant_points',
+      {
+        p_start_date: '2026-05-01',
+        p_end_date: '2026-05-10',
+        p_zone_id: 'zone-1',
+      },
+    );
+    expect(result).toEqual(points);
+  });
 });
 
