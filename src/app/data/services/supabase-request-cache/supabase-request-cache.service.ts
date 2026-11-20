@@ -7,6 +7,7 @@ export const SUPABASE_CACHE_NAMESPACES = {
   plantCounters: 'plant-counters',
   plants: 'plants',
   referenceData: 'reference-data',
+  harvestForecasts: 'harvest-forecasts',
 } as const;
 
 export type SupabaseCachePolicy =
