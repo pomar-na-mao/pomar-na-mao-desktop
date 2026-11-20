@@ -16,6 +16,13 @@ export const ROUTES: Routes = [
         loadComponent: () => import('./ui/views/my-orchard/my-orchard').then(m => m.MyOrchard)
       },
       {
+        path: 'previsao-de-safra',
+        loadComponent: () =>
+          import('./ui/views/harvest-forecast/harvest-forecast').then(
+            (m) => m.HarvestForecast,
+          ),
+      },
+      {
         path: 'cadastro',
         loadComponent: () => import('./ui/views/registration/registration').then(m => m.Registration),
         children: [

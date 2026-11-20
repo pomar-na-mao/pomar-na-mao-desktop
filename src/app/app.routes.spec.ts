@@ -12,6 +12,7 @@ describe('ROUTES', () => {
     expect(childPaths).toEqual(
       expect.arrayContaining([
         'meu-pomar',
+        'previsao-de-safra',
         'cadastro',
         'atividades-de-campo',
         'mpid',
@@ -42,6 +43,17 @@ describe('ROUTES', () => {
 
     expect(myOrchardRoute?.loadComponent).toBeDefined();
     const loadFn = myOrchardRoute?.loadComponent as () => Promise<unknown>;
+    await expect(loadFn()).resolves.toBeDefined();
+  });
+
+  it('should lazy-load Harvest Forecast as a root authenticated route', async () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const harvestForecastRoute = mainRoute?.children?.find(
+      (route) => route.path === 'previsao-de-safra',
+    );
+
+    expect(harvestForecastRoute?.loadComponent).toBeDefined();
+    const loadFn = harvestForecastRoute?.loadComponent as () => Promise<unknown>;
     await expect(loadFn()).resolves.toBeDefined();
   });
 
