@@ -218,6 +218,35 @@ describe('HarvestForecastViewModel', () => {
     ]);
   });
 
+  it('preserves the current viewport when filtered markers change', () => {
+    const fitBounds = vi.fn();
+    viewModel['map'] = { fitBounds } as never;
+    viewModel['territoryLayer'] = {
+      clearLayers: vi.fn(),
+      addLayer: vi.fn(),
+    } as never;
+    viewModel['markersLayer'] = {
+      clearLayers: vi.fn(),
+      addLayer: vi.fn(),
+    } as never;
+
+    viewModel.farmPolygon.set([
+      [-23.4, -49.1],
+      [-23.41, -49.11],
+      [-23.42, -49.12],
+    ]);
+    TestBed.flushEffects();
+    fitBounds.mockClear();
+
+    items.set([forecast('p1', 'P')]);
+    TestBed.flushEffects();
+
+    expect(fitBounds).not.toHaveBeenCalled();
+
+    viewModel.setZoneId('z1');
+    expect(fitBounds).toHaveBeenCalledOnce();
+  });
+
   it('calculates with edited weights and invalidates on any dependent change', () => {
     items.set([forecast('p1', 'N'), forecast('p2', 'P'), forecast('p3', 'GG')]);
     viewModel.calculate();

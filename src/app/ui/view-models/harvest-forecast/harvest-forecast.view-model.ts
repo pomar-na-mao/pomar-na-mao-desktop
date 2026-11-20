@@ -1,4 +1,11 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import {
+  computed,
+  effect,
+  inject,
+  Injectable,
+  signal,
+  untracked,
+} from '@angular/core';
 import * as L from 'leaflet';
 import { HarvestForecastRepository } from '../../../data/repositories/harvest-forecast/harvest-forecast.repository';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
@@ -26,7 +33,14 @@ import {
 import { buildOrderedMapBoundary } from '../../../shared/utils/ordered-map-boundary';
 
 const DEFAULT_CENTER: L.LatLngTuple = [-23.403, -49.149];
-const ZONE_COLORS = ['#0EA5E9', '#F97316', '#A855F7', '#10B981', '#EC4899', '#EAB308'];
+const ZONE_COLORS = [
+  '#0EA5E9',
+  '#F97316',
+  '#A855F7',
+  '#10B981',
+  '#EC4899',
+  '#EAB308',
+];
 
 export interface HarvestForecastMarkerDescriptor {
   plantId: string;
@@ -52,7 +66,8 @@ export class HarvestForecastViewModel {
   private farmBoundaryService = inject(FarmBoundaryService);
 
   public readonly classifications = HARVEST_FORECAST_CLASSIFICATIONS;
-  public readonly productiveClassifications = PRODUCTIVE_HARVEST_CLASSIFICATIONS;
+  public readonly productiveClassifications =
+    PRODUCTIVE_HARVEST_CLASSIFICATIONS;
   public readonly scenarios = HARVEST_FORECAST_SCENARIOS;
   public readonly classificationLabels = HARVEST_FORECAST_CLASSIFICATION_LABELS;
   public readonly classificationColors = HARVEST_FORECAST_CLASSIFICATION_COLORS;
@@ -68,7 +83,9 @@ export class HarvestForecastViewModel {
   public selectedClassifications = signal<HarvestForecastClassification[]>([]);
   public selectedZoneId = signal('');
   public selectedScenario = signal<HarvestForecastScenario>('realistic');
-  public weights = signal<HarvestForecastWeights>(cloneHarvestForecastWeights());
+  public weights = signal<HarvestForecastWeights>(
+    cloneHarvestForecastWeights(),
+  );
   public calculation = signal<HarvestForecastCalculation | null>(null);
   public hasFilterInteraction = signal(false);
   public territoryLoadFailed = signal(false);
@@ -157,25 +174,32 @@ export class HarvestForecastViewModel {
   }
 
   public setClassifications(values: string | string[]): void {
-    const list = (Array.isArray(values) ? values : values ? [values] : []).filter(
-      (value): value is HarvestForecastClassification =>
-        HARVEST_FORECAST_CLASSIFICATIONS.includes(
-          value as HarvestForecastClassification,
-        ),
+    const list = (
+      Array.isArray(values) ? values : values ? [values] : []
+    ).filter((value): value is HarvestForecastClassification =>
+      HARVEST_FORECAST_CLASSIFICATIONS.includes(
+        value as HarvestForecastClassification,
+      ),
     );
     this.selectedClassifications.set([...new Set(list)]);
     this.onFilterChanged();
   }
 
   public setZoneId(value: string | number | string[] | null): void {
-    this.selectedZoneId.set(Array.isArray(value) ? String(value[0] ?? '') : String(value ?? ''));
+    this.selectedZoneId.set(
+      Array.isArray(value) ? String(value[0] ?? '') : String(value ?? ''),
+    );
     this.onFilterChanged();
     this.fitCurrentContent();
   }
 
   public setScenario(value: string | number | string[] | null): void {
-    const scenario = String(Array.isArray(value) ? value[0] ?? '' : value ?? '');
-    if (HARVEST_FORECAST_SCENARIOS.includes(scenario as HarvestForecastScenario)) {
+    const scenario = String(
+      Array.isArray(value) ? (value[0] ?? '') : (value ?? ''),
+    );
+    if (
+      HARVEST_FORECAST_SCENARIOS.includes(scenario as HarvestForecastScenario)
+    ) {
       this.selectedScenario.set(scenario as HarvestForecastScenario);
       this.invalidateCalculation();
     }
@@ -186,7 +210,8 @@ export class HarvestForecastViewModel {
     classification: ProductiveHarvestClassification,
     rawValue: string | number | null,
   ): void {
-    const value = rawValue === '' || rawValue === null ? Number.NaN : Number(rawValue);
+    const value =
+      rawValue === '' || rawValue === null ? Number.NaN : Number(rawValue);
     this.weights.update((current) => ({
       ...current,
       [scenario]: {
@@ -201,7 +226,9 @@ export class HarvestForecastViewModel {
     scenario: HarvestForecastScenario,
     classification: ProductiveHarvestClassification,
   ): boolean {
-    return isValidHarvestForecastWeight(this.weights()[scenario][classification]);
+    return isValidHarvestForecastWeight(
+      this.weights()[scenario][classification],
+    );
   }
 
   public calculate(): void {
@@ -216,10 +243,12 @@ export class HarvestForecastViewModel {
   }
 
   public formatKg(value: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }).format(value) + ' kg';
+    return (
+      new Intl.NumberFormat('pt-BR', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(value) + ' kg'
+    );
   }
 
   public async applyFilters(): Promise<void> {
@@ -295,8 +324,10 @@ export class HarvestForecastViewModel {
         !unique.has(item.plant_id) &&
         Number.isFinite(item.latitude) &&
         Number.isFinite(item.longitude) &&
-        item.latitude >= -90 && item.latitude <= 90 &&
-        item.longitude >= -180 && item.longitude <= 180
+        item.latitude >= -90 &&
+        item.latitude <= 90 &&
+        item.longitude >= -180 &&
+        item.longitude <= 180
       ) {
         unique.set(item.plant_id, item);
       }
@@ -315,13 +346,16 @@ export class HarvestForecastViewModel {
     if (!this.map || !this.markersLayer) return;
     this.markersLayer.clearLayers();
     for (const descriptor of descriptors) {
-      const marker = L.circleMarker([descriptor.latitude, descriptor.longitude], {
-        radius: 7,
-        fillColor: descriptor.color,
-        color: descriptor.classification === 'M' ? '#713F12' : '#FFFFFF',
-        weight: 2,
-        fillOpacity: 0.92,
-      });
+      const marker = L.circleMarker(
+        [descriptor.latitude, descriptor.longitude],
+        {
+          radius: 7,
+          fillColor: descriptor.color,
+          color: descriptor.classification === 'M' ? '#713F12' : '#FFFFFF',
+          weight: 2,
+          fillOpacity: 0.92,
+        },
+      );
       const accessibleLabel = `${descriptor.label}; planta ${descriptor.plantId}`;
       marker.bindTooltip(
         `<strong>${escapeHtml(descriptor.label)}</strong><br>Planta: ${escapeHtml(descriptor.plantId)}`,
@@ -334,7 +368,6 @@ export class HarvestForecastViewModel {
       });
       marker.addTo(this.markersLayer);
     }
-    this.fitCurrentContent();
   }
 
   private onFilterChanged(): void {
@@ -371,9 +404,11 @@ export class HarvestForecastViewModel {
         weight: 2,
         fill: false,
         fillOpacity: 0,
-      }).bindTooltip(escapeHtml(zone.name)).addTo(this.territoryLayer);
+      })
+        .bindTooltip(escapeHtml(zone.name))
+        .addTo(this.territoryLayer);
     }
-    this.fitCurrentContent();
+    untracked(() => this.fitCurrentContent());
   }
 
   private fitCurrentContent(): void {
@@ -382,24 +417,36 @@ export class HarvestForecastViewModel {
       (zone) => zone.id === this.selectedZoneId(),
     );
     if (selectedZone) {
-      this.map.fitBounds(L.latLngBounds(selectedZone.points), { padding: [30, 30] });
+      this.map.fitBounds(L.latLngBounds(selectedZone.points), {
+        padding: [30, 30],
+      });
       return;
     }
 
     const points: L.LatLngTuple[] = [
       ...(this.farmPolygon() ?? []),
       ...this.zonePolygons().flatMap((zone) => zone.points),
-      ...this.markerDescriptors().map((marker) => [marker.latitude, marker.longitude] as L.LatLngTuple),
+      ...this.markerDescriptors().map(
+        (marker) => [marker.latitude, marker.longitude] as L.LatLngTuple,
+      ),
     ];
     if (points.length) {
-      this.map.fitBounds(L.latLngBounds(points), { padding: [30, 30], maxZoom: 17 });
+      this.map.fitBounds(L.latLngBounds(points), {
+        padding: [30, 30],
+        maxZoom: 17,
+      });
     }
   }
 
   private buildZonePolygons(zones: Zone[], regions: Region[]): ZonePolygon[] {
     const grouped = new Map<string, Region[]>();
     for (const region of regions) {
-      if (!region.zone_id || !Number.isFinite(region.latitude) || !Number.isFinite(region.longitude)) continue;
+      if (
+        !region.zone_id ||
+        !Number.isFinite(region.latitude) ||
+        !Number.isFinite(region.longitude)
+      )
+        continue;
       const current = grouped.get(region.zone_id) ?? [];
       current.push(region);
       grouped.set(region.zone_id, current);
@@ -410,16 +457,26 @@ export class HarvestForecastViewModel {
         .filter((region) => Number.isFinite(Number(region.order)))
         .sort((left, right) => Number(left.order) - Number(right.order))
         .map((region) => [region.latitude, region.longitude] as L.LatLngTuple);
-      const points = regionPoints.length >= 3
-        ? regionPoints
-        : this.parseZonePolygon(zone.polygon);
+      const points =
+        regionPoints.length >= 3
+          ? regionPoints
+          : this.parseZonePolygon(zone.polygon);
       return points.length >= 3
-        ? [{ id: zone.id, name: zone.name, points, color: ZONE_COLORS[index % ZONE_COLORS.length] }]
+        ? [
+            {
+              id: zone.id,
+              name: zone.name,
+              points,
+              color: ZONE_COLORS[index % ZONE_COLORS.length],
+            },
+          ]
         : [];
     });
   }
 
-  private parseZonePolygon(polygon: Record<string, unknown> | null | undefined): L.LatLngTuple[] {
+  private parseZonePolygon(
+    polygon: Record<string, unknown> | null | undefined,
+  ): L.LatLngTuple[] {
     if (!polygon || polygon['type'] !== 'Polygon') return [];
     const rings = polygon['coordinates'];
     if (!Array.isArray(rings) || !Array.isArray(rings[0])) return [];
@@ -435,7 +492,8 @@ export class HarvestForecastViewModel {
     if (points.length > 3) {
       const first = points[0];
       const last = points[points.length - 1];
-      if (first[0] === last[0] && first[1] === last[1]) return points.slice(0, -1);
+      if (first[0] === last[0] && first[1] === last[1])
+        return points.slice(0, -1);
     }
     return points;
   }

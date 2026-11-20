@@ -72,6 +72,13 @@ O painel SHALL oferecer **Período de coleta** com datas inicial e final, **Clas
 - **WHEN** uma consulta anterior termina depois da consulta correspondente aos filtros atuais
 - **THEN** somente a resposta dos filtros atuais MUST atualizar o mapa e o estado de cálculo.
 
+#### Scenario: Trocar a classificação preserva a visualização atual
+
+- **GIVEN** o usuário ajustou manualmente o zoom ou a posição do mapa
+- **WHEN** a classificação é alterada e os marcadores filtrados são atualizados
+- **THEN** o mapa MUST preservar o centro e o nível de zoom atuais
+- **AND** MUST NOT reenquadrar automaticamente a fazenda, as zonas ou os marcadores.
+
 ### Requirement: Representar a classificação de cada planta no mapa
 
 O mapa SHALL exibir no máximo um marcador por `plant_id` retornado, nas coordenadas atuais da planta, usando cinza para `N`, azul para `P`, amarelo para `M`, laranja para `G` e vermelho para `GG`.
