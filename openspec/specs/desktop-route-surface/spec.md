@@ -62,3 +62,15 @@ The desktop app SHALL show `Visão geral` as the first navigation entry, followe
 - **THEN** exactly one top-level entry labelled `Zoneamento` pointing to `/zoneamento` MUST appear immediately below `Dados básicos`.
 - **THEN** the `Zoneamento` entry MUST use the `pi-share-alt` icon and MUST NOT contain child routes.
 - **THEN** the sidebar menu MUST NOT include an entry labelled `Zonas` or `Atribuição de Zonas`.
+
+### Requirement: Harvest forecast route is available from the main menu
+The desktop app SHALL expose the authenticated harvest forecast screen at `/previsao-de-safra` and SHALL provide exactly one top-level menu entry labelled `Previsão de Safra` immediately below the `Mipd` group.
+
+#### Scenario: Authenticated user navigates to harvest forecast
+- **WHEN** the router matches `/previsao-de-safra`
+- **THEN** the harvest forecast screen MUST be loaded lazily inside the authenticated main layout.
+
+#### Scenario: Sidebar menu is rendered
+- **WHEN** the authenticated layout sidebar is displayed
+- **THEN** exactly one top-level entry labelled `Previsão de Safra` MUST appear immediately after `Mipd`
+- **AND** the entry MUST navigate to `/previsao-de-safra` and use an icon consistent with the existing PrimeIcons menu system.

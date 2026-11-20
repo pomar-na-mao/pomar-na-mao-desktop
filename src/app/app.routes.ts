@@ -78,6 +78,10 @@ export const ROUTES: Routes = [
         redirectTo: 'mpid/registrar',
       },
       {
+        path: 'previsao-de-safra',
+        loadComponent: () => import('./ui/views/harvest-forecast/harvest-forecast').then(m => m.HarvestForecast)
+      },
+      {
         path: 'registrar',
         children: [
           {
