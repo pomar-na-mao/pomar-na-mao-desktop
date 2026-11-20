@@ -145,6 +145,12 @@ export class AppMenu implements OnInit {
               },
             ],
           },
+          {
+            label: 'Previsão de Safra',
+            visible: true,
+            icon: 'pi pi-fw pi-chart-line',
+            routerLink: ['/previsao-de-safra'],
+          },
           /* {
             label: 'Configurações',
             visible: true,

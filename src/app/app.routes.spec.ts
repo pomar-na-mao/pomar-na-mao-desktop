@@ -15,6 +15,7 @@ describe('ROUTES', () => {
         'cadastro',
         'atividades-de-campo',
         'mpid',
+        'previsao-de-safra',
         'registrar',
         'configuracoes',
         'usuarios',
@@ -107,5 +108,15 @@ describe('ROUTES', () => {
 
     const mipdAlias = mainRoute?.children?.find((route) => route.path === 'mipd');
     expect(mipdAlias).toMatchObject({ redirectTo: 'mpid' });
+  });
+
+  it('should lazy-load harvest forecast as an authenticated route', async () => {
+    const mainRoute = ROUTES.find((route) => route.path === '');
+    const route = mainRoute?.children?.find(
+      (child) => child.path === 'previsao-de-safra',
+    );
+    expect(route?.loadComponent).toBeDefined();
+    const loadFn = route?.loadComponent as () => Promise<unknown>;
+    await expect(loadFn()).resolves.toBeDefined();
   });
 });
