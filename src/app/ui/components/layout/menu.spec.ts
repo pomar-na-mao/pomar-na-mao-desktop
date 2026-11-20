@@ -101,6 +101,11 @@ describe('AppMenu', () => {
         }),
       ],
     });
+    expect(items[registrationIndex + 4]).toMatchObject({
+      label: 'Previsão de Safra',
+      icon: 'pi pi-fw pi-chart-line',
+      routerLink: ['/previsao-de-safra'],
+    });
   });
 
   it('does not contain Visão das operações or its child routes', () => {

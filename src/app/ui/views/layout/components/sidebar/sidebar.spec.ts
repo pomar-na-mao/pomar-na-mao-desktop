@@ -12,21 +12,10 @@ describe('Sidebar', () => {
     );
   });
 
-  it('shows Harvest Forecast immediately below My Orchard', () => {
+  it('shows Cadastro immediately below My Orchard', () => {
     const sidebar = new Sidebar();
 
     expect(sidebar.menuItems[1]).toEqual(
-      expect.objectContaining({
-        label: 'Previsão de Safra',
-        path: '/previsao-de-safra',
-      }),
-    );
-  });
-
-  it('shows Cadastro immediately below Harvest Forecast', () => {
-    const sidebar = new Sidebar();
-
-    expect(sidebar.menuItems[2]).toEqual(
       expect.objectContaining({ label: 'Cadastro', path: '/cadastro' }),
     );
   });
@@ -34,7 +23,7 @@ describe('Sidebar', () => {
   it('shows Registrar immediately below Cadastro with Ocorrências as a child', () => {
     const sidebar = new Sidebar();
 
-    expect(sidebar.menuItems[3]).toEqual(
+    expect(sidebar.menuItems[2]).toEqual(
       expect.objectContaining({
         label: 'Registrar',
         items: [
@@ -50,7 +39,7 @@ describe('Sidebar', () => {
   it('shows Atividade de campo immediately below Registrar with Realizadas as a child', () => {
     const sidebar = new Sidebar();
 
-    expect(sidebar.menuItems[4]).toEqual(
+    expect(sidebar.menuItems[3]).toEqual(
       expect.objectContaining({
         label: 'Atividade de campo',
         items: [
@@ -70,7 +59,7 @@ describe('Sidebar', () => {
   it('shows Mipd immediately below Atividade de campo with Registrar and Realizadas as children', () => {
     const sidebar = new Sidebar();
 
-    expect(sidebar.menuItems[5]).toEqual(
+    expect(sidebar.menuItems[4]).toEqual(
       expect.objectContaining({
         label: 'Mipd',
         items: [
@@ -83,6 +72,17 @@ describe('Sidebar', () => {
             path: '/mpid/realizadas',
           }),
         ],
+      }),
+    );
+  });
+
+  it('shows Harvest Forecast immediately below Mipd', () => {
+    const sidebar = new Sidebar();
+
+    expect(sidebar.menuItems[5]).toEqual(
+      expect.objectContaining({
+        label: 'Previsão de Safra',
+        path: '/previsao-de-safra',
       }),
     );
   });
