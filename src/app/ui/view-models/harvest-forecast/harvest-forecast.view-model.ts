@@ -7,6 +7,7 @@ import {
   untracked,
 } from '@angular/core';
 import * as L from 'leaflet';
+import { ForecastMassLayer } from '../../../shared/utils/forecast-mass-layer';
 import { HarvestForecastRepository } from '../../../data/repositories/harvest-forecast/harvest-forecast.repository';
 import { RegionsRepository } from '../../../data/repositories/regions/regions-repository';
 import { ZonesRepository } from '../../../data/repositories/zones/zones-repository';
@@ -90,6 +91,7 @@ export class HarvestForecastViewModel {
   public hasFilterInteraction = signal(false);
   public territoryLoadFailed = signal(false);
   public isMapFullscreen = signal(false);
+  public mapMode = signal<'points' | 'heatmap'>('points');
   public farmPolygon = signal<L.LatLngTuple[] | null>(null);
   public markerDescriptors = signal<HarvestForecastMarkerDescriptor[]>([]);
 
@@ -128,6 +130,7 @@ export class HarvestForecastViewModel {
   private map: L.Map | null = null;
   private territoryLayer: L.LayerGroup | null = null;
   private markersLayer: L.LayerGroup | null = null;
+  private heatLayer: ForecastMassLayer | null = null;
   private filterTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
@@ -135,7 +138,11 @@ export class HarvestForecastViewModel {
 
     effect(() => {
       const items = this.items();
-      this.renderMarkers(items);
+      // Track these even before the Leaflet map has been initialized.
+      this.mapMode();
+      this.selectedScenario();
+      this.weights();
+      untracked(() => this.renderMarkers(items));
     });
 
     effect(() => {
@@ -295,6 +302,7 @@ export class HarvestForecastViewModel {
       { maxZoom: 22, maxNativeZoom: 18, attribution: 'Esri World Imagery' },
     ).addTo(this.map);
     this.territoryLayer = L.layerGroup().addTo(this.map);
+    this.map.createPane('forecastPlants').style.zIndex = '450';
     this.markersLayer = L.layerGroup().addTo(this.map);
     this.renderTerritory();
     this.renderMarkers(this.items());
@@ -308,6 +316,11 @@ export class HarvestForecastViewModel {
     this.isMapFullscreen.set(value);
   }
 
+  public setMapMode(mode: 'points' | 'heatmap'): void {
+    this.mapMode.set(mode);
+    this.renderMarkers(this.items());
+  }
+
   public destroyMap(): void {
     if (this.filterTimer) clearTimeout(this.filterTimer);
     this.filterTimer = null;
@@ -315,6 +328,7 @@ export class HarvestForecastViewModel {
     this.map = null;
     this.territoryLayer = null;
     this.markersLayer = null;
+    this.heatLayer = null;
   }
 
   public renderMarkers(items: readonly HarvestForecastItem[]): void {
@@ -345,21 +359,51 @@ export class HarvestForecastViewModel {
 
     if (!this.map || !this.markersLayer) return;
     this.markersLayer.clearLayers();
+    const isHeatmap = this.mapMode() === 'heatmap';
+    const scenario = this.selectedScenario();
+    const weights = this.weights()[scenario];
+    if (isHeatmap) {
+      const points: L.LatLngTuple[] = descriptors.flatMap((point) => {
+        const kg =
+          point.classification === 'N' ? 0 : weights[point.classification];
+        return isValidHarvestForecastWeight(kg) && kg > 0
+          ? [[point.latitude, point.longitude, kg] as L.LatLngTuple]
+          : [];
+      });
+      if (!this.heatLayer) {
+        this.heatLayer = new ForecastMassLayer(points);
+      } else {
+        this.heatLayer.setLatLngs(points);
+      }
+      if (!this.map.hasLayer(this.heatLayer)) this.heatLayer.addTo(this.map);
+    } else {
+      this.heatLayer?.remove();
+    }
     for (const descriptor of descriptors) {
       const marker = L.circleMarker(
         [descriptor.latitude, descriptor.longitude],
         {
-          radius: 7,
+          pane: 'forecastPlants',
+          radius: isHeatmap ? 12 : 7,
           fillColor: descriptor.color,
           color: descriptor.classification === 'M' ? '#713F12' : '#FFFFFF',
           weight: 2,
-          fillOpacity: 0.92,
+          opacity: isHeatmap ? 0 : 1,
+          fillOpacity: isHeatmap ? 0 : 0.92,
         },
       );
-      const accessibleLabel = `${descriptor.label}; planta ${descriptor.plantId}`;
+      const kg =
+        descriptor.classification === 'N'
+          ? 0
+          : weights[descriptor.classification];
+      const mass = isValidHarvestForecastWeight(kg)
+        ? this.formatKg(kg)
+        : 'Peso inválido';
+      const scenarioLabel = this.scenarioLabels[scenario];
+      const accessibleLabel = `${descriptor.label}; planta ${descriptor.plantId}; massa prevista por planta: ${mass}; cenário ${scenarioLabel}`;
       marker.bindTooltip(
-        `<strong>${escapeHtml(descriptor.label)}</strong><br>Planta: ${escapeHtml(descriptor.plantId)}`,
-        { direction: 'top' },
+        `<strong>${escapeHtml(descriptor.label)}</strong><br>Massa prevista por planta: <strong>${escapeHtml(mass)}</strong><br>Cenário: ${escapeHtml(scenarioLabel)}<br>Planta: ${escapeHtml(descriptor.plantId)}`,
+        { direction: 'top', sticky: true },
       );
       marker.on('add', () => {
         const element = marker.getElement();

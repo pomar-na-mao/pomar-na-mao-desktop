@@ -19,16 +19,23 @@ describe('HarvestForecastMap', () => {
     showEmptyState: signal(false),
     hasFilterInteraction: signal(false),
     isMapFullscreen: signal(false),
+    mapMode: signal<'points' | 'heatmap'>('points'),
+    setMapMode: vi.fn((mode: 'points' | 'heatmap') =>
+      viewModel.mapMode.set(mode),
+    ),
     initMap: vi.fn(),
     destroyMap: vi.fn(),
     invalidateMapSize: vi.fn(),
-    setMapFullscreen: vi.fn((value: boolean) => viewModel.isMapFullscreen.set(value)),
+    setMapFullscreen: vi.fn((value: boolean) =>
+      viewModel.isMapFullscreen.set(value),
+    ),
     retry: vi.fn(),
   };
 
   beforeEach(async () => {
     vi.clearAllMocks();
     viewModel.isMapFullscreen.set(false);
+    viewModel.mapMode.set('points');
     await TestBed.configureTestingModule({
       imports: [HarvestForecastMap],
       providers: [{ provide: HarvestForecastViewModel, useValue: viewModel }],
@@ -39,12 +46,35 @@ describe('HarvestForecastMap', () => {
     const fixture = TestBed.createComponent(HarvestForecastMap);
     fixture.detectChanges();
     const root = fixture.nativeElement as HTMLElement;
-    expect(root.querySelector('#harvest-forecast-map')?.className).toContain('h-full');
+    expect(root.querySelector('#harvest-forecast-map')?.className).toContain(
+      'h-full',
+    );
     expect(viewModel.initMap).toHaveBeenCalledWith('harvest-forecast-map');
-    expect(root.querySelector('[aria-label="Legenda das classificações"]')).toBeTruthy();
+    expect(
+      root.querySelector('[aria-label="Legenda das classificações"]'),
+    ).toBeTruthy();
     expect(root.textContent).toContain('Muito grande');
     fixture.destroy();
     expect(viewModel.destroyMap).toHaveBeenCalled();
+  });
+
+  it('switches between points and heatmap with the matching legend', () => {
+    const fixture = TestBed.createComponent(HarvestForecastMap);
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const buttons = root.querySelectorAll<HTMLButtonElement>(
+      '[aria-label="Visualização do mapa"] button',
+    );
+    expect(buttons[0].getAttribute('aria-pressed')).toBe('true');
+    buttons[1].click();
+    fixture.detectChanges();
+    expect(viewModel.setMapMode).toHaveBeenCalledWith('heatmap');
+    expect(buttons[1].getAttribute('aria-pressed')).toBe('true');
+    expect(root.textContent).toContain('Massa prevista (kg/pé)');
+    buttons[0].click();
+    fixture.detectChanges();
+    expect(root.textContent).toContain('Muito grande');
+    fixture.destroy();
   });
 
   it('toggles fullscreen and invalidates Leaflet size', () => {
@@ -53,7 +83,9 @@ describe('HarvestForecastMap', () => {
     fixture.componentInstance.toggleFullscreen();
     expect(viewModel.setMapFullscreen).toHaveBeenCalledWith(true);
     expect(viewModel.invalidateMapSize).toHaveBeenCalled();
-    expect(document.body.classList.contains('map-fullscreen-active')).toBe(true);
+    expect(document.body.classList.contains('map-fullscreen-active')).toBe(
+      true,
+    );
     fixture.destroy();
   });
 });
