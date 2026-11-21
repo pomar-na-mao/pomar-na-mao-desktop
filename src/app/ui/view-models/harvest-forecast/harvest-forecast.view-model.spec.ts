@@ -247,6 +247,100 @@ describe('HarvestForecastViewModel', () => {
     expect(fitBounds).toHaveBeenCalledOnce();
   });
 
+  it('renders heat on the real map and preserves viewport and calculation across mode and data changes', () => {
+    const container = document.createElement('div');
+    container.id = 'heatmap-test';
+    container.style.cssText = 'width:800px;height:600px';
+    document.body.appendChild(container);
+    try {
+      viewModel.initMap(container.id);
+      const map = viewModel['map']!;
+      map.setView([-23.4, -49.1], 19, { animate: false });
+      const center = map.getCenter();
+      items.set([
+        forecast('p1', 'P'),
+        forecast('p1', 'P'),
+        forecast('p2', 'N'),
+        forecast('bad', 'G', NaN),
+      ]);
+      TestBed.flushEffects();
+      viewModel.calculate();
+      const calculation = viewModel.calculation();
+      viewModel.setMapMode('heatmap');
+      TestBed.flushEffects();
+      expect(container.querySelector('canvas')).toBeTruthy();
+      expect(viewModel['markersLayer']!.getLayers()).toHaveLength(2);
+      const plant = viewModel['markersLayer']!.getLayers()[0];
+      expect(plant.getTooltip()?.getContent()).toContain('5 kg');
+      plant.fire('mouseover');
+      expect(plant.isTooltipOpen()).toBe(true);
+      plant.fire('mouseout');
+      expect(plant.isTooltipOpen()).toBe(false);
+      expect(
+        viewModel['markersLayer']!.getLayers()[1].getTooltip()?.getContent(),
+      ).toContain('0 kg');
+      expect(viewModel.markerDescriptors()).toHaveLength(2);
+      const heat = viewModel['heatLayer']!;
+      const update = vi.spyOn(heat, 'setLatLngs');
+      items.set([forecast('p2', 'N')]);
+      TestBed.flushEffects();
+      expect(update).toHaveBeenLastCalledWith([]);
+      items.set([]);
+      TestBed.flushEffects();
+      expect(update).toHaveBeenLastCalledWith([]);
+      viewModel.setMapMode('points');
+      TestBed.flushEffects();
+      expect(map.hasLayer(heat)).toBe(false);
+      expect(map.getZoom()).toBe(19);
+      expect(map.getCenter()).toEqual(center);
+      expect(viewModel.calculation()).toEqual(calculation);
+      viewModel.setMapMode('heatmap');
+      items.set([
+        forecast('p', 'P'),
+        forecast('m', 'M'),
+        forecast('g', 'G'),
+        forecast('gg', 'GG'),
+        forecast('n', 'N'),
+        forecast('p', 'P'),
+      ]);
+      TestBed.flushEffects();
+      expect(update).toHaveBeenLastCalledWith(
+        [5, 15, 25, 35].map((kg) => [-23.4, -49.1, kg]),
+      );
+      viewModel.setScenario('optimistic');
+      TestBed.flushEffects();
+      expect(update).toHaveBeenLastCalledWith(
+        [6, 17, 28, 40].map((kg) => [-23.4, -49.1, kg]),
+      );
+      viewModel.setWeight('optimistic', 'P', 12);
+      TestBed.flushEffects();
+      expect(
+        viewModel['markersLayer']!.getLayers()[0].getTooltip()?.getContent(),
+      ).toContain('12 kg');
+      expect(
+        viewModel['markersLayer']!.getLayers()[0].getTooltip()?.getContent(),
+      ).toContain('Otimista');
+      expect(update).toHaveBeenLastCalledWith(
+        [12, 17, 28, 40].map((kg) => [-23.4, -49.1, kg]),
+      );
+      viewModel.setWeight('optimistic', 'P', 0);
+      viewModel.setWeight('optimistic', 'M', '');
+      TestBed.flushEffects();
+      expect(
+        viewModel['markersLayer']!.getLayers()[1].getTooltip()?.getContent(),
+      ).toContain('Peso inválido');
+      expect(update).toHaveBeenLastCalledWith(
+        [28, 40].map((kg) => [-23.4, -49.1, kg]),
+      );
+      expect(map.getZoom()).toBe(19);
+      expect(map.getCenter()).toEqual(center);
+      expect(findAll).not.toHaveBeenCalled();
+    } finally {
+      viewModel.destroyMap();
+      container.remove();
+    }
+  });
+
   it('calculates with edited weights and invalidates on any dependent change', () => {
     items.set([forecast('p1', 'N'), forecast('p2', 'P'), forecast('p3', 'GG')]);
     viewModel.calculate();
