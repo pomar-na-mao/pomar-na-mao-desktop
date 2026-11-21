@@ -151,6 +151,33 @@ O aplicativo SHALL calcular a produção usando as contagens atuais de `P`, `M`,
 - **THEN** os valores do card MUST voltar ao estado vazio
 - **AND** um novo clique em **Previsão** MUST ser exigido para apresentar valores atualizados.
 
+### Requirement: Alternar pontos e mapa de calor
+
+O mapa SHALL oferecer um seletor acessível entre **Pontos** (padrão) e **Mapa de calor**, mantendo os contornos da fazenda e das zonas.
+
+#### Scenario: Alternar a visualização dos resultados filtrados
+
+- **WHEN** o usuário alterna o modo no próprio mapa
+- **THEN** o mapa MUST preservar o zoom, o centro, os filtros e a estimativa calculada, sem uma nova consulta
+- **AND** o modo de calor MUST ponderar cada planta válida e única pelos kg/pé da sua classificação no cenário selecionado; `N`, pesos zero ou inválidos não contribuem para o calor
+- **AND** alterações no cenário ou nos pesos MUST atualizar o calor automaticamente, sem consultar novamente os dados ou alterar zoom e centro
+- **AND** a cor MUST representar a média espacial suavizada dos kg/pé das plantas contribuintes, sem somar intensidades sobrepostas; aumentar a quantidade de plantas com o mesmo peso não pode alterar sua cor
+- **AND** a escala MUST manter uma referência fixa de 0 a 40+ kg/pé entre filtros e cenários, sem normalizar cada conjunto separadamente
+- **AND** a legenda MUST alternar entre as classificações e a escala de menor a maior massa prevista em kg.
+
+#### Scenario: Consultar a massa ao passar o mouse
+
+- **WHEN** o usuário passa o mouse sobre a posição de uma planta em Pontos ou Mapa de calor
+- **THEN** um tooltip MUST informar a massa prevista por planta em kg, classificação, cenário e identificador da planta
+- **AND** o valor MUST acompanhar o cenário e os pesos atuais, mostrar zero para `N` e indicar pesos inválidos sem exibir `NaN`
+- **AND** no modo de calor a área de interação MUST ser transparente, sem sobrepor pontos visíveis ao calor.
+
+#### Scenario: Atualizar os resultados no modo de calor
+
+- **WHEN** os filtros retornam um novo conjunto de previsões
+- **THEN** o calor MUST refletir apenas esse conjunto, removendo os dados anteriores inclusive quando vazio
+- **AND** a troca de classificação MUST preservar o enquadramento atual.
+
 ### Requirement: Comunicar estados de interação e consulta
 
 A tela SHALL fornecer labels, foco visível, feedback de interação, estados de carregamento, vazio e erro com contraste suficiente nos temas suportados.
